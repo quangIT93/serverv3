@@ -12,6 +12,7 @@ import { timeToTextTransform } from 'src/common/helper/transform/timeToText.tran
 // import { SalaryType } from 'src/models/salary-types/entities/salary-type.entity';
 import { MoneyType } from 'src/common/enum';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
+import { BUCKET_IMAGE_POST } from 'src/common/constants';
 // import { Bookmark } from 'src/models/bookmarks/entities/bookmark.entity';
 
 @Injectable()
@@ -42,7 +43,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         return next.handle().pipe(
             map((posts: Post[]) => {
-                return posts.map((post) => {
+                const data = posts.map((post) => {
                     const postNormally = new PostNormally();
                     postNormally.id = post.id;
                     postNormally.title = post.title;
@@ -56,20 +57,24 @@ export class PostNormallyInterceptor implements NestInterceptor {
                         lang,
                     );
                     postNormally['moneyType'] = post.moneyType === MoneyType.VND ? 'VND' : 'USD';
-                    postNormally['image'] = post.postImages
-                        ? post.postImages[0].image
+                    postNormally['image'] = post.postImages && post.postImages.length > 0
+                        ? `${BUCKET_IMAGE_POST}/${post.id}/${post.postImages[0].image}`
                         : post.categories
                             ? post.categories[0].parentCategory?.defaultPostImage
                             : null;
 
                     postNormally['jobType'] = {
                         id: post.jobTypeData?.id,
-                        name: post.jobTypeData?.name,
+                        name: 
+                            lang === 'vi' ? post.jobTypeData?.name :
+                            lang === 'en' ? post.jobTypeData?.nameEn : post.jobTypeData?.nameKo,
                     }
 
                     postNormally['salaryType'] = {
                         id: post.salaryTypeData?.id,
-                        name: post.salaryTypeData?.value,
+                        name: 
+                            lang === 'vi' ? post.salaryTypeData?.value : 
+                            lang === 'en' ? post.salaryTypeData?.valueEn : post.salaryTypeData?.valueKo,
                     }
 
                     postNormally['location'] = {
@@ -91,6 +96,12 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
                     return postNormally;
                 });
+
+                return {
+                    status: _context.switchToHttp().getResponse().statusCode,
+                    message: _context.switchToHttp().getResponse().statusMessage,
+                    data,
+                }
             }),
         );
     }

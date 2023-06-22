@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities';
 import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_PARENT_CATEGORY_ID } from 'src/common/constants';
+import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 // import { PostNormally } from './class/normallyPost.class';
 
 @Injectable()
@@ -29,7 +30,7 @@ export class PostsService {
         .getMany();
     }
 
-    async findByQuery(query: any): Promise<any[]> {
+    async findByQuery(query: any, limit: number, page: number): Promise<any[]> {
         return await this.postsRepository
         .createQueryBuilder('posts')
         .select([
@@ -58,12 +59,12 @@ export class PostsService {
         .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
         .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: query[QUERY_IS_REMOTELY] })
         .orderBy('posts.createdAt', 'DESC')
-        .skip(0)
-        .take(3)
+        .skip((page - 1) * limit)
+        .take(limit)
         .getMany();
     }
 
-    async countByQuery(query: any): Promise<number> {
+    async countByQuery(query: HotTopicQueriesDto): Promise<number> {
         return await this.postsRepository
         .createQueryBuilder('posts')
         .select([
@@ -92,8 +93,6 @@ export class PostsService {
         .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
         .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: query[QUERY_IS_REMOTELY] })
         .orderBy('posts.createdAt', 'DESC')
-        .skip(0)
-        .take(3)
         .getCount();
     }
 

@@ -10,5 +10,9 @@ export interface CustomRequest extends Request {
 
     user: JwtPayload | undefined;
 
+    page?: number;
+
+    limit?: number;
+
     bookmarks?: Bookmark[] | undefined;
 }

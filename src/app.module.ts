@@ -25,6 +25,7 @@ import { SalaryTypesModule } from './models/salary-types/salary-types.module';
 import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
 import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
+import { AWSConfigModule } from './config/storage/aws/config.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { BookmarksModule } from './models/bookmarks/bookmarks.module';
     UserModule,
     MailModule, 
     QueueModule,
+    AWSConfigModule,
     AuthModule,
     JwtAccessTokenServiceModule,
     JwtRefreshTokenServiceModule,

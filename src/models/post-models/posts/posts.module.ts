@@ -1,11 +1,12 @@
 // import { TypeOrmExModule } from './../../database/typeorm-ex.module';
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Post } from "./entities";
 import { PostsController } from "./posts.controller";
 import { PostsService } from "./posts.service";
 import { JwtAccessTokenServiceModule } from "src/providers/jwt/atk.provider.module";
 import { BookmarksModule } from "src/models/bookmarks/bookmarks.module";
+import { PageAndLimitMiddleware } from "src/common/middlewares/page-limit/page-limit.middleware";
 // import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
 
 
@@ -24,4 +25,16 @@ import { BookmarksModule } from "src/models/bookmarks/bookmarks.module";
     ],
 })
 
-export class PostsModule { }
+export class PostsModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(PageAndLimitMiddleware)
+            .exclude(
+                { path: 'posts/:id', method: RequestMethod.GET },
+                { path: 'posts/:id', method: RequestMethod.PUT },
+                { path: 'posts', method: RequestMethod.POST },
+            )
+            .forRoutes(PostsController)
+            
+    }
+}

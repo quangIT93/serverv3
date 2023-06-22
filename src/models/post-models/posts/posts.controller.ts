@@ -1,4 +1,4 @@
-import {  Controller, Get, Logger, Param, ParseIntPipe, Query, UseGuards, UseInterceptors } from "@nestjs/common";
+import {  Controller, Get, Logger, Param, ParseIntPipe, Query, Req, UseGuards, UseInterceptors } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { PostsService } from "./posts.service";
@@ -24,15 +24,17 @@ export class PostsController {
     @Get('topic/:id')
     @UseGuards(AuthNotRequiredGuard)
     @UseInterceptors(PostNormallyInterceptor)
-    async findByTopicId(@Query() hotTopicQueries: HotTopicQueriesDto) {
+    async findByTopicId(@Query() hotTopicQueries: HotTopicQueriesDto, @Req() req: any) {
+
+        const { limit, page } = req;
+
         const { childrenCategoryId, parentCategoryId, isRemotely } = hotTopicQueries;
         const query = {
             childrenCategoryId,
             parentCategoryId,
             isRemotely,
         };
-        return this.postsService.findByQuery(query);
-        
+        return this.postsService.findByQuery(query, limit, page); 
     }
 
     @Get(':id')

@@ -26,7 +26,7 @@ export class HotPostsController {
           ...hotTopic,
           count
       };
-  }));
+    }));
   }
 
   
