@@ -1,0 +1,18 @@
+{
+    "npm-scripts.showStartNotification": false,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "db_connect",
+            "database": "aiwork_gig_app",
+            "username": "root",
+            "password": "123456"
+        }
+    ]
+}
