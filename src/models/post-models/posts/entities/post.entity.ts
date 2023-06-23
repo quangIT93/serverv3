@@ -141,4 +141,5 @@ export class Post extends BaseEntity {
     @OneToMany(() => Bookmark, bookmark => bookmark.post)
     @JoinColumn({ name: 'id' })
     bookmarks: Bookmark[] | undefined;
+    // companyResourceData: any;
 }

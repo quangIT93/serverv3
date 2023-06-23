@@ -3,7 +3,7 @@ import { HotTopicsService } from './hot-topics.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateHotTopicDto } from './dto/create-hot-topic.dto';
 // import { HotTopicsInterxceptor } from './interceptors/hot-topics.interceptor';
-import { ResponseInterceptor } from 'src/common/interceptors/reponse.interceptors';
+import { ResponseInterceptor } from 'src/common/interceptors/response.interceptors';
 import { PostsService } from '../post-models/posts/posts.service';
 import { HotTopicQueriesDto } from '../post-models/posts/dto/hot-topic-queries.dto';
 

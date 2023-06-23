@@ -53,7 +53,6 @@ export class PostsService {
         .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
         .leftJoinAndSelect('posts.postResource', 'postResource')
         .leftJoinAndSelect('postResource.companyResource', 'companyResource')
-        // .leftJoinAndSelect('posts.bookmarks', 'bookmarks', 'bookmarks.accountId = :accountId', { accountId: query.accountId })
         .where('posts.status = 1')
         .where(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
         .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })

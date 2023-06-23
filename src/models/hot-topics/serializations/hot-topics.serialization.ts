@@ -44,7 +44,7 @@ export class HotTopicSerializer {
             image: entity.image,
             themeId: entity.themeId,
             query: query,
-            api: `/api/v3/posts/topic/${entity.id}`
+            api: `/api/v3/posts/topic/${entity.id}?`
         });
     }
 }

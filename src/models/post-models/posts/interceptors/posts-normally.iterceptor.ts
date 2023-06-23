@@ -12,7 +12,7 @@ import { timeToTextTransform } from 'src/common/helper/transform/timeToText.tran
 // import { SalaryType } from 'src/models/salary-types/entities/salary-type.entity';
 import { MoneyType } from 'src/common/enum';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
-import { BUCKET_IMAGE_POST } from 'src/common/constants';
+import { BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from 'src/common/constants';
 // import { Bookmark } from 'src/models/bookmarks/entities/bookmark.entity';
 
 @Injectable()
@@ -90,6 +90,11 @@ export class PostNormallyInterceptor implements NestInterceptor {
                             id: post.ward?.district?.province?.id,
                             fullName: lang === 'vi' ? post.ward?.district?.province?.fullName : post.ward?.district?.province?.fullNameEn,
                         },
+                    }
+
+                    postNormally['companyResourceData'] = {
+                        ...post.postResource?.companyResource,
+                        logo: `${BUCKET_IMAGE_COMPANY_ICON}/${post.postResource?.companyResource?.logo}`
                     }
 
                     postNormally['bookmarked'] = bookmarks.includes(post.id);

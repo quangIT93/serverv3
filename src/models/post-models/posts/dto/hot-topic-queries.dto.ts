@@ -20,6 +20,8 @@ export class HotTopicQueriesDto {
     @IsOptional()
     [QUERY_IS_REMOTELY]?: string;
 
+    
+
     [key: string]: any;
 
 

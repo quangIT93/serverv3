@@ -29,7 +29,7 @@ export class AuthNotRequiredGuard implements CanActivate {
         const token = request.headers.authorization;
         try {
             const user =  await this.validateToken(token);
-            Logger.log('AuthNotRequiredGuard: true', user);
+            // Logger.log('AuthNotRequiredGuard: true', user);
             context.switchToHttp().getRequest().user = user;
             return true;
         } catch (error) {
