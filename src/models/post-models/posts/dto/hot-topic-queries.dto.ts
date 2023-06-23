@@ -30,16 +30,16 @@ export class HotTopicQueriesDto {
     }
 
     static from(plain: string) {
-        const temp = plain.split('&');
-        const queries: {[key: string]: string} = {
+        // const temp = plain.split('&');
+        // const queries: {[key: string]: string} = {
             
-        };
-        temp.forEach((item) => {
-            const [key, value] = item.split('=') 
-            queries[key] = value;
-        });
+        // };
+        // temp.forEach((item) => {
+        //     const [key, value] = item.split('=') 
+        //     queries[key] = value;
+        // });
 
-        return plainToClass(HotTopicQueriesDto, queries);
+        return plainToClass(HotTopicQueriesDto, plain);
 
     }
 }

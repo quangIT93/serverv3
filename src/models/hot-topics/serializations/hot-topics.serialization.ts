@@ -21,17 +21,17 @@ export class HotTopicSerializer {
 
     static fromEntity(entity: HotTopic) {
 
-        let query = [];
+        let query: any[] = [];
 
         switch (entity.type) {
             case 1:
-                query.push(`${QUERY_IS_REMOTELY}=${entity.detailId}`);
+                query.push({ [QUERY_IS_REMOTELY] : entity.detailId});
                 break;
             case 2:
-                query.push(`${QUERY_PARENT_CATEGORY_ID}=${entity.detailId}`);
+                query.push({[QUERY_PARENT_CATEGORY_ID]: entity.detailId});
                 break;
             case 3:
-                query.push(`${QUERY_CHILDREN_CATEGORY_ID}=${entity.detailId}`);
+                query.push({[QUERY_CHILDREN_CATEGORY_ID] : entity.detailId});
                 break;
             default:
                 break;
@@ -44,7 +44,7 @@ export class HotTopicSerializer {
             image: entity.image,
             themeId: entity.themeId,
             query: query,
-            api: `/api/v3/posts/topic/${entity.id}?`
+            api: `/api/v3/posts/topic/${entity.id}`
         });
     }
 }
