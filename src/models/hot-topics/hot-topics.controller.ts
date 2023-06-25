@@ -19,7 +19,6 @@ export class HotPostsController {
   @UseInterceptors(ResponseInterceptor)
   async getHotTopics() {
     const hotTopics = await this.hotTopicService.getHotTopics();
-
     return Promise.all(hotTopics.map(async (hotTopic: { query: string[]; }) => {
       let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
       return {

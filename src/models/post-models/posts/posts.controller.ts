@@ -28,12 +28,14 @@ export class PostsController {
 
         const { limit, page } = req;
 
-        const { childrenCategoryId, parentCategoryId, isRemotely } = hotTopicQueries;
+        const { childrenCategoryId, parentCategoryId, isRemotely, isShortTimeJobs } = hotTopicQueries;
         const query = {
             childrenCategoryId,
             parentCategoryId,
             isRemotely,
+            isShortTimeJobs,
         };
+
         return this.postsService.findByQuery(query, limit, page); 
     }
 

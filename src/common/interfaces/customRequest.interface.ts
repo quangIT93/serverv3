@@ -14,5 +14,7 @@ export interface CustomRequest extends Request {
 
     limit?: number;
 
+    checkOverLimit?: number;
+
     bookmarks?: Bookmark[] | undefined;
 }

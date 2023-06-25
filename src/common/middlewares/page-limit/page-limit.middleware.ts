@@ -49,8 +49,15 @@ export class PageAndLimitMiddleware implements NestMiddleware {
         // Delete page and limit from query
         
         req.page = Number(req.query['page']) || 1;
+
+        // Check if limit is over 20
+        // If list is over 20, we will return 20 items and a boolean value to check if there are more items
+    
+
+        req.checkOverLimit = Number(req.query['limit']) || 20;
         
-        req.limit = Number(req.query['limit']) || 20;
+        req.limit = req.checkOverLimit + 1;
+
         
         delete req.query['page'];
         delete req.query['limit'];

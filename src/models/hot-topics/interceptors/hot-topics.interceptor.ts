@@ -23,7 +23,6 @@ export class HotTopicsInterxceptor implements NestInterceptor {
         // const lang = _context.switchToHttp().getRequest()['lang'];
         const data = next.handle().toPromise()
         return data.then((res) => {
-            console.log(res);
             return Promise.all(res.map(async (hotTopic: { query: string[]; }) => {
                 let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
                 return {
@@ -32,20 +31,7 @@ export class HotTopicsInterxceptor implements NestInterceptor {
                 };
             }));
         }).then((res) => {
-            console.log(res);
             return res;
-        })
-
-        // map((hotTopics: HotTopicSerializer[]) => {
-        //     console.log(hotTopics);
-        //     return Promise.all(hotTopics.map(async (hotTopic) => {
-        //         let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
-        //         return {
-        //             ...hotTopic,
-        //             count
-        //         };
-        //     }));
-        // }
-        
+        })        
     }
 }

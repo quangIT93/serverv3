@@ -30,6 +30,8 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         const user_id = _context.switchToHttp().getRequest()['user']?.id;
 
+        // console.log(_context.switchToHttp().getRequest().checkOverLimit)
+
         let bookmarks: number[] = [];
 
         if (user_id) {
@@ -41,8 +43,25 @@ export class PostNormallyInterceptor implements NestInterceptor {
             })
         }
 
+        // return if posts is empty
+
+
         return next.handle().pipe(
             map((posts: Post[]) => {
+
+                const length = posts.length;
+
+                posts.pop();                
+                
+                if (length === 0) {
+                    return {
+                        status: _context.switchToHttp().getResponse().statusCode,
+                        data: [],
+                        message: _context.switchToHttp().getResponse().statusMessage,
+                        is_over: true,
+                    }
+                }
+
                 const data = posts.map((post) => {
                     const postNormally = new PostNormally();
                     postNormally.id = post.id;
@@ -60,7 +79,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
                     postNormally['image'] = post.postImages && post.postImages.length > 0
                         ? `${BUCKET_IMAGE_POST}/${post.id}/${post.postImages[0].image}`
                         : post.categories
-                            ? post.categories[0].parentCategory?.defaultPostImage
+                            ? post.categories[0]?.parentCategory?.defaultPostImage
                             : null;
 
                     postNormally['jobType'] = {
@@ -101,13 +120,15 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
                     return postNormally;
                 });
-
                 return {
                     status: _context.switchToHttp().getResponse().statusCode,
                     message: _context.switchToHttp().getResponse().statusMessage,
+                    is_over: length < _context.switchToHttp().getRequest().checkOverLimit,
                     data,
                 }
             }),
+
+            
         );
     }
 }

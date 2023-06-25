@@ -1,4 +1,4 @@
-import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_PARENT_CATEGORY_ID } from "src/common/constants";
+import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_IS_SHORT_TIME_JOBS, QUERY_PARENT_CATEGORY_ID } from "src/common/constants";
 import { HotTopic } from "../entities/hot-posts.entity";
 
 export class HotTopicSerializer {
@@ -32,6 +32,9 @@ export class HotTopicSerializer {
                 break;
             case 3:
                 query.push({[QUERY_CHILDREN_CATEGORY_ID] : entity.detailId});
+                break;
+            case 4:
+                query.push({[QUERY_IS_SHORT_TIME_JOBS] : entity.detailId});
                 break;
             default:
                 break;
