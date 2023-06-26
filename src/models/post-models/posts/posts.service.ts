@@ -58,22 +58,15 @@ export class PostsService {
         .where(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
         .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
         .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
-
         if (query[QUERY_IS_SHORT_TIME_JOBS] === 1) {
             queryBuilder.orWhere(`posts.start_date IS NOT NULL`);
         }
 
         return queryBuilder
         .orderBy('posts.createdAt', 'DESC')
-        .skip((page - 1) * limit)
+        .skip(page * limit)
         .take(limit)
         .getMany();
-
-        // .orWhere(`${query.isShortTimeJobs === '1' ? 'posts.start_time IS NOT NULL' : ''}`)
-        // .orderBy('posts.createdAt', 'DESC')
-        // .skip((page - 1) * limit)
-        // .take(limit)
-        // .getMany();
     }
 
     async countByQuery(query: HotTopicQueriesDto): Promise<number> {
