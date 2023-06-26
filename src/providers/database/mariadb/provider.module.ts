@@ -14,7 +14,7 @@ import { AppConfigModule } from "src/config/app/config.module";
             imports: [MariadbConfigModule, AppConfigModule],
             inject: [MariadbConfigService, AppConfigService],
             // useClass: MariadbConfigService,
-            useFactory: async (mariadbConfigService: MariadbConfigService, _appconfigService: AppConfigService) => ({
+            useFactory: async (mariadbConfigService: MariadbConfigService, appconfigService: AppConfigService) => ({
                 type: 'mysql',
                 host: mariadbConfigService.host,
                 port: mariadbConfigService.port,
@@ -23,7 +23,7 @@ import { AppConfigModule } from "src/config/app/config.module";
                 database: mariadbConfigService.database,
                 // synchronize: true,
                 // autoLoadEntities: true,
-                logging: true,
+                logging: appconfigService.mode === 'development' ? true : true,
                 entities: [...mariadbConfigService.entities],
                 // entities: 
                 // migrations: mariadbConfigService.migrations,

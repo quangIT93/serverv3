@@ -15,7 +15,7 @@ export class PostResource {
 
     @ManyToOne(() => CompanyResource, companyResource => companyResource.id)
     @JoinColumn({ name: 'company' })
-    companyResource: CompanyResource | undefined;
+    companyResource!: CompanyResource;
 
     @OneToOne(() => Post, post => post.id)
     @JoinColumn({ name: 'post_id' })

@@ -12,7 +12,7 @@ export class Ward extends Location {
 
     @ManyToOne(() => District, distrcit => distrcit.id)
     @JoinColumn({ name: 'district_id' })
-    district: District | undefined;
+    district!: District;
 
     @OneToMany(() => Post, post => post.ward)
     posts: Post[] | undefined;

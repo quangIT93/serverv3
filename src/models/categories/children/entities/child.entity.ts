@@ -25,7 +25,7 @@ export class ChildCategory {
 
     @ManyToOne(() => ParentCategory, parentCategory => parentCategory.id)
     @JoinColumn({ name: 'parent_category_id' })
-    parentCategory: ParentCategory | undefined;
+    parentCategory!: ParentCategory;
 
     // @ManyToMany(() => PostCategories, postCategories => postCategories.childCategory)
     // postCategories: PostCategories[] | undefined;

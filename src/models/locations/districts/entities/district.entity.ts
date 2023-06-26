@@ -10,5 +10,5 @@ export class District extends Location {
 
     @ManyToOne(() => Province, province => province.id)
     @JoinColumn({ name: 'province_id' })
-    province: Province | undefined;
+    province!: Province;
 }

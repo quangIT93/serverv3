@@ -128,15 +128,15 @@ export class Post extends BaseEntity {
 
     @ManyToOne(() => JobType, jobType => jobType.id)
     @JoinColumn({ name: 'job_type' })
-    jobTypeData: JobType | undefined;
+    jobTypeData!: JobType;
 
     @ManyToOne(() => SalaryType, salaryType => salaryType.id)
     @JoinColumn({ name: 'salary_type' })
-    salaryTypeData: SalaryType | undefined;
+    salaryTypeData!: SalaryType;
 
     @OneToOne(() => PostResource, postResource => postResource.post)
     @JoinColumn({ name: 'id' })
-    postResource: PostResource | undefined;
+    postResource!: PostResource;
 
     @OneToMany(() => Bookmark, bookmark => bookmark.post)
     @JoinColumn({ name: 'id' })
