@@ -54,13 +54,26 @@ export class PostsService {
         .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
         .leftJoinAndSelect('posts.postResource', 'postResource')
         .leftJoinAndSelect('postResource.companyResource', 'companyResource')
-        .where(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
-        .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
-        .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
-        .andWhere(`posts.status = 1`)
-        .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`);
+        .where(`posts.status = 1`)
+        .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`)
+
+        if (query[QUERY_CHILDREN_CATEGORY_ID]) {
+            queryBuilder.andWhere(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
+        }
+
+        if (query[QUERY_PARENT_CATEGORY_ID]) {
+            queryBuilder.andWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
+        }
+
+        if (query[QUERY_IS_REMOTELY]) {
+            queryBuilder.andWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
+        }
+
+        // .andWhere(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
+        // .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
+        // .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
         if (query[QUERY_IS_SHORT_TIME_JOBS] === 1) {
-            queryBuilder.orWhere(`posts.start_date IS NOT NULL`);
+            queryBuilder.andWhere(`posts.start_date IS NOT NULL`);
         }
 
         return queryBuilder
@@ -94,13 +107,26 @@ export class PostsService {
         .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
         .leftJoinAndSelect('posts.postResource', 'postResource')
         .leftJoinAndSelect('postResource.companyResource', 'companyResource')
-        .where(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
-        .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
-        .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
+        // .where(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
+        // .orWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
+        // .orWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
         .andWhere(`posts.status = 1`)
         .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`);
+
+        if (query[QUERY_CHILDREN_CATEGORY_ID]) {
+            queryBuilder.andWhere(`categories.id = :${QUERY_CHILDREN_CATEGORY_ID}`, { [QUERY_CHILDREN_CATEGORY_ID]: query[QUERY_CHILDREN_CATEGORY_ID] })
+        }
+
+        if (query[QUERY_PARENT_CATEGORY_ID]) {
+            queryBuilder.andWhere(`categories.parentCategoryId = :${QUERY_PARENT_CATEGORY_ID}`, { [QUERY_PARENT_CATEGORY_ID]: query[QUERY_PARENT_CATEGORY_ID] })
+        }
+
+        if (query[QUERY_IS_REMOTELY]) {
+            queryBuilder.andWhere(`posts.isRemotely = :${QUERY_IS_REMOTELY}`, { [QUERY_IS_REMOTELY]: String(query[QUERY_IS_REMOTELY]) })
+        }
+
         if (query[QUERY_IS_SHORT_TIME_JOBS] === 1) {
-            queryBuilder.orWhere(`posts.start_date IS NOT NULL`);
+            queryBuilder.andWhere(`posts.start_date IS NOT NULL`);
         }
         return queryBuilder.getCount();
 
