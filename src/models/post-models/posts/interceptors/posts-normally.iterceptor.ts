@@ -2,19 +2,12 @@ import {
     CallHandler,
     ExecutionContext,
     Injectable,
-    // Logger,
     NestInterceptor,
 } from '@nestjs/common';
 import { PostNormally } from './../class/normallyPost.class';
 import { Observable, map } from 'rxjs';
 import { Post } from '../entities';
-// import { timeToTextTransform } from 'src/common/helper/transform/timeToText.tranform';
-// import { SalaryType } from 'src/models/salary-types/entities/salary-type.entity';
-// import { MoneyType } from 'src/common/enum';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
-// import { BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from 'src/common/constants';
-// import { Bookmark } from 'src/models/bookmarks/entities/bookmark.entity';
-
 @Injectable()
 export class PostNormallyInterceptor implements NestInterceptor {
 
@@ -30,8 +23,6 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         const user_id = _context.switchToHttp().getRequest()['user']?.id;
 
-        // console.log(_context.switchToHttp().getRequest().checkOverLimit)
-
         let bookmarks: number[] = [];
 
         if (user_id) {
@@ -42,9 +33,6 @@ export class PostNormallyInterceptor implements NestInterceptor {
                 }
             })
         }
-
-        // return if posts is empty
-
 
         return next.handle().pipe(
             map((posts: Post[]) => {
@@ -63,6 +51,11 @@ export class PostNormallyInterceptor implements NestInterceptor {
                 }
                 const data = posts.map((post: Post) => {
                     const postNormally = new PostNormally(post, lang);
+
+                    if (bookmarks.includes(postNormally.id)) {
+                        postNormally.bookmarked = true;
+                    }
+
                     return postNormally;
                 });
                 return {
@@ -72,8 +65,6 @@ export class PostNormallyInterceptor implements NestInterceptor {
                     data,
                 }
             }),
-
-            
         );
     }
 }

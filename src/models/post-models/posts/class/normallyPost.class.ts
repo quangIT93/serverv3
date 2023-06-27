@@ -46,6 +46,8 @@ export class PostNormally {
 
     companyResourceData!: CompanyResource;
 
+    bookmarked: boolean = false;
+
 
     [key: string]: any;
 
