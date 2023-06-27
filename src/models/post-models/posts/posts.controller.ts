@@ -3,7 +3,7 @@ import {  Controller, Get, Logger, Param, ParseIntPipe, Query, Req, UseGuards, U
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { PostsService } from "./posts.service";
 import { HotTopicQueriesDto } from "./dto/hot-topic-queries.dto";
-import { PostNormallyInterceptor } from "./interceptors/posts-normally.iterceptor";
+import { PostNormallyInterceptor } from "./interceptors/posts-normally.interceptor";
 import { AuthGuard } from "src/authentication/auth.guard";
 import { AuthNotRequiredGuard } from "src/authentication/authNotRequired.guard";
 

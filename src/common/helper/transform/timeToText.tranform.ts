@@ -18,7 +18,7 @@ export function timeToTextTransform(time: number | string | Date, lang: string):
     return formatPostedTime(time, lang);
 }
 
-const formatPostedTime = (time: number, lang: string = "vi") => {
+const formatPostedTime = (time: number, lang: string) => {
 
     const minutes = Math.floor((Date.now() - time) / 60000);
     const hours = Math.floor((Date.now() - time) / 3600000);
@@ -46,7 +46,7 @@ const formatPostedTime = (time: number, lang: string = "vi") => {
     
 }
 
-const newPostTime = (lang: string = "vi") => {
+const newPostTime = (lang: string) => {
     
     switch (lang) {
         case "vi":
@@ -60,7 +60,7 @@ const newPostTime = (lang: string = "vi") => {
     }
 }
 
-const thirtyTo59MinutesAgo = (lang: string = "vi", time: number) => {
+const thirtyTo59MinutesAgo = (lang: string, time: number) => {
 
     //get minutes from posted time to now
     const minutes = Math.floor((Date.now() - time) / 60000);
@@ -79,7 +79,7 @@ const thirtyTo59MinutesAgo = (lang: string = "vi", time: number) => {
 }
 
 
-const oneTo23HoursAgo = (lang: string = "vi", time: number) => {
+const oneTo23HoursAgo = (lang: string, time: number) => {
 
     //get hours from posted time to now
     const hours = Math.floor((Date.now() - time) / 3600000);
@@ -101,7 +101,7 @@ const oneTo23HoursAgo = (lang: string = "vi", time: number) => {
     }
 }
 
-const oneTo30DaysAgo = (lang: string = "vi", time: number) => {
+const oneTo30DaysAgo = (lang: string, time: number) => {
 
     //get days from posted time to now
     const days = Math.floor((Date.now() - time) / 86400000);
@@ -123,7 +123,7 @@ const oneTo30DaysAgo = (lang: string = "vi", time: number) => {
     }
 }
 
-const oneTo11MonthsAgo = (lang: string = "vi", time: number) => {
+const oneTo11MonthsAgo = (lang: string, time: number) => {
 
     //get months from posted time to now
     const months = Math.floor((Date.now() - time) / 2592000000);
@@ -146,7 +146,7 @@ const oneTo11MonthsAgo = (lang: string = "vi", time: number) => {
 }
 
 
-const oldPostTime = (lang: string = "vi") => {
+const oldPostTime = (lang: string) => {
     switch (lang) {
         case "vi":
             return "Cũ";

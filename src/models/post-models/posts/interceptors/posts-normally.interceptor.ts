@@ -4,7 +4,7 @@ import {
     Injectable,
     NestInterceptor,
 } from '@nestjs/common';
-import { PostNormally } from './../class/normallyPost.class';
+import { PostNormally } from '../class/normallyPost.class';
 import { Observable, map } from 'rxjs';
 import { Post } from '../entities';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
@@ -39,7 +39,10 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
                 const length = posts.length;
 
-                posts.pop();                
+                if (length === _context.switchToHttp().getRequest().checkOverLimit) {
+                    posts.pop();                
+                }
+
                 
                 if (length === 0) {
                     return {
