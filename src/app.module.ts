@@ -26,6 +26,7 @@ import { CompanyResourcesModule } from './models/company-resources/company-resou
 import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
 import { AWSConfigModule } from './config/storage/aws/config.module';
+import { MulterConfigModule } from './providers/storage/multer/provider.module';
 
 @Module({
   imports: [
@@ -51,7 +52,8 @@ import { AWSConfigModule } from './config/storage/aws/config.module';
     SalaryTypesModule,
     CompanyResourcesModule,
     PostResourceModule,
-    BookmarksModule
+    BookmarksModule,
+    MulterConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],

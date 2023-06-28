@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsEmail, IsNumber, IsPhoneNumber, IsString, MaxLength, Min } from "class-validator";
+import { IsDate, IsEmail, IsNumber, IsOptional, IsPhoneNumber, IsString, MaxLength, Min } from "class-validator";
 import { OneOfOptionalRequired } from "src/common/decorators/validation";
+import { IsFile } from "src/common/decorators/validation";
 
 export class CreatePostByAdminDto {
-
+    @ApiProperty({ type: 'string', format: 'binary', required: true })
     @IsString()
     accountId!: string;
 
@@ -27,13 +28,13 @@ export class CreatePostByAdminDto {
     address!: string;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
-    @IsString()
+    @IsOptional()
     @MaxLength(255)
     @IsEmail()
     email?: string | null = null;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
-    @IsString()
+    @IsOptional()
     @MaxLength(255)
     @IsPhoneNumber('VN')
     phone?: string | null = null;
@@ -59,10 +60,12 @@ export class CreatePostByAdminDto {
     isRemotely!: number;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
+    @IsOptional()
     @IsDate({ each: true })
     startDate?: Date | null = null;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
+    @IsOptional()
     @IsDate({ each: true })
     endDate?: Date | null = null;
 
@@ -84,21 +87,31 @@ export class CreatePostByAdminDto {
     @Min(0)
     salaryMax!: number;
 
+    @ApiProperty({ type: 'number', format: 'binary', required: true })
     @IsNumber({ allowNaN: false, allowInfinity: false})
     salaryType!: number;
 
+    @ApiProperty({ type: 'number', format: 'binary', required: true })
     @IsNumber({ allowNaN: false, allowInfinity: false})
     @OneOfOptionalRequired([1, 2])
     moneyType!: number;
 
+    @ApiProperty({ type: 'number', format: 'binary', required: true })
     @IsNumber({ allowNaN: false, allowInfinity: false})
     jobTypeId!: number;
     
+    @ApiProperty({ type: 'string', format: 'binary', required: false })
+    @IsOptional()
     @IsDate()
     expiredDate!: Date | null;
 
+    @ApiProperty({ type: 'string', format: 'binary', required: false })
+    @IsOptional()
     @IsString()
     siteUrl!: string | null;
 
-
+    @ApiProperty({ type: 'file', format: 'binary', required: false, isArray: true })
+    @IsOptional()
+    @IsFile({ mime: ['image/jpg', 'image/png', 'image/jpeg'] })
+    image!: any | null;
 }
