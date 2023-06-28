@@ -6,6 +6,7 @@ import { HotTopicQueriesDto } from "./dto/hot-topic-queries.dto";
 import { PostNormallyInterceptor } from "./interceptors/posts-normally.interceptor";
 import { AuthGuard } from "src/authentication/auth.guard";
 import { AuthNotRequiredGuard } from "src/authentication/authNotRequired.guard";
+// import * as constantsQuery from '../../../common/constants/postQuery.constants'
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -28,13 +29,15 @@ export class PostsController {
 
         const { limit, page } = req;
 
-        const { childrenCategoryId, parentCategoryId, isRemotely, isShortTimeJobs } = hotTopicQueries;
+        const { ...constantsQuery } = hotTopicQueries;
         const query = {
-            childrenCategoryId,
-            parentCategoryId,
-            isRemotely,
-            isShortTimeJobs,
+            ...constantsQuery,
         };
+
+        if (Object.keys(query).length === 0) {
+            return [];
+        }
+
 
         return this.postsService.findByQuery(query, limit, page); 
     }
