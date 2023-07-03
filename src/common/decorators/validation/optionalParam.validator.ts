@@ -7,7 +7,7 @@ export function OneOfOptionalRequired(values: any[]) {
             target: object.constructor,
             propertyName: propertyName,
             options: {
-                message: `${propertyName} must be one of ${values}`,
+                message: `Type of ${propertyName} are not allowed.`,
             },
             validator: {
                 validate(value: any, _args: ValidationArguments) {

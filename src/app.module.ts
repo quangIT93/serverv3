@@ -25,17 +25,19 @@ import { SalaryTypesModule } from './models/salary-types/salary-types.module';
 import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
 import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
-import { AWSConfigModule } from './config/storage/aws/config.module';
+// import { AWSConfigModule } from './config/storage/aws/config.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
-
+import { AWSModule } from './providers/storage/aws/provider.module';
 @Module({
   imports: [
+
     AppConfigModule,
     DatabaseConfigModule,
     UserModule,
     MailModule, 
     QueueModule,
-    AWSConfigModule,
+    AWSModule,
+    // AWSConfigModule,
     AuthModule,
     JwtAccessTokenServiceModule,
     JwtRefreshTokenServiceModule,
@@ -56,7 +58,9 @@ import { MulterConfigModule } from './providers/storage/multer/provider.module';
     MulterConfigModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
