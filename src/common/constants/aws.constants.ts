@@ -3,6 +3,7 @@ export const BUCKET_PREFIX = process.env['AWS_BUCKET_PREFIX_URL']
 export const BUCKET_IMAGE = `${BUCKET_PREFIX}/images`
 export const BUCKET_IMAGE_CHAT = `${BUCKET_IMAGE}/chat-images`
 export const BUCKET_IMAGE_POST = `${BUCKET_IMAGE}/posts-images`
+export const BUCKET_IMAGE_POST_UPLOAD = `images/posts-images`
 export const BUCKET_IMAGE_BANNER = `${BUCKET_IMAGE}/banners`
 export const BUCKET_IMAGE_AVATAR = `${BUCKET_IMAGE}/avatar`
 export const BUCKET_IMAGE_THEME = `${BUCKET_IMAGE}/themes`

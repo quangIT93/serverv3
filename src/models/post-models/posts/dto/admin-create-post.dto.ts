@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
     IsDate,
@@ -9,7 +10,8 @@ import {
     MaxLength,
     Min,
 } from 'class-validator';
-import { IsTimestamp, OneOfOptionalRequired } from 'src/common/decorators/validation';
+import { OneOfOptionalRequired, IsTimestamp } from 'src/common/decorators/validation';
+import { Post } from '../entities';
 // import { IsFile } from "src/common/decorators/validation";
 
 export class CreatePostByAdminDto {
@@ -58,13 +60,13 @@ export class CreatePostByAdminDto {
     @IsOptional()
     @MaxLength(255)
     @IsEmail()
-    email?: string | null = null;
+    email: string | null = null;
 
     @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsOptional()
     @MaxLength(255)
     @IsPhoneNumber('VN')
-    phone?: string | null = null;
+    phone: string | null = null;
 
     @ApiProperty({ type: 'string', format: 'string', required: true })
     @IsString()
@@ -110,12 +112,12 @@ export class CreatePostByAdminDto {
     @ApiProperty({ type: 'string', format: 'number', required: false })
     @IsOptional()
     @IsTimestamp()
-    startDate?: number | null = null;
+    startDate: number | null = null;
 
     @ApiProperty({ type: 'string', format: 'number', required: false })
     @IsOptional()
     @IsTimestamp()
-    endDate?: number | null = null;
+    endDate: number | null = null;
 
     @ApiProperty({
         type: 'string',
@@ -189,7 +191,7 @@ export class CreatePostByAdminDto {
     @IsString()
     siteUrl!: string;
 
-    @ApiProperty({ type: 'number', format: 'binary', required: true })
+    @ApiProperty({ type: 'number', format: 'binary', required: true, default: 0 })
     @IsNumber({ allowNaN: false, allowInfinity: false })
     companyResourceId!: number;
 
@@ -203,14 +205,55 @@ export class CreatePostByAdminDto {
     images?: string[] | [];
 
 
-    validate() {
+    validate(): any {
         if (this.isDatePeriod === 1) {
             if (!this.startDate || !this.endDate) {
-                throw new Error('Start date and end date are required');
+                return new BadRequestException('Start date and end date are required when isDatePeriod is true');
             }
         }
-        
 
+        return true
+        
+    }
+
+    // add account id and images to dto
+    addData(accountId: string): void {
+        this.accountId = accountId;
+        
+        // if (images) {
+        //     this.images = [images.thumbnail.originalname, ...images.original.map((image) => image.originalname)]
+        // }
+    }
+
+    // serialization():   {
+    // }
+
+    toEntity(): Post {
+        const post = new Post();
+        post.accountId = this.accountId;
+        post.companyName = this.companyName;
+        post.wardId = this.wardId;
+        post.address = this.address;
+        post.email = this.email;
+        post.phoneContact = this.phone;
+        post.description = this.description;
+        post.isDatePeriod = this.isDatePeriod;
+        post.isWorkingWeekend = this.isWorkingWeekend;
+        post.isRemotely = this.isRemotely.toString();
+        post.startDate = this.startDate?.toString() || null;
+        post.endDate = this.endDate?.toString() || null;
+        post.startTime = this.startTime.toString();
+        post.endTime = this.endTime.toString();
+        post.salaryMin = this.salaryMin;
+        post.salaryMax = this.salaryMax;
+        post.salaryType = this.salaryType;
+        post.moneyType = this.moneyType.toString();
+        post.jobType = this.jobTypeId;
+        post.expiredDate = this.expiredDate;
+        post.isInHouseData = '1';
+        // post.images = this.images;
+
+        return post;
     }
         
 }

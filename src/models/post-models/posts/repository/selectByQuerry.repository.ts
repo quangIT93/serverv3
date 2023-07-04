@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm/repository/Repository';
-import { InitQuerySelectNormallyPost } from './_common';
+import { InitQuerySelectNormallyPost } from './_common.repository';
 import { Post } from '../entities';
 import {
     QUERY_CHILDREN_CATEGORY_ID,

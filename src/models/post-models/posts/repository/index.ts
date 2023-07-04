@@ -1,2 +1,2 @@
-export * from  "./_common"
+export * from  "./_common.repository"
 export * from  "./selectByQuerry.repository";

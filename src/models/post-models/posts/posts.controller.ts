@@ -10,6 +10,7 @@ import {
     Post,
     Query,
     Req,
+    Res,
     UploadedFiles,
     UseGuards,
     UseInterceptors,
@@ -26,15 +27,21 @@ import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ImagesPipe } from 'src/common/helper/transform/image.transform';
-// import { AWSService } from 'src/services/aws/aws.service';
+import { ImagesPipe, ImagesTransformed } from 'src/common/helper/transform/image.transform';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { AWSService } from 'src/services/aws/aws.service';
+import { PostsImagesService } from '../posts-images/posts-images.service';
+import { createPostByAdminController } from './controller';
+import { PostResourceService } from '../post-resource/post-resource.service';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
-        // private readonly awsService: AWSService,
+        private readonly awsService: AWSService,
+        private readonly postImageService: PostsImagesService,
+        private readonly postResourceService: PostResourceService,
     ) { }
 
     @UseGuards(AuthGuard)
@@ -75,6 +82,7 @@ export class PostsController {
         return this.postsService.findOne(id);
     }
 
+
     @Post('by-admin')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -98,31 +106,32 @@ export class PostsController {
     async createByWorker(
         @UploadedFiles(
             new ParseFilePipeBuilder()
-            .addMaxSizeValidator({ maxSize: 1024 * 1024 * 10 })
-            .addValidator(new ImageValidator({mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/}))
-            .build({
-                fileIsRequired: false,
-                exceptionFactory: (errors) => {
-                    console.log(errors);
-                    return new Error(errors);
-                }
-            }),
-            ImagesPipe, 
+                .addMaxSizeValidator({ maxSize: 1024 * 1024 * 10 })
+                .addValidator(new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }))
+                .build({
+                    fileIsRequired: false,
+                    exceptionFactory: (errors) => {
+                        console.log(errors);
+                        return new Error(errors);
+                    }
+                }),
+            ImagesPipe,
         )
-        images: {
-            images?: Express.Multer.File[];
-        },
+        images: ImagesTransformed,
         @Body()
         dto: CreatePostByAdminDto,
+        @Req() req: CustomRequest,
+        @Res() res: any,
     ) {
-        // const uploaded = await this.awsService.uploadImagesForPost(images as any)
-        try {
-            console.log(images);
-            console.log(dto);
-            return 'createByWorker';
-        } catch (error) {
-            console.log(error);
-            return error;
-        }
+        return await createPostByAdminController({
+            dto,
+            req,
+            res,
+            images,
+            awsService: this.awsService,
+            postImageService: this.postImageService,
+            postsService: this.postsService,
+            postResourceService: this.postResourceService,
+        });
     }
 }

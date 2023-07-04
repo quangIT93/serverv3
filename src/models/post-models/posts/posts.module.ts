@@ -7,9 +7,9 @@ import { PostsService } from "./posts.service";
 import { JwtAccessTokenServiceModule } from "src/providers/jwt/atk.provider.module";
 import { BookmarksModule } from "src/models/bookmarks/bookmarks.module";
 import { PageAndLimitMiddleware } from "src/common/middlewares/page-limit/page-limit.middleware";
-import { AWSService } from "src/services/aws/aws.service";
 import { AWSModule } from "src/providers/storage/aws/provider.module";
-import { AWSConfigService } from "src/config/storage/aws/config.service";
+import { PostsImagesModule } from "../posts-images/posts-images.module";
+import { PostResourceModule } from "../post-resource/post-resource.module";
 // import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
 
 
@@ -19,13 +19,12 @@ import { AWSConfigService } from "src/config/storage/aws/config.service";
         JwtAccessTokenServiceModule,
         BookmarksModule,
         AWSModule,
-
+        PostsImagesModule,
+        PostResourceModule,
     ],
     controllers: [PostsController],
     providers: [
         PostsService,
-        AWSService,
-        AWSConfigService
     ],
     exports: [
         PostsService,
