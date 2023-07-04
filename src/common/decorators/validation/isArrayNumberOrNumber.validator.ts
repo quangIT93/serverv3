@@ -1,7 +1,7 @@
 
 import { ValidationArguments, registerDecorator } from "class-validator";
 
-export function IsArrayNumberOrNumber(options: { each: boolean, maxLength: number } = { each: false, maxLength: 2 }) {
+export function IsArrayNumberOrNumber(validateOptions?: {minLength?: number, maxLength?: number}) {
     return function (object: Object, propertyName: string) {
         return registerDecorator({
             name: 'isArrayNumberOrNumber',
@@ -9,22 +9,39 @@ export function IsArrayNumberOrNumber(options: { each: boolean, maxLength: numbe
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: 'Value must be a number or an array of numbers',
+                message: (validationArguments: ValidationArguments) => {
+                    const { property } = validationArguments;
+                    if (validateOptions?.maxLength && validateOptions?.minLength) {
+                        return `${property} must be an array of number or number and have length between ${validateOptions.minLength} and ${validateOptions.maxLength}`;
+                    }
+                    else if (validateOptions?.maxLength) {
+                        return `${property} must be an array of number or number and have length less than ${validateOptions.maxLength}`;
+                    }
+                    else if (validateOptions?.minLength) {
+                        return `${property} must be an array of number or number and have length greater than ${validateOptions.minLength}`;
+                    }
+                    else {
+                        return `${property} must be an array of number or number`;
+                    }
+                }
             },
-        
             validator: {
                 validate(value: any, _args: ValidationArguments) {
                     try {
                         if (!value) {
                             return false;
                         }
-                        if (options.each) {
-                            if (!Array.isArray(value)) {
-                                return false;
+                        if (Array.isArray(value)) {
+                            if (validateOptions?.maxLength) {
+                                if (value.length > validateOptions.maxLength) {
+                                    return false;
+                                }
                             }
 
-                            if (value.length > options.maxLength) {
-                                return false;
+                            if (validateOptions?.minLength) {
+                                if (value.length < validateOptions.minLength) {
+                                    return false;
+                                }
                             }
 
                             for (const item of value) {
@@ -46,7 +63,6 @@ export function IsArrayNumberOrNumber(options: { each: boolean, maxLength: numbe
                         }
                     }      
                     catch (error) {
-                        console.log(error);
                         return false;
                     }
                 },

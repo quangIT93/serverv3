@@ -8,7 +8,9 @@ export function IsTimestamp() {
             propertyName: propertyName,
             constraints: [],
             options: {
-                message: 'Value must be a timestamp',
+                message: (validationArguments: ValidationArguments) => 
+                    `${validationArguments.property} must be a timestamp`,
+                
             },
             validator: {
                 validate(value: any, _args: ValidationArguments) {

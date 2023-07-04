@@ -192,7 +192,7 @@ export class CreatePostByAdminDto {
         default: [400],
         description: '400: Nhân viên',
     })
-    @IsArrayNumberOrNumber()
+    @IsArrayNumberOrNumber({ maxLength: 2, minLength: 1})
     categoriesId!: number[] | number;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
