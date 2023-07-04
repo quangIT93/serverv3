@@ -130,6 +130,7 @@ export class PostsController {
         @Req() req: CustomRequest,
         @Res() res: any,
     ) {
+        Logger.log('createByWorker: ', req.user?.id);
         return await createPostByAdminController({
             dto,
             req,
