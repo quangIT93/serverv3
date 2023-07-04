@@ -60,9 +60,18 @@ export class PostsController {
     ) {
         const { limit, page } = req;
 
-        const { ...constantsQuery } = hotTopicQueries;
+        const {
+            childrenCategoryId,
+            parentCategoryId,
+            isRemotely,
+            isShortTimeJobs,
+        } = hotTopicQueries;
+        
         const query = {
-            ...constantsQuery,
+            childrenCategoryId,
+            parentCategoryId,
+            isRemotely,
+            isShortTimeJobs,
         };
 
         if (Object.keys(query).length === 0) {
@@ -115,8 +124,7 @@ export class PostsController {
             ImagesPipe,
         )
         images: ImagesTransformed,
-        @Body()
-        dto: CreatePostByAdminDto,
+        @Body() dto: CreatePostByAdminDto,
         @Req() req: CustomRequest,
         @Res() res: any,
     ) {
