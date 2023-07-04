@@ -54,7 +54,7 @@ export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Ex
 
 async function createThumbnail(file: Express.Multer.File) {
     const { buffer } = file;
-    const EXT_IMAGE = '.jpg';
+    const EXT_IMAGE = '.png';
     const name = `${Date.now()}-${uuidv4()}`
 
     const thumbnailBuffer = await sharp(buffer)
