@@ -59,7 +59,7 @@ async function createThumbnail(file: Express.Multer.File) {
 
     const thumbnailBuffer = await sharp(buffer)
         .resize(THUMNAIL_HEIGHT, THUMNAIL_WIDTH)
-        .png({ quality: 100 })
+        .jp2({ quality: 100, lossless: true})
         .toBuffer();
 
     const thumbnailFile: Express.Multer.File = {
