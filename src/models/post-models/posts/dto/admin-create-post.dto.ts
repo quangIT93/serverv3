@@ -1,11 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    ArrayMaxSize,
-    ArrayMinSize,
-    ArrayUnique,
-    IsArray,
-    IsDate,
+    // ArrayMaxSize,
+    // ArrayMinSize,
+    // ArrayUnique,
+    // IsArray,
     IsEmail,
     IsNumber,
     IsOptional,
@@ -16,6 +15,7 @@ import {
 } from 'class-validator';
 import { OneOfOptionalRequired, IsTimestamp } from 'src/common/decorators/validation';
 import { Post } from '../entities';
+import { IsArrayNumberOrNumber } from 'src/common/decorators/validation/isArrayNumberOrNumber.validator';
 // import { IsFile } from "src/common/decorators/validation";
 
 export class CreatePostByAdminDto {
@@ -192,15 +192,12 @@ export class CreatePostByAdminDto {
         default: [400],
         description: '400: Nhân viên',
     })
-    @IsArray()
-    @ArrayMinSize(1)
-    @ArrayMaxSize(2)
-    @ArrayUnique()
-    categoriesId!: number[];
+    @IsArrayNumberOrNumber()
+    categoriesId!: number[] | number;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
     @IsOptional()
-    @IsDate()
+    @IsTimestamp()
     expiredDate!: Date | null;
 
     @ApiProperty({ type: 'string', format: 'binary', required: true })
@@ -210,6 +207,7 @@ export class CreatePostByAdminDto {
 
     @ApiProperty({ type: 'number', format: 'binary', required: true, default: 0 })
     @IsNumber({ allowNaN: false, allowInfinity: false })
+
     companyResourceId!: number;
 
     @ApiProperty({
@@ -220,6 +218,9 @@ export class CreatePostByAdminDto {
     })
     @IsOptional()
     images?: string[] | [];
+
+
+
 
     validate(): any {
         if (this.isDatePeriod === 1) {
@@ -265,7 +266,7 @@ export class CreatePostByAdminDto {
         post.salaryType = this.salaryType;
         post.moneyType = this.moneyType.toString();
         post.jobType = this.jobTypeId;
-        post.expiredDate = this.expiredDate;
+        post.expiredDate = this.expiredDate ? new Date(+this.expiredDate) : null;
         post.isInHouseData = '1';
         // post.images = this.images;
 

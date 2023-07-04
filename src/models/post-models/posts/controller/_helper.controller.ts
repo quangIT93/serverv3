@@ -77,9 +77,16 @@ export class HelperController {
         postCategoriesService: PostsCategoriesService
     ) {
         try {
-            const postCategories: CreatePostCategoriesDto[] = dto.categoriesId.map((category) => {
-                return new CreatePostCategoriesDto(postId, category);
-            })
+
+            let postCategories: CreatePostCategoriesDto | CreatePostCategoriesDto[];
+
+            if (Array.isArray(dto.categoriesId)) {
+                postCategories = dto.categoriesId.map((category) => {
+                    return new CreatePostCategoriesDto(postId, +category);
+                })
+            } else {
+                postCategories = new CreatePostCategoriesDto(postId, +dto.categoriesId);
+            }
 
             const postCategoriesResult = await postCategoriesService.create(postCategories);
 

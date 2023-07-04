@@ -7,7 +7,9 @@ export function IsTimestamp() {
             target: object.constructor,
             propertyName: propertyName,
             constraints: [],
-            options: {},
+            options: {
+                message: 'Value must be a timestamp',
+            },
             validator: {
                 validate(value: any, _args: ValidationArguments) {
                     try {
@@ -16,7 +18,7 @@ export function IsTimestamp() {
                             return false;
                         }
 
-                        const date = new Date(timestamp);
+                        const date = new Date(+timestamp);
 
                         if (date.toString() === 'Invalid Date') {
                             return false;
@@ -25,7 +27,6 @@ export function IsTimestamp() {
                         return true;
                     }      
                     catch (error) {
-                        console.log(error);
                         return false;
                     }
                 },

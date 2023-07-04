@@ -35,7 +35,6 @@ export async function createPostByAdminController(params: {
 }) {
     const { dto, req, res, images, postsService, awsService, postImageService, postResourceService, postCategoriesService } = params;
     try {
-
         // validate dto
         const isValidDto = dto.validate();
 
@@ -79,6 +78,7 @@ export async function createPostByAdminController(params: {
             data: postCreated,
         });
     } catch (error: any) {
+        console.log(error);
         return res.status(HttpStatus.BAD_REQUEST).json({ 
             statusCode: HttpStatus.BAD_REQUEST,
             message: 'Bad Request',
