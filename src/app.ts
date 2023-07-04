@@ -26,7 +26,6 @@ async function bootstrap() {
       origin: '*',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
       allowedHeaders: 'Content-Type, Accept',
-      credentials: true,
     });
 
   const openAPIConfig = new DocumentBuilder()
