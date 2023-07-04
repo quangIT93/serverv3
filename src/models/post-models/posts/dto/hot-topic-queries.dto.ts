@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import {  IsOptional, IsString, } from 'class-validator';
-import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_IS_SHORT_TIME_JOBS, QUERY_PARENT_CATEGORY_ID } from 'src/common/constants';
+import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_IS_SHORT_TIME_JOBS, QUERY_IS_TODAY_JOBS, QUERY_PARENT_CATEGORY_ID } from 'src/common/constants';
 export class HotTopicQueriesDto {
 
     // Not required
@@ -24,6 +24,11 @@ export class HotTopicQueriesDto {
     // @IsNumberString()
     @IsOptional()
     [QUERY_IS_SHORT_TIME_JOBS]?: number;
+
+    @ApiProperty({ type: String, required: false })
+    // @IsNumberString()
+    @IsOptional()
+    [QUERY_IS_TODAY_JOBS]?: number;
     
 
     [key: string]: any;

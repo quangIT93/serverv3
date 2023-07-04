@@ -16,6 +16,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 
+<<<<<<< HEAD
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
@@ -33,6 +34,15 @@ import { AWSService } from 'src/services/aws/aws.service';
 import { PostsImagesService } from '../posts-images/posts-images.service';
 import { createPostByAdminController } from './controller';
 import { PostResourceService } from '../post-resource/post-resource.service';
+=======
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { PostsService } from "./posts.service";
+import { HotTopicQueriesDto } from "./dto/hot-topic-queries.dto";
+import { PostNormallyInterceptor } from "./interceptors/posts-normally.interceptor";
+import { AuthGuard } from "src/authentication/auth.guard";
+import { AuthNotRequiredGuard } from "src/authentication/authNotRequired.guard";
+// import * as constantsQuery from '../../../common/constants/postQuery.constants'
+>>>>>>> main
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -60,20 +70,30 @@ export class PostsController {
     ) {
         const { limit, page } = req;
 
+<<<<<<< HEAD
         const {
             childrenCategoryId,
             parentCategoryId,
             isRemotely,
             isShortTimeJobs,
         } = hotTopicQueries;
+=======
+        const { ...constantsQuery } = hotTopicQueries;
+>>>>>>> main
         const query = {
-            childrenCategoryId,
-            parentCategoryId,
-            isRemotely,
-            isShortTimeJobs,
+            ...constantsQuery,
         };
 
+<<<<<<< HEAD
         return this.postsService.findByQuery(query, limit, page);
+=======
+        if (Object.keys(query).length === 0) {
+            return [];
+        }
+
+
+        return this.postsService.findByQuery(query, limit, page); 
+>>>>>>> main
     }
 
     @Get(':id')
