@@ -58,7 +58,13 @@ export class PostsService {
     }
 
     async create(dto: CreatePostByAdminDto): Promise<Post> {
-        const post = this.postsRepository.create(dto.toEntity());
-        return this.postsRepository.save(post);
+        try {
+            const post = this.postsRepository.create(dto.toEntity());
+            return this.postsRepository.save(post);
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+
     }
 }
