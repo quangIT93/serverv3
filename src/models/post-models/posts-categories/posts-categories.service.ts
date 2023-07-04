@@ -11,8 +11,13 @@ export class PostsCategoriesService {
     ) { }
 
     async create(dto: any) {
-        const postCategories = this.postCategoriesRepository.create(dto);
-        return await this.postCategoriesRepository.save(postCategories);
+        try {
+            const postCategories = this.postCategoriesRepository.create(dto);
+            return await this.postCategoriesRepository.save(postCategories);
+        } catch (error) {
+            throw new Error('Can not create post categories');
+        }
+
     }
 
 }

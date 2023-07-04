@@ -192,7 +192,7 @@ export class CreatePostByAdminDto {
         default: [400],
         description: '400: Nhân viên',
     })
-    @IsArrayNumberOrNumber({ maxLength: 2, minLength: 1})
+    @IsArrayNumberOrNumber({ maxLength: 2, minLength: 1 })
     categoriesId!: number[] | number;
 
     @ApiProperty({ type: 'string', format: 'binary', required: false })
@@ -268,6 +268,7 @@ export class CreatePostByAdminDto {
         post.jobType = this.jobTypeId;
         post.expiredDate = this.expiredDate ? new Date(+this.expiredDate) : null;
         post.isInHouseData = '1';
+        post.status = 1;
         // post.images = this.images;
 
         return post;
