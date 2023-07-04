@@ -33,6 +33,7 @@ import { AWSService } from 'src/services/aws/aws.service';
 import { PostsImagesService } from '../posts-images/posts-images.service';
 import { createPostByAdminController } from './controller';
 import { PostResourceService } from '../post-resource/post-resource.service';
+import { PostsCategoriesService } from '../posts-categories/posts-categories.service';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -42,6 +43,7 @@ export class PostsController {
         private readonly awsService: AWSService,
         private readonly postImageService: PostsImagesService,
         private readonly postResourceService: PostResourceService,
+        private readonly postsCategoriesService: PostsCategoriesService,
     ) { }
 
     @UseGuards(AuthGuard)
@@ -137,6 +139,7 @@ export class PostsController {
             postImageService: this.postImageService,
             postsService: this.postsService,
             postResourceService: this.postResourceService,
+            postCategoriesService: this.postsCategoriesService,
         });
     }
 }

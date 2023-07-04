@@ -1,6 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
+    ArrayMaxSize,
+    ArrayMinSize,
+    ArrayUnique,
+    IsArray,
     IsDate,
     IsEmail,
     IsNumber,
@@ -181,6 +185,19 @@ export class CreatePostByAdminDto {
     @OneOfOptionalRequired([1, 2, 4, 7])
     jobTypeId!: number;
 
+    @ApiProperty({
+        type: 'array',
+        format: 'number',
+        required: true,
+        default: [400],
+        description: '400: Nhân viên',
+    })
+    @IsArray()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(2)
+    @ArrayUnique()
+    categoriesId!: number[];
+
     @ApiProperty({ type: 'string', format: 'binary', required: false })
     @IsOptional()
     @IsDate()
@@ -203,7 +220,6 @@ export class CreatePostByAdminDto {
     })
     @IsOptional()
     images?: string[] | [];
-
 
     validate(): any {
         if (this.isDatePeriod === 1) {

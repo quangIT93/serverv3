@@ -11,6 +11,7 @@ import { PostCategories } from './entities/posts-categories.entity';
     ])
   ],
   // controllers: [PostsCategoriesController],
-  providers: [PostsCategoriesService]
+  providers: [PostsCategoriesService],
+  exports: [PostsCategoriesService]
 })
 export class PostsCategoriesModule {}

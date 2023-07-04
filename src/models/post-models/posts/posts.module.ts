@@ -10,6 +10,7 @@ import { PageAndLimitMiddleware } from "src/common/middlewares/page-limit/page-l
 import { AWSModule } from "src/providers/storage/aws/provider.module";
 import { PostsImagesModule } from "../posts-images/posts-images.module";
 import { PostResourceModule } from "../post-resource/post-resource.module";
+import { PostsCategoriesModule } from "../posts-categories/posts-categories.module";
 // import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
 
 
@@ -21,8 +22,11 @@ import { PostResourceModule } from "../post-resource/post-resource.module";
         AWSModule,
         PostsImagesModule,
         PostResourceModule,
+        PostsCategoriesModule
     ],
-    controllers: [PostsController],
+    controllers: [
+        PostsController,
+    ],
     providers: [
         PostsService,
     ],

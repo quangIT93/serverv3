@@ -8,6 +8,7 @@ import { ImagesTransformed } from "src/common/helper/transform/image.transform";
 import { HelperController } from "./_helper.controller";
 import { HttpStatus } from "@nestjs/common";
 import { PostResourceService } from "../../post-resource/post-resource.service";
+import { PostsCategoriesService } from "../../posts-categories/posts-categories.service";
 
 /**
  * 
@@ -29,9 +30,10 @@ export async function createPostByAdminController(params: {
     postsService: PostsService,
     awsService: AWSService,
     postImageService: PostsImagesService,
-    postResourceService: PostResourceService
+    postResourceService: PostResourceService,
+    postCategoriesService: PostsCategoriesService,
 }) {
-    const { dto, req, res, images, postsService, awsService, postImageService, postResourceService } = params;
+    const { dto, req, res, images, postsService, awsService, postImageService, postResourceService, postCategoriesService } = params;
     try {
 
         // validate dto
@@ -56,16 +58,19 @@ export async function createPostByAdminController(params: {
         const newPostId = postCreated.id;
         
         // define helper controller
-        const helperController = new HelperController(awsService, postImageService, postResourceService);
+        const helperController = new HelperController();
 
         // save images to aws s3 -> image_id
-        const imagesResult = await helperController.saveImagesForPost(images, newPostId);
+        await helperController.saveImagesForPost(images, newPostId, awsService, postImageService);
 
-        const postResource = await helperController.savePostResourceForPost(newPostId, dto);
+        await helperController.savePostResourceForPost(newPostId, dto, postResourceService);
 
-        postCreated.postImages = imagesResult;
+        await helperController.savePostCategoriesForPost(newPostId, dto, postCategoriesService);
 
-        postCreated.postResource = postResource;
+        // postCreated.postImages = imagesResult;
+
+        // postCreated.postResource = postResource;
+
 
         // return post created
         return res.status(HttpStatus.CREATED).json({
@@ -76,7 +81,7 @@ export async function createPostByAdminController(params: {
     } catch (error: any) {
         return res.status(HttpStatus.BAD_REQUEST).json({ 
             statusCode: HttpStatus.BAD_REQUEST,
-            message: error?.message ?? 'Bad Request',
+            message: 'Bad Request',
          });
     }
 }
