@@ -59,7 +59,9 @@ async function createThumbnail(file: Express.Multer.File) {
 
 
     let quanlity = 100;
-    if (file.size > 3000000) {
+    if (file.size > 4000000) {
+        quanlity = 5;
+    } else if (file.size > 3000000) {
         quanlity = 10;
     } else if (file.size > 2000000) {
         quanlity = 30;

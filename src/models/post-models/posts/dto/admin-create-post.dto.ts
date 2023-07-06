@@ -248,6 +248,7 @@ export class CreatePostByAdminDto {
     toEntity(): Post {
         const post = new Post();
         post.accountId = this.accountId;
+        post.title = this.title;
         post.companyName = this.companyName;
         post.wardId = this.wardId;
         post.address = this.address;
