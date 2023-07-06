@@ -9,7 +9,7 @@
  * @class
  */
 
-import { CanActivate, ForbiddenException, Injectable, Logger } from "@nestjs/common";
+import { CanActivate, Injectable, Logger } from "@nestjs/common";
 import { JwtPayload } from "src/common/interfaces/jwtPayload.interface";
 import { JwtAccessTokenService } from "src/services/jwt/atk.service";
 
@@ -33,7 +33,7 @@ export class AuthNotRequiredGuard implements CanActivate {
             context.switchToHttp().getRequest().user = user;
             return true;
         } catch (error) {
-            throw new ForbiddenException('Invalid token');
+            throw error;
         }
     }
 
@@ -42,7 +42,7 @@ export class AuthNotRequiredGuard implements CanActivate {
         try {
             return await this.jwtAccessTokenService.validateToken(auth);
         } catch (error) {
-            throw new Error('Invalid token');
+            throw error;
         }
     }
 }

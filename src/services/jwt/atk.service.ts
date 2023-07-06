@@ -35,14 +35,26 @@ export class JwtAccessTokenService {
             await this.jwtATKService.verifyAsync(token)
             return this.jwtATKService.decode(token) as JwtPayload;
         } catch (error) {
-            switch (typeof error) {
-                case UnauthorizedException.name:
-                    throw new UnauthorizedException();
-                case ForbiddenException.name:
-                    throw new ForbiddenException();
-                default:
-                    throw new Error('Invalid token');
+
+            if (error instanceof Error) {
+                switch (error.message) {
+                    case 'invalid token':
+                        // throw new ForbiddenException('Invalid token');
+                    case 'jwt malformed':
+                        // throw new 
+                    case 'invalid signature':
+                    case 'jwt signature is required':
+                    case 'invalid algorithm':
+                        throw new UnauthorizedException();
+                    case 'jwt expired':
+                        throw new ForbiddenException('Token expired');
+                    case 'jwt not active':
+                        throw new ForbiddenException('Token not active');
+                    default:
+                        throw new UnauthorizedException('Invalid token');
+                }
             }
+            throw error;
 
         }
     }
