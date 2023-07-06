@@ -21,20 +21,24 @@ export class AuthGuard implements CanActivate {
     ) {}
 
     async canActivate(context: any): Promise<boolean> {
-        const request = context.switchToHttp().getRequest();
-        if (!request.headers.authorization) {
-            throw new UnauthorizedException();
+        try {
+            const request = context.switchToHttp().getRequest();
+            if (!request.headers.authorization) {
+                throw new UnauthorizedException();
+            }
+            Logger.log('AuthGuard: canActivate');
+            request.user = await this.validateToken(request.headers.authorization);
+            return true;
+        } catch (error) {
+            throw error;
         }
-        Logger.log('AuthGuard: canActivate');
-        request.user = await this.validateToken(request.headers.authorization);
-        return true;
     }
 
     async validateToken(token: string) {
         try {
             return await this.jwtAccessTokenService.validateToken(token);
         } catch (error) {
-            throw new UnauthorizedException();
+            throw error;
         }
     }
 }

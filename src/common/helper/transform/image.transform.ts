@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform } from "@nestjs/common";
+import { Injectable, Logger, PipeTransform } from "@nestjs/common";
 import sharp from 'sharp';
 import { THUMNAIL_HEIGHT, THUMNAIL_WIDTH } from "src/common/constants";
 import { Readable } from "stream";
@@ -41,6 +41,9 @@ export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Ex
             for (const file of files) {
                 totalSize += file.size;
             }
+
+            Logger.log(`Total size of files: ${totalSize}`);
+            Logger.log(`Max total size of files: ${this.MAX_TOTAL_SIZE}`);
 
             if (totalSize > this.MAX_TOTAL_SIZE) {
                 throw new Error('Total size of files is too large');
