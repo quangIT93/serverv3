@@ -119,7 +119,6 @@ export class PostsController {
                 .build({
                     fileIsRequired: false,
                     exceptionFactory: (errors) => {
-                        console.log(errors);
                         return new Error(errors);
                     }
                 }),

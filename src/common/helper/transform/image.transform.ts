@@ -22,11 +22,13 @@ export interface ImagesTransformed {
 export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File[]>> {
     constructor() { }
     EXT_IMAGE = '.jpg';
+    MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 5MB
 
     async transform(files: Express.Multer.File): Promise<any> {
 
         if (!files) return null;
 
+        
         const filesTransformed: ImagesTransformed = {
             thumbnail: {} as Express.Multer.File,
             original: [],
@@ -34,6 +36,16 @@ export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Ex
         };
         
         if (Array.isArray(files)) {
+            let totalSize = 0;
+            
+            for (const file of files) {
+                totalSize += file.size;
+            }
+
+            if (totalSize > this.MAX_TOTAL_SIZE) {
+                throw new Error('Total size of files is too large');
+            }
+
             filesTransformed.original = files.map(file => {
                 return {
                     ...file,
@@ -43,10 +55,6 @@ export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Ex
 
             filesTransformed.thumbnail = await createThumbnail(files[0]);
             
-            // for (const file of files) {
-            //     const fileTransformed = await resize(file);
-            //     filesTransformed.resized.push(...fileTransformed);
-            // }
         }
         return filesTransformed; 
     }
