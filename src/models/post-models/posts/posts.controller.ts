@@ -114,7 +114,7 @@ export class PostsController {
     async createByWorker(
         @UploadedFiles(
             new ParseFilePipeBuilder()
-                .addMaxSizeValidator({ maxSize: 1024 * 1024 * 10 })
+                .addMaxSizeValidator({ maxSize: 1024 * 1024 * 5 })
                 .addValidator(new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }))
                 .build({
                     fileIsRequired: false,

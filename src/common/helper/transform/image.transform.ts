@@ -57,9 +57,25 @@ async function createThumbnail(file: Express.Multer.File) {
     const EXT_IMAGE = '.png';
     const name = `${Date.now()}-${uuidv4()}`
 
+
+    let quanlity = 100;
+    if (file.size > 3000000) {
+        quanlity = 10;
+    } else if (file.size > 2000000) {
+        quanlity = 30;
+    } else if (file.size > 1000000) {
+        quanlity = 50;
+    } else if (file.size > 500000) {
+        quanlity = 70;
+    }
+
     const thumbnailBuffer = await sharp(buffer)
         .resize(THUMNAIL_HEIGHT, THUMNAIL_WIDTH)
-        .jp2({ quality: 100, lossless: true})
+        .png({
+            adaptiveFiltering: false,
+            force: false,
+            quality: quanlity,
+        })
         .toBuffer();
 
     const thumbnailFile: Express.Multer.File = {
