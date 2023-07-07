@@ -4,7 +4,7 @@ import { Response } from "express";
 import { PostsService } from "../posts.service";
 import { PostsImagesService } from "../../posts-images/posts-images.service";
 import { AWSService } from "src/services/aws/aws.service";
-import { ImagesTransformed } from "src/common/helper/transform/image.transform";
+import { PostImagesTransformed } from "src/common/helper/transform/post-image.transform";
 import { HelperController } from "./_helper.controller";
 import { HttpStatus } from "@nestjs/common";
 import { PostResourceService } from "../../post-resource/post-resource.service";
@@ -26,7 +26,7 @@ export async function createPostByAdminController(params: {
     dto: CreatePostByAdminDto,
     req: CustomRequest,
     res: Response,
-    images: ImagesTransformed | undefined,
+    images: PostImagesTransformed | undefined,
     postsService: PostsService,
     awsService: AWSService,
     postImageService: PostsImagesService,

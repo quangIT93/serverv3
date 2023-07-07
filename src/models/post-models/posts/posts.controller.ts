@@ -27,7 +27,7 @@ import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ImagesPipe, ImagesTransformed } from 'src/common/helper/transform/image.transform';
+import { PostImagesPipe, PostImagesTransformed } from 'src/common/helper/transform/post-image.transform';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AWSService } from 'src/services/aws/aws.service';
 import { PostsImagesService } from '../posts-images/posts-images.service';
@@ -99,6 +99,23 @@ export class PostsController {
         return 'createByAdmin';
     }
 
+
+    /**
+     * 
+     * @param images 
+     * @param dto 
+     * @param req 
+     * @param res 
+     * @returns Post
+     * 
+     * @description
+     * 1. Create post
+     * 2. Upload images to AWS S3
+     * 3. Create post images
+     * 4. Create post resource
+     * 5. Create post categories
+     * 
+     */
     @ApiConsumes('multipart/form-data')
     @Post('by-worker')
     @Roles(Role.WORKER, Role.ADMIN)
@@ -122,9 +139,9 @@ export class PostsController {
                         return new Error(errors);
                     }
                 }),
-            ImagesPipe,
+            PostImagesPipe,
         )
-        images: ImagesTransformed,
+        images: PostImagesTransformed,
         @Body() dto: CreatePostByAdminDto,
         @Req() req: CustomRequest,
         @Res() res: any,

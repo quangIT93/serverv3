@@ -1,6 +1,6 @@
 import { AWSService } from "src/services/aws/aws.service";
 import { PostsImagesService } from "../../posts-images/posts-images.service";
-import { ImagesTransformed } from "src/common/helper/transform/image.transform";
+import { PostImagesTransformed } from "src/common/helper/transform/post-image.transform";
 import { Injectable } from "@nestjs/common";
 import { CreatePostsImageDto } from "../../posts-images/dto/create-posts-image.dto";
 import { BUCKET_IMAGE_POST } from "src/common/constants";
@@ -30,7 +30,7 @@ export class HelperController {
      * save image_id to database
      */
     async saveImagesForPost(
-        images: ImagesTransformed | undefined, 
+        images: PostImagesTransformed | undefined, 
         postId: number,
         awsService: AWSService,
         postImageService: PostsImagesService

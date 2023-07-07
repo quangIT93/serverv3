@@ -1,6 +1,7 @@
+
 import { Injectable, Logger, PipeTransform } from "@nestjs/common";
 import sharp from 'sharp';
-import { THUMNAIL_HEIGHT, THUMNAIL_WIDTH } from "src/common/constants";
+import { LOGO_COMPANY_HEIGHT, LOGO_COMPANY_WIDTH } from "src/common/constants";
 import { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
@@ -12,27 +13,22 @@ import { v4 as uuidv4 } from "uuid";
  * 
  */
 
-export interface ImagesTransformed {
-    thumbnail: Express.Multer.File;
-    original: Express.Multer.File[];
-    resized: Express.Multer.File[];
+export interface ImageTransformed {
+    image: Express.Multer.File;
 }
 
 @Injectable()
-export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File[]>> {
+export class ImagePipe implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File>> {
     constructor() { }
-    EXT_IMAGE = '.jpg';
-    MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 5MB
+    MAX_TOTAL_SIZE = 1024 * 1024 * 2; // 5MB
 
     async transform(files: Express.Multer.File): Promise<any> {
 
         if (!files) return null;
 
         
-        const filesTransformed: ImagesTransformed = {
-            thumbnail: {} as Express.Multer.File,
-            original: [],
-            resized: []
+        const fileTransformed: ImageTransformed = {
+            image: {} as Express.Multer.File,
         };
         
         if (Array.isArray(files)) {
@@ -49,25 +45,17 @@ export class ImagesPipe implements PipeTransform<Express.Multer.File, Promise<Ex
                 throw new Error('Total size of files is too large');
             }
 
-            filesTransformed.original = files.map(file => {
-                return {
-                    ...file,
-                    originalname: `${Date.now()}-${uuidv4()}${this.EXT_IMAGE}`
-                }
-            });
+            fileTransformed.image = await createResizeImage(files[0]);
 
-            filesTransformed.thumbnail = await createThumbnail(files[0]);
-            
         }
-        return filesTransformed; 
+        return fileTransformed.image; 
     }
 }
 
-async function createThumbnail(file: Express.Multer.File) {
+async function createResizeImage(file: Express.Multer.File) {
     const { buffer } = file;
     const EXT_IMAGE = '.png';
     const name = `${Date.now()}-${uuidv4()}`
-
 
     let quanlity = 100;
     if (file.size > 4000000) {
@@ -82,8 +70,8 @@ async function createThumbnail(file: Express.Multer.File) {
         quanlity = 70;
     }
 
-    const thumbnailBuffer = await sharp(buffer)
-        .resize(THUMNAIL_HEIGHT, THUMNAIL_WIDTH)
+    const fileBuffer = await sharp(buffer)
+        .resize(LOGO_COMPANY_HEIGHT, LOGO_COMPANY_WIDTH)
         .png({
             adaptiveFiltering: false,
             force: false,
@@ -91,38 +79,18 @@ async function createThumbnail(file: Express.Multer.File) {
         })
         .toBuffer();
 
-    const thumbnailFile: Express.Multer.File = {
-        buffer: thumbnailBuffer,
+    const resizedFile: Express.Multer.File = {
+        buffer: fileBuffer,
         originalname: `${name}${EXT_IMAGE}`,
         fieldname: "",
         encoding: "",
         mimetype: "",
         size: 0,
-        stream: Readable.from(thumbnailBuffer),
+        stream: Readable.from(fileBuffer),
         destination: "",
         filename: "",
         path: ""
     };
 
-    return thumbnailFile;
+    return resizedFile;
 }
-
-// async function resize(file: Express.Multer.File) {
-//     const { buffer, originalname } = file;
-//     const EXT_IMAGE = '.jpg';
-
-//     const originalFile: Express.Multer.File = {
-//         buffer,
-//         originalname: `${originalname}${EXT_IMAGE}`,
-//         fieldname: "",
-//         encoding: "",
-//         mimetype: "",
-//         size: 0,
-//         stream: Readable.from(buffer),
-//         destination: "",
-//         filename: "",
-//         path: ""
-//     };
-
-//     return [originalFile];
-// }

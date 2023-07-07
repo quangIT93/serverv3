@@ -28,6 +28,9 @@ import { BookmarksModule } from './models/bookmarks/bookmarks.module';
 // import { AWSConfigModule } from './config/storage/aws/config.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
 import { AWSModule } from './providers/storage/aws/provider.module';
+import { CompaniesModule } from './models/company-models/companies/companies.module';
+import { CompanyRolesModule } from './models/company-models/company-roles/company-roles.module';
+import { CompanySizesModule } from './models/company-models/company-sizes/company-sizes.module';
 @Module({
   imports: [
 
@@ -56,6 +59,9 @@ import { AWSModule } from './providers/storage/aws/provider.module';
     PostResourceModule,
     BookmarksModule,
     MulterConfigModule,
+    CompaniesModule,
+    CompanyRolesModule,
+    CompanySizesModule,
   ],
   controllers: [AppController],
   providers: [

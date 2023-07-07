@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { PutObjectRequest } from "aws-sdk/clients/s3";
-import { ImagesTransformed } from "src/common/helper/transform/image.transform";
+import { PostImagesTransformed } from "src/common/helper/transform/post-image.transform";
 import { BUCKET_IMAGE_POST_UPLOAD } from "src/common/constants";
 
 @Injectable()
@@ -21,19 +21,35 @@ export class AWSService {
 
     }
 
-    async uploadFile(file: any) {
+    async uploadFile(file: any, options?: { BUCKET: string, id: string }) {
         try {
             const s3 = this.getS3();
-    
+
+            let key = file.originalname;
+
+            if (options) {
+                if (options.id) {
+                    key = `${options.id}/${file.originalname}`;
+                }
+                if (options.BUCKET) {
+                    key = `${options.BUCKET}/${key}`;
+                }
+            }
+
             const params: PutObjectRequest = {
                 Bucket: this.awsConfig.bucket,
-                Key: file.originalname,
+                Key: key,
                 Body: file.buffer,
             };
     
             const data = await s3.upload(params).promise();
+
+            console.log(data);
     
-            return data;
+            return {
+                ...data,
+                originalname: file.originalname,
+            }
         } catch (error) {
             Logger.error(error);
             throw error;
@@ -64,7 +80,7 @@ export class AWSService {
         }
     }
 
-    async uploadImagesForPost(image: ImagesTransformed, postId: number) {
+    async uploadImagesForPost(image: PostImagesTransformed, postId: number) {
         const data = [];
         try {
             const s3 = this.getS3();
