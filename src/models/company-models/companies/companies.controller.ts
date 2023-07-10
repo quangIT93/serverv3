@@ -11,6 +11,8 @@ import {
   UploadedFiles,
   ParseFilePipeBuilder,
   Req,
+  Res,
+  HttpStatus,
   // Req,
   // Res,
 } from '@nestjs/common';
@@ -25,6 +27,8 @@ import { ImagePipe } from 'src/common/helper/transform/image.transform';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { Role } from 'src/common/enum';
+import { Roles } from 'src/authentication/roles.decorator';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -40,7 +44,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(
-    FilesInterceptor('image', 1, {
+    FilesInterceptor('logo', 1, {
       fileFilter: (_req, _file, cb) => {
         if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
           return cb(new Error('Only image files are allowed!'), false);
@@ -64,42 +68,171 @@ export class CompaniesController {
         }),
       ImagePipe,
     )
-    image: Express.Multer.File,
+    logo: Express.Multer.File,
     @Req() req: CustomRequest,
-    // @Res() res: any,
+    @Res() res: any,
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
-    createCompanyDto.accountId = req.user?.id;
-    createCompanyDto['logo'] = image.originalname;
-    const company = await this.companiesService.create(createCompanyDto);
-    const uploadedObject = await this.awsService.uploadFile(image, {
-      BUCKET: BUCKET_IMAGE_COMANIES_LOGO,
-      id: String(company.id),
-    });
-
-    return {
-      ...company,
-      logo: uploadedObject.Key,
-    };
+    try {
+      createCompanyDto.accountId = req.user?.id;
+      createCompanyDto['logo'] = logo.originalname;
+      const company = await this.companiesService.create(createCompanyDto);
+      const uploadedObject = await this.awsService.uploadFile(logo, {
+        BUCKET: BUCKET_IMAGE_COMANIES_LOGO,
+        id: String(company.id),
+      });
+  
+      return res.status(HttpStatus.CREATED).json({
+        statusCode: HttpStatus.CREATED,
+        message: 'Company created successfully',
+        data: {
+          ...company,
+          logo: uploadedObject.Location,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return res.status(HttpStatus.BAD_REQUEST).json({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        });
+      }
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Something went wrong',
+      });
+    }
   }
 
+  @ApiBasicAuth('JWT-auth')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.companiesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companiesService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.companiesService.findOne(+id);
+  // }
 
+  @UseGuards(AuthGuard)
+  @Get('account')
+  findByAccountId(@Req() req: CustomRequest) {
+    if (!req.user) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized',
+      };
+    }
+    return this.companiesService.findByAccountId(req.user?.id);
+  }
+  @UseInterceptors(
+    FilesInterceptor('logo', 1, {
+      fileFilter: (_req, _file, cb) => {
+        if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companiesService.update(+id, updateCompanyDto);
+  async update(
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
+        .addValidator(
+          new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }),
+        )
+        .build({
+          fileIsRequired: false,
+          exceptionFactory: (errors) => {
+            return new Error(errors);
+          },
+        }),
+      ImagePipe,
+    )
+    logo: Express.Multer.File,
+    @Req() req: CustomRequest,
+    // @Res() res: any,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    try {
+      console.log('updateCompanyDto', updateCompanyDto);
+      if (!updateCompanyDto.validate()) {
+        return {
+          // Not thing to update
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Nothing to update',
+        };
+      }
+      updateCompanyDto.accountId = req.user?.id;
+      if (logo) {
+        updateCompanyDto['logo'] = logo.originalname;
+      }
+      const company = await this.companiesService.update(
+        +req.params['id'],
+        updateCompanyDto,
+      );
+      let uploadedObject = {
+        Location: '',
+      }
+      if (logo) {
+        uploadedObject = await this.awsService.uploadFile(logo, {
+          BUCKET: BUCKET_IMAGE_COMANIES_LOGO,
+          id: String(company?.id),
+        });
+      }
+
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Company updated successfully',
+      data: {
+        ...company,
+        logo: uploadedObject.Location,
+      },
+    };
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        };
+      }
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Something went wrong',
+      };
+    }
   }
 
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBasicAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companiesService.remove(+id);
+  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
+    if (!req.user) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized',
+      };
+    }
+    const deleted = await this.companiesService.remove(+id, req.user?.id);
+
+    if (deleted.affected === 0) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Company not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Company deleted successfully',
+    };
   }
 }

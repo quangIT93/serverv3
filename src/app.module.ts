@@ -31,6 +31,8 @@ import { AWSModule } from './providers/storage/aws/provider.module';
 import { CompaniesModule } from './models/company-models/companies/companies.module';
 import { CompanyRolesModule } from './models/company-models/company-roles/company-roles.module';
 import { CompanySizesModule } from './models/company-models/company-sizes/company-sizes.module';
+import { ProfilesModule } from './models/profile-models/profiles/profiles.module';
+import { ProfilesCategoriesModule } from './models/profile-models/profiles-categories/profiles-categories.module';
 @Module({
   imports: [
 
@@ -62,6 +64,8 @@ import { CompanySizesModule } from './models/company-models/company-sizes/compan
     CompaniesModule,
     CompanyRolesModule,
     CompanySizesModule,
+    ProfilesModule,
+    ProfilesCategoriesModule,
   ],
   controllers: [AppController],
   providers: [

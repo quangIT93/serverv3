@@ -26,7 +26,7 @@ export class CreateCompanyDto {
     @IsOptional()
     @IsString({ message: 'Tax code must be a string' })
     @MaxLength(255, { message: 'Tax code must be less than 255 characters' })
-    taxCode: string | null = null;
+    taxCode!: string | null;
 
     @ApiProperty({ type: 'string', format: 'string', required: true })
     @IsString({ message: 'Phone must be a string' })

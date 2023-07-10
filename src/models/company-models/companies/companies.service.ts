@@ -25,11 +25,22 @@ export class CompaniesService {
     return `This action returns a #${id} company`;
   }
 
-  update(id: number, _updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  findByAccountId(_accountId: string) {
+    return this.companyRepository.findOne({
+      relations: ['ward', 'ward.district', 'ward.district.province', 'companyRole', 'companySize'],
+      where: {
+        accountId: _accountId,
+      },
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+  update(id: number, _updateCompanyDto: UpdateCompanyDto) {
+    return this.companyRepository.update({ id }, _updateCompanyDto).then(() => {
+      return this.companyRepository.findOne({ where: { id } });
+    });
+  }
+
+  remove(id: number, _accountId: string) {
+    return this.companyRepository.delete({ id, accountId: _accountId });
   }
 }
