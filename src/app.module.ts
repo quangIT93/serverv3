@@ -33,6 +33,10 @@ import { CompanyRolesModule } from './models/company-models/company-roles/compan
 import { CompanySizesModule } from './models/company-models/company-sizes/company-sizes.module';
 import { ProfilesModule } from './models/profile-models/profiles/profiles.module';
 import { ProfilesCategoriesModule } from './models/profile-models/profiles-categories/profiles-categories.module';
+import { ProfilesEducationsModule } from './models/profile-models/profiles_educations/profiles_educations.module';
+import { ProfilesExperiencesModule } from './models/profile-models/profiles_experiences/profiles_experiences.module';
+import { ProfilesLocationsModule } from './models/profile-models/profiles_locations/profiles_locations.module';
+
 @Module({
   imports: [
 
@@ -66,6 +70,9 @@ import { ProfilesCategoriesModule } from './models/profile-models/profiles-categ
     CompanySizesModule,
     ProfilesModule,
     ProfilesCategoriesModule,
+    ProfilesEducationsModule,
+    ProfilesExperiencesModule,
+    ProfilesLocationsModule,
   ],
   controllers: [AppController],
   providers: [
