@@ -4,5 +4,5 @@ export interface ILocation {
     fullName: string;
     codeName?: string;
     nameEn: string;
-    fullNameEn: string;   
+    fullNameEn: string;  
 }

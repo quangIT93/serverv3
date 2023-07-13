@@ -1,8 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor, Req, UseGuards } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ApiTags } from '@nestjs/swagger';
+// import { plainToInstance } from 'class-transformer';
+import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { AuthGuard } from 'src/authentication/auth.guard';
 
+@ApiTags('profiles')
 @Controller('profiles')
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
@@ -17,9 +23,23 @@ export class ProfilesController {
     return this.profilesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profilesService.findOne(+id);
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    ProfileDetailInterceptor,
+    // ResponseInterceptor
+  )
+  @UseGuards(AuthGuard)
+  @Get('me')
+  async findOne(@Req() req: CustomRequest) {
+    const id = req.user?.id;
+    if (!id) {
+      return null;
+    }
+    const profile = await this.profilesService.findOne(id);
+
+    // const serializedProfile = Object.assign(
+
+    return profile;
   }
 
   @Patch(':id')

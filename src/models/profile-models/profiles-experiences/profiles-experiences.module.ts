@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProfilesExperiencesController } from './profiles_experiences.controller';
-import { ProfilesExperiencesService } from './profiles_experiences.service';
+import { ProfilesExperiencesController } from './profiles-experiences.controller';
+import { ProfilesExperiencesService } from './profiles-experiences.service';
 
 @Module({
   controllers: [ProfilesExperiencesController],

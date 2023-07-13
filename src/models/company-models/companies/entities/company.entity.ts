@@ -3,11 +3,14 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CompanyRole } from '../../company-roles/entities/company-role.entity';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { Ward } from 'src/models/locations/wards/entities';
+import { Profile } from 'src/models/profile-models/profiles/entities';
+import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 
 @Entity('companies')
 export class Company {
@@ -94,4 +97,14 @@ export class Company {
     @ManyToOne(() => Ward, (ward) => ward.id)
     @JoinColumn({ name: 'ward_id' })
     ward!: Ward;
+
+    @ManyToOne(() => ParentCategory, (parentCategory) => parentCategory.id)
+    @JoinColumn({ name: 'category_id' })
+    category!: ParentCategory;
+
+    // @OneToOne()
+
+    @OneToOne(() => Profile, (profile) => profile.accountId)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    profile!: Profile;
 }

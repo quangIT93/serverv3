@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { District } from "src/models/locations/districts/entities";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('profiles_categories')
+@Entity('profiles_locations')
 export class ProfilesLocation{
 
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -11,5 +12,9 @@ export class ProfilesLocation{
 
     @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
     accountId!: string;
+
+    @OneToOne(() => District, district => district.id)
+    @JoinColumn({ name: 'location_id' })
+    district!: District;
 
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProfilesLocationsService } from './profiles_locations.service';
-import { ProfilesLocationsController } from './profiles_locations.controller';
+import { ProfilesLocationsService } from './profiles-locations.service';
+import { ProfilesLocationsController } from './profiles-locations.controller';
 
 @Module({
   providers: [ProfilesLocationsService],

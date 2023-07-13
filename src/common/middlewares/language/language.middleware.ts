@@ -24,7 +24,7 @@ export class LanguageMiddleware implements NestMiddleware {
     }
     else {
       // Set lang to request
-      req['lang'] = lang;
+      req.lang = lang as Language;
       // Remove lang from query
       delete req.query['lang'];
       next();
