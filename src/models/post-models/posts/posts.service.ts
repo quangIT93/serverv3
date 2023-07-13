@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Post } from './entities';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { countByHotTopicQuery, findByHotTopicQuery } from './repository';
+import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 // import { PostNormally } from './class/normallyPost.class';
 
 @Injectable()
@@ -54,5 +55,16 @@ export class PostsService {
                 id
             },
         });
+    }
+
+    async create(dto: CreatePostByAdminDto): Promise<Post> {
+        try {
+            const post = this.postsRepository.create(dto.toEntity());
+            return this.postsRepository.save(post);
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+
     }
 }

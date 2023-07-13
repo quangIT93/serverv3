@@ -5,6 +5,7 @@ import { Location } from "../../location.class";
 
 @Entity('districts')
 export class District extends Location {
+
     @Column({ type: 'varchar', name: 'province_id' })
     provinceId!: string;
 
