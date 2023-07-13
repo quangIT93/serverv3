@@ -1,8 +1,7 @@
 /**
  * Category translator
- * 
+ *
  */
-
 
 import { Language } from 'src/common/enum';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
@@ -15,14 +14,26 @@ class ChildCategoryResponse {
 
     constructor(category: ChildCategory, lang: Language) {
         this.id = category.id;
-        this.fullName = lang === Language.VI ? category.name : lang === Language.EN ? category.nameEn : category.nameKor;
+        this.fullName =
+            lang === Language.VI
+                ? category.name
+                : lang === Language.EN
+                    ? category.nameEn
+                    : category.nameKor;
         if (category.parentCategory) {
-            this.parentCategory = new ParentCategoryResponse(category.parentCategory, lang);
+            this.parentCategory = new ParentCategoryResponse(
+                category.parentCategory,
+                lang,
+            );
             this.parentCategory.id = category.parentCategory.id;
-            this.parentCategory.fullName = lang === Language.VI ? category.parentCategory.name : lang === Language.EN ? category.parentCategory.nameEn : category.parentCategory.nameKor;
+            this.parentCategory.fullName =
+                lang === Language.VI
+                    ? category.parentCategory.name
+                    : lang === Language.EN
+                        ? category.parentCategory.nameEn
+                        : category.parentCategory.nameKor;
         }
     }
-
 }
 
 class ParentCategoryResponse {
@@ -31,14 +42,18 @@ class ParentCategoryResponse {
 
     constructor(category: ParentCategory, lang: Language) {
         this.id = category.id;
-        this.fullName = lang === Language.VI ? category.name : lang === Language.EN ? category.nameEn : category.nameKor;
+        this.fullName =
+            lang === Language.VI
+                ? category.name
+                : lang === Language.EN
+                    ? category.nameEn
+                    : category.nameKor;
     }
 }
 
-
 export function categoryTranslator(
-    category: ChildCategory | ParentCategory, 
-    lang: Language
+    category: ChildCategory | ParentCategory,
+    lang: Language,
 ) {
     if (!category) return null;
     if (category instanceof ChildCategory) {

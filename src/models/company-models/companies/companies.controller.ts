@@ -129,6 +129,9 @@ export class CompaniesController {
     }
     return this.companiesService.findByAccountId(req.user?.id);
   }
+
+
+  @Patch(':id')
   @UseInterceptors(
     FilesInterceptor('logo', 1, {
       fileFilter: (_req, _file, cb) => {
@@ -139,7 +142,6 @@ export class CompaniesController {
       },
     }),
   )
-  @Patch(':id')
   async update(
     @UploadedFiles(
       new ParseFilePipeBuilder()
