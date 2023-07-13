@@ -10,13 +10,29 @@ import { ParentCategory } from 'src/models/categories/parents/entities/parent.en
 
 class ChildCategoryResponse {
     id!: number;
-    name!: string;
+    fullName!: string;
     parentCategory: ParentCategoryResponse | null = null;
+
+    constructor(category: ChildCategory, lang: Language) {
+        this.id = category.id;
+        this.fullName = lang === Language.VI ? category.name : lang === Language.EN ? category.nameEn : category.nameKor;
+        if (category.parentCategory) {
+            this.parentCategory = new ParentCategoryResponse(category.parentCategory, lang);
+            this.parentCategory.id = category.parentCategory.id;
+            this.parentCategory.fullName = lang === Language.VI ? category.parentCategory.name : lang === Language.EN ? category.parentCategory.nameEn : category.parentCategory.nameKor;
+        }
+    }
+
 }
 
 class ParentCategoryResponse {
     id!: number;
-    name!: string;
+    fullName!: string;
+
+    constructor(category: ParentCategory, lang: Language) {
+        this.id = category.id;
+        this.fullName = lang === Language.VI ? category.name : lang === Language.EN ? category.nameEn : category.nameKor;
+    }
 }
 
 
@@ -26,25 +42,12 @@ export function categoryTranslator(
 ) {
     if (!category) return null;
     if (category instanceof ChildCategory) {
-        const childCategory = category as ChildCategory;
-        const childCategoryResponse = new ChildCategoryResponse();
-        childCategoryResponse.id = childCategory.id;
-        childCategoryResponse.name = lang === Language.VI ? childCategory.name : lang === Language.EN ? childCategory.nameEn : childCategory.nameKor;
-        if (childCategory.parentCategory) {
-            const parentCategory = childCategory.parentCategory;
-            const parentCategoryResponse = new ParentCategoryResponse();
-            parentCategoryResponse.id = parentCategory.id;
-            parentCategoryResponse.name = lang === Language.VI ? parentCategory.name : lang === Language.EN ? parentCategory.nameEn : parentCategory.nameKor;
-            childCategoryResponse.parentCategory = parentCategoryResponse;
-        }
-        return childCategoryResponse;
+        const childCategory = new ChildCategoryResponse(category, lang);
+        return childCategory;
     }
     if (category instanceof ParentCategory) {
-        const parentCategory = category as ParentCategory;
-        const parentCategoryResponse = new ParentCategoryResponse();
-        parentCategoryResponse.id = parentCategory.id;
-        parentCategoryResponse.name = lang === Language.VI ? parentCategory.name : lang === Language.EN ? parentCategory.nameEn : parentCategory.nameKor;
-        return parentCategoryResponse;
+        const parentCategory = new ParentCategoryResponse(category, lang);
+        return parentCategory;
     }
     return null;
 }
