@@ -11,6 +11,7 @@ import { PostImages } from './entities/post-images.entity';
     ])
   ],
   controllers: [PostsImagesController],
-  providers: [PostsImagesService]
+  providers: [PostsImagesService],
+  exports: [PostsImagesService]
 })
 export class PostsImagesModule {}

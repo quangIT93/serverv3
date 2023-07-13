@@ -40,10 +40,10 @@ export class Post extends BaseEntity {
     isDatePeriod!: number;
 
     @Column({ type: 'varchar', length: 20, default: null, name: 'start_date' })
-    startDate!: string;
+    startDate!: string | null ;
 
     @Column({ type: 'varchar', length: 20, default: null, name: 'end_date' })
-    endDate!: string;
+    endDate!: string | null;
 
     @Column({ type: 'varchar', length: 20, default: null, name: 'start_time' })
     startTime!: string;
@@ -73,16 +73,16 @@ export class Post extends BaseEntity {
     description!: string;
 
     @Column({ type: 'varchar', length: 15, default: null, name: 'phone_contact' })
-    phoneContact!: string;
+    phoneContact!: string | null;
 
     @Column({ type: 'varchar', length: 255, default: null, name: 'email' })
-    email!: string;
+    email!: string | null;
 
     @Column({ type: 'enum', enum:['0', '1'], default: '0', name: 'is_inhouse_data' })
     isInHouseData!: string;
 
     @Column({ type: 'datetime', default: null, name: 'expired_date' })
-    expiredDate!: Date;
+    expiredDate!: Date | null;
 
     @Column({ type: 'tinyint', default: 0, name: 'job_type' })
     jobType!: number;

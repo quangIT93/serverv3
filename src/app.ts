@@ -24,9 +24,8 @@ async function bootstrap() {
     // CORS
     app.enableCors({
       origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      allowedHeaders: 'Content-Type, Accept',
-      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+      // allowedHeaders: 'Content-Type, Accept',
     });
 
   const openAPIConfig = new DocumentBuilder()

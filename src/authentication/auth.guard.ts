@@ -9,7 +9,7 @@
  * @class
  */
 
-import { CanActivate, Injectable } from "@nestjs/common";
+import { CanActivate, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { JwtAccessTokenService } from "src/services/jwt/atk.service";
 
 
@@ -21,23 +21,24 @@ export class AuthGuard implements CanActivate {
     ) {}
 
     async canActivate(context: any): Promise<boolean> {
-        const request = context.switchToHttp().getRequest();
-        if (!request.headers.authorization) {
-            return false;
+        try {
+            const request = context.switchToHttp().getRequest();
+            if (!request.headers.authorization) {
+                throw new UnauthorizedException();
+            }
+            Logger.log('AuthGuard: canActivate');
+            request.user = await this.validateToken(request.headers.authorization);
+            return true;
+        } catch (error) {
+            throw error;
         }
-        request.user = await this.validateToken(request.headers.authorization);
-        return true;
     }
 
-    async validateToken(auth: string) {
-        if (auth.split(' ')[0] !== 'Bearer') {
-            throw new Error('Invalid token');
-        }
-        const token = auth.split(' ')[1];
+    async validateToken(token: string) {
         try {
             return await this.jwtAccessTokenService.validateToken(token);
         } catch (error) {
-            throw new Error('Invalid token');
+            throw error;
         }
     }
 }

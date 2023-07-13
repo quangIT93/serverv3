@@ -7,6 +7,10 @@ import { PostsService } from "./posts.service";
 import { JwtAccessTokenServiceModule } from "src/providers/jwt/atk.provider.module";
 import { BookmarksModule } from "src/models/bookmarks/bookmarks.module";
 import { PageAndLimitMiddleware } from "src/common/middlewares/page-limit/page-limit.middleware";
+import { AWSModule } from "src/providers/storage/aws/provider.module";
+import { PostsImagesModule } from "../posts-images/posts-images.module";
+import { PostResourceModule } from "../post-resource/post-resource.module";
+import { PostsCategoriesModule } from "../posts-categories/posts-categories.module";
 // import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
 
 
@@ -15,8 +19,14 @@ import { PageAndLimitMiddleware } from "src/common/middlewares/page-limit/page-l
         TypeOrmModule.forFeature([Post]),
         JwtAccessTokenServiceModule,
         BookmarksModule,
+        AWSModule,
+        PostsImagesModule,
+        PostResourceModule,
+        PostsCategoriesModule
     ],
-    controllers: [PostsController],
+    controllers: [
+        PostsController,
+    ],
     providers: [
         PostsService,
     ],
