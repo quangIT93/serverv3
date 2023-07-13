@@ -25,7 +25,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImageValidator } from 'src/common/decorators/validation/image-validator/image.validator';
 import { ImagePipe } from 'src/common/helper/transform/image.transform';
 import { AWSService } from 'src/services/aws/aws.service';
-import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
+import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
@@ -78,7 +78,7 @@ export class CompaniesController {
       createCompanyDto['logo'] = logo.originalname;
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
-        BUCKET: BUCKET_IMAGE_COMANIES_LOGO,
+        BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
   
@@ -87,7 +87,8 @@ export class CompaniesController {
         message: 'Company created successfully',
         data: {
           ...company,
-          logo: uploadedObject.Location,
+          logo: uploadedObject.Location
+          ,
         },
       });
     } catch (error) {
@@ -176,23 +177,20 @@ export class CompaniesController {
         +req.params['id'],
         updateCompanyDto,
       );
-      let uploadedObject = {
-        Location: '',
-      }
+      let uploadedObject: any
       if (logo) {
         uploadedObject = await this.awsService.uploadFile(logo, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO,
+          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
           id: String(company?.id),
         });
       }
-
 
     return {
       statusCode: HttpStatus.OK,
       message: 'Company updated successfully',
       data: {
         ...company,
-        logo: uploadedObject.Location,
+        logo: uploadedObject.Location
       },
     };
     } catch (error) {

@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, ClassSerializerInterceptor, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  // Post,
+  // Body,
+  // Patch,
+  // Param,
+  // Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
+// import { CreateProfileDto } from './dto/create-profile.dto';
+// import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiTags } from '@nestjs/swagger';
 // import { plainToInstance } from 'class-transformer';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
@@ -13,15 +25,15 @@ import { AuthGuard } from 'src/authentication/auth.guard';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profilesService.create(createProfileDto);
-  }
+  // @Post()
+  // create(@Body() createProfileDto: CreateProfileDto) {
+  //   return this.profilesService.create(createProfileDto);
+  // }
 
-  @Get()
-  findAll() {
-    return this.profilesService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.profilesService.findAll();
+  // }
 
   @UseInterceptors(
     ClassSerializerInterceptor,
@@ -42,13 +54,13 @@ export class ProfilesController {
     return profile;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profilesService.update(+id, updateProfileDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
+  //   return this.profilesService.update(+id, updateProfileDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profilesService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.profilesService.remove(+id);
+  // }
 }

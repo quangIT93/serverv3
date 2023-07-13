@@ -11,5 +11,6 @@ export const BUCKET_IMAGE_APPLICATION = `${BUCKET_IMAGE}/applications`
 export const BUCKET_IMAGE_COMPANY_ICON = `${BUCKET_IMAGE}/icons/company`
 export const BUCKET_IMAGE_WELCOME = `${BUCKET_IMAGE}/welcome-images`
 export const BUCKET_IMAGE_COMANIES_LOGO = `${BUCKET_IMAGE}/companies-logo`
+export const BUCKET_IMAGE_COMANIES_LOGO_UPLOAD = `images/companies-logo`
 export const BUCKET_IMAGE_DEFAULT = `${BUCKET_IMAGE}/default`
 export const BUCKET_CV = `${BUCKET_PREFIX}/cv-bucket`

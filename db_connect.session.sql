@@ -40,42 +40,42 @@ CREATE TABLE `companies` (
   Constraint FK_Wards_Companies FOREIGN KEY (ward_id) REFERENCES wards (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 )
 
--- CREATE TABLE `company_roles` (
---   id TINYINT(4) NOT NULL AUTO_INCREMENT,
---   name VARCHAR(255) NOT NULL,
---   name_en VARCHAR(255) NOT NULL,
---   name_ko VARCHAR(255) NOT NULL,
---   status TINYINT(4) DEFAULT 1,
---   `order` TINYINT(4) DEFAULT 1,
---   created_at DATETIME DEFAULT current_timestamp(),
---   updated_at DATETIME DEFAULT current_timestamp() ON UPDATE current_timestamp(),
---   PRIMARY KEY (id)
--- )
+CREATE TABLE `company_roles` (
+  id TINYINT(4) NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  name_en VARCHAR(255) NOT NULL,
+  name_ko VARCHAR(255) NOT NULL,
+  status TINYINT(4) DEFAULT 1,
+  `order` TINYINT(4) DEFAULT 1,
+  created_at DATETIME DEFAULT current_timestamp(),
+  updated_at DATETIME DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (id)
+)
 
--- INSERT INTO `company_roles`
--- (`name`, `name_en`, `name_ko`, `status`)
--- VALUES('Chủ sở hữu', 'CEO', 'CEO', 1),
--- ('Nhân viên', 'Employee', '직원', 1),
--- ('Nhà tuyển dụng', 'Recruiter', '채용 담당자', 1),
--- ('Khác', 'Other', '기타', 1),
--- ('Người sáng lập', '', '', 0),
--- ('Người đồng sáng lập', '', '', 0);
+INSERT INTO `company_roles`
+(`name`, `name_en`, `name_ko`, `status`)
+VALUES('Chủ sở hữu', 'CEO', 'CEO', 1),
+('Nhân viên', 'Employee', '직원', 1),
+('Nhà tuyển dụng', 'Recruiter', '채용 담당자', 1),
+('Khác', 'Other', '기타', 1),
+('Người sáng lập', '', '', 0),
+('Người đồng sáng lập', '', '', 0);
 
--- CREATE TABLE `company_sizes` (
---   id TINYINT(4) NOT NULL AUTO_INCREMENT,
---   name VARCHAR(255) NOT NULL,
---   name_en VARCHAR(255) NOT NULL,
---   name_ko VARCHAR(255) NOT NULL,
---   status TINYINT(4) DEFAULT 1,
---   `order` TINYINT(4) DEFAULT 1,
---   created_at DATETIME DEFAULT current_timestamp(),
---   updated_at DATETIME DEFAULT current_timestamp() ON UPDATE current_timestamp(),
---   PRIMARY KEY (id)
--- )
+CREATE TABLE `company_sizes` (
+  id TINYINT(4) NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  name_en VARCHAR(255) NOT NULL,
+  name_ko VARCHAR(255) NOT NULL,
+  status TINYINT(4) DEFAULT 1,
+  `order` TINYINT(4) DEFAULT 1,
+  created_at DATETIME DEFAULT current_timestamp(),
+  updated_at DATETIME DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (id)
+)
 
--- INSERT INTO `company_sizes`
--- (`name`, `name_en`, `name_ko`, `status`)
--- VALUES('01 - 50 Nhân viên', '01 - 50 Employees', '01 - 50 직원', 1),
--- ('50 - 200 Nhân viên', '50 - 200 Employees', '50 - 200 직원', 1),
--- ('200 - 1000 Nhân viên', '200 - 1000 Employees', '200 - 1000 직원', 1),
--- ('>1000 Nhân viên', '>1000 Employees', '>1000 직원', 1);
+INSERT INTO `company_sizes`
+(`name`, `name_en`, `name_ko`, `status`)
+VALUES('01 - 50 Nhân viên', '01 - 50 Employees', '01 - 50 직원', 1),
+('50 - 200 Nhân viên', '50 - 200 Employees', '50 - 200 직원', 1),
+('200 - 1000 Nhân viên', '200 - 1000 Employees', '200 - 1000 직원', 1),
+('>1000 Nhân viên', '>1000 Employees', '>1000 직원', 1);

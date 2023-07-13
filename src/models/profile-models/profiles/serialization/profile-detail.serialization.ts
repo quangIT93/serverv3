@@ -26,8 +26,8 @@ export class ProfileSerialization extends Profile {
 
     // exclude gender
     // return genderText
-    @Exclude({ toPlainOnly: true })
-    override gender!: number;
+    // @Exclude({ toPlainOnly: true })
+    // override gender!: number;
 
     // exclude cvUrl
     // return cvUrlPath
