@@ -6,6 +6,7 @@ import {
     QUERY_IS_REMOTELY,
     QUERY_IS_SHORT_TIME_JOBS,
     QUERY_IS_TODAY_JOBS,
+    QUERY_JOB_TYPE,
     QUERY_PARENT_CATEGORY_ID,
 } from 'src/common/constants';
 import { HotTopicQueriesDto } from '../dto/hot-topic-queries.dto';
@@ -39,6 +40,12 @@ function __init__(respository: Repository<Post>, query: HotTopicQueriesDto) {
     if (query[QUERY_IS_TODAY_JOBS] === 1) {
         queryBuilder.andWhere(`posts.createdAt >= :today`, {
             today: new Date().toISOString().split('T')[0],
+        });
+    }
+
+    if (query[QUERY_JOB_TYPE]) {
+        queryBuilder.andWhere(`posts.jobType = :${QUERY_JOB_TYPE}`, {
+            [QUERY_JOB_TYPE]: query[QUERY_JOB_TYPE],
         });
     }
 
