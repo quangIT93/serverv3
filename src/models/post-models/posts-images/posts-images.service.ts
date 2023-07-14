@@ -41,8 +41,13 @@ export class PostsImagesService {
     //images is string[]
     const data = [];
 
-    for (let i = 0; i < images.length; i++) {
+    for (let i = 1; i < images.length; i++) {
       const createPostsImage = new PostImages();
+      if (i == 0) {
+        createPostsImage.type = 1;
+      } else {
+        createPostsImage.type = 0;
+      }
       createPostsImage.postId = postId;
       createPostsImage.image = images[i];
       const result = await this.postsImagesRepository.save(createPostsImage);

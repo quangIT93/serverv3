@@ -13,6 +13,9 @@ export class PostImages {
     @Column({ type: 'varchar', length: 200, name: 'image' })
     image!: string;
 
+    @Column({ type: 'tinyint', length: 200, name: 'image_path', default: 0 })
+    type!: number;
+
     @Column({ type: 'tinyint', name: 'status' })
     status!: number;
 
