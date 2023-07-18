@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 // import { Transform } from "class-transformer";
-import { IsEmail, IsNumber, IsOptional, IsString, IsUrl, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsString, IsUrl, MaxLength } from "class-validator";
 
 export class CreateCompanyDto {
     @IsOptional()
@@ -14,7 +14,6 @@ export class CreateCompanyDto {
     @ApiProperty({ type: 'string', format: 'string', required: true })
     @IsString({ message: 'Address must be a string' })
     @MaxLength(255, { message: 'Address must be less than 255 characters' })
-    @MinLength(10, { message: 'Address must be more than 10 characters' })
     address!: string;
 
     @ApiProperty({ type: 'string', format: 'string', required: true })

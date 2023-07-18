@@ -43,7 +43,7 @@ function __init__(respository: Repository<Post>, query: HotTopicQueriesDto) {
         });
     }
 
-    if (query[QUERY_JOB_TYPE]) {
+    if (query[QUERY_JOB_TYPE] !== undefined && query[QUERY_JOB_TYPE] !== null) {
         queryBuilder.andWhere(`posts.jobType = :${QUERY_JOB_TYPE}`, {
             [QUERY_JOB_TYPE]: query[QUERY_JOB_TYPE],
         });

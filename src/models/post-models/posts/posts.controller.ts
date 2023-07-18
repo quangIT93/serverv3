@@ -67,6 +67,7 @@ export class PostsController {
             parentCategoryId,
             isRemotely,
             isShortTimeJobs,
+            jobType,
         } = hotTopicQueries;
         
         const query = {
@@ -74,6 +75,7 @@ export class PostsController {
             parentCategoryId,
             isRemotely,
             isShortTimeJobs,
+            jobType,
         };
 
         if (Object.keys(query).length === 0) {
