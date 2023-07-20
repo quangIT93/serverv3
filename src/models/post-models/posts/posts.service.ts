@@ -63,7 +63,15 @@ export class PostsService {
                 'ward.district',
                 'ward.district.province',
                 'postImages',
-                'jobTypeData'
+                'jobTypeData',
+                'companyInformation',
+                'companyInformation.ward',
+                'companyInformation.ward.district',
+                'companyInformation.ward.district.province',
+                'companyInformation.companySize',
+                'companyInformation.companyRole',
+                'postResource',
+                'postResource.companyResource'
             ],
             where: { 
                 id

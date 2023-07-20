@@ -1,6 +1,7 @@
 import { ImageValidator } from './../../../common/decorators/validation/image-validator/image.validator';
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Get,
     Logger,
@@ -30,6 +31,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { PostImagesPipe } from 'src/common/helper/transform/post-image.transform';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreatePostByAdminController } from './controller';
+import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -78,6 +80,8 @@ export class PostsController {
         return this.postsService.findByQuery(query, limit, page); 
     }
 
+    @UseGuards(AuthNotRequiredGuard)
+    @UseInterceptors(ClassSerializerInterceptor, PostDetailInterceptor)
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
         Logger.log('findOne');
