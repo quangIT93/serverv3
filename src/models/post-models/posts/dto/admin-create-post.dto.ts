@@ -1,10 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    // ArrayMaxSize,
-    // ArrayMinSize,
-    // ArrayUnique,
-    // IsArray,
     IsEmail,
     IsNumber,
     IsOptional,
@@ -16,7 +12,6 @@ import {
 import { OneOfOptionalRequired, IsTimestamp } from 'src/common/decorators/validation';
 import { Post } from '../entities';
 import { IsArrayNumberOrNumber } from 'src/common/decorators/validation/isArrayNumberOrNumber.validator';
-// import { IsFile } from "src/common/decorators/validation";
 
 export class CreatePostByAdminDto {
     accountId!: string;
@@ -207,7 +202,6 @@ export class CreatePostByAdminDto {
 
     @ApiProperty({ type: 'number', format: 'binary', required: true, default: 0 })
     @IsNumber({ allowNaN: false, allowInfinity: false })
-
     companyResourceId!: number;
 
     @ApiProperty({
@@ -227,10 +221,16 @@ export class CreatePostByAdminDto {
             if (!this.startDate || !this.endDate) {
                 return new BadRequestException('Start date and end date are required when isDatePeriod is true');
             }
-        }
 
-        return true
+            if (this.startDate > this.endDate) {
+                return new BadRequestException('Start date must be less than end date');
+            }
+        }
         
+        if (this.salaryMax < this.salaryMin) {
+            return new BadRequestException('Salary max must be greater than salary min');
+        }
+        return true
     }
 
     // add account id and images to dto

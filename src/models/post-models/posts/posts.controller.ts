@@ -27,23 +27,15 @@ import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PostImagesPipe, PostImagesTransformed } from 'src/common/helper/transform/post-image.transform';
+import { PostImagesPipe } from 'src/common/helper/transform/post-image.transform';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { AWSService } from 'src/services/aws/aws.service';
-import { PostsImagesService } from '../posts-images/posts-images.service';
-import { createPostByAdminController } from './controller';
-import { PostResourceService } from '../post-resource/post-resource.service';
-import { PostsCategoriesService } from '../posts-categories/posts-categories.service';
+import { CreatePostByAdminController } from './controller';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
-        private readonly awsService: AWSService,
-        private readonly postImageService: PostsImagesService,
-        private readonly postResourceService: PostResourceService,
-        private readonly postsCategoriesService: PostsCategoriesService,
     ) { }
 
     @UseGuards(AuthGuard)
@@ -143,22 +135,12 @@ export class PostsController {
                 }),
             PostImagesPipe,
         )
-        images: PostImagesTransformed,
+        images: Express.Multer.File[],
         @Body() dto: CreatePostByAdminDto,
         @Req() req: CustomRequest,
         @Res() res: any,
     ) {
-        Logger.log('createByWorker: ', req.user?.id);
-        return await createPostByAdminController({
-            dto,
-            req,
-            res,
-            images,
-            awsService: this.awsService,
-            postImageService: this.postImageService,
-            postsService: this.postsService,
-            postResourceService: this.postResourceService,
-            postCategoriesService: this.postsCategoriesService,
-        });
+        return new CreatePostByAdminController(this.postsService, req, res)
+        .createPostByAdminController({dto, images});
     }
 }
