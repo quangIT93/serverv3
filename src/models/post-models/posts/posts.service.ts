@@ -91,10 +91,10 @@ export class PostsService {
      */
     async savePostImages(postId: number, images: Express.Multer.File[]): Promise<PostImages[] | []> {
         const resultUploadImages = await this.awsService.uploadMutilpleFiles(images, {BUCKET: BUCKET_IMAGE_POST_UPLOAD, id: postId});
-        console.log(resultUploadImages);
         const postImageDto: CreatePostsImageDto[] = resultUploadImages.map((image) => {
-            return new CreatePostsImageDto(postId, image.originalname);
+            return new CreatePostsImageDto(postId, image.originalname, 0);
         });
+        postImageDto[0].type = 1; // set thumbnail
         const postImages = this.postImagesService.createPostImages(postImageDto);
         return postImages;
     }

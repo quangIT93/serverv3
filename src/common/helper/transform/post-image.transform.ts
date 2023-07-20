@@ -4,6 +4,14 @@ import { THUMNAIL_HEIGHT, THUMNAIL_WIDTH } from "src/common/constants";
 import { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
+
+interface ResizeImageOptions {
+    width: number;
+    height: number;
+    quanlity: number;
+    type: 'png' | 'jpg';
+
+}
 /**
  * Transfrom images to thumbnail, original and resized
  * 
@@ -11,19 +19,6 @@ import { v4 as uuidv4 } from "uuid";
  * @class ImagesPipe
  * 
  */
-
-interface ResizeImageOptions {
-    width: number;
-    height: number;
-    quanlity: number;
-    type: 'png' | 'jpg';
-    // fit: 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
-    // position: 'top' | 'right top' | 'right' | 'right bottom' | 'bottom' | 'left bottom' | 'left' | 'left top' | 'entropy' | 'attention';
-    // background: { r: number, g: number, b: number, alpha: number };
-    // withoutEnlargement: boolean;
-    // kernel: 'nearest' | 'cubic' | 'mitchell' | 'lanczos2' | 'lanczos3';
-
-}
 @Injectable()
 export class PostImagesPipe implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File[]>> {
     constructor() { }

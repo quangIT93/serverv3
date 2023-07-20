@@ -15,7 +15,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-
+import { Response } from 'express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
@@ -138,7 +138,7 @@ export class PostsController {
         images: Express.Multer.File[],
         @Body() dto: CreatePostByAdminDto,
         @Req() req: CustomRequest,
-        @Res() res: any,
+        @Res() res: Response,
     ) {
         return new CreatePostByAdminController(this.postsService, req, res)
         .createPostByAdminController({dto, images});

@@ -41,6 +41,4 @@ export class PostsImagesService {
 
     return this.postsImagesRepository.save(newPostImages);
   }
-
-
 }
