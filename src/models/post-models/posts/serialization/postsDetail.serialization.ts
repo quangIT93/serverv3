@@ -10,6 +10,7 @@ import { JobType } from "src/models/job-types/entities/job-type.entity";
 import { BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from "src/common/constants";
 import { PostImages } from "../../posts-images/entities/post-images.entity";
 import { PostResource } from "../../post-resource/entities/post-resource.entity";
+import { salaryTypeTranslator } from "src/common/helper/translators/salaryTypeTranslator";
 
 export class PostDetailSeialization extends Post {
     lang: Language = Language.VI;
@@ -46,6 +47,12 @@ export class PostDetailSeialization extends Post {
     
     @Exclude({ toPlainOnly: true })
     override postResource!: PostResource;
+
+    @Exclude({ toPlainOnly: true })
+    override salaryType!: number;
+
+    @Exclude({ toPlainOnly: true })
+    override salaryTypeData!: any;
 
     @Transform(({ value }) => value ? +value : null)
     override startDate!: string | null;
@@ -127,6 +134,11 @@ export class PostDetailSeialization extends Post {
             name: this.postResource.companyResource.name,
             logo: `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}`,
         }
+    }
+
+    @Expose()
+    get postSalaryType() {
+        return salaryTypeTranslator(this.salaryTypeData, this.lang);
     }
 
 

@@ -2,6 +2,7 @@ import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
 import {
     CallHandler,
     ExecutionContext,
+    HttpStatus,
     Injectable,
     NestInterceptor,
 } from '@nestjs/common';
@@ -36,6 +37,13 @@ export class PostDetailInterceptor implements NestInterceptor {
         return next.handle().pipe(
             map((posts: Post) => {
 
+                if (!posts) {
+                    return {
+                        status: HttpStatus.NOT_FOUND,
+                        message: 'Post not found',
+                        data: null,
+                    }
+                }
 
                 const data = new PostDetailSeialization(posts, lang);
 

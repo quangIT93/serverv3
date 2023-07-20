@@ -71,10 +71,12 @@ export class PostsService {
                 'companyInformation.companySize',
                 'companyInformation.companyRole',
                 'postResource',
-                'postResource.companyResource'
+                'postResource.companyResource',
+                'salaryTypeData',
             ],
             where: { 
-                id
+                id,
+                status: 1
             },
         });
     }
