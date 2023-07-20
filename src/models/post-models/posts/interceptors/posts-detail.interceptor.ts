@@ -39,7 +39,7 @@ export class PostDetailInterceptor implements NestInterceptor {
 
                 const data = new PostDetailSeialization(posts, lang);
 
-                data.bookmarked = bookmarked;
+                data.bookmarked = bookmarked || false;
                
                 return {
                     status: _context.switchToHttp().getResponse().statusCode,
