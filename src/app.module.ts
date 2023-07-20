@@ -36,6 +36,8 @@ import { ProfilesCategoriesModule } from './models/profile-models/profiles-categ
 import { ProfilesEducationsModule } from './models/profile-models/profiles-educations/profiles-educations.module';
 import { ProfilesExperiencesModule } from './models/profile-models/profiles-experiences/profiles-experiences.module';
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
+import { BannersController } from './models/banners/banners.controller';
+import { BannersModule } from './models/banners/banners.module';
 
 @Module({
   imports: [
@@ -73,8 +75,9 @@ import { ProfilesLocationsModule } from './models/profile-models/profiles-locati
     ProfilesEducationsModule,
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
+    BannersModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, BannersController],
   providers: [
     AppService,
   ],
