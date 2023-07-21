@@ -46,7 +46,7 @@ export class PostImagesPipe implements PipeTransform<Express.Multer.File, Promis
                 file.originalname = this.generateFileName(file.mimetype.split('/')[1] || 'jpg');
             });
 
-            console.log('files', files);
+            // console.log('files', files);
 
             // first image will be thumbnail
             const thumnail = await this.createThumbnail(files[0]);

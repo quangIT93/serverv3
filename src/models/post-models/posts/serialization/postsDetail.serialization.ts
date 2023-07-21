@@ -115,7 +115,7 @@ export class PostDetailSeialization extends Post {
 
     @Expose()
     get images() {
-        if (!this.postImages) return null;
+        if (!this.postImages || this.postImages.length === 0) return null;
         if (this.postImages[0].type === 1) {
             this.postImages.shift();
         }
