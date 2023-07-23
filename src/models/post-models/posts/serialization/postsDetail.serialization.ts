@@ -7,10 +7,11 @@ import { CompanySerialization } from "src/models/company-models/companies/serial
 import { ChildCategory } from "src/models/categories/children/entities/child.entity";
 import { jobTypeTranslator } from "src/common/helper/translators/jobType.translator";
 import { JobType } from "src/models/job-types/entities/job-type.entity";
-import { BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from "src/common/constants";
+import { BUCKET_IMAGE_AVATAR, BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from "src/common/constants";
 import { PostImages } from "../../posts-images/entities/post-images.entity";
 import { PostResource } from "../../post-resource/entities/post-resource.entity";
 import { salaryTypeTranslator } from "src/common/helper/translators/salaryTypeTranslator";
+import { timeToTextTransform } from "src/common/helper/transform/timeToText.transform";
 
 export class PostDetailSeialization extends Post {
     lang: Language = Language.VI;
@@ -53,6 +54,9 @@ export class PostDetailSeialization extends Post {
 
     @Exclude({ toPlainOnly: true })
     override salaryTypeData!: any;
+
+    @Exclude({ toPlainOnly: true })
+    override profile!: any;
 
     @Transform(({ value }) => value ? +value : null)
     override startDate!: string | null;
@@ -141,6 +145,30 @@ export class PostDetailSeialization extends Post {
         return salaryTypeTranslator(this.salaryTypeData, this.lang);
     }
 
+    @Expose()
+    get shareLink() {
+        // https://m.neoworks.vn/?link=https://app.neoworks.vn/post?postId=41999&st=Gi%C3%A1m%20S%C3%A1t%20C%C3%B4ng%20Tr%C3%ACnh&sd=Welcome%20to%20HiJob!&si=https://hi-job-app-upload.s3-ap-southeast-1.amazonaws.com/images/posts-images/41999/1687330678558-b94d6a3c-8d29-43a3-91ab-c6725f0e558c.jpg"
+        return encodeURI(`https://m.neoworks.vn/?link=https://app.neoworks.vn/post?postId=${this.id}&st=${this.title}&sd=Welcome to HiJob!&si=${this.images ? this.images[0].url : 'https://neoworks.vn/logo-hijob.png'}`)
+        
+    }
+
+    @Expose()
+    get posterAvatar() {
+        if (!this.profile.avatar) return null;
+        return `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
+    }
+
+    @Expose()
+    get createdAtText() {
+        return timeToTextTransform(this.createdAt, this.lang);
+    }
 
     bookmarked: boolean = false;
+
+    application: {
+        id: number;
+        status: number;
+    } | null = null;
+
+    applied: boolean = false;
 }

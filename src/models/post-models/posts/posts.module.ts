@@ -11,6 +11,7 @@ import { AWSModule } from "src/providers/storage/aws/provider.module";
 import { PostsImagesModule } from "../posts-images/posts-images.module";
 import { PostResourceModule } from "../post-resource/post-resource.module";
 import { PostsCategoriesModule } from "../posts-categories/posts-categories.module";
+import { ApplicationsModule } from "src/models/application-model/applications/applications.module";
 // import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
 
 
@@ -22,7 +23,8 @@ import { PostsCategoriesModule } from "../posts-categories/posts-categories.modu
         AWSModule,
         PostsImagesModule,
         PostResourceModule,
-        PostsCategoriesModule
+        PostsCategoriesModule,
+        ApplicationsModule,
     ],
     controllers: [
         PostsController,

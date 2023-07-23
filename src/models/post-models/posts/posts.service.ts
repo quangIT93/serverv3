@@ -73,10 +73,14 @@ export class PostsService {
                 'postResource',
                 'postResource.companyResource',
                 'salaryTypeData',
+                'profile'
             ],
             where: { 
                 id,
-                status: 1
+                status: 1,
+                // applications: {
+                    
+                // }
             },
         });
     }

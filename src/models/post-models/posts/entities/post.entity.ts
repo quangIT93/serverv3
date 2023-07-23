@@ -9,6 +9,8 @@ import { BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOn
 import { PostResource } from "../../post-resource/entities/post-resource.entity";
 import { Bookmark } from "src/models/bookmarks/entities/bookmark.entity";
 import { Company } from "src/models/company-models/companies/entities/company.entity";
+import { Profile } from "src/models/profile-models/profiles/entities";
+// import { Application } from "src/models/application-model/applications/entities/application.entity";
 
 
 @Entity('posts')
@@ -148,7 +150,11 @@ export class Post extends BaseEntity {
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     companyInformation!: Company;
 
-    // set setPostResource(postResource: PostResource) {
-    //     this.postResource = postResource;
-    // }
+    // @OneToMany(() => Application, application => application.post)
+    // @JoinColumn({ name: 'id', referencedColumnName: 'postId' })
+    // applications!: Application[];
+
+    @ManyToOne(() => Profile, profile => profile.accountId)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    profile!: Profile;
 }

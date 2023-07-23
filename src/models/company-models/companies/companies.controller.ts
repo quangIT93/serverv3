@@ -131,6 +131,7 @@ export class CompaniesController {
   }
 
 
+  @ApiConsumes('multipart/form-data')
   @Patch(':id')
   @UseInterceptors(
     FilesInterceptor('logo', 1, {
@@ -157,13 +158,12 @@ export class CompaniesController {
         }),
       ImagePipe,
     )
-    logo: Express.Multer.File,
+    logo: Express.Multer.File | undefined,
     @Req() req: CustomRequest,
     // @Res() res: any,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     try {
-      console.log('updateCompanyDto', updateCompanyDto);
       if (!updateCompanyDto.validate()) {
         return {
           // Not thing to update
@@ -172,7 +172,7 @@ export class CompaniesController {
         };
       }
       updateCompanyDto.accountId = req.user?.id;
-      if (logo) {
+      if (logo && logo.originalname) {
         updateCompanyDto['logo'] = logo.originalname;
       }
       const company = await this.companiesService.update(
@@ -180,7 +180,7 @@ export class CompaniesController {
         updateCompanyDto,
       );
       let uploadedObject: any
-      if (logo) {
+      if (logo && logo.originalname) {
         uploadedObject = await this.awsService.uploadFile(logo, {
           BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
           id: String(company?.id),
@@ -192,7 +192,7 @@ export class CompaniesController {
       message: 'Company updated successfully',
       data: {
         ...company,
-        logo: uploadedObject.Location
+        logo: uploadedObject?.Location || company?.logo || null,
       },
     };
     } catch (error) {

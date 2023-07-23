@@ -7,7 +7,6 @@ import { AuthModule } from './authentication/auth.module';
 import { UserModule } from './models/users/users.module';
 import { MailModule } from './providers/mail/provider.module';
 import { QueueModule } from './providers/queue/provider.module';
-// import { JwtConfigModule } from './config/jwt/config.module';
 import { JwtAccessTokenServiceModule } from './providers/jwt/atk.provider.module';
 import { JwtRefreshTokenServiceModule } from './providers/jwt/rtk.provider.module';
 import { ProvincesModule } from './models/locations/provinces/provinces.module';
@@ -25,7 +24,6 @@ import { SalaryTypesModule } from './models/salary-types/salary-types.module';
 import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
 import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
-// import { AWSConfigModule } from './config/storage/aws/config.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
 import { AWSModule } from './providers/storage/aws/provider.module';
 import { CompaniesModule } from './models/company-models/companies/companies.module';
@@ -36,6 +34,8 @@ import { ProfilesCategoriesModule } from './models/profile-models/profiles-categ
 import { ProfilesEducationsModule } from './models/profile-models/profiles-educations/profiles-educations.module';
 import { ProfilesExperiencesModule } from './models/profile-models/profiles-experiences/profiles-experiences.module';
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
+import { ApplicationsModule } from './models/application-model/applications/applications.module';
+import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
 
 @Module({
   imports: [
@@ -46,7 +46,6 @@ import { ProfilesLocationsModule } from './models/profile-models/profiles-locati
     MailModule, 
     QueueModule,
     AWSModule,
-    // AWSConfigModule,
     AuthModule,
     JwtAccessTokenServiceModule,
     JwtRefreshTokenServiceModule,
@@ -73,6 +72,8 @@ import { ProfilesLocationsModule } from './models/profile-models/profiles-locati
     ProfilesEducationsModule,
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
+    ApplicationsModule,
+    HistoriesRecruiterModule,
   ],
   controllers: [AppController],
   providers: [

@@ -62,7 +62,7 @@ export class CreateCompanyDto {
     @IsNumber({}, { message: 'category_id must be a number' })
     categoryId!: number;
 
-    @ApiProperty({ type: 'number', format: 'binary', required: true })
+    @ApiProperty({ type: 'file', format: 'binary', required: true })
     @Transform(({ value } : { value: Express.Multer.File}) => value.originalname)
     @IsOptional()
     logo!: string;
