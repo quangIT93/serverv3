@@ -35,7 +35,7 @@ export class PostDetailSeialization extends Post {
     override ward!: Ward;
 
     @Exclude({ toPlainOnly: true })
-    override categories: ChildCategory[] | undefined;
+    override categories!: ChildCategory[];
 
     @Exclude({ toPlainOnly: true })
     override postImages: PostImages[] | undefined;
@@ -79,13 +79,13 @@ export class PostDetailSeialization extends Post {
     @Transform(({ value }) => new Date(value).getTime() || null)
     override expiredDate!: Date;
 
-    @Transform(({ value }) => +value || null)
+    @Transform(({ value }) => +value)
     override isInHouseData!: string;
 
-    @Transform(({ value }) => +value || null)
+    @Transform(({ value }) => +value)
     override moneyType!: string; 
 
-    @Transform(({ value }) => +value || null)
+    @Transform(({ value }) => +value)
     override isRemotely!: string;
 
     @Expose()
@@ -161,6 +161,12 @@ export class PostDetailSeialization extends Post {
     @Expose()
     get createdAtText() {
         return timeToTextTransform(this.createdAt, this.lang);
+    }
+
+    @Expose()
+    get image() {
+        if (!this.images) return this.categories[0].parentCategory.defaultPostImage;
+        return this.images[0].url;
     }
 
     bookmarked: boolean = false;
