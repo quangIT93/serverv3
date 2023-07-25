@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
     IsEmail,
+    IsNotEmpty,
     IsNumber,
     IsOptional,
     IsPhoneNumber,
@@ -23,6 +24,7 @@ export class CreatePostByAdminDto {
         default: 'Test',
     })
     @IsString()
+    @IsNotEmpty()
     @MaxLength(100)
     title!: string;
 

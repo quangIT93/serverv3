@@ -15,7 +15,6 @@ import { CreatePostCategoriesDto } from '../posts-categories/dto/create-posts-ca
 import { PostCategories } from '../posts-categories/entities/posts-categories.entity';
 import { CreatePostResourceDto } from '../post-resource/dto/create-post-resource.dto';
 import { PostResourceService } from '../post-resource/post-resource.service';
-// import { PostNormally } from './class/normallyPost.class';
 
 @Injectable()
 export class PostsService {
@@ -25,8 +24,8 @@ export class PostsService {
         private readonly awsService: AWSService,
         private readonly postImagesService: PostsImagesService,
         private readonly postCategoriesService: PostsCategoriesService,
-        private readonly postResourceService: PostResourceService
-    ) { }
+        private readonly postResourceService: PostResourceService,
+    ) {}
 
     async findByAccountId(accountId: string): Promise<Post[]> {
         return this.postsRepository
@@ -70,6 +69,7 @@ export class PostsService {
                 'companyInformation.ward.district.province',
                 'companyInformation.companySize',
                 'companyInformation.companyRole',
+                'companyInformation.category',
                 'postResource',
                 'postResource.companyResource',
                 'salaryTypeData',
@@ -77,7 +77,7 @@ export class PostsService {
             ],
             where: { 
                 id,
-                status: 1,
+                // status: 1,
                 // applications: {
                     
                 // }
@@ -88,7 +88,8 @@ export class PostsService {
     async create(dto: CreatePostByAdminDto): Promise<Post> {
         try {
             const post = this.postsRepository.create(dto.toEntity());
-            return this.postsRepository.save(post);
+            const data = await this.postsRepository.save(post);
+            return data;
         } catch (error) {
             console.log(error);
             throw error;
@@ -139,5 +140,9 @@ export class PostsService {
         const dto = new CreatePostResourceDto(id, url, companyId);
         const postResource = await this.postResourceService.create(dto);
         return postResource;
+    }
+
+    async deleteById(id: number): Promise<any> {
+        return this.postsRepository.delete(id);
     }
 }

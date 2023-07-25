@@ -4,7 +4,7 @@ import {
     Injectable,
     NestInterceptor,
 } from '@nestjs/common';
-import { PostNormally } from '../serialization/normallyPost.class';
+import { PostNormally } from '../serialization/normally-post.class';
 import { Observable, map } from 'rxjs';
 import { Post } from '../entities';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';

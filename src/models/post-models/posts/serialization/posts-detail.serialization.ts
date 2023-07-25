@@ -137,6 +137,7 @@ export class PostDetailSeialization extends Post {
             id: this.postResource.company,
             name: this.postResource.companyResource.name,
             logo: `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}`,
+            postUrl: this.postResource.url,
         }
     }
 

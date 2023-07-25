@@ -32,12 +32,14 @@ import { PostImagesPipe } from 'src/common/helper/transform/post-image.transform
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreatePostByAdminController } from './controller';
 import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
+import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
+        private readonly postNotification: PostNotificationsService
     ) { }
 
     @UseGuards(AuthGuard)
@@ -144,7 +146,7 @@ export class PostsController {
         @Req() req: CustomRequest,
         @Res() res: Response,
     ) {
-        return new CreatePostByAdminController(this.postsService, req, res)
+        return new CreatePostByAdminController(this.postsService, req, res, this.postNotification)
         .createPostByAdminController({dto, images});
     }
 }

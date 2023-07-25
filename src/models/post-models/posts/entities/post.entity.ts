@@ -117,7 +117,7 @@ export class Post extends BaseEntity {
             referencedColumnName: 'id'
         }
     })
-    categories: ChildCategory[] | undefined;
+    categories!: ChildCategory[];
 
     //Ward relation
     @ManyToOne(() => Ward, ward => ward.posts)

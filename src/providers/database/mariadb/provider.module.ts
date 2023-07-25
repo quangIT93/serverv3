@@ -23,7 +23,7 @@ import { AppConfigModule } from "src/config/app/config.module";
                 database: mariadbConfigService.database,
                 // synchronize: true,
                 // autoLoadEntities: true,
-                logging: appconfigService.mode === 'development' ? true : true,
+                logging: appconfigService.mode === 'development' ? true : false,
                 entities: [...mariadbConfigService.entities],
                 // entities: 
                 // migrations: mariadbConfigService.migrations,

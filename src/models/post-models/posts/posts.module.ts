@@ -1,4 +1,3 @@
-// import { TypeOrmExModule } from './../../database/typeorm-ex.module';
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Post } from "./entities";
@@ -12,8 +11,7 @@ import { PostsImagesModule } from "../posts-images/posts-images.module";
 import { PostResourceModule } from "../post-resource/post-resource.module";
 import { PostsCategoriesModule } from "../posts-categories/posts-categories.module";
 import { ApplicationsModule } from "src/models/application-model/applications/applications.module";
-// import { BookmarksService } from "src/models/bookmarks/bookmarks.service";
-
+import { PostNotificationsModule } from "src/models/notifications-model/post-notifications/post-notifications.module";
 
 @Module({
     imports: [
@@ -25,6 +23,7 @@ import { ApplicationsModule } from "src/models/application-model/applications/ap
         PostResourceModule,
         PostsCategoriesModule,
         ApplicationsModule,
+        PostNotificationsModule
     ],
     controllers: [
         PostsController,

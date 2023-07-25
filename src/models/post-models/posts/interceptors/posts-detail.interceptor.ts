@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 import { Post } from '../entities';
-import { PostDetailSeialization } from '../serialization/postsDetail.serialization';
+import { PostDetailSeialization } from '../serialization/posts-detail.serialization';
 
 @Injectable()
 export class PostDetailInterceptor implements NestInterceptor {

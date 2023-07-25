@@ -36,6 +36,9 @@ import { ProfilesExperiencesModule } from './models/profile-models/profiles-expe
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
 import { ApplicationsModule } from './models/application-model/applications/applications.module';
 import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
+import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
+import { FirebaseMessagingModule } from './services/firebase/messaging/firebase-messaging.module';
+import { PostNotificationsModule } from './models/notifications-model/post-notifications/post-notifications.module';
 
 @Module({
   imports: [
@@ -74,6 +77,9 @@ import { HistoriesRecruiterModule } from './models/history-models/histories-recr
     ProfilesLocationsModule,
     ApplicationsModule,
     HistoriesRecruiterModule,
+    FcmTokensModule,
+    FirebaseMessagingModule,
+    PostNotificationsModule,
   ],
   controllers: [AppController],
   providers: [

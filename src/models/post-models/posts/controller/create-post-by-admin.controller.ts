@@ -2,8 +2,9 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreatePostByAdminDto } from '../dto/admin-create-post.dto';
 import { Response } from 'express';
 import { PostsService } from '../posts.service';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { isArray } from 'class-validator';
+import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
 
 /**
  *
@@ -18,6 +19,7 @@ import { isArray } from 'class-validator';
  * save images to aws s3 -> image_id
  */
 
+@Injectable()
 export class CreatePostByAdminController {
 
     postService: PostsService;
@@ -28,6 +30,7 @@ export class CreatePostByAdminController {
         private readonly postsService: PostsService,
         req: CustomRequest,
         res: Response,
+        private readonly postNotification: PostNotificationsService,
     ) { 
         this.postService = postsService;
         this.req = req;
@@ -69,7 +72,9 @@ export class CreatePostByAdminController {
                 postCreated.id,
                 isArray(dto.categoriesId) ? dto.categoriesId : [dto.categoriesId],
             );
-    
+
+            this.postNotification.createWhenCreatePost(dto, postCreated.id);
+
             return this.res.status(HttpStatus.CREATED).json({
                 statusCode: HttpStatus.CREATED,
                 message: 'Create post successfully',
