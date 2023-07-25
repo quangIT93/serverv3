@@ -50,19 +50,23 @@ export class PostNotificationsService {
       return [];
     }
 
-    const postNotifications = new Set<CreatePostNotificationDto>();
+    const accounts = new Set<string>();
 
     // create notification for each token
     tokens.forEach((token) => {
-      const postNotification = new CreatePostNotificationDto();
-      postNotification.postId = postId;
-      postNotification.accountId = token.accountId;
-      postNotifications.add(postNotification);
+      accounts.add(token.accountId);
+    });
+
+    const dto = Array.from(accounts).map((accountId) => {
+      return {
+        accountId,
+        postId,
+      };
     });
 
 
     // save all dto in set
-    const notificationCreated = await this.postNotificationRepository.save([...postNotifications]);
+    const notificationCreated = await this.postNotificationRepository.save([...dto]);
 
     // send notification to all tokens
     const notification = {
