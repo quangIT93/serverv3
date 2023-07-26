@@ -27,8 +27,6 @@ export class PostImagesPipe implements PipeTransform<Express.Multer.File, Promis
     async transform(files: Express.Multer.File): Promise<any> {
 
         if (!files) return null;
-
-        
         const filesTransformed: PostImagesTransformed = {
             thumbnail: {} as Express.Multer.File,
             original: [],

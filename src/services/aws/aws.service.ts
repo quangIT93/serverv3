@@ -3,7 +3,7 @@ import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import { PostImagesTransformed } from "src/common/helper/transform/post-image.transform";
-import { BUCKET_IMAGE_POST_UPLOAD } from "src/common/constants";
+import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT, BUCKET_IMAGE_POST_UPLOAD } from "src/common/constants";
 
 @Injectable()
 export class AWSService {
@@ -43,8 +43,6 @@ export class AWSService {
             };
     
             const data = await s3.upload(params).promise();
-
-            console.log(data);
     
             return {
                 ...data,
@@ -112,8 +110,6 @@ export class AWSService {
                 });
             }
 
-            console.log(data);
-
             return data;
 
         } catch (error) {
@@ -127,6 +123,48 @@ export class AWSService {
             throw error;
         }
     }
+
+
+    async uploadImageToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket,
+          Key: `${BUCKET_IMAGE_PARENT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
+
+    async uploadImageDefaultToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket,
+          Key: `${BUCKET_IMAGE_PARENT_DEFAULT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
+      
 
     async deleteFile(key: string) {
         try {

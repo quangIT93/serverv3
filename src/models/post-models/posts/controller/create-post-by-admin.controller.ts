@@ -34,6 +34,7 @@ export async function createPostByAdminController(params: {
     postCategoriesService: PostsCategoriesService,
 }) {
     const { dto, req, res, images, postsService, awsService, postImageService, postResourceService, postCategoriesService } = params;
+
     try {
         // validate dto
         const isValidDto = dto.validate();
