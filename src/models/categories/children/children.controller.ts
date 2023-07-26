@@ -10,6 +10,8 @@ export class ChildrenController {
   constructor(private readonly childrenService: ChildrenService) {}
 
   @Post('create')
+  @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard, RoleGuard)
   async create(@Body() createChildDto: CreateChildDto) {
     const create = await this.childrenService.create(createChildDto);
 
@@ -23,11 +25,15 @@ export class ChildrenController {
   }
 
   @Get()
+  @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard, RoleGuard)
   findAll() {
     return this.childrenService.findAll();
   }
 
   @Get(':id')
+  @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string) {
     const dataChildren = await this.childrenService.findOne(+id);
 
@@ -83,6 +89,8 @@ export class ChildrenController {
   }
 
   @Get('/by-parent/:id')
+  @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard, RoleGuard)
   async getChildByIdParent(@Param('id') id: string) {
     const child = await this.childrenService.getChildByIdParent(+id);
 
