@@ -1,15 +1,15 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-export class createSearchSuggestDto {
+export class CreateSearchSuggestDto {
     
     @IsString()
     @IsNotEmpty()
-    keyword?: string;
+    keyword!: string;
 
     @IsNumber()
     @IsOptional()
-    status?: number = 1;
+    status!: number;
 
     @IsNumber()
-    order?: number = 0;
+    order!: number;
     
 }
