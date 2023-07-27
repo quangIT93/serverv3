@@ -37,6 +37,7 @@ export class FcmTokensService {
                 INNER JOIN child_categories
                 ON child_categories.id IN (${isArray(post.categoriesId) ? post.categoriesId.join(',') : post.categoriesId})
                 WHERE type_notification_platform.push_status = 1
+                AND keywords_notification.status = 1
                 AND "%${post.title}%" LIKE CONCAT('%', keywords_notification.keyword, '%')
                 AND fcm_tokens.account_id != '${post.accountId}'
                 AND (keywords_notification.district_status = 0 OR keywords_notification.district_id = wards.district_id)
