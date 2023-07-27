@@ -1,83 +1,42 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ParentCategory } from './entities/parent.entity';
 import { Repository } from 'typeorm';
 import { CreateParentDto } from './dto/create-parent.dto';
 import { UpdateParentDto } from './dto/update-parent.dto';
-import { ChildCategory } from '../children/entities/child.entity';
-import { UpdateChildDto } from '../children/dto/update-child.dto';
 import sharp from 'sharp';
 import { AWSService } from 'src/services/aws/aws.service';
-
+import { ChildrenService } from '../children/children.service';
 
 @Injectable()
 export class ParentService {
 
-  // create(createParentDto: CreateParentDto) {
-  //   return 'This action adds a new parent';
-  // }
+
   constructor(
     @InjectRepository(ParentCategory)
     private readonly parentRepository: Repository<ParentCategory>,
-    @InjectRepository(ChildCategory)
-    private readonly childRepository: Repository<ChildCategory>,
+    private readonly childrenService: ChildrenService,
     private readonly awsService: AWSService
   ){}
 
   findAll() {
-    return this.parentRepository.find({relations: ['childCategories']})
+    try {
+      return this.parentRepository.find({relations: ['childCategories']})
+    } catch (error) {
+      throw new Error('Could not find')
+    }
   }
 
   findOne(id: number) {
-    const parentCategory = this.parentRepository.findOne({where: {id: id} , relations: ['childCategories']}) 
-
-    if(!parentCategory) {
-      throw new NotFoundException('Parent not found')
+    try {
+      return this.parentRepository.findOne({where: {id: id} , relations: ['childCategories']}) 
+    } catch (error) {
+      throw new Error('Could not find')
     }
-
-    return parentCategory
   }
-
-  // update(id: number, updateParentDto: UpdateParentDto) {
-  //   return `This action updates a #${id} parent`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} parent`;
-  }
-
-  async disable(id: number) {
-    try {
-      const parent_categories = await this.parentRepository.findOne({ where: { id } });
-  
-      if (!parent_categories || parent_categories.status === 0) {
-        throw new Error('No parent categories or parent status = 1');
-      }
-    
-      const newParentCategories = {...parent_categories, status: 0}
-      const updatedParentCategory = await this.parentRepository.save(newParentCategories);
-     
-      return updatedParentCategory;
-    } catch (error) {
-      throw new Error('Error');
-    }
-  }
-
-  async enable(id: number) {
-    try {
-      const parent_categories = await this.parentRepository.findOne({ where: { id } });
-
-      if (!parent_categories || parent_categories.status === 1) {
-        throw new Error('No parent categories or parent status = 0');
-      }
-
-      const newParentCategories = {...parent_categories, status: 1}
-      const updatedParentCategory = await this.parentRepository.save(newParentCategories)
-
-      return updatedParentCategory;
-    } catch (error) {
-      throw new Error('Error')
-    }
   }
 
   async createParent(dto: CreateParentDto, files: { image: Express.Multer.File[], defaultPostImage: Express.Multer.File[] }) {
@@ -117,31 +76,15 @@ export class ParentService {
     try {
       const { childCategories, ...otherVariables } = updateParentDto;
 
-      const parent_categories = await this.parentRepository.findOne({ where: { id: idParent }})
-
       await this.parentRepository.update({id: idParent}, otherVariables)
 
-    if (!parent_categories ) {
-      throw new Error('No parent categories')
-    }
+      if (updateParentDto.childCategories?.[0]) {
 
-    // const updatedParentCategory = await this.parentRepository.update(id, updateParentDto)
+        const {id, ...dataChild} = updateParentDto.childCategories?.[0]
+        
+        await this.childrenService.update(id, dataChild);
 
-    childCategories?.map(async (parentCategory : UpdateChildDto) => {
-
-      const childCategories = await this.childRepository.findOne({ where: {
-        id: parentCategory.id,
-        parentCategoryId: parentCategory.parentCategoryId
-      }})
-      
-      if (!childCategories) {
-        throw new Error('No child categories')
       }
-
-      await this.childRepository.update({id : parentCategory.id}, parentCategory)
-    })
-
-    return true
     } catch (error) {
       throw new Error("Error while updating")
     }

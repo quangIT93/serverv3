@@ -1,24 +1,27 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
+import { IsNumber, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class CreateChildDto {
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
-    parentCategoryId?: number;
+    parentCategoryId!: number;
 
     @IsString()
+    @IsOptional()
     @MaxLength(255)
-    name?: string;
+    name!: string;
 
     @IsString()
+    @IsOptional()
     @MaxLength(255)
-    nameEn?: string
+    nameEn!: string
 
     @IsString()
+    @IsOptional()
     @MaxLength(255)
-    nameKor?: string
+    nameKor!: string
 
     @IsNumber()
     @IsOptional()
-    status?: number = 1;
+    status!: number;
 }

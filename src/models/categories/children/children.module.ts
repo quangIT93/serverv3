@@ -13,6 +13,7 @@ import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.modu
     JwtAccessTokenServiceModule
   ],
   controllers: [ChildrenController],
-  providers: [ChildrenService]
+  providers: [ChildrenService],
+  exports: [ChildrenService]
 })
 export class ChildrenModule {}

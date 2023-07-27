@@ -1,86 +1,64 @@
-import { Controller, Get, Param, Delete, Post, Res, NotFoundException, Body } from '@nestjs/common';
+import { Controller, Get, Param, Delete, Post, Body, UseGuards, HttpStatus, Put, BadRequestException } from '@nestjs/common';
 import { ChildrenService } from './children.service';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
 import { CreateChildDto } from './dto/create-child.dto';
-// import { UpdateChildDto } from './dto/update-child.dto';
-import { Response } from 'express';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { RoleGuard } from 'src/authentication/role.guard';
+import { UpdateChildDto } from './dto/update-child.dto';
 @Controller('children')
 export class ChildrenController {
   constructor(private readonly childrenService: ChildrenService) {}
 
   @Post('create')
   @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   async create(@Body() createChildDto: CreateChildDto) {
-    const create = await this.childrenService.create(createChildDto);
 
-    if (!create) {
-      throw new NotFoundException('Create failed');
+    try {
+      await this.childrenService.create(createChildDto);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'created successfully'
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message)
+      }
+      throw new BadRequestException('Error creating search')
     }
-    return {
-      status: 200,
-      message: 'created successfully'
-    }
+  
   }
 
   @Get()
   @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   findAll() {
     return this.childrenService.findAll();
   }
 
   @Get(':id')
   @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string) {
-    const dataChildren = await this.childrenService.findOne(+id);
+    return {
+      status: HttpStatus.OK,
+      data: await this.childrenService.findOne(+id)
+    }
+  }
+
+  @Put('update/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
+  async update(@Param('id') id: number,@Body() dto: UpdateChildDto) {    
+
+    await this.childrenService.update(id, dto)
 
     return {
-      status: 200,
-      message: 'Success',
-      data: dataChildren
+        statusCode: HttpStatus.OK,
+        message: 'update search successfully',
     }
-  }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateChildDto: UpdateChildDto) {
-  //   return this.childrenService.update(+id, updateChildDto);
-  // }
-  @Post('disable/:id')
-  @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
-  async disable(@Param('id') id: number, @Res() res: Response) {
-    const updateChildUpdate = await this.childrenService.disable(id);
-
-    if (!updateChildUpdate) {
-      throw new NotFoundException('Parent not found');
-    }
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Child disable success',
-      updateChildUpdate
-    })
-  }
-
-  @Post('enable/:id')
-  @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
-  async enable(@Param('id') id: number, @Res() res: Response) {
-
-    const updateChildUpdate = await this.childrenService.enable(id);
-
-    if (!updateChildUpdate) {
-      throw new NotFoundException('Child not found');
-    }
-
-    return res.status(200).json({
-      status: 200,
-      message: 'Child disable success',
-      updateChildUpdate
-    })
   }
 
   @Delete(':id')
@@ -90,14 +68,11 @@ export class ChildrenController {
 
   @Get('/by-parent/:id')
   @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   async getChildByIdParent(@Param('id') id: string) {
-    const child = await this.childrenService.getChildByIdParent(+id);
-
     return {
-      status: 200,
-      message: 'Success',
-      data: child
+      status: HttpStatus.OK,
+      data: await this.childrenService.getChildByIdParent(+id)
     }
   }
 }

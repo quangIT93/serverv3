@@ -16,14 +16,14 @@ export class SearchService {
         return this.searchRepository
         .createQueryBuilder('suggest_search')
         .select([
-            'id', 
-            'keyword', 
-            'status',
-            'order',
-            'createdAt', 
-            'updatedAt'
+            'suggest_search.id', 
+            'suggest_search.keyword', 
+            'suggest_search.status',
+            'suggest_search.order',
+            'suggest_search.createdAt', 
+            'suggest_search.updatedAt'
         ])
-        .orderBy('order', 'ASC')
+        .orderBy('suggest_search.order', 'ASC')
         .getMany();
     }
 
