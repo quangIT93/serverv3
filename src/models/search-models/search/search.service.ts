@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Search } from './entities/search.entity';
 import { Repository } from 'typeorm';
 import { CreateSearchSuggestDto } from './dto/create-search.dto';
-import { UpdateSearchDto } from './dto/update-search.sto';
+import { UpdateSearchSuggestDto } from './dto/update-search.sto';
 
 @Injectable()
 export class SearchService {
@@ -36,7 +36,27 @@ export class SearchService {
         }
     }
 
-    async update(id : number, update: UpdateSearchDto) {
+    // async disable(id : number) {
+    //     const search = await this.searchRepository.findOne({where: {id: id , status: 1}});
+
+    //     if (!search) {
+    //         throw new NotFoundException('Search suggest not found');
+    //     }
+
+    //     return this.searchRepository.update(id , {status: 0})
+    // }
+
+    // async enable(id: number) {
+    //     const search = await this.searchRepository.findOne({where: {id: id , status: 0}});
+
+    //     if (!search) {
+    //         throw new NotFoundException('Search suggest not found');
+    //     }
+
+    //     return this.searchRepository.update(id , {status: 1})
+    // }
+
+    async update(id : number, update: UpdateSearchSuggestDto) {
         const search = await this.searchRepository.findOne({where: {id: id }});
 
         if (!search) {
