@@ -38,6 +38,8 @@ import { ProfilesExperiencesModule } from './models/profile-models/profiles-expe
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
 import { BannersController } from './models/banners/banners.controller';
 import { BannersModule } from './models/banners/banners.module';
+import { SearchModule } from './models/search-models/search/search.module';
+
 
 @Module({
   imports: [
@@ -76,6 +78,7 @@ import { BannersModule } from './models/banners/banners.module';
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
     BannersModule,
+    SearchModule
   ],
   controllers: [AppController, BannersController],
   providers: [
