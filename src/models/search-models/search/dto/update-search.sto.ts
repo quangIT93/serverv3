@@ -1,13 +1,9 @@
-import { IsNotEmpty, IsNumber, IsString, MaxLength } from "class-validator";
+import { PartialType } from "@nestjs/swagger";
+import { CreateSearchSuggestDto } from "./create-search.dto";
 
-export class UpdateSearchDto {
-
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(255)
-    keyword?: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    order?:number;
+export class UpdateSearchDto extends PartialType(CreateSearchSuggestDto){
+    constructor() 
+    { 
+        super(); 
+    }
 }

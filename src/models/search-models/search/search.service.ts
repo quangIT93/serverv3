@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Search } from './entities/search.entity';
 import { Repository } from 'typeorm';
-import { createSearchSuggestDto } from './dto/create-search.dto';
+import { CreateSearchSuggestDto } from './dto/create-search.dto';
 import { UpdateSearchDto } from './dto/update-search.sto';
 
 @Injectable()
@@ -27,32 +27,13 @@ export class SearchService {
         .getMany();
     }
 
-    async create(createSearch : createSearchSuggestDto) {
+    async create(createSearch : CreateSearchSuggestDto) {
         try {
-            return await this.searchRepository.save(createSearch);
+            const search = await this.searchRepository.create(createSearch);
+            return await this.searchRepository.save(search);
         } catch (error) {
             throw new Error('Error creating search')
         }
-    }
-
-    async disable(id : number) {
-        const search = await this.searchRepository.findOne({where: {id: id , status: 1}});
-
-        if (!search) {
-            throw new NotFoundException('Search suggest not found');
-        }
-
-        return this.searchRepository.update(id , {status: 0})
-    }
-
-    async enable(id: number) {
-        const search = await this.searchRepository.findOne({where: {id: id , status: 0}});
-
-        if (!search) {
-            throw new NotFoundException('Search suggest not found');
-        }
-
-        return this.searchRepository.update(id , {status: 1})
     }
 
     async update(id : number, update: UpdateSearchDto) {
@@ -62,7 +43,9 @@ export class SearchService {
             throw new NotFoundException('Search suggest not found');
         }
 
-        return this.searchRepository.update(id, update)
+        const newUpdate = this.searchRepository.create(update)
+
+        return this.searchRepository.update(id, newUpdate)
     }
 
     async searchById(idNumber: number) {

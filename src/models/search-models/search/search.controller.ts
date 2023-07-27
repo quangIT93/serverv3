@@ -1,9 +1,11 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { createSearchSuggestDto } from './dto/create-search.dto';
+import { CreateSearchSuggestDto } from './dto/create-search.dto';
 import { UpdateSearchDto } from './dto/update-search.sto';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { RoleGuard } from 'src/authentication/role.guard';
 
 @Controller('suggest_search')
 export class SearchController {
@@ -11,32 +13,28 @@ export class SearchController {
 
     @Get()
     @Roles(Role.ADMIN)
-    // @UseGuards(AuthGuard, RoleGuard)
+    @UseGuards(AuthGuard, RoleGuard)
     async findAll() {
-        const search = await this.searchService.search()
-
         return {
-            statusCode: 200,
-            data: search
+            statusCode: HttpStatus.OK,
+            data: await this.searchService.search()
         }
     }
 
     @Get('/:id')
     @Roles(Role.ADMIN)
-    // @UseGuards(AuthGuard, RoleGuard)
+    @UseGuards(AuthGuard, RoleGuard)
     async findById(@Param('id') id: number) {
-        const search = await this.searchService.searchById(id)
-
         return {
-            statusCode: 200,
-            data: search
+            statusCode: HttpStatus.OK,
+            data: await this.searchService.searchById(id)
         }
     }
 
     @Post('create')
     @Roles(Role.ADMIN)
-    // @UseGuards(AuthGuard, RoleGuard)
-    async create(@Body() createSearchSuggestDto: createSearchSuggestDto) { 
+    @UseGuards(AuthGuard, RoleGuard)
+    async create(@Body() createSearchSuggestDto: CreateSearchSuggestDto) { 
         const createSearch = await this.searchService.create(createSearchSuggestDto)
 
         if (!createSearch) { 
@@ -44,51 +42,21 @@ export class SearchController {
         }
 
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: 'create search successfully'
         }
     }
 
-    @Get('disable/:id')
-    @Roles(Role.ADMIN)
-    // @UseGuards(AuthGuard, RoleGuard)
-    async disable(@Param('id') id: number) {
-        const updateSearch = await this.searchService.disable(id)
-
-        if (updateSearch.affected === 0){
-            throw new NotFoundException('Update search failed')
-        }
-
-        return {
-            statusCode: 200,
-            message: 'update search successfully'
-        }
-    }
-
-
-    @Get('enable/:id')
-    @Roles(Role.ADMIN)
-    // @UseGuards(AuthGuard, RoleGuard)
-    async enable(@Param('id') id: number) {
-        const updateSearch = await this.searchService.enable(id)
-
-        if (updateSearch.affected === 0){
-            throw new NotFoundException('Update search failed')
-        }
-
-        return {
-            statusCode: 200,
-            message: 'update search successfully'
-        }
-    }
-
     @Put('update/:id')
+    @Roles(Role.ADMIN)
+    @UseGuards(AuthGuard, RoleGuard)
     async update(@Param('id') id: number, @Body() update : UpdateSearchDto) {
+
         const newUpdate = {...update, updatedAt: new Date}
         await this.searchService.update(id, newUpdate)
 
         return {
-            statusCode: 200,
+            statusCode: HttpStatus.OK,
             message: 'update search successfully',
         }
     }
