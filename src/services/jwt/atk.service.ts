@@ -8,7 +8,7 @@
  * @class
  */
 
-import { ForbiddenException, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "src/common/interfaces/jwtPayload.interface";
 
