@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional, IsString } from "class-validator";
-export class CreateSearchSuggestDto {
+export class CreateSuggestSearchDto {
     
     @IsString()
     @IsOptional()

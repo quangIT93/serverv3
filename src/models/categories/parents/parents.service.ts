@@ -83,10 +83,10 @@ export class ParentService {
   async createParent(dto: CreateParentDto, files: { image: Express.Multer.File[], defaultPostImage: Express.Multer.File[] }) {
     try {
       const parent = new ParentCategory();
-      parent.status = dto.status || 1;
-      parent.name = dto.name ? dto.name : '';
-      parent.nameEn = dto.nameEn ? dto.nameEn : '';
-      parent.nameKor = dto.nameKor ? dto.nameKor : '';
+      parent.status = dto.status;
+      parent.name = dto.name;
+      parent.nameEn = dto.nameEn;
+      parent.nameKor = dto.nameKor;
 
       // save with s3
       if (files.image && files.image.length > 0) {

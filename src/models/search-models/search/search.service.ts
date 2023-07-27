@@ -1,70 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Search } from './entities/search.entity';
+import { SuggestSearch } from './entities/search.entity';
 import { Repository } from 'typeorm';
-import { CreateSearchSuggestDto } from './dto/create-search.dto';
-import { UpdateSearchSuggestDto } from './dto/update-search.sto';
+import { CreateSuggestSearchDto } from './dto/create-search.dto';
+import { UpdateSuggestSearchDto } from './dto/update-search.sto';
 
 @Injectable()
 export class SearchService {
     constructor(
-        @InjectRepository(Search)
-        private readonly searchRepository: Repository<Search>,
+        @InjectRepository(SuggestSearch)
+        private readonly searchRepository: Repository<SuggestSearch>,
     ) { }
     
     async search() {
         return this.searchRepository
         .createQueryBuilder('suggest_search')
         .select([
-            'suggest_search.id', 
-            'suggest_search.keyword', 
-            'suggest_search.status',
-            'suggest_search.order',
-            'suggest_search.createdAt', 
-            'suggest_search.updatedAt'
+            'id', 
+            'keyword', 
+            'status',
+            'order',
+            'createdAt', 
+            'updatedAt'
         ])
-        .orderBy('suggest_search.order', 'ASC')
+        .orderBy('order', 'ASC')
         .getMany();
     }
 
-    async create(createSearch : CreateSearchSuggestDto) {
+    async create(createSearch : CreateSuggestSearchDto) {
         try {
-            const search = await this.searchRepository.create(createSearch);
+            const search = this.searchRepository.create(createSearch);
             return await this.searchRepository.save(search);
         } catch (error) {
             throw new Error('Error creating search')
         }
     }
 
-    // async disable(id : number) {
-    //     const search = await this.searchRepository.findOne({where: {id: id , status: 1}});
-
-    //     if (!search) {
-    //         throw new NotFoundException('Search suggest not found');
-    //     }
-
-    //     return this.searchRepository.update(id , {status: 0})
-    // }
-
-    // async enable(id: number) {
-    //     const search = await this.searchRepository.findOne({where: {id: id , status: 0}});
-
-    //     if (!search) {
-    //         throw new NotFoundException('Search suggest not found');
-    //     }
-
-    //     return this.searchRepository.update(id , {status: 1})
-    // }
-
-    async update(id : number, update: UpdateSearchSuggestDto) {
-        const search = await this.searchRepository.findOne({where: {id: id }});
-
-        if (!search) {
-            throw new NotFoundException('Search suggest not found');
-        }
-
-        const newUpdate = this.searchRepository.create(update)
-
+    async update(id : number, update: UpdateSuggestSearchDto) {
+        const newUpdate = this.searchRepository.create(update);
         return this.searchRepository.update(id, newUpdate)
     }
 

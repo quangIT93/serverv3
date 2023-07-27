@@ -1,7 +1,7 @@
-import { Body, Controller, Get, HttpStatus, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { CreateSearchSuggestDto } from './dto/create-search.dto';
-import { UpdateSearchDto } from './dto/update-search.sto';
+import { CreateSuggestSearchDto } from './dto/create-search.dto';
+import { UpdateSuggestSearchDto } from './dto/update-search.sto';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
 import { AuthGuard } from 'src/authentication/auth.guard';
@@ -34,26 +34,23 @@ export class SearchController {
     @Post('create')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
-    async create(@Body() createSearchSuggestDto: CreateSearchSuggestDto) { 
-        const createSearch = await this.searchService.create(createSearchSuggestDto)
-
-        if (!createSearch) { 
-            throw new NotFoundException('Create Search')
-        }
-
-        return {
-            statusCode: HttpStatus.OK,
-            message: 'create search successfully'
+    async create(@Body() createSuggestSearchDto: CreateSuggestSearchDto) { 
+        try {
+            await this.searchService.create(createSuggestSearchDto)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new BadRequestException(error.message)
+            }
+            throw new BadRequestException('Error creating search')
         }
     }
 
     @Put('update/:id')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
-    async update(@Param('id') id: number, @Body() update : UpdateSearchDto) {
+    async update(@Param('id') id: number, @Body() update : UpdateSuggestSearchDto) {
 
-        const newUpdate = {...update, updatedAt: new Date}
-        await this.searchService.update(id, newUpdate)
+        await this.searchService.update(id, update)
 
         return {
             statusCode: HttpStatus.OK,

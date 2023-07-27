@@ -1,7 +1,7 @@
 import { Column, Entity,PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('suggest_search')
-export class Search {
+export class SuggestSearch {
     
     @PrimaryGeneratedColumn('increment')
     id!: number;

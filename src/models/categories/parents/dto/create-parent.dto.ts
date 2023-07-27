@@ -13,7 +13,7 @@ export class CreateParentDto {
     @IsString()
     @IsOptional()
     @MaxLength(100)
-    name?: string;
+    name!: string;
 
     @ApiProperty({
         type: 'file',
@@ -22,7 +22,7 @@ export class CreateParentDto {
         isArray: true,
     })
     @IsOptional()
-    image?: string[] | [] | string;
+    image!: string;
 
     @ApiProperty({
         type: 'file',
@@ -31,7 +31,7 @@ export class CreateParentDto {
         isArray: true,
     })
     @IsOptional()
-    defaultPostImage?: string[] | [] | string;
+    defaultPostImage!: string;
 
     @ApiProperty({
         type: 'string',
@@ -42,7 +42,7 @@ export class CreateParentDto {
     @IsString()
     @MaxLength(100)
     @IsOptional()
-    nameEn?: string;
+    nameEn!: string;
 
     @ApiProperty({
         type: 'string',
@@ -53,13 +53,13 @@ export class CreateParentDto {
     @IsString()
     @MaxLength(100)
     @IsOptional()
-    nameKor?: string;
+    nameKor!: string;
 
     @ApiProperty({ type: 'number', format: 'number', required: true, default: 1 })
     @IsNumber({ allowNaN: false, allowInfinity: false })
     @IsOptional()
-    status?:number = 1;
+    status!: number;
 
     @IsOptional()
-    childCategories?: ChildCategory[] | undefined;
+    childCategories!: ChildCategory[] | undefined;
 }
