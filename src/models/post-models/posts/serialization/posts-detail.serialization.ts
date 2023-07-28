@@ -133,6 +133,7 @@ export class PostDetailSeialization extends Post {
 
     @Expose()
     get companyResourceData() {
+        if (!this.postResource) return null;
         return {
             id: this.postResource?.company ? this.postResource.company : null,
             name: this.postResource.companyResource.name,
