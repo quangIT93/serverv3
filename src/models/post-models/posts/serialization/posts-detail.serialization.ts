@@ -134,10 +134,10 @@ export class PostDetailSeialization extends Post {
     @Expose()
     get companyResourceData() {
         return {
-            id: this.postResource?.company ?? null,
+            id: this.postResource?.company ? this.postResource.company : null,
             name: this.postResource.companyResource.name,
-            logo: `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}`,
-            postUrl: this.postResource.url ?? null,
+            logo: this.postResource.companyResource.logo ? `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}` : null,
+            postUrl: this.postResource.url ? this.postResource.url : null,
         }
     }
 
