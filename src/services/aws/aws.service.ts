@@ -3,6 +3,7 @@ import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { AWSServiceInterface, UploadFileResult, UploadOpions } from "./awsService.interface";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
+import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
 
 @Injectable()
 export class AWSService implements AWSServiceInterface {
@@ -109,20 +110,50 @@ export class AWSService implements AWSServiceInterface {
     }
 
     async deleteMultipleFiles(keys: string[]): Promise<void> {
-        const s3 = this.getS3();
+        // const s3 = this.getS3();
 
         if (!keys) {
             throw new Error('Keys is not exist');
         }
-
-        const params = keys.map((key) => {
-            return {
-                Bucket: this.awsConfig.bucket,
-                Key: key,
-            };
-        });
-
-        await Promise.all(params.map((param) => s3.deleteObject(param).promise()));
     }
 
+    async uploadImageToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket,
+          Key: `${BUCKET_IMAGE_PARENT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
+
+    async uploadImageDefaultToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket,
+          Key: `${BUCKET_IMAGE_PARENT_DEFAULT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
 }
