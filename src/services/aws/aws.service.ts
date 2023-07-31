@@ -40,7 +40,7 @@ export class AWSService implements AWSServiceInterface {
         const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
 
         const params: PutObjectRequest = {
-            Bucket: this.awsConfig.bucket,
+            Bucket: this.awsConfig.bucket || '',
             Key: key,
             Body: file.buffer,
         };
@@ -76,7 +76,7 @@ export class AWSService implements AWSServiceInterface {
             const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
 
             params.push({
-                Bucket: this.awsConfig.bucket,
+                Bucket: this.awsConfig.bucket || '',
                 Key: key,
                 Body: file.buffer,
             });
@@ -101,7 +101,7 @@ export class AWSService implements AWSServiceInterface {
         }
 
         const params = {
-            Bucket: this.awsConfig.bucket,
+            Bucket: this.awsConfig.bucket || '',
             Key: key,
         };
 
@@ -117,7 +117,7 @@ export class AWSService implements AWSServiceInterface {
 
         const params = keys.map((key) => {
             return {
-                Bucket: this.awsConfig.bucket,
+                Bucket: this.awsConfig.bucket || '',
                 Key: key,
             };
         });
