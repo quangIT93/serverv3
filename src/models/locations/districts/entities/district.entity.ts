@@ -13,3 +13,4 @@ export class District extends Location {
     @JoinColumn({ name: 'province_id' })
     province!: Province;
 }
+    

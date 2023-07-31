@@ -28,6 +28,10 @@ export class AuthGuard implements CanActivate {
             }
             Logger.log('AuthGuard: canActivate');
             request.user = await this.validateToken(request.headers.authorization);
+
+            Logger.log(request.user);
+
+
             return true;
         } catch (error) {
             throw error;
