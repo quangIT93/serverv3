@@ -21,8 +21,6 @@ import { PostsCategoriesModule } from './models/post-models/posts-categories/pos
 import { PostsImagesModule } from './models/post-models/posts-images/posts-images.module';
 import { JobTypesModule } from './models/job-types/job-types.module';
 import { SalaryTypesModule } from './models/salary-types/salary-types.module';
-import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
-import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
 import { AWSModule } from './providers/storage/aws/provider.module';
@@ -34,6 +32,10 @@ import { ProfilesCategoriesModule } from './models/profile-models/profiles-categ
 import { ProfilesEducationsModule } from './models/profile-models/profiles-educations/profiles-educations.module';
 import { ProfilesExperiencesModule } from './models/profile-models/profiles-experiences/profiles-experiences.module';
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
+import { BannersController } from './models/banners/banners.controller';
+import { BannersModule } from './models/banners/banners.module';
+import { SearchModule } from './models/search-models/suggest-search/search.module';
+
 import { ApplicationsModule } from './models/application-model/applications/applications.module';
 import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
 import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
@@ -63,8 +65,6 @@ import { PostNotificationsModule } from './models/notifications-model/post-notif
     PostsImagesModule,
     JobTypesModule,
     SalaryTypesModule,
-    CompanyResourcesModule,
-    PostResourceModule,
     BookmarksModule,
     MulterConfigModule,
     CompaniesModule,
@@ -75,13 +75,15 @@ import { PostNotificationsModule } from './models/notifications-model/post-notif
     ProfilesEducationsModule,
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
+    BannersModule,
+    SearchModule,
     ApplicationsModule,
     HistoriesRecruiterModule,
     FcmTokensModule,
     FirebaseMessagingModule,
     PostNotificationsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, BannersController],
   providers: [
     AppService,
   ],

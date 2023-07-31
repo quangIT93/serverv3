@@ -11,6 +11,7 @@ import { CompanySize } from './entities/company-size.entity';
     ])
   ],
   controllers: [CompanySizesController],
-  providers: [CompanySizesService]
+  providers: [CompanySizesService],
+  exports: [CompanySizesService]
 })
 export class CompanySizesModule {}
