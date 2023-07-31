@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { AWSServiceInterface, UploadFileResult, UploadOpions } from "./awsService.interface";
@@ -8,6 +8,7 @@ import { PutObjectRequest } from "aws-sdk/clients/s3";
 export class AWSService implements AWSServiceInterface {
 
     constructor(
+        @Inject(forwardRef(() => AWSConfigService))
         private readonly awsConfig: AWSConfigService,
     ) {}
 

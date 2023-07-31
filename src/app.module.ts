@@ -21,8 +21,6 @@ import { PostsCategoriesModule } from './models/post-models/posts-categories/pos
 import { PostsImagesModule } from './models/post-models/posts-images/posts-images.module';
 import { JobTypesModule } from './models/job-types/job-types.module';
 import { SalaryTypesModule } from './models/salary-types/salary-types.module';
-import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
-import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
 import { AWSModule } from './providers/storage/aws/provider.module';
@@ -63,8 +61,6 @@ import { PostNotificationsModule } from './models/notifications-model/post-notif
     PostsImagesModule,
     JobTypesModule,
     SalaryTypesModule,
-    CompanyResourcesModule,
-    PostResourceModule,
     BookmarksModule,
     MulterConfigModule,
     CompaniesModule,

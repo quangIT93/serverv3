@@ -11,7 +11,9 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class AWSConfigService {
-    constructor(private awsConfig: ConfigService) {}
+    constructor(
+        private awsConfig: ConfigService,
+    ) {}
 
     get accessId(): string {
         return this.awsConfig.get<string>('aws.accessId') ?? ''
@@ -32,4 +34,5 @@ export class AWSConfigService {
     get prefixUrl(): string {
         return this.awsConfig.get<string>('aws.prefixUrl') ?? ''
     }
+
 }

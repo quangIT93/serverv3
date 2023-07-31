@@ -1,4 +1,4 @@
-import { CompanyResource } from "src/models/company-resources/entities/company-resources.entity";
+import { CompanyResource } from 'src/models/company-resources/entities/company-resources.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { Post } from "../../posts/entities";
 

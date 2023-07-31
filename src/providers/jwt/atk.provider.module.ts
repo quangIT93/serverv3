@@ -20,8 +20,8 @@ import { JwtAccessTokenService } from 'src/services/jwt/atk.service';
         }),
     }),
   ],
-  providers: [JwtAccessTokenService],
-  exports: [JwtAccessTokenService],
+  providers: [JwtAccessTokenService, JwtConfigService],
+  exports: [JwtAccessTokenService, JwtConfigService],
   controllers: [],
 })
 export class JwtAccessTokenServiceModule {}
