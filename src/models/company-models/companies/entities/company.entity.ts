@@ -3,6 +3,7 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -11,6 +12,7 @@ import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { Ward } from 'src/models/locations/wards/entities';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
+import { CompanyImage } from '../../company-images/entities/company-image.entity';
 
 @Entity('companies')
 export class Company {
@@ -107,4 +109,8 @@ export class Company {
     @OneToOne(() => Profile, (profile) => profile.accountId)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
+
+    @OneToMany(() => CompanyImage, (companyImage) => companyImage.companyId)
+    @JoinColumn({ name: 'company_id' })
+    companyImages!: CompanyImage[];
 }

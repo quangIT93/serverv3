@@ -67,5 +67,11 @@ export class CreateCompanyDto {
     @IsOptional()
     logo!: string;
 
+    // list images
+    @ApiProperty({ type: 'array', items: { type: 'file', format: 'binary' }, required: false })
+    @Transform(({ value } : { value: Express.Multer.File[]}) => value.map((file) => file.originalname))
+    @IsOptional()
+    images!: Express.Multer.File[] | undefined;
+
     [key: string]: any;
 }

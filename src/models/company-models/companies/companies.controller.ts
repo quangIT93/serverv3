@@ -21,7 +21,10 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ApiBasicAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { ImageValidator } from 'src/common/decorators/validation/image-validator/image.validator';
 import { ImagePipe } from 'src/common/helper/transform/image.transform';
 import { AWSService } from 'src/services/aws/aws.service';
@@ -29,6 +32,7 @@ import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
+import { CompanyImagesPipe } from './interceptors/image.interceptor';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -44,51 +48,56 @@ export class CompaniesController {
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(
-    FilesInterceptor('logo', 1, {
-      fileFilter: (_req, _file, cb) => {
-        if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
+    FileFieldsInterceptor(
+      [
+        { name: 'logo', maxCount: 1 },
+        { name: 'images', maxCount: 5 },
+      ],
+      {
+        limits: {
+          fileSize: 1024 * 1024 * 6,
+        },
       },
-    }),
+    ),
   )
   async create(
     @UploadedFiles(
       new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
-        .addValidator(
-          new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }),
-        )
+        // .addValidator(
+        //   new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }),
+        // )
         .build({
           fileIsRequired: false,
           exceptionFactory: (errors) => {
+            console.log(errors);
             return new Error(errors);
           },
         }),
-      ImagePipe,
+      CompanyImagesPipe,
     )
     logo: Express.Multer.File,
+    images: Express.Multer.File[] | undefined,
     @Req() req: CustomRequest,
     @Res() res: any,
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
     try {
+      console.log(logo, images);
       createCompanyDto.accountId = req.user?.id;
       createCompanyDto['logo'] = logo.originalname;
+      createCompanyDto.images = images ?? [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
         BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
-  
+
       return res.status(HttpStatus.CREATED).json({
         statusCode: HttpStatus.CREATED,
         message: 'Company created successfully',
         data: {
           ...company,
-          logo: uploadedObject.Location
-          ,
+          logo: uploadedObject.Location,
         },
       });
     } catch (error) {
@@ -130,7 +139,6 @@ export class CompaniesController {
     return this.companiesService.findByAccountId(req.user?.id);
   }
 
-
   @ApiConsumes('multipart/form-data')
   @Patch(':id')
   @UseInterceptors(
@@ -159,6 +167,7 @@ export class CompaniesController {
       ImagePipe,
     )
     logo: Express.Multer.File | undefined,
+    // images: Express.Multer.File[] | undefined,
     @Req() req: CustomRequest,
     // @Res() res: any,
     @Body() updateCompanyDto: UpdateCompanyDto,
@@ -179,7 +188,7 @@ export class CompaniesController {
         +req.params['id'],
         updateCompanyDto,
       );
-      let uploadedObject: any
+      let uploadedObject: any;
       if (logo && logo.originalname) {
         uploadedObject = await this.awsService.uploadFile(logo, {
           BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
@@ -187,14 +196,14 @@ export class CompaniesController {
         });
       }
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Company updated successfully',
-      data: {
-        ...company,
-        logo: uploadedObject?.Location || company?.logo || null,
-      },
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Company updated successfully',
+        data: {
+          ...company,
+          logo: uploadedObject?.Location || company?.logo || null,
+        },
+      };
     } catch (error) {
       if (error instanceof Error) {
         return {
@@ -208,7 +217,6 @@ export class CompaniesController {
       };
     }
   }
-
 
   @ApiConsumes('multipart/form-data')
   @ApiBasicAuth('JWT-auth')

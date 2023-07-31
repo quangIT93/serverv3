@@ -29,6 +29,8 @@ export class ImagePipe implements PipeTransform<Express.Multer.File, Promise<Exp
         const fileTransformed: ImageTransformed = {
             image: {} as Express.Multer.File,
         };
+
+        console.log('files', files);
         
         if (Array.isArray(files)) {
 
