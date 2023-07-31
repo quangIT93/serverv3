@@ -12,11 +12,6 @@ export class PostsImagesService {
     private readonly postsImagesRepository: Repository<PostImages>,
   ) { }
 
-  create(createPostsImageDto: CreatePostsImageDto) {
-    console.log(createPostsImageDto);
-    return 'This action adds a new postsImage';
-  }
-
   findAll() {
     return `This action returns all postsImages`;
   }
@@ -34,29 +29,16 @@ export class PostsImagesService {
     return `This action removes a #${id} postsImage`;
   }
 
-  async createPostsImage(dto: CreatePostsImageDto): Promise<PostImages[]> {
-    const { postId, images } = dto;
-
-    //postId is number
-    //images is string[]
-    const data = [];
-
-    for (let i = 1; i < images.length; i++) {
-      const createPostsImage = new PostImages();
-      if (i == 0) {
-        createPostsImage.type = 1;
-      } else {
-        createPostsImage.type = 0;
-      }
-      createPostsImage.postId = postId;
-      createPostsImage.image = images[i];
-      const result = await this.postsImagesRepository.save(createPostsImage);
-      data.push(result);
-    }
-
-    return data;
-    
+  async create(dto: CreatePostsImageDto): Promise<PostImages> {
+    const newPostImage = this.postsImagesRepository.create(dto);
+    return this.postsImagesRepository.save(newPostImage);
   }
 
+  async createPostImages(dto: CreatePostsImageDto[]): Promise<PostImages[]> {
+    const newPostImages = dto.map((item) => {
+      return this.postsImagesRepository.create(item);
+    });
 
+    return this.postsImagesRepository.save(newPostImages);
+  }
 }

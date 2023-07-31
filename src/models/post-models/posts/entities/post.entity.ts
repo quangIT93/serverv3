@@ -8,6 +8,9 @@ import { User } from "src/models/users/entities";
 import { BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PostResource } from "../../post-resource/entities/post-resource.entity";
 import { Bookmark } from "src/models/bookmarks/entities/bookmark.entity";
+import { Company } from "src/models/company-models/companies/entities/company.entity";
+import { Profile } from "src/models/profile-models/profiles/entities";
+// import { Application } from "src/models/application-model/applications/entities/application.entity";
 
 
 @Entity('posts')
@@ -114,7 +117,7 @@ export class Post extends BaseEntity {
             referencedColumnName: 'id'
         }
     })
-    categories: ChildCategory[] | undefined;
+    categories!: ChildCategory[];
 
     //Ward relation
     @ManyToOne(() => Ward, ward => ward.posts)
@@ -137,9 +140,21 @@ export class Post extends BaseEntity {
     @OneToOne(() => PostResource, postResource => postResource.post)
     @JoinColumn({ name: 'id' })
     postResource!: PostResource;
-
+    
     @OneToMany(() => Bookmark, bookmark => bookmark.post)
     @JoinColumn({ name: 'id' })
     bookmarks: Bookmark[] | undefined;
     // companyResourceData: any;
+    
+    @OneToOne(() => Company, company => company.id)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    companyInformation!: Company;
+
+    // @OneToMany(() => Application, application => application.post)
+    // @JoinColumn({ name: 'id', referencedColumnName: 'postId' })
+    // applications!: Application[];
+
+    @ManyToOne(() => Profile, profile => profile.accountId)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    profile!: Profile;
 }

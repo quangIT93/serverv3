@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ProvincesService } from './provinces.service';
-import { ProvincesController } from './provinces.controller';
+// import { ProvincesController } from './provinces.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Province } from './entities';
 
@@ -8,7 +8,7 @@ import { Province } from './entities';
   imports: [
     TypeOrmModule.forFeature([Province])
   ],
-  controllers: [ProvincesController],
+  // controllers: [ProvincesController],
   providers: [ProvincesService],
   exports: [ProvincesService],
 })

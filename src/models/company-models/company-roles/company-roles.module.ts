@@ -12,6 +12,7 @@ import { CompanyRole } from './entities/company-role.entity';
     ])
   ],
   controllers: [CompanyRolesController],
-  providers: [CompanyRolesService]
+  providers: [CompanyRolesService],
+  exports: [CompanyRolesService]
 })
 export class CompanyRolesModule {}

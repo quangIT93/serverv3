@@ -39,6 +39,7 @@ class ChildCategoryResponse {
 class ParentCategoryResponse {
     id!: number;
     fullName!: string;
+    // defaultPostImage!: string;
 
     constructor(category: ParentCategory, lang: Language) {
         this.id = category.id;
@@ -48,6 +49,7 @@ class ParentCategoryResponse {
                 : lang === Language.EN
                     ? category.nameEn
                     : category.nameKor;
+        // this.defaultPostImage = category.defaultPostImage;
     }
 }
 

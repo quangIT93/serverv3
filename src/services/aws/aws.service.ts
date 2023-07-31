@@ -1,14 +1,15 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
+import { AWSServiceInterface, UploadFileResult, UploadOpions } from "./awsService.interface";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
-import { PostImagesTransformed } from "src/common/helper/transform/post-image.transform";
-import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT, BUCKET_IMAGE_POST_UPLOAD } from "src/common/constants";
+import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
 
 @Injectable()
-export class AWSService {
+export class AWSService implements AWSServiceInterface {
 
     constructor(
+        @Inject(forwardRef(() => AWSConfigService))
         private readonly awsConfig: AWSConfigService,
     ) {}
 
@@ -21,109 +22,100 @@ export class AWSService {
 
     }
 
-    async uploadFile(file: any, options?: { BUCKET: string, id: string }) {
-        try {
-            const s3 = this.getS3();
+    /**
+     * Upload a file to AWS S3
+     */
+    async uploadFile(file: Express.Multer.File, options: UploadOpions): Promise<UploadFileResult> {
+        const s3 = this.getS3();
 
-            let key = file.originalname;
+        if (!file) {
+            throw new Error('File is not exist');
+        }
 
-            if (options) {
-                if (options.id) {
-                    key = `${options.id}/${file.originalname}`;
-                }
-                if (options.BUCKET) {
-                    key = `${options.BUCKET}/${key}`;
-                }
-            }
+        if (!options.BUCKET) {
+            throw new Error('Bucket is not exist');
+        }
 
-            const params: PutObjectRequest = {
+        // add bucket name to file name 
+        // add id to file name if id is exist
+        const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
+
+        const params: PutObjectRequest = {
+            Bucket: this.awsConfig.bucket,
+            Key: key,
+            Body: file.buffer,
+        };
+
+        const result = await s3.upload(params).promise();
+
+        return {
+            ...result,
+            originalname: file.originalname,
+            filename: file.filename,
+        };
+    }
+
+    /**
+     * Upload multiple files to AWS S3
+     */
+    async uploadMutilpleFiles(files: Express.Multer.File[], options: UploadOpions): Promise<UploadFileResult[]> {
+        const s3 = this.getS3();
+
+        if (!files) {
+            throw new Error('File is not exist');
+        }
+
+        if (!options.BUCKET) {
+            throw new Error('Bucket is not exist');
+        }
+
+        const params: PutObjectRequest[] = [];
+
+        files.forEach((file) => {
+            // add bucket name to file name 
+            // add id to file name if id is exist
+            const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
+
+            params.push({
                 Bucket: this.awsConfig.bucket,
                 Key: key,
                 Body: file.buffer,
-            };
-    
-            const data = await s3.upload(params).promise();
-    
+            });
+        });
+
+        const result = await Promise.all(params.map((param) => s3.upload(param).promise()));
+
+        return result.map((item, index) => {
             return {
-                ...data,
-                originalname: file.originalname,
+                ...item,
+                originalname: files[index].originalname,
+                filename: files[index].filename,
             }
-        } catch (error) {
-            Logger.error(error);
-            throw error;
-        }
+        });
     }
 
-    async uploadMutilpleFiles(files: any[]) {
-        try {
-            const s3 = this.getS3();
-            
-            const data = [];
+    async deleteFile(key: string): Promise<void> {
+        const s3 = this.getS3();
 
-            for (const file of files) {
-                const params: PutObjectRequest = {
-                    Bucket: this.awsConfig.bucket,
-                    Key: file.originalname,
-                    Body: file.buffer,
-                };
-    
-                data.push(await s3.upload(params).promise());
-            }
-
-            return data;
-
-        } catch (error) {
-            Logger.error(error);
-            throw error;
+        if (!key) {
+            throw new Error('Key is not exist');
         }
+
+        const params = {
+            Bucket: this.awsConfig.bucket,
+            Key: key,
+        };
+
+        await s3.deleteObject(params).promise();
     }
 
-    async uploadImagesForPost(image: PostImagesTransformed, postId: number) {
-        const data = [];
-        try {
-            const s3 = this.getS3();
-            
+    async deleteMultipleFiles(keys: string[]): Promise<void> {
+        // const s3 = this.getS3();
 
-            const thumbnailParams: PutObjectRequest = {
-                Bucket: this.awsConfig.bucket,
-                Key: `${BUCKET_IMAGE_POST_UPLOAD}/${postId}/${image.thumbnail.originalname}`,
-                Body: image.thumbnail.buffer,
-            };
-
-            data.push(
-                {
-                    ...await s3.upload(thumbnailParams).promise(),
-                    originalname: image.thumbnail.originalname,
-                }
-            );
-
-            for (const file of image.original) {
-                const params: PutObjectRequest = {
-                    Bucket: this.awsConfig.bucket,
-                    Key: `${BUCKET_IMAGE_POST_UPLOAD}/${postId}/${file.originalname}`,
-                    Body: file.buffer,
-                };
-    
-                data.push({
-                    ...await s3.upload(params).promise(),
-                    originalname: file.originalname,
-                });
-            }
-
-            return data;
-
-        } catch (error) {
-            // call delete file
-            Logger.error("UPLOAD IMAGES FOR POST ERROR");
-            if (data) {
-                for (const file of data) {
-                    await this.deleteFile(file.Key);
-                }
-            }
-            throw error;
+        if (!keys) {
+            throw new Error('Keys is not exist');
         }
     }
-
 
     async uploadImageToS3(buffer: Buffer, originalname: string): Promise<string> {
         const s3 = this.getS3();
@@ -164,25 +156,4 @@ export class AWSService {
           });
         });
     }
-      
-
-    async deleteFile(key: string) {
-        try {
-            const s3 = this.getS3();
-
-            const params = {
-                Bucket: this.awsConfig.bucket,
-                Key: key,
-            };
-
-            const data = await s3.deleteObject(params).promise();
-
-            return data;
-        } catch (error) {
-            Logger.error(error);
-            throw error;
-        }
-    }
-
-
 }

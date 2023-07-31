@@ -24,7 +24,7 @@ export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true }) 
     override address!: string;
 
-    @Transform(({ value }) => value ?? "Your name")
+    @Transform(({ value }) => value ? value : "Your name")
     override name!: string;
 
     // exclude gender
@@ -98,7 +98,7 @@ export class ProfileSerialization extends Profile {
     get profileLocations() {
         if (!this.profilesLocations) return null;
         return this.profilesLocations.map(profileLocation => {
-            console.log(profileLocation);
+            // console.log(profileLocation);
             return locationTranslator(profileLocation, this.lang);
         })
     }

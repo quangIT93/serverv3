@@ -22,6 +22,14 @@ export class BookmarksService {
       .getMany();
   }
 
+  findByPostIdAndUserId(postId: number, userId: string): Promise<Bookmark | null> {
+    return this.bookmarkRepository
+      .createQueryBuilder('bookmarks')
+      .where('bookmarks.post_id = :postId', { postId })
+      .andWhere('bookmarks.account_id = :userId', { userId })
+      .getOne();
+  }
+
   create(_createBookmarkDto: CreateBookmarkDto) {
     return 'This action adds a new bookmark';
   }

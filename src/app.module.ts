@@ -7,7 +7,6 @@ import { AuthModule } from './authentication/auth.module';
 import { UserModule } from './models/users/users.module';
 import { MailModule } from './providers/mail/provider.module';
 import { QueueModule } from './providers/queue/provider.module';
-// import { JwtConfigModule } from './config/jwt/config.module';
 import { JwtAccessTokenServiceModule } from './providers/jwt/atk.provider.module';
 import { JwtRefreshTokenServiceModule } from './providers/jwt/rtk.provider.module';
 import { ProvincesModule } from './models/locations/provinces/provinces.module';
@@ -22,10 +21,7 @@ import { PostsCategoriesModule } from './models/post-models/posts-categories/pos
 import { PostsImagesModule } from './models/post-models/posts-images/posts-images.module';
 import { JobTypesModule } from './models/job-types/job-types.module';
 import { SalaryTypesModule } from './models/salary-types/salary-types.module';
-import { CompanyResourcesModule } from './models/company-resources/company-resources.module';
-import { PostResourceModule } from './models/post-models/post-resource/post-resource.module';
 import { BookmarksModule } from './models/bookmarks/bookmarks.module';
-// import { AWSConfigModule } from './config/storage/aws/config.module';
 import { MulterConfigModule } from './providers/storage/multer/provider.module';
 import { AWSModule } from './providers/storage/aws/provider.module';
 import { CompaniesModule } from './models/company-models/companies/companies.module';
@@ -40,6 +36,11 @@ import { BannersController } from './models/banners/banners.controller';
 import { BannersModule } from './models/banners/banners.module';
 import { SearchModule } from './models/search-models/suggest-search/search.module';
 
+import { ApplicationsModule } from './models/application-model/applications/applications.module';
+import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
+import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
+import { FirebaseMessagingModule } from './services/firebase/messaging/firebase-messaging.module';
+import { PostNotificationsModule } from './models/notifications-model/post-notifications/post-notifications.module';
 
 @Module({
   imports: [
@@ -50,7 +51,6 @@ import { SearchModule } from './models/search-models/suggest-search/search.modul
     MailModule, 
     QueueModule,
     AWSModule,
-    // AWSConfigModule,
     AuthModule,
     JwtAccessTokenServiceModule,
     JwtRefreshTokenServiceModule,
@@ -65,8 +65,6 @@ import { SearchModule } from './models/search-models/suggest-search/search.modul
     PostsImagesModule,
     JobTypesModule,
     SalaryTypesModule,
-    CompanyResourcesModule,
-    PostResourceModule,
     BookmarksModule,
     MulterConfigModule,
     CompaniesModule,
@@ -78,7 +76,12 @@ import { SearchModule } from './models/search-models/suggest-search/search.modul
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
     BannersModule,
-    SearchModule
+    SearchModule,
+    ApplicationsModule,
+    HistoriesRecruiterModule,
+    FcmTokensModule,
+    FirebaseMessagingModule,
+    PostNotificationsModule,
   ],
   controllers: [AppController, BannersController],
   providers: [

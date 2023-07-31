@@ -42,6 +42,7 @@ export class CreateCompanyDto {
     @IsString({ message: 'Website must be a string' })
     @MaxLength(255, { message: 'Website must be less than 255 characters' })
     @IsUrl({}, { message: 'Website must be a valid url' })
+    @IsOptional()
     website!: string;
 
     @ApiProperty({ type: 'string', format: 'string', required: true })
@@ -61,7 +62,7 @@ export class CreateCompanyDto {
     @IsNumber({}, { message: 'category_id must be a number' })
     categoryId!: number;
 
-    @ApiProperty({ type: 'number', format: 'binary', required: true })
+    @ApiProperty({ type: 'file', format: 'binary', required: true })
     @Transform(({ value } : { value: Express.Multer.File}) => value.originalname)
     @IsOptional()
     logo!: string;

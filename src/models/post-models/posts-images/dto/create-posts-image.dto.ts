@@ -1,10 +1,13 @@
 export class CreatePostsImageDto {
     postId!: number ;
 
-    images: string[] = [];  
+    image: string;  
+
+    type: number;
     
-    constructor(postId: number, images: string[]) {
+    constructor(postId: number, image: string, type: number = 0) {
         this.postId = postId;
-        this.images = images;
+        this.image = image;
+        this.type = type;
     }
 }

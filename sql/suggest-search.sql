@@ -16,5 +16,5 @@ INSERT INTO suggest_search (`keyword`, `order`) VALUES ('IT System', 1),
 ('bán hàng', 6),
 ('lễ tân', 7),
 ('phục vụ', 8),
-('gia sư', 9), 
+('gia sư', 9),
 ('kinh doanh', 10);

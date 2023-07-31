@@ -1,6 +1,7 @@
 import { ImageValidator } from './../../../common/decorators/validation/image-validator/image.validator';
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Get,
     Logger,
@@ -15,7 +16,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-
+import { Response } from 'express';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
@@ -27,23 +28,18 @@ import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PostImagesPipe, PostImagesTransformed } from 'src/common/helper/transform/post-image.transform';
+import { PostImagesPipe } from 'src/common/helper/transform/post-image.transform';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { AWSService } from 'src/services/aws/aws.service';
-import { PostsImagesService } from '../posts-images/posts-images.service';
-import { createPostByAdminController } from './controller';
-import { PostResourceService } from '../post-resource/post-resource.service';
-import { PostsCategoriesService } from '../posts-categories/posts-categories.service';
+import { CreatePostByAdminController } from './controller';
+import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
+import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
-        private readonly awsService: AWSService,
-        private readonly postImageService: PostsImagesService,
-        private readonly postResourceService: PostResourceService,
-        private readonly postsCategoriesService: PostsCategoriesService,
+        private readonly postNotification: PostNotificationsService
     ) { }
 
     @UseGuards(AuthGuard)
@@ -86,6 +82,8 @@ export class PostsController {
         return this.postsService.findByQuery(query, limit, page); 
     }
 
+    @UseGuards(AuthNotRequiredGuard)
+    @UseInterceptors(ClassSerializerInterceptor, PostDetailInterceptor)
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
         Logger.log('findOne');
@@ -143,23 +141,12 @@ export class PostsController {
                 }),
             PostImagesPipe,
         )
-        images: PostImagesTransformed,
+        images: Express.Multer.File[],
         @Body() dto: CreatePostByAdminDto,
         @Req() req: CustomRequest,
-        @Res() res: any,
+        @Res() res: Response,
     ) {
-        Logger.log('createByWorker: ', req.user?.id);
-
-        return await createPostByAdminController({
-            dto,
-            req,
-            res,
-            images,
-            awsService: this.awsService,
-            postImageService: this.postImageService,
-            postsService: this.postsService,
-            postResourceService: this.postResourceService,
-            postCategoriesService: this.postsCategoriesService,
-        });
+        return new CreatePostByAdminController(this.postsService, req, res, this.postNotification)
+        .createPostByAdminController({dto, images});
     }
 }
