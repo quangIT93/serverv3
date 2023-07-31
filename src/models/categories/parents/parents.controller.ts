@@ -16,9 +16,13 @@ export class ParentController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   async findAll() {
-    return {
-      status: HttpStatus.OK,
-      data: await this.parentService.findAll()
+    try {
+      return {
+        status: HttpStatus.OK,
+        data: await this.parentService.findAll()
+      }
+    } catch (error) {
+      throw new Error('Error from server')
     }
   }
 
@@ -50,9 +54,13 @@ export class ParentController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   async findOne(@Param('id') id: string) {
-    return {
-      status: HttpStatus.OK,
-      data: await this.parentService.findOne(+id)
+    try {
+      return {
+        status: HttpStatus.OK,
+        data: await this.parentService.findOne(+id)
+      }
+    } catch (error) {
+      throw new Error('Error from server')
     }
   }
 
