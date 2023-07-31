@@ -29,7 +29,9 @@ export class SearchService {
 
     async create(createSearch : CreateSuggestSearchDto) {
         try {
+
             const search = this.searchRepository.create(createSearch);
+
             return await this.searchRepository.save(search);
         } catch (error) {
             throw new Error('Error creating search')

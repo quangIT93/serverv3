@@ -52,6 +52,10 @@ export class SearchController {
     async create(@Body() createSuggestSearchDto: CreateSuggestSearchDto) { 
         try {
             await this.searchService.create(createSuggestSearchDto)
+
+            return {
+                statusCode : HttpStatus.OK
+            }
         } catch (error) {
             if (error instanceof Error) {
                 throw new BadRequestException(error.message)

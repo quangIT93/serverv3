@@ -14,7 +14,7 @@ export class SuggestSearch {
     status!: number;
 
     @Column({ type: 'int', nullable: false, default: 0})
-    order?: number;
+    order!: number;
 
     @Column({
         type: 'datetime',
