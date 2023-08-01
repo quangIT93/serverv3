@@ -1,12 +1,14 @@
 import { Module } from "@nestjs/common";
-import { AWSConfigService } from "src/config/storage/aws/config.service";
+import { AWSConfigModule } from "src/config/storage/aws/config.module";
 import { AWSService } from "src/services/aws/aws.service";
 
 
 @Module({
-    imports: [],
-    providers: [AWSService, AWSConfigService],
-    exports: [AWSService, AWSConfigService],
+    imports: [
+        AWSConfigModule
+    ],
+    providers: [AWSService],
+    exports: [AWSService],
 
 })
 

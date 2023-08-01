@@ -65,13 +65,12 @@ export class CreateCompanyDto {
     @ApiProperty({ type: 'file', format: 'binary', required: true })
     @Transform(({ value } : { value: Express.Multer.File}) => value.originalname)
     @IsOptional()
-    logo!: string;
+    logo!: string | undefined;
 
     // list images
     @ApiProperty({ type: 'array', items: { type: 'file', format: 'binary' }, required: false })
-    @Transform(({ value } : { value: Express.Multer.File[]}) => value.map((file) => file.originalname))
     @IsOptional()
-    images!: Express.Multer.File[] | undefined;
+    images!: string[] | undefined;
 
     [key: string]: any;
 }

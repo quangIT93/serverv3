@@ -9,8 +9,8 @@ import { fromBuffer } from 'file-type';
 @Injectable()
 export class ImageValidator extends FileValidator<{ mime?: RegExp }> {
 
-    constructor(options: {
-        mime: RegExp;
+    constructor(options?: {
+        mime?: RegExp;
     }) {
         super(options ?? { mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ });
     }        
@@ -34,7 +34,5 @@ export class ImageValidator extends FileValidator<{ mime?: RegExp }> {
         
         return false;
     }
-
-
     
 }

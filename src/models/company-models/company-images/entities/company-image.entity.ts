@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Company } from '../../companies/entities/company.entity';
+// import { Company } from '../../companies/entities/company.entity';
 
 @Entity('company_images')
 export class CompanyImage {
@@ -30,5 +32,9 @@ export class CompanyImage {
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     updatedAt!: Date;
+
+    @ManyToOne(() => Company, (company) => company.companyImages)
+    @JoinColumn({ name: 'company_id' })
+    company!: Company;
     
 }

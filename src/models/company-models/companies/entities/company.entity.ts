@@ -19,7 +19,7 @@ export class Company {
     @PrimaryGeneratedColumn('increment')
     id!: number;
 
-    @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
+    @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id', default: '' })
     accountId!: string;
 
     @Column({ type: 'varchar', length: 255, nullable: false })
@@ -110,7 +110,9 @@ export class Company {
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
 
-    @OneToMany(() => CompanyImage, (companyImage) => companyImage.companyId)
+    @OneToMany(() => CompanyImage, (companyImage) => companyImage.company, {
+        cascade: true,
+    })
     @JoinColumn({ name: 'company_id' })
     companyImages!: CompanyImage[];
 }

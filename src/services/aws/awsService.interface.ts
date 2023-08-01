@@ -1,5 +1,18 @@
 import { S3 } from "aws-sdk";
 
+export interface FileUpload {
+    /**
+     * Buffer of file
+     */
+    buffer: Buffer;
+
+    /**
+     * Original name of file
+     */
+    originalname: string;
+
+}
+
 export interface UploadOpions {
     /**
      * BUCKET NAME
@@ -52,11 +65,6 @@ export class UploadFileResult implements S3.ManagedUpload.SendData {
      * Original file name
      */
     originalname!: string;
-
-    /**
-     * Generated file name
-     */
-    filename!: string;
 }
 
 export interface AWSServiceInterface {
