@@ -32,6 +32,10 @@ import { ProfilesCategoriesModule } from './models/profile-models/profiles-categ
 import { ProfilesEducationsModule } from './models/profile-models/profiles-educations/profiles-educations.module';
 import { ProfilesExperiencesModule } from './models/profile-models/profiles-experiences/profiles-experiences.module';
 import { ProfilesLocationsModule } from './models/profile-models/profiles-locations/profiles-locations.module';
+import { BannersController } from './models/banners/banners.controller';
+import { BannersModule } from './models/banners/banners.module';
+import { SearchModule } from './models/search-models/suggest-search/search.module';
+
 import { ApplicationsModule } from './models/application-model/applications/applications.module';
 import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
 import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
@@ -72,6 +76,8 @@ import { CompanyImagesModule } from './models/company-models/company-images/comp
     ProfilesEducationsModule,
     ProfilesExperiencesModule,
     ProfilesLocationsModule,
+    BannersModule,
+    SearchModule,
     ApplicationsModule,
     HistoriesRecruiterModule,
     FcmTokensModule,
@@ -79,7 +85,7 @@ import { CompanyImagesModule } from './models/company-models/company-images/comp
     PostNotificationsModule,
     CompanyImagesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, BannersController],
   providers: [
     AppService,
   ],

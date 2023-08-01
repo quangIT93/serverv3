@@ -3,6 +3,7 @@ import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { AWSServiceInterface, FileUpload, UploadFileResult, UploadOpions } from "./awsService.interface";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
+import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
 
 
 @Injectable()
@@ -41,7 +42,7 @@ export class AWSService implements AWSServiceInterface {
         const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
 
         const params: PutObjectRequest = {
-            Bucket: this.awsConfig.bucket,
+            Bucket: this.awsConfig.bucket || '',
             Key: key,
             Body: file.buffer,
         };
@@ -76,7 +77,7 @@ export class AWSService implements AWSServiceInterface {
             const key = options.BUCKET + '/' + `${options.id ? options.id + '/' : ''}` + `${file.originalname}`;
 
             params.push({
-                Bucket: this.awsConfig.bucket,
+                Bucket: this.awsConfig.bucket || '',
                 Key: key,
                 Body: file.buffer,
             });
@@ -100,7 +101,7 @@ export class AWSService implements AWSServiceInterface {
         }
 
         const params = {
-            Bucket: this.awsConfig.bucket,
+            Bucket: this.awsConfig.bucket || '',
             Key: key,
         };
 
@@ -116,7 +117,7 @@ export class AWSService implements AWSServiceInterface {
 
         const params = keys.map((key) => {
             return {
-                Bucket: this.awsConfig.bucket,
+                Bucket: this.awsConfig.bucket || '',
                 Key: key,
             };
         });
@@ -124,4 +125,43 @@ export class AWSService implements AWSServiceInterface {
         await Promise.all(params.map((param) => s3.deleteObject(param).promise()));
     }
 
+    async uploadImageToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket || '',
+          Key: `${BUCKET_IMAGE_PARENT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
+
+    async uploadImageDefaultToS3(buffer: Buffer, originalname: string): Promise<string> {
+        const s3 = this.getS3();
+      
+        const params = {
+          Bucket: this.awsConfig.bucket || '',
+          Key: `${BUCKET_IMAGE_PARENT_DEFAULT}/${originalname}`,
+          Body: buffer,
+        };
+      
+        return new Promise((resolve, reject) => {
+          s3.upload(params, (err : any, data : any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(data.Location);
+            }
+          });
+        });
+    }
 }
