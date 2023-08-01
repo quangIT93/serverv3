@@ -1,9 +1,10 @@
 import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
-import { AWSServiceInterface, UploadFileResult, UploadOpions } from "./awsService.interface";
+import { AWSServiceInterface, FileUpload, UploadFileResult, UploadOpions } from "./awsService.interface";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
+
 
 @Injectable()
 export class AWSService implements AWSServiceInterface {
@@ -25,7 +26,7 @@ export class AWSService implements AWSServiceInterface {
     /**
      * Upload a file to AWS S3
      */
-    async uploadFile(file: Express.Multer.File, options: UploadOpions): Promise<UploadFileResult> {
+    async uploadFile(file: FileUpload, options: UploadOpions): Promise<UploadFileResult> {
         const s3 = this.getS3();
 
         if (!file) {
@@ -51,7 +52,6 @@ export class AWSService implements AWSServiceInterface {
         return {
             ...result,
             originalname: file.originalname,
-            filename: file.filename,
         };
     }
 
@@ -89,7 +89,6 @@ export class AWSService implements AWSServiceInterface {
             return {
                 ...item,
                 originalname: files[index].originalname,
-                filename: files[index].filename,
             }
         });
     }

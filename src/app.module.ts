@@ -41,6 +41,7 @@ import { HistoriesRecruiterModule } from './models/history-models/histories-recr
 import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
 import { FirebaseMessagingModule } from './services/firebase/messaging/firebase-messaging.module';
 import { PostNotificationsModule } from './models/notifications-model/post-notifications/post-notifications.module';
+import { CompanyImagesModule } from './models/company-models/company-images/company-images.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { PostNotificationsModule } from './models/notifications-model/post-notif
     FcmTokensModule,
     FirebaseMessagingModule,
     PostNotificationsModule,
+    CompanyImagesModule,
   ],
   controllers: [AppController, BannersController],
   providers: [

@@ -7,7 +7,6 @@ import { AWSService } from "src/services/aws/aws.service";
     imports: [AWSConfigModule],
     providers: [AWSService],
     exports: [AWSService],
-
 })
 
 export class AWSModule { }

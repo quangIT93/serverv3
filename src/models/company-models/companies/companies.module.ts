@@ -6,6 +6,7 @@ import { Company } from './entities/company.entity';
 // import { AWSConfigService } from 'src/config/storage/aws/config.service';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
+import { CompanyImagesModule } from '../company-images/company-images.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
       Company
     ]),
     JwtAccessTokenServiceModule,
-    AWSModule
+    AWSModule,
+    CompanyImagesModule
   ],
   controllers: [CompaniesController],
   providers: [CompaniesService]

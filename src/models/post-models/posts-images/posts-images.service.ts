@@ -20,8 +20,7 @@ export class PostsImagesService {
     return `This action returns a #${id} postsImage`;
   }
 
-  update(id: number, updatePostsImageDto: UpdatePostsImageDto) {
-    console.log(updatePostsImageDto);
+  update(id: number, _updatePostsImageDto: UpdatePostsImageDto) {
     return `This action updates a #${id} postsImage`;
   }
 

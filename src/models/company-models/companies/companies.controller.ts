@@ -9,10 +9,11 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
-  ParseFilePipeBuilder,
   Req,
   Res,
   HttpStatus,
+  ClassSerializerInterceptor,
+  ParseIntPipe,
   // Req,
   // Res,
 } from '@nestjs/common';
@@ -21,14 +22,18 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ApiBasicAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { ImageValidator } from 'src/common/decorators/validation/image-validator/image.validator';
-import { ImagePipe } from 'src/common/helper/transform/image.transform';
+import {
+  FileFieldsInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { Role } from 'src/common/enum';
 import { Roles } from 'src/authentication/roles.decorator';
+import { CompanyImagesPipe } from './interceptors/image.interceptor';
+import { CreateCompanyImageDto } from '../company-images/dto/create-company-image.dto';
+import { UpdateCompanyImageDto } from '../company-images/dto/delete-comapny-image.dto';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -44,55 +49,68 @@ export class CompaniesController {
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(
-    FilesInterceptor('logo', 1, {
-      fileFilter: (_req, _file, cb) => {
-        if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
+    FileFieldsInterceptor(
+      [
+        { name: 'logo', maxCount: 1 },
+        { name: 'images', maxCount: 5 },
+      ],
+      {
+        limits: {
+          fileSize: 1024 * 1024 * 6,
+        },
       },
-    }),
+    ),
   )
   async create(
     @UploadedFiles(
-      new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
-        .addValidator(
-          new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }),
-        )
-        .build({
-          fileIsRequired: false,
-          exceptionFactory: (errors) => {
-            return new Error(errors);
-          },
-        }),
-      ImagePipe,
+      CompanyImagesPipe,
     )
-    logo: Express.Multer.File,
+    listImages: any | undefined,
     @Req() req: CustomRequest,
     @Res() res: any,
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
     try {
-      createCompanyDto.accountId = req.user?.id;
-      createCompanyDto['logo'] = logo.originalname;
+      const { logo, images } = listImages;
+      if (req.user?.id === undefined) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Unauthorized',
+        });
+      }
+      createCompanyDto.accountId = req.user.id;
+      // createCompanyDto.logo = logo.originalname;
+      createCompanyDto.images = images ? images.map((image: any) => image.originalname) : [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
         BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
+      if (images) {
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
+          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+          id: String(company.id),
+        });
   
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
+          companyId: company.id,
+          image: image.originalname,
+        }));
+        await this.companiesService.createCompanyImage(companyImagesDto);
+      }
+
       return res.status(HttpStatus.CREATED).json({
         statusCode: HttpStatus.CREATED,
         message: 'Company created successfully',
         data: {
           ...company,
-          logo: uploadedObject.Location
-          ,
+          logo: uploadedObject.Location,
+          images: images ? images.map((image: any) => image.originalname) : [],
         },
       });
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error);
         return res.status(HttpStatus.BAD_REQUEST).json({
           statusCode: HttpStatus.BAD_REQUEST,
           message: error.message,
@@ -113,11 +131,6 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.companiesService.findOne(+id);
-  // }
-
   @UseGuards(AuthGuard)
   @Get('account')
   findByAccountId(@Req() req: CustomRequest) {
@@ -130,10 +143,10 @@ export class CompaniesController {
     return this.companiesService.findByAccountId(req.user?.id);
   }
 
-
   @ApiConsumes('multipart/form-data')
   @Patch(':id')
   @UseInterceptors(
+    ClassSerializerInterceptor,
     FilesInterceptor('logo', 1, {
       fileFilter: (_req, _file, cb) => {
         if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
@@ -145,22 +158,10 @@ export class CompaniesController {
   )
   async update(
     @UploadedFiles(
-      new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
-        .addValidator(
-          new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }),
-        )
-        .build({
-          fileIsRequired: false,
-          exceptionFactory: (errors) => {
-            return new Error(errors);
-          },
-        }),
-      ImagePipe,
+      CompanyImagesPipe,
     )
-    logo: Express.Multer.File | undefined,
+    imagesList: any | undefined,
     @Req() req: CustomRequest,
-    // @Res() res: any,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
     try {
@@ -172,6 +173,9 @@ export class CompaniesController {
         };
       }
       updateCompanyDto.accountId = req.user?.id;
+
+      const { logo } = imagesList;
+
       if (logo && logo.originalname) {
         updateCompanyDto['logo'] = logo.originalname;
       }
@@ -179,22 +183,17 @@ export class CompaniesController {
         +req.params['id'],
         updateCompanyDto,
       );
-      let uploadedObject: any
       if (logo && logo.originalname) {
-        uploadedObject = await this.awsService.uploadFile(logo, {
+        await this.awsService.uploadFile(logo, {
           BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
           id: String(company?.id),
         });
       }
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Company updated successfully',
-      data: {
-        ...company,
-        logo: uploadedObject?.Location || company?.logo || null,
-      },
-    };
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Company updated successfully',
+        data: null
+      };
     } catch (error) {
       if (error instanceof Error) {
         return {
@@ -208,6 +207,98 @@ export class CompaniesController {
       };
     }
   }
+
+  @ApiConsumes('multipart/form-data')
+  @Patch(':id/images')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    FilesInterceptor('images', 5, {
+      fileFilter: (_req, _file, cb) => {
+        if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async updateImages(
+    @UploadedFiles(
+      CompanyImagesPipe,
+    )
+    imagesList: any | undefined,
+    @Req() req: CustomRequest,
+    @Body() updateCompanyImage: UpdateCompanyImageDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const { images } = imagesList;
+    if (!req.user) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized',
+      };
+    }
+    try {
+      const company = await this.companiesService.findOne(id, req.user.id);
+
+      if (!company) {
+        return {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Company not found',
+        };
+      }
+
+      let deletedImages: any[] = [];
+      if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
+        deletedImages = await this.companiesService.removeCompanyImages(updateCompanyImage.imagesId, id);
+      }
+
+      if (images && images.length > 0) {
+        if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
+          if (images.length + company.companyImages.length - deletedImages.length > 5 ) {
+            return {
+              statusCode: HttpStatus.BAD_REQUEST,
+              message: 'Maximum 5 images',
+            };
+          }
+        } else if (images.length + company.companyImages.length > 5 ) {
+          return {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'Maximum 5 images',
+          };
+        }
+
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
+          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+          id: id
+        });
+  
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
+          companyId: id,
+          image: image.originalname,
+        }));
+        await this.companiesService.createCompanyImage(companyImagesDto);
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Company images updated successfully',
+        data: null
+      };
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: error.message,
+        };
+      }
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Something went wrong',
+      };
+    }
+  }
+
 
 
   @ApiConsumes('multipart/form-data')

@@ -38,6 +38,7 @@ export class ProfilesService {
         'company.ward.district',
         'company.ward.district.province',
         'company.category',
+        'company.companyImages',
       ],
       where: { accountId: id }
     });

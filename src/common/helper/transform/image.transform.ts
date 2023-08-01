@@ -29,6 +29,8 @@ export class ImagePipe implements PipeTransform<Express.Multer.File, Promise<Exp
         const fileTransformed: ImageTransformed = {
             image: {} as Express.Multer.File,
         };
+
+        console.log('files', files);
         
         if (Array.isArray(files)) {
 
@@ -49,14 +51,14 @@ export class ImagePipe implements PipeTransform<Express.Multer.File, Promise<Exp
                 throw new Error('Total size of files is too large');
             }
 
-            fileTransformed.image = await createResizeImage(files[0]);
+            fileTransformed.image = await createResizeImage(files[0], LOGO_COMPANY_WIDTH, LOGO_COMPANY_HEIGHT);
 
         }
         return fileTransformed.image; 
     }
 }
 
-async function createResizeImage(file: Express.Multer.File) {
+async function createResizeImage(file: Express.Multer.File, width: number = 500, height: number = 500) {
     const { buffer } = file;
     const EXT_IMAGE = '.png';
     const name = `${Date.now()}-${uuidv4()}`
@@ -75,7 +77,7 @@ async function createResizeImage(file: Express.Multer.File) {
     }
 
     const fileBuffer = await sharp(buffer)
-        .resize(LOGO_COMPANY_HEIGHT, LOGO_COMPANY_WIDTH)
+        .resize(width, height)
         .png({
             adaptiveFiltering: false,
             force: false,

@@ -4,8 +4,7 @@ import { UpdateJobTypeDto } from './dto/update-job-type.dto';
 
 @Injectable()
 export class JobTypesService {
-  create(createJobTypeDto: CreateJobTypeDto) {
-    console.log(createJobTypeDto);
+  create(_createJobTypeDto: CreateJobTypeDto) {
     return 'This action adds a new jobType';
   }
 
@@ -17,8 +16,7 @@ export class JobTypesService {
     return `This action returns a #${id} jobType`;
   }
 
-  update(id: number, updateJobTypeDto: UpdateJobTypeDto) {
-    console.log(updateJobTypeDto);
+  update(id: number, _updateJobTypeDto: UpdateJobTypeDto) {
     return `This action updates a #${id} jobType`;
   }
 
