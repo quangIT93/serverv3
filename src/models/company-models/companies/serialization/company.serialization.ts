@@ -5,6 +5,7 @@ import { CompanyRoleSerialization } from "../../company-roles/serialization/comp
 import { Language } from "src/common/enum";
 import { categoryTranslator, locationTranslator } from "src/common/helper/translators";
 import { CompanySizeSerialization } from "../../company-sizes/serialization/company-size.serialization";
+import { CompanyImagesSerializer } from "../../company-images/serializers/company-images.serializer";
 
 export class CompanySerialization extends Company {
     lang: Language = Language.VI;
@@ -42,6 +43,9 @@ export class CompanySerialization extends Company {
     @Exclude({ toPlainOnly: true })
     override ward!: any;
 
+    @Exclude({ toPlainOnly: true })
+    override companyImages!: CompanyImagesSerializer[];
+
     @Transform(({ value }) => new Date(value).getTime())
     override createdAt!: Date;
 
@@ -76,5 +80,11 @@ export class CompanySerialization extends Company {
     get companySizeInfomation() {
         if (!this.companySize) return null;
         return Object.assign(new CompanySizeSerialization(this.companySize, this.lang));
+    }
+
+    @Expose()
+    get images() {
+        if (!(this.companyImages)) return null;
+        return this.companyImages.map((companyImage) => Object.assign(new CompanyImagesSerializer(companyImage)));
     }
 }

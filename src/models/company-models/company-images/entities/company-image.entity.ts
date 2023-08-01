@@ -12,6 +12,7 @@ export class CompanyImage {
 
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'image' })
     image!: string;
+    
 
     @Column({ type: 'tinyint', nullable: false, default: 1 })
     status!: number;
