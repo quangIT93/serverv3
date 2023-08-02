@@ -46,7 +46,8 @@ export class KeywordNotificationsService {
         where: {
           accoundId: id,
         },
-        relations: ['categories', 'districts']
+        relations: ['categories', 'districts'],
+        select: ['id', 'accoundId', 'keyword', 'categories', 'districts', 'status']
       }
       )
     } catch (error) {

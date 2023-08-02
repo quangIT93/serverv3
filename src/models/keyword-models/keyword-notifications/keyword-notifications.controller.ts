@@ -36,7 +36,6 @@ export class KeywordNotificationsController {
    */
   @Post()
   async create(@Body() createKeywordNotificationDto: CreateKeywordNotificationDto) {
-    try {
       await this.keywordNotificationsService.create(
         createKeywordNotificationDto,
       );
@@ -45,9 +44,6 @@ export class KeywordNotificationsController {
         status: HttpStatus.OK,
         message: 'Create keyword notification successfully'
       }
-    } catch (error) {
-      throw new Error('Error')
-    }
   }
 
   /**
