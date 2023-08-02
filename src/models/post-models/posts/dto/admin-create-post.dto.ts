@@ -120,48 +120,48 @@ export class CreatePostByAdminDto {
     @IsTimestamp()
     endDate: number | null = null;
 
-    // @ApiProperty({
-    //     type: 'string',
-    //     format: 'number',
-    //     required: true,
-    //     default: 57600000,
-    // })
-    // @IsTimestamp()
+    @ApiProperty({
+        type: 'string',
+        format: 'number',
+        required: true,
+        default: 57600000,
+    })
+    @IsTimestamp()
     startTime!: number;
 
     // new start time
     // format: hh:mm
-    @ApiProperty({
-        type: 'string',
-        format: 'string',
-        pattern: '^[0-9]{2}:[0-9]{2}$',
-        required: true,
-        default: '00:00',
-    })
-    @IsString()
-    @MaxLength(5)
-    newStartTime!: string;
-
-    // new end time
-    // format: hh:mm
-    @ApiProperty({
-        type: 'string',
-        format: 'string',
-        pattern: '^[0-9]{2}:[0-9]{2}$',
-        required: true,
-        default: '00:00',
-    })
-    @IsString()
-    @MaxLength(5)
-    newEndTime!: string;
-
     // @ApiProperty({
     //     type: 'string',
-    //     format: 'number',
+    //     format: 'string',
+    //     pattern: '^[0-9]{2}:[0-9]{2}$',
     //     required: true,
-    //     default: 57600000,
+    //     default: '00:00',
     // })
-    // @IsTimestamp()
+    // @IsString()
+    // @MaxLength(5)
+    // newStartTime!: string;
+
+    // // new end time
+    // // format: hh:mm
+    // @ApiProperty({
+    //     type: 'string',
+    //     format: 'string',
+    //     pattern: '^[0-9]{2}:[0-9]{2}$',
+    //     required: true,
+    //     default: '00:00',
+    // })
+    // @IsString()
+    // @MaxLength(5)
+    // newEndTime!: string;
+
+    @ApiProperty({
+        type: 'string',
+        format: 'number',
+        required: true,
+        default: 57600000,
+    })
+    @IsTimestamp()
     endTime!: number;
 
     @ApiProperty({ type: 'number', format: 'number', required: true, default: 0 })
@@ -288,10 +288,12 @@ export class CreatePostByAdminDto {
         post.isRemotely = this.isRemotely.toString();
         post.startDate = this.startDate?.toString() || null;
         post.endDate = this.endDate?.toString() || null;
-        post.startTime = (61200000 + this.newStartTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
-        post.endTime = (61200000 + this.newEndTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
-        post.newStartTime = this.newStartTime;
-        post.newEndTime = this.newEndTime;
+        post.startTime = this.startTime?.toString();
+        post.endTime = this.endTime?.toString();
+        // post.startTime = (61200000 + this.newStartTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
+        // post.endTime = (61200000 + this.newEndTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
+        // post.newStartTime = this.newStartTime;
+        // post.newEndTime = this.newEndTime;
         post.salaryMin = this.salaryMin;
         post.salaryMax = this.salaryMax;
         post.salaryType = this.salaryType;
