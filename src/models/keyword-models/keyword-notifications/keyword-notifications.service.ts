@@ -81,4 +81,12 @@ export class KeywordNotificationsService {
       throw new Error('Error updating keyword notification');
     }
   }
+
+  async findPlatformStatus(id: string): Promise<any> {
+    return await this.keywordNotificationRepository
+    .createQueryBuilder('type_notification_platform')
+    .select(['email_status', 'push_status'])
+    .where('type_notification_platform.accoundId = :id', { id })
+    .getOne()
+  }
 }

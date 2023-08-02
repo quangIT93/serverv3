@@ -74,12 +74,18 @@ export class KeywordNotificationsController {
     const id = req.user?.id || '';
     try {
       return {
-        data: (await this.keywordNotificationsService.findAll(id)).map(
-          (keywordNotification) =>
-            Object.assign(
-              new KeywordNotificationsSerializer(keywordNotification, req.lang),
-            ),
-        ),
+        data: {
+              keywords: (await this.keywordNotificationsService.findAll(id)).map(
+                (keywordNotification) =>
+                  Object.assign(
+                    new KeywordNotificationsSerializer(keywordNotification, req.lang),
+                  ),
+              ),
+              status: {
+                emailStatus: false,
+                pushStatus: false,
+              }
+            }
       };
     } catch (error) {
       if (error instanceof Error) {
