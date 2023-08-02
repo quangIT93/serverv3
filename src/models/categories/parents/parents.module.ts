@@ -22,6 +22,7 @@ import { ChildrenService } from '../children/children.service';
     // AWSModule
   ],
   controllers: [ParentController],
-  providers: [ParentService, AWSService, AWSConfigService, ChildrenService]
+  providers: [ParentService, AWSService, AWSConfigService, ChildrenService],
+  exports: [ParentService,]
 })
 export class ParentModule {}
