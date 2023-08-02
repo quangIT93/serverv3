@@ -19,7 +19,7 @@ export class KeywordNotificationsService {
   async create(_createKeywordNotificationDto: CreateKeywordNotificationDto) {
     try {
         const newKeywordNotification = this.keywordNotificationRepository.create({..._createKeywordNotificationDto, districtId: _createKeywordNotificationDto.districtsId[0], 
-          categoryId: _createKeywordNotificationDto.categoriesId[0]
+          categoryId: 2
         })
         const createKeywordCategory = await this.keywordNotificationRepository.save(newKeywordNotification);
 
