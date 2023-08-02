@@ -2,7 +2,6 @@ import { Exclude, Expose } from "class-transformer";
 import { KeywordNotification } from "../entities/keyword-notification.entity";
 import { categoryTranslator, locationTranslator } from "src/common/helper/translators";
 import { Language } from "src/common/enum";
-import { ParentCategory } from "src/models/categories/parents/entities/parent.entity";
 import { District } from "src/models/locations/districts/entities";
 
 export class KeywordNotificationsSerializer extends KeywordNotification {
@@ -24,7 +23,7 @@ export class KeywordNotificationsSerializer extends KeywordNotification {
     override categoryId!: number;
 
     @Exclude({ toPlainOnly: true })
-    override categories: ParentCategory[] | undefined;
+    override categories: any[] | undefined;
 
     @Exclude({ toPlainOnly: true })
     override districts: District[] | undefined;
