@@ -1,4 +1,4 @@
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Transform } from "class-transformer";
 import { KeywordNotification } from "../entities/keyword-notification.entity";
 import { categoryTranslator, locationTranslator } from "src/common/helper/translators";
 import { Language } from "src/common/enum";
@@ -21,6 +21,10 @@ export class KeywordNotificationsSerializer extends KeywordNotification {
 
     @Exclude()
     override categoryId!: number;
+
+    @Transform(({ value }) => new Date(value).getTime())
+    @Expose()
+    override createdAt!: Date;
 
     @Exclude({ toPlainOnly: true })
     override categories: any[] | undefined;
