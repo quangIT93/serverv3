@@ -46,7 +46,7 @@ export class KeywordNotificationsService {
         where: {
           accoundId: id,
         },
-        relations: ['categories', 'districts', 'districts.province']
+        relations: ['categories', 'districts', 'districts.province', 'categories.parentCategory']
       })
     } catch (error) {
       throw new Error('Error finding keyword notifications');

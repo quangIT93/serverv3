@@ -1,4 +1,4 @@
-import { ParentCategory } from "src/models/categories/parents/entities/parent.entity";
+import { ChildCategory } from "src/models/categories/children/entities/child.entity";
 import { District } from "src/models/locations/districts/entities";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -26,7 +26,7 @@ export class KeywordNotification {
     @Column({ type: 'varchar', nullable: false, name: 'category_id'})
     categoryId!: number;
 
-    @ManyToMany(() => ParentCategory, parentCategory => parentCategory.id)
+    @ManyToMany(() => ChildCategory, childCategory => childCategory.id)
     @JoinTable({
         name: 'keyword_categories',
         joinColumn: {
@@ -38,7 +38,7 @@ export class KeywordNotification {
             referencedColumnName: 'id'
         }
     })
-    categories: ParentCategory[] | undefined;
+    categories: ChildCategory[] | undefined;
 
     @ManyToMany(() => District, district => district.id)
     @JoinTable({
