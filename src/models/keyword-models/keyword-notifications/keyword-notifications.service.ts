@@ -42,39 +42,38 @@ export class KeywordNotificationsService {
 
   async findAll(id: string) {
     try {
-      return this.keywordNotificationRepository.find({
+      return await this.keywordNotificationRepository.find({
         where: {
           accoundId: id,
         },
-        relations: ['categories', 'districts']
-      }
-      )
+        relations: ['categories', 'districts', 'districts.province']
+      })
     } catch (error) {
       throw new Error('Error finding keyword notifications');
     }
   }
 
-  async update(id: number, _updateKeywordNotificationDto: UpdateKeywordNotificationDto) {
+  async update(id: number, updateKeywordNotificationDto: UpdateKeywordNotificationDto) {
     try {
-      await this.keywordNotificationRepository.update(+id, {
-        keyword: _updateKeywordNotificationDto.keyword
+      updateKeywordNotificationDto.keyword && await this.keywordNotificationRepository.update(+id, {
+        keyword: updateKeywordNotificationDto.keyword
       }) 
 
       await this.keywordCategoriesService.deteleAllByKeywordId(id)
 
       await this.keywordDistrictsService.deteleAllByKeywordId(id)
 
-      if (_updateKeywordNotificationDto.categoriesId.length > 0 ) {
+      if (updateKeywordNotificationDto.categoriesId && updateKeywordNotificationDto.categoriesId.length > 0) {
         await this.keywordCategoriesService.create({
           keywordId: id,
-          categoryId: _updateKeywordNotificationDto.categoriesId
+          categoryId: updateKeywordNotificationDto.categoriesId
         })
       }
 
-      if (_updateKeywordNotificationDto.districtsId.length > 0 ) {
+      if (updateKeywordNotificationDto.districtsId && updateKeywordNotificationDto.districtsId.length > 0 ) {
         await this.keywordDistrictsService.create({
           keywordId: id,
-          districtId: _updateKeywordNotificationDto.districtsId
+          districtId: updateKeywordNotificationDto.districtsId
         })
       }
 

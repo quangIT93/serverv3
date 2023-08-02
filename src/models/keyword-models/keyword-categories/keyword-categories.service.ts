@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { KeywordCategory } from './entities/keyword-categories.entity';
 import { Repository } from 'typeorm';
 import { CreateKeywordCategoriesDto } from './dto/create-keyword-categories.dto';
-// import { ParentService } from 'src/models/categories/parents/parents.service';
 
 @Injectable()
 export class KeywordCategoriesService {
@@ -11,7 +10,6 @@ export class KeywordCategoriesService {
     constructor(
         @InjectRepository(KeywordCategory)
         private readonly keywordCategoryRepository: Repository<KeywordCategory>,
-        // private readonly parentService : ParentService
     ){}
 
     async create(_createKeywordCategoriesDto: CreateKeywordCategoriesDto) {
