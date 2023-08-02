@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateKeywordNotificationDto } from './create-keyword-notification.dto';
+import { IsNotEmpty } from "class-validator";
 
-export class UpdateKeywordNotificationDto extends PartialType(CreateKeywordNotificationDto) {}
+export class UpdateKeywordNotificationDto {
+    @IsNotEmpty()
+    keyword!: string;
+
+    @IsNotEmpty()
+    categoriesId!: number[];
+
+    @IsNotEmpty()
+    districtsId!: string[];
+}

@@ -8,8 +8,8 @@ export class KeywordNotification {
     @PrimaryGeneratedColumn('increment')
     id!: number;
 
-    @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
-    accountId!: string;
+    @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id'})
+    accoundId!: string;
 
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'keyword' })
     keyword!: string;
@@ -19,6 +19,12 @@ export class KeywordNotification {
 
     @Column({ type: 'datetime', nullable: false, name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
+
+    @Column({ type: 'varchar', nullable: false, name: 'district_id'})
+    districtId!: string;
+
+    @Column({ type: 'varchar', nullable: false, name: 'category_id'})
+    categoryId!: number;
 
     @ManyToMany(() => ParentCategory, parentCategory => parentCategory.id)
     @JoinTable({

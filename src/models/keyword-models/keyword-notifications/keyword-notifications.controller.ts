@@ -3,12 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Param,
+  HttpStatus,
+  BadRequestException,
+  Put,
 } from '@nestjs/common';
 import { KeywordNotificationsService } from './keyword-notifications.service';
 import { CreateKeywordNotificationDto } from './dto/create-keyword-notification.dto';
+import { UpdateKeywordNotificationDto } from './dto/update-keyword-notification.dto';
+import { ApiTags } from '@nestjs/swagger';
 // import { UpdateKeywordNotificationDto } from './dto/update-keyword-notification.dto';
 
+@ApiTags('keyword-notifications')
 @Controller('keyword-notifications')
 export class KeywordNotificationsController {
   constructor(
@@ -29,26 +35,56 @@ export class KeywordNotificationsController {
    * If have any error, it will throw an error and rollback all queries.
    */
   @Post()
-  create(@Body() createKeywordNotificationDto: CreateKeywordNotificationDto) {
-    return this.keywordNotificationsService.create(
-      createKeywordNotificationDto,
-    );
+  async create(@Body() createKeywordNotificationDto: CreateKeywordNotificationDto) {
+    try {
+      await this.keywordNotificationsService.create(
+        createKeywordNotificationDto,
+      );
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Create keyword notification successfully'
+      }
+    } catch (error) {
+      throw new Error('Error')
+    }
   }
 
   /**
    * Get all keyword notifications by account id
    */
-  @Get()
-  findAll() {
-    return this.keywordNotificationsService.findAll();
+  @Get(':id')
+  async findAll(@Param('id') id : string) {
+    try {
+      return {
+        status: HttpStatus.OK,
+        data: await this.keywordNotificationsService.findAll(id)
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message)
+      }
+      throw new BadRequestException('Error finding keyword notification')
+      }
   }
 
   /**
    * Update keyword notification
    */
-  @Patch()
-  update() {
-    // return this.keywordNotificationsService.update();
+  @Put(":id")
+  async update(@Param('id') id : number, @Body() updateKeywordNotificationDto: UpdateKeywordNotificationDto) {
+    try {
+      await this.keywordNotificationsService.update(id, updateKeywordNotificationDto);
+      return {
+        status: HttpStatus.OK,
+        message: 'Updated keyword notification successfully'
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message)
+      }
+      throw new BadRequestException('Error update keyword notification')
+      }
+    }
   }
 
-}
