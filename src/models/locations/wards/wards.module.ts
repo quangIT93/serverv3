@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { WardsService } from './wards.service';
-import { WardsController } from './wards.controller';
+// import { WardsController } from './wards.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ward } from './entities';
 
@@ -8,7 +8,7 @@ import { Ward } from './entities';
   imports: [
     TypeOrmModule.forFeature([Ward])
   ],
-  controllers: [WardsController],
+  // controllers: [WardsController],
   providers: [WardsService],
   exports: [WardsService],
 })

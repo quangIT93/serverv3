@@ -2,7 +2,7 @@
 
 import { CompanyResource } from "src/models/company-resources/entities/company-resources.entity";
 import { Post } from "../entities";
-import { timeToTextTransform } from "src/common/helper/transform/timeToText.tranform";
+import { timeToTextTransform } from "src/common/helper/transform/timeToText.transform";
 import { Language, MoneyType } from "src/common/enum";
 import { BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from "src/common/constants";
 
