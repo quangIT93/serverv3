@@ -7,11 +7,18 @@ import {
   HttpStatus,
   BadRequestException,
   Put,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { KeywordNotificationsService } from './keyword-notifications.service';
 import { CreateKeywordNotificationDto } from './dto/create-keyword-notification.dto';
 import { UpdateKeywordNotificationDto } from './dto/update-keyword-notification.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { KeywordNotificationsSerializer } from './serializer/keyword-notifications.serializer';
 // import { UpdateKeywordNotificationDto } from './dto/update-keyword-notification.dto';
 
 @ApiTags('keyword-notifications')
@@ -19,72 +26,93 @@ import { ApiTags } from '@nestjs/swagger';
 export class KeywordNotificationsController {
   constructor(
     private readonly keywordNotificationsService: KeywordNotificationsService,
-  ) {}
+  ) { }
 
   /**
-   * 
-   * @param createKeywordNotificationDto 
+   *
+   * @param createKeywordNotificationDto
    * @returns new keyword notification
-   * 
+   *
    * @description
    * This method is used to create a new keyword notification.
    * 1. Create keyword in keyword table
    * 2. Create keyword district in keyword district table
    * 3. Create keyword category in keyword category table
-   * 
+   *
    * If have any error, it will throw an error and rollback all queries.
    */
+  @ApiBasicAuth()
+  @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() createKeywordNotificationDto: CreateKeywordNotificationDto) {
+  async create(
+    @Req() req: CustomRequest,
+    @Body() createKeywordNotificationDto: CreateKeywordNotificationDto,
+  ) {
     try {
+      createKeywordNotificationDto.accoundId = req.user?.id || '';
       await this.keywordNotificationsService.create(
         createKeywordNotificationDto,
       );
 
       return {
         status: HttpStatus.OK,
-        message: 'Create keyword notification successfully'
-      }
+        message: 'Create keyword notification successfully',
+      };
     } catch (error) {
-      throw new Error('Error')
+      throw new Error('Error');
     }
   }
 
   /**
    * Get all keyword notifications by account id
    */
-  @Get(':id')
-  async findAll(@Param('id') id : string) {
+  @ApiBasicAuth()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get()
+  async findAll(@Req() req: CustomRequest) {
+    const id = req.user?.id || '';
     try {
       return {
-        status: HttpStatus.OK,
-        data: await this.keywordNotificationsService.findAll(id)
-      }
+        data: (await this.keywordNotificationsService.findAll(id)).map(
+          (keywordNotification) =>
+            Object.assign(
+              new KeywordNotificationsSerializer(keywordNotification, req.lang),
+            ),
+        ),
+      };
     } catch (error) {
       if (error instanceof Error) {
-        throw new BadRequestException(error.message)
+        throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error finding keyword notification')
-      }
-  }
-
-  /**
-   * Update keyword notification
-   */
-  @Put(":id")
-  async update(@Param('id') id : number, @Body() updateKeywordNotificationDto: UpdateKeywordNotificationDto) {
-    try {
-      await this.keywordNotificationsService.update(id, updateKeywordNotificationDto);
-      return {
-        status: HttpStatus.OK,
-        message: 'Updated keyword notification successfully'
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message)
-      }
-      throw new BadRequestException('Error update keyword notification')
-      }
+      throw new BadRequestException('Error finding keyword notification');
     }
   }
 
+  @ApiBasicAuth()
+  /**
+   * Update keyword notification
+   */
+  @UseGuards(AuthGuard)
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateKeywordNotificationDto: UpdateKeywordNotificationDto,
+  ) {
+    try {
+      await this.keywordNotificationsService.update(
+        id,
+        updateKeywordNotificationDto,
+      );
+      return {
+        status: HttpStatus.OK,
+        message: 'Updated keyword notification successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error update keyword notification');
+    }
+  }
+}
