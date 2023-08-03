@@ -45,6 +45,9 @@ export class KeywordNotificationsService {
           where: {
             accoundId: id,
           },
+          order: {
+            createdAt: 'DESC',
+          },
         })
       }
     } catch (error) {
