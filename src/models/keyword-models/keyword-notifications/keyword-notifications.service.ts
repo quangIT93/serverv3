@@ -37,8 +37,8 @@ export class KeywordNotificationsService {
       );
       return {
         status: {
-          emailStatus: typeNotificationPlatform?.emailStatus || false,
-          pushStatus: typeNotificationPlatform?.pushStatus || false,
+          emailStatus: typeNotificationPlatform?.emailStatus || 0,
+          pushStatus: typeNotificationPlatform?.pushStatus || 0,
         },
         data: await this.keywordNotificationRepository.find({
           relations: ['categories', 'districts', 'districts.province', 'categories.parentCategory'],
