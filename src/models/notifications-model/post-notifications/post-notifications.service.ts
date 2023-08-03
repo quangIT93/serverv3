@@ -5,9 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostNotification } from './entities/post-notification.entity';
 import { Repository } from 'typeorm';
 import { FirebaseMessagingService } from 'src/services/firebase/messaging/firebase-messaging.service';
-import { CreatePostByAdminDto } from 'src/models/post-models/posts/dto/admin-create-post.dto';
 import { FcmTokensService } from 'src/models/fcm-tokens/fcm-tokens.service';
 import { Logger } from '@nestjs/common';
+import { CreatePostDto } from 'src/models/post-models/posts/dto/create-post.dto';
 
 @Injectable()
 export class PostNotificationsService {
@@ -40,7 +40,7 @@ export class PostNotificationsService {
     return `This action removes a #${id} postNotification`;
   }
 
-  async createWhenCreatePost(post: CreatePostByAdminDto, postId: number) {
+  async createWhenCreatePost(post: CreatePostDto, postId: number) {
 
     // get all tokens
     const tokens = await this.fcmTokenService.getTokensWhenNewPost(post);
