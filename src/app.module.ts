@@ -35,7 +35,6 @@ import { ProfilesLocationsModule } from './models/profile-models/profiles-locati
 import { BannersController } from './models/banners/banners.controller';
 import { BannersModule } from './models/banners/banners.module';
 import { SearchModule } from './models/search-models/suggest-search/search.module';
-
 import { ApplicationsModule } from './models/application-model/applications/applications.module';
 import { HistoriesRecruiterModule } from './models/history-models/histories-recruiter/histories-recruiter.module';
 import { FcmTokensModule } from './models/fcm-tokens/fcm-tokens.module';
@@ -45,8 +44,7 @@ import { CompanyImagesModule } from './models/company-models/company-images/comp
 import { KeywordCategoriesModule } from './models/keyword-models/keyword-categories/keyword-categories.module';
 import { KeywordDistrictsModule } from './models/keyword-models/keyword-districts/keyword-districts.module';
 import { KeywordNotificationsModule } from './models/keyword-models/keyword-notifications/keyword-notifications.module';
-import { KeywordCategoriesController } from './models/keyword-models/keyword-categories/keyword-categories.controller';
-import { KeywordDistricsController } from './models/keyword-models/keyword-districts/keyword-districs.controller';
+import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
 
 @Module({
   imports: [
@@ -92,8 +90,9 @@ import { KeywordDistricsController } from './models/keyword-models/keyword-distr
     KeywordCategoriesModule,
     KeywordDistrictsModule,
     KeywordNotificationsModule,
+    TypeNotificationPlatformModule,
   ],
-  controllers: [AppController, BannersController, KeywordCategoriesController, KeywordDistricsController],
+  controllers: [AppController, BannersController],
   providers: [
     AppService,
   ],

@@ -50,16 +50,18 @@ export class KeywordNotificationsController {
   ) {
     try {
       createKeywordNotificationDto.accoundId = req.user?.id || '';
-      await this.keywordNotificationsService.create(
-        createKeywordNotificationDto,
-      );
-
       return {
-        status: HttpStatus.OK,
+        status: HttpStatus.CREATED,
         message: 'Create keyword notification successfully',
+        data: await this.keywordNotificationsService.create(
+          createKeywordNotificationDto,
+        ),
       };
     } catch (error) {
-      throw new Error('Error');
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error creating keyword notification');
     }
   }
 
@@ -73,19 +75,16 @@ export class KeywordNotificationsController {
   async findAll(@Req() req: CustomRequest) {
     const id = req.user?.id || '';
     try {
+      const data = await this.keywordNotificationsService.findAll(id);
       return {
         data: {
-              keywords: (await this.keywordNotificationsService.findAll(id)).map(
-                (keywordNotification) =>
-                  Object.assign(
-                    new KeywordNotificationsSerializer(keywordNotification, req.lang),
-                  ),
-              ),
-              status: {
-                emailStatus: false,
-                pushStatus: false,
-              }
-            }
+          status: data.status,
+          keywords: data.data.map((keywordNotification) =>
+            Object.assign(
+              new KeywordNotificationsSerializer(keywordNotification, req.lang),
+            ),
+          ),
+        },
       };
     } catch (error) {
       if (error instanceof Error) {

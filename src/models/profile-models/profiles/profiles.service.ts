@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
@@ -44,8 +43,11 @@ export class ProfilesService {
     });
   }
 
-  update(id: number, _updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
+  getProfileEmail(id: string) {
+    return this.profileRepository.findOne({
+      select: ['email'],
+      where: { accountId: id }
+    })
   }
 
   remove(id: number) {
