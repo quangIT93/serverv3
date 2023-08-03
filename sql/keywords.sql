@@ -30,3 +30,6 @@ alter table keywords_notification drop CONSTRAINT `FK_Keyword_Account`;
 alter table keywords_notification drop index `account_id`;
 alter table keywords_notification CONSTRAINT `FK_Keyword_Category` FOREIGN KEY (`category_id`) REFERENCES `parent_categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 alter table keywords_notification CONSTRAINT `FK_Keyword_District` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  CONSTRAINT `keyword_categories_ibfk_1` FOREIGN KEY (`keyword_id`) REFERENCES `keywords_notification` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `keyword_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `child_categories` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
