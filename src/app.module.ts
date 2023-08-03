@@ -45,6 +45,7 @@ import { KeywordCategoriesModule } from './models/keyword-models/keyword-categor
 import { KeywordDistrictsModule } from './models/keyword-models/keyword-districts/keyword-districts.module';
 import { KeywordNotificationsModule } from './models/keyword-models/keyword-notifications/keyword-notifications.module';
 import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
+import { SiteModule } from './models/site/site.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { TypeNotificationPlatformModule } from './models/keyword-models/type-not
     KeywordDistrictsModule,
     KeywordNotificationsModule,
     TypeNotificationPlatformModule,
+    SiteModule
   ],
   controllers: [AppController, BannersController],
   providers: [
