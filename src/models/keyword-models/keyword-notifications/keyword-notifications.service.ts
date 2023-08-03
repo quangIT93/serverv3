@@ -41,7 +41,7 @@ export class KeywordNotificationsService {
           pushStatus: typeNotificationPlatform?.pushStatus || false,
         },
         data: await this.keywordNotificationRepository.find({
-          relations: ['categories', 'districts', 'districts.province', 'categories.childCategory'],
+          relations: ['categories', 'districts', 'districts.province', 'categories.parentCategory'],
           where: {
             accoundId: id,
           },
