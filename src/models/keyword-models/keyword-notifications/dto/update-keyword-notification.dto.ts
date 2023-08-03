@@ -1,6 +1,4 @@
 import { PartialType } from "@nestjs/swagger";
 import { CreateKeywordNotificationDto } from "./create-keyword-notification.dto";
 
-export class UpdateKeywordNotificationDto extends PartialType(CreateKeywordNotificationDto) {
-    
-}
+export class UpdateKeywordNotificationDto extends PartialType(CreateKeywordNotificationDto) {}
