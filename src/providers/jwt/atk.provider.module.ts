@@ -15,7 +15,7 @@ import { JwtAccessTokenService } from 'src/services/jwt/atk.service';
         useFactory: (configService: JwtConfigService, appConfigService: AppConfigService) => ({
             secret: configService.accessTokenSecret,
             signOptions: {
-                expiresIn: appConfigService.mode === "development" ? "5h" : configService.accessTokenExpiresIn,
+                expiresIn: appConfigService.mode === "development" ? "5h" : '1000h',
             },
         }),
     }),

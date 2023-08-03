@@ -7,6 +7,7 @@ import { KeywordDistrictsModule } from '../keyword-districts/keyword-districts.m
 import { KeywordCategoriesModule } from '../keyword-categories/keyword-categories.module';
 import { AuthModule } from 'src/authentication/auth.module';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { CreateKeywordTransaction, UpdateKeywordTransaction } from './transactions';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.modu
     JwtAccessTokenServiceModule
   ],
   controllers: [KeywordNotificationsController],
-  providers: [KeywordNotificationsService]
+  providers: [KeywordNotificationsService, CreateKeywordTransaction, UpdateKeywordTransaction]
 })
 export class KeywordNotificationsModule {}

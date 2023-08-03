@@ -1,42 +1,30 @@
+import { CreateKeywordTransaction } from './transactions/create-keyword.transaction';
 import { Injectable } from '@nestjs/common';
 import { CreateKeywordNotificationDto } from './dto/create-keyword-notification.dto';
 import { UpdateKeywordNotificationDto } from './dto/update-keyword-notification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KeywordNotification } from './entities/keyword-notification.entity';
 import { Repository } from 'typeorm';
-import { KeywordCategoriesService } from '../keyword-categories/keyword-categories.service';
-import { KeywordDistrictsService } from '../keyword-districts/keyword-districts.service';
+import { UpdateKeywordTransaction } from './transactions/update-keyword.transaction';
 
 @Injectable()
 export class KeywordNotificationsService {
-
   constructor(
     @InjectRepository(KeywordNotification)
     private readonly keywordNotificationRepository: Repository<KeywordNotification>,
-    private readonly keywordCategoriesService : KeywordCategoriesService,
-    private readonly keywordDistrictsService: KeywordDistrictsService,
+    private readonly createKeywordTransaction: CreateKeywordTransaction,
+    private readonly updateKeywordTransaction: UpdateKeywordTransaction,
   ) {}
-  async create(_createKeywordNotificationDto: CreateKeywordNotificationDto) {
+  async create(createKeywordNotificationDto: CreateKeywordNotificationDto) {
     try {
-        const newKeywordNotification = this.keywordNotificationRepository.create({..._createKeywordNotificationDto, districtId: _createKeywordNotificationDto.districtsId[0], 
-          categoryId: _createKeywordNotificationDto.categoriesId[0]
-        })
-        const createKeywordCategory = await this.keywordNotificationRepository.save(newKeywordNotification);
-
-        if (createKeywordCategory) {
-          await this.keywordCategoriesService.create({
-            keywordId: createKeywordCategory.id,
-            categoryId: _createKeywordNotificationDto.categoriesId
-          })
-
-          await this.keywordDistrictsService.create({
-            keywordId: createKeywordCategory.id,
-            districtId: _createKeywordNotificationDto.districtsId
-          })
-        }
-      
+      // Transaction when create keyword notification
+      // create keyword categories, keyword districts
+      const newKeywordNotification = await this.createKeywordTransaction.run(
+        createKeywordNotificationDto,
+      );
+      return newKeywordNotification;
     } catch (error) {
-      throw new Error('Error creating keyword notification');
+      throw error;
     }
   }
 
@@ -46,39 +34,39 @@ export class KeywordNotificationsService {
         where: {
           accoundId: id,
         },
-        relations: ['categories', 'districts', 'districts.province']
-      })
+        relations: [
+          'categories',
+          'districts',
+          'districts.province',
+          'categories.parentCategory',
+        ],
+      });
     } catch (error) {
       throw new Error('Error finding keyword notifications');
     }
   }
 
-  async update(id: number, updateKeywordNotificationDto: UpdateKeywordNotificationDto) {
+  async update(
+    id: number,
+    updateKeywordNotificationDto: UpdateKeywordNotificationDto,
+  ) {
     try {
-      updateKeywordNotificationDto.keyword && await this.keywordNotificationRepository.update(+id, {
-        keyword: updateKeywordNotificationDto.keyword
-      }) 
-
-      await this.keywordCategoriesService.deteleAllByKeywordId(id)
-
-      await this.keywordDistrictsService.deteleAllByKeywordId(id)
-
-      if (updateKeywordNotificationDto.categoriesId && updateKeywordNotificationDto.categoriesId.length > 0) {
-        await this.keywordCategoriesService.create({
-          keywordId: id,
-          categoryId: updateKeywordNotificationDto.categoriesId
-        })
-      }
-
-      if (updateKeywordNotificationDto.districtsId && updateKeywordNotificationDto.districtsId.length > 0 ) {
-        await this.keywordDistrictsService.create({
-          keywordId: id,
-          districtId: updateKeywordNotificationDto.districtsId
-        })
-      }
-
+      // Transaction when update keyword notification
+      // update keyword categories, keyword districts
+      updateKeywordNotificationDto.id = id;
+      return await this.updateKeywordTransaction.run(
+        updateKeywordNotificationDto,
+      );
     } catch (error) {
-      throw new Error('Error updating keyword notification');
+      throw error;
     }
+  }
+
+  async findPlatformStatus(id: string): Promise<any> {
+    return await this.keywordNotificationRepository
+      .createQueryBuilder('type_notification_platform')
+      .select(['email_status', 'push_status'])
+      .where('type_notification_platform.accoundId = :id', { id })
+      .getOne();
   }
 }

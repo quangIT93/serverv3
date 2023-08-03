@@ -50,16 +50,18 @@ export class KeywordNotificationsController {
   ) {
     try {
       createKeywordNotificationDto.accoundId = req.user?.id || '';
-      await this.keywordNotificationsService.create(
-        createKeywordNotificationDto,
-      );
-
       return {
-        status: HttpStatus.OK,
+        status: HttpStatus.CREATED,
         message: 'Create keyword notification successfully',
+        data: await this.keywordNotificationsService.create(
+          createKeywordNotificationDto,
+        ),
       };
     } catch (error) {
-      throw new Error('Error');
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error creating keyword notification');
     }
   }
 
