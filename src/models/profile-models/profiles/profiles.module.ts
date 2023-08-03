@@ -17,6 +17,7 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
     AWSModule,
   ],
   controllers: [ProfilesController],
-  providers: [ProfilesService]
+  providers: [ProfilesService],
+  exports: [ProfilesService]
 })
 export class ProfilesModule {}

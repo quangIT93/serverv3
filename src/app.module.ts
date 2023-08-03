@@ -45,8 +45,7 @@ import { CompanyImagesModule } from './models/company-models/company-images/comp
 import { KeywordCategoriesModule } from './models/keyword-models/keyword-categories/keyword-categories.module';
 import { KeywordDistrictsModule } from './models/keyword-models/keyword-districts/keyword-districts.module';
 import { KeywordNotificationsModule } from './models/keyword-models/keyword-notifications/keyword-notifications.module';
-import { KeywordCategoriesController } from './models/keyword-models/keyword-categories/keyword-categories.controller';
-import { KeywordDistricsController } from './models/keyword-models/keyword-districts/keyword-districs.controller';
+import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
 
 @Module({
   imports: [
@@ -92,8 +91,9 @@ import { KeywordDistricsController } from './models/keyword-models/keyword-distr
     KeywordCategoriesModule,
     KeywordDistrictsModule,
     KeywordNotificationsModule,
+    TypeNotificationPlatformModule,
   ],
-  controllers: [AppController, BannersController, KeywordCategoriesController, KeywordDistricsController],
+  controllers: [AppController, BannersController],
   providers: [
     AppService,
   ],
