@@ -1,3 +1,4 @@
+import { TypeNotificationPlatformService } from './../type-notification-platform/type-notification-platform.service';
 import { CreateKeywordTransaction } from './transactions/create-keyword.transaction';
 import { Injectable } from '@nestjs/common';
 import { CreateKeywordNotificationDto } from './dto/create-keyword-notification.dto';
@@ -14,6 +15,7 @@ export class KeywordNotificationsService {
     private readonly keywordNotificationRepository: Repository<KeywordNotification>,
     private readonly createKeywordTransaction: CreateKeywordTransaction,
     private readonly updateKeywordTransaction: UpdateKeywordTransaction,
+    private readonly typeNotificationPlatformService: TypeNotificationPlatformService,
   ) {}
   async create(createKeywordNotificationDto: CreateKeywordNotificationDto) {
     try {
@@ -30,19 +32,23 @@ export class KeywordNotificationsService {
 
   async findAll(id: string) {
     try {
-      return await this.keywordNotificationRepository.find({
-        where: {
-          accoundId: id,
+      const typeNotificationPlatform = await this.typeNotificationPlatformService.findByAccountId(
+        id,
+      );
+      return {
+        status: {
+          emailStatus: typeNotificationPlatform?.emailStatus || false,
+          pushStatus: typeNotificationPlatform?.pushStatus || false,
         },
-        relations: [
-          'categories',
-          'districts',
-          'districts.province',
-          'categories.parentCategory',
-        ],
-      });
+        data: await this.keywordNotificationRepository.find({
+          relations: ['categories', 'districts', 'districts.province', 'categories.childCategory'],
+          where: {
+            accoundId: id,
+          },
+        })
+      }
     } catch (error) {
-      throw new Error('Error finding keyword notifications');
+      throw error;
     }
   }
 

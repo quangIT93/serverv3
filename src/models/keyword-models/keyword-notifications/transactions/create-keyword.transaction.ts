@@ -1,3 +1,4 @@
+import { TypeNotificationPlatformService } from './../../type-notification-platform/type-notification-platform.service';
 import { DataSource, EntityManager } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { BaseTransaction } from 'src/providers/database/mariadb/transaction';
@@ -16,6 +17,7 @@ export class CreateKeywordTransaction extends BaseTransaction<
         // private readonly keywordNotification
         private readonly keywordCategoriesService: KeywordCategoriesService,
         private readonly keywordDistrictsService: KeywordDistrictsService,
+        private readonly typeNotificationPlatformService: TypeNotificationPlatformService,
     ) {
         super(dataSource);
     }
@@ -25,6 +27,18 @@ export class CreateKeywordTransaction extends BaseTransaction<
         manager: EntityManager,
     ): Promise<KeywordNotification> {
         try {
+            const LIMIT_KEYWORD_NOTIFICATION = 10;
+
+            const currentKeywordNotification = await manager.find(KeywordNotification, {
+                where: {
+                    accoundId: createKeywordNotificationDto.accoundId,
+                },
+            });
+
+            if (currentKeywordNotification.length >= LIMIT_KEYWORD_NOTIFICATION) {
+                throw new Error(`You can only create ${LIMIT_KEYWORD_NOTIFICATION} keyword notifications`);
+            }
+
             const newKeywordNotificationEntity = manager.create(KeywordNotification, {
                 ...createKeywordNotificationDto,
                 districtId: createKeywordNotificationDto.districtsId[0],
@@ -49,10 +63,21 @@ export class CreateKeywordTransaction extends BaseTransaction<
 
             await this.keywordCategoriesService.createMany(keywordCategoriesDto, manager);
             await this.keywordDistrictsService.createMany(keywordDistrictsDto, manager);
-            
+
+            const typeNotificationPlatform = await this.typeNotificationPlatformService
+            .findByAccountId(createKeywordNotificationDto.accoundId);
+
+            if (!typeNotificationPlatform) {
+                this.typeNotificationPlatformService.create(createKeywordNotificationDto.accoundId);
+            }
+
             return newKeywordNotification;
         } catch (error) {
-            throw new Error('Error creating keyword notification');
+            // if (error instanceof Error) {                
+            //     throw new Error(error.message);
+            // }
+
+            throw new Error('Create keyword notification failed');
         }
     }
 }

@@ -16,6 +16,7 @@ import { FcmTokensModule } from 'src/models/fcm-tokens/fcm-tokens.module';
     FcmTokensModule
   ],
   controllers: [],
-  providers: [TypeNotificationPlatformService]
+  providers: [TypeNotificationPlatformService],
+  exports: [TypeNotificationPlatformService]
 })
 export class TypeNotificationPlatformModule {}

@@ -75,13 +75,16 @@ export class KeywordNotificationsController {
   async findAll(@Req() req: CustomRequest) {
     const id = req.user?.id || '';
     try {
+      const data = await this.keywordNotificationsService.findAll(id);
       return {
-        data: (await this.keywordNotificationsService.findAll(id)).map(
-          (keywordNotification) =>
+        data: {
+          status: data.status,
+          keywords: data.data.map((keywordNotification) =>
             Object.assign(
               new KeywordNotificationsSerializer(keywordNotification, req.lang),
             ),
-        ),
+          ),
+        },
       };
     } catch (error) {
       if (error instanceof Error) {

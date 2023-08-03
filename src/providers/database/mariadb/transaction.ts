@@ -33,7 +33,7 @@ export abstract class BaseTransaction<TransactionInput, TransactionOutput> {
       return result;
     } catch(error) {
       await queryRunner.rollbackTransaction();
-      throw new Error('Transaction failed');
+      throw error;
     } finally {
       await queryRunner.release();
     }

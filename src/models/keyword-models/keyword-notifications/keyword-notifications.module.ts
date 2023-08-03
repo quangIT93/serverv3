@@ -8,6 +8,7 @@ import { KeywordCategoriesModule } from '../keyword-categories/keyword-categorie
 import { AuthModule } from 'src/authentication/auth.module';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
 import { CreateKeywordTransaction, UpdateKeywordTransaction } from './transactions';
+import { TypeNotificationPlatformModule } from '../type-notification-platform/type-notification-platform.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { CreateKeywordTransaction, UpdateKeywordTransaction } from './transactio
     KeywordDistrictsModule,
     KeywordCategoriesModule,
     AuthModule,
-    JwtAccessTokenServiceModule
+    JwtAccessTokenServiceModule,
+    TypeNotificationPlatformModule
   ],
   controllers: [KeywordNotificationsController],
   providers: [KeywordNotificationsService, CreateKeywordTransaction, UpdateKeywordTransaction]
