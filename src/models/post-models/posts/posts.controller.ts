@@ -119,6 +119,7 @@ export class PostsController {
      * 
      */
     @ApiConsumes('multipart/form-data')
+    @ApiBearerAuth()
     @Post('by-worker')
     @Roles(Role.WORKER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -169,6 +170,7 @@ export class PostsController {
      * 
      */
     @ApiConsumes('multipart/form-data')
+    @ApiBearerAuth()
     @Post('')
     @UseGuards(AuthGuard)
     @UseInterceptors(FilesInterceptor('images', 5, {
