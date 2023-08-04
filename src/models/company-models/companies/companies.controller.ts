@@ -71,6 +71,7 @@ export class CompaniesController {
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
     try {
+      console.log(listImages);
       const { logo, images } = listImages;
       if (req.user?.id === undefined) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
@@ -79,7 +80,7 @@ export class CompaniesController {
         });
       }
       createCompanyDto.accountId = req.user.id;
-      // createCompanyDto.logo = logo.originalname;
+      createCompanyDto.logo = logo.originalname;
       createCompanyDto.images = images ? images.map((image: any) => image.originalname) : [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
