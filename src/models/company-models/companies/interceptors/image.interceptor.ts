@@ -34,7 +34,7 @@ export class CompanyImagesPipe
 
     async transform(files: any): Promise<any> {
         try {
-            console.log('files', files);
+            // console.log('files', files);
 
             if (!files) {
                 return {

@@ -71,7 +71,7 @@ export class CompaniesController {
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
     try {
-      console.log(listImages);
+      // console.log(listImages);
       const { logo, images } = listImages;
       if (req.user?.id === undefined) {
         return res.status(HttpStatus.UNAUTHORIZED).json({
@@ -148,14 +148,17 @@ export class CompaniesController {
   @Patch(':id')
   @UseInterceptors(
     ClassSerializerInterceptor,
-    FilesInterceptor('logo', 1, {
-      fileFilter: (_req, _file, cb) => {
-        if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
+    FileFieldsInterceptor(
+      [
+        { name: 'logo', maxCount: 1 },
+        { name: 'images', maxCount: 5 },
+      ],
+      {
+        limits: {
+          fileSize: 1024 * 1024 * 6,
+        },
       },
-    }),
+    ),
   )
   async update(
     @UploadedFiles(
