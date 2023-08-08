@@ -3,7 +3,7 @@ import { AWSConfigService } from "src/config/storage/aws/config.service";
 import { S3 } from 'aws-sdk';
 import { AWSServiceInterface, FileUpload, UploadFileResult, UploadOpions } from "./awsService.interface";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
-import { BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
+import {  BUCKET_IMAGE_PARENT, BUCKET_IMAGE_PARENT_DEFAULT } from "src/common/constants";
 
 
 @Injectable()
@@ -20,7 +20,6 @@ export class AWSService implements AWSServiceInterface {
             secretAccessKey: this.awsConfig.secretKey,
             region: this.awsConfig.region,
         });
-
     }
 
     /**

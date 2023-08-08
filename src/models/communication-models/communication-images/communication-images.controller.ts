@@ -8,8 +8,8 @@ export class CommunicationImagesController {
   constructor(private readonly communicationImagesService: CommunicationImagesService) {}
 
   @Post()
-  create(@Body() createCommunicationImageDto: CreateCommunicationImageDto) {
-    return this.communicationImagesService.create(createCommunicationImageDto);
+  create(@Body() createCommunicationImageDto: CreateCommunicationImageDto[]) {
+    return this.communicationImagesService.createMany(createCommunicationImageDto);
   }
 
   @Get()

@@ -9,6 +9,7 @@ import { CommunicationCategory } from './entities/communication.entity';
       CommunicationCategory
     ])
   ],
-  providers: [CommunicationCategoriesService]
+  providers: [CommunicationCategoriesService],
+  exports: [CommunicationCategoriesService]
 })
 export class CommunicationCategoriesModule {}
