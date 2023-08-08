@@ -11,7 +11,7 @@ export class CommunicationCategoriesService {
         private readonly globalEntityManager: EntityManager
     ){}
 
-    async create(createCommunicationCategoriesDto: CreateCommunicationCategoriesDto, transactionalManager?: EntityManager) {
+    async createMany(createCommunicationCategoriesDto: CreateCommunicationCategoriesDto[], transactionalManager?: EntityManager) {
         const manager = transactionalManager ?? this.globalEntityManager;
 
         return await manager.getRepository(CommunicationCategory).save(createCommunicationCategoriesDto);

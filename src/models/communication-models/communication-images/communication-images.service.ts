@@ -18,11 +18,7 @@ export class CommunicationImagesService {
 
   }
 
-  async createMany(
-    
-    createCommunicationImageDto: CommunicationImage, transactionalManager?: EntityManager
-    
-    ) {
+  async createMany(createCommunicationImageDto: CreateCommunicationImageDto[] , transactionalManager?: EntityManager) {
     const manager = transactionalManager ?? this.globalEntityManager;
 
     return await manager.getRepository(CommunicationImage).save(createCommunicationImageDto);

@@ -22,5 +22,5 @@ export class CreateCommunicationDto {
     images!: string[] | undefined;
 
     @IsOptional()
-    categoryId!:number;
+    categoryId!:number[] | undefined;
 }

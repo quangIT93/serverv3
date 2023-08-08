@@ -6,6 +6,7 @@ import { DataSource, EntityManager } from "typeorm";
 // import { AWSService } from "src/services/aws/aws.service";
 import { CommunicationImagesService } from "../../communication-images/communication-images.service";
 import { CommunicationCategoriesService } from "../../communication-categories/communication-categories.service";
+import { CreateCommunicationImageDto } from "../../communication-images/dto/create-communication-image.dto";
 import { CreateCommunicationCategoriesDto } from "../../communication-categories/dto/create-communication-categories.dto";
 // import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from "src/common/constants";
 
@@ -30,31 +31,26 @@ export class CreateCommunicationTransaction extends BaseTransaction<
     ): Promise<Communication> 
     {
         try {
-            const newCommunicationEntity = manager.create(Communication, 
-                {
-                    ...createCommunicationDto
-                }
-            )
+            const newCommunicationEntity = manager.create(Communication, createCommunicationDto)
             const newCommunication = await manager.save(newCommunicationEntity)
 
-            const newCommunicationImageDto : any = createCommunicationDto.images?.map((image) =>
+            const newCommunicationImageDto = createCommunicationDto.images?.map((image) =>
                 ({
-                    communicationId: +newCommunication.id,
+                    communicationId: newCommunication.id,
                     image
                 })
             )
-
-            const newCommunicationCategoriesDto : CreateCommunicationCategoriesDto = {
-                communicationId: +newCommunication.id,
-                categoryId: createCommunicationDto.categoryId
-            }
+            const newCommunicationCategoriesDto = createCommunicationDto.categoryId?.map((category) =>
+            ({
+                communicationId: newCommunication.id,
+                categoryId: category
+            })
+            )
 
             // save in communication images
-            await this.communicationImagesService.createMany(newCommunicationImageDto, manager);
-
+            await this.communicationImagesService.createMany(newCommunicationImageDto as CreateCommunicationImageDto[], manager);
             // save in communication category
-            await this.communicationCategoriesService.create(newCommunicationCategoriesDto, manager)
-
+            await this.communicationCategoriesService.createMany(newCommunicationCategoriesDto as CreateCommunicationCategoriesDto[], manager)
             return newCommunication;
         } catch (error) {
             throw new Error("Create communication failed.");
