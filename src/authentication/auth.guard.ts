@@ -17,7 +17,7 @@ import { JwtAccessTokenService } from "src/services/jwt/atk.service";
 export class AuthGuard implements CanActivate {
     constructor(
         private readonly jwtAccessTokenService: JwtAccessTokenService,
-        // private readonly jwtRefreshTokenService: JwtRefreshTokenService,
+        // private readonly jwtRefreshTokenService: JwtRefreshTokenService,pm2
     ) {}
 
     async canActivate(context: any): Promise<boolean> {

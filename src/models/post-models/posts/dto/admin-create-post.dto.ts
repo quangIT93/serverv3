@@ -255,7 +255,7 @@ export class CreatePostByAdminDto {
             }
         }
         
-        if (this.salaryMax < this.salaryMin) {
+        if (+this.salaryMax < +this.salaryMin) {
             return new BadRequestException('Salary max must be greater than salary min');
         }
         return true

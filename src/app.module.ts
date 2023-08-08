@@ -46,6 +46,13 @@ import { KeywordDistrictsModule } from './models/keyword-models/keyword-district
 import { KeywordNotificationsModule } from './models/keyword-models/keyword-notifications/keyword-notifications.module';
 import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
 import { SiteModule } from './models/site/site.module';
+import { CommunicationsModule } from './models/communication-models/communications/communications.module';
+import { CommunicationLikesModule } from './models/communication-models/communication-likes/communication-likes.module';
+import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
+import { CommunicationCategoriesModule } from './models/communication-models/communication-categories/communication-categories.module';
+import { CommunicationImagesModule } from './models/communication-models/communication-images/communication-images.module';
+import { CommunicationCommentsModule } from './models/communication-models/communication-comments/communication-comments.module';
+import { CommunicationCommentImagesModule } from './models/communication-models/communication-comment-images/communication-comment-images.module';
 
 @Module({
   imports: [
@@ -75,6 +82,8 @@ import { SiteModule } from './models/site/site.module';
     CompaniesModule,
     CompanyRolesModule,
     CompanySizesModule,
+
+    // Profile Module
     ProfilesModule,
     ProfilesCategoriesModule,
     ProfilesEducationsModule,
@@ -92,7 +101,16 @@ import { SiteModule } from './models/site/site.module';
     KeywordDistrictsModule,
     KeywordNotificationsModule,
     TypeNotificationPlatformModule,
-    SiteModule
+    SiteModule,
+
+    // Communication Module
+    CommunicationsModule,
+    CommunicationLikesModule,
+    CommunicationViewsModule,
+    CommunicationCategoriesModule,
+    CommunicationImagesModule,
+    CommunicationCommentsModule,
+    CommunicationCommentImagesModule
   ],
   controllers: [AppController, BannersController],
   providers: [
