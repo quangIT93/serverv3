@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Post } from './entities';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { countByHotTopicQuery, findByHotTopicQuery } from './repository';
-import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
 import { PostsImagesService } from '../posts-images/posts-images.service';
@@ -15,6 +14,7 @@ import { CreatePostCategoriesDto } from '../posts-categories/dto/create-posts-ca
 import { PostCategories } from '../posts-categories/entities/posts-categories.entity';
 import { CreatePostResourceDto } from '../post-resource/dto/create-post-resource.dto';
 import { PostResourceService } from '../post-resource/post-resource.service';
+import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -85,7 +85,7 @@ export class PostsService {
         });
     }
 
-    async create(dto: CreatePostByAdminDto): Promise<Post> {
+    async create(dto: CreatePostDto): Promise<Post> {
         try {
             const post = this.postsRepository.create(dto.toEntity());
             const data = await this.postsRepository.save(post);

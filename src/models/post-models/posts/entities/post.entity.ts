@@ -54,11 +54,11 @@ export class Post extends BaseEntity {
     @Column({ type: 'varchar', length: 20, default: null, name: 'end_time' })
     endTime!: string;
     
-    // @Column({ type: 'time', default: null, name: 'new_start_time' })
-    // newStartTime!: string;
+    @Column({ type: 'time', default: null, name: 'new_start_time' })
+    newStartTime!: string;
 
-    // @Column({ type: 'time', default: null, name: 'new_end_time' })
-    // newEndTime!: string;
+    @Column({ type: 'time', default: null, name: 'new_end_time' })
+    newEndTime!: string;
 
     @Column({ type: 'tinyint', default: 0, name: 'is_working_weekend' })
     isWorkingWeekend!: number;
