@@ -2,7 +2,8 @@ import { BadRequestException, Controller, Get, HttpStatus, Req } from "@nestjs/c
 import { ApiTags } from "@nestjs/swagger";
 import { Language } from "src/common/enum";
 import * as fs from 'fs';
-import path from 'path'; 
+// import path from 'path'; 
+import { CustomRequest } from "src/common/interfaces/customRequest.interface";
 
 @ApiTags('Site')
 @Controller('site')
@@ -21,17 +22,20 @@ export class SiteController {
     // get languages
 
     @Get('languages')
-    getLanguages(@Req() req: any) {
+    getLanguages(@Req() req: CustomRequest) {
 
-        const { lang } = req;
+        // get language
+        const lang = req.lang
 
         const languagePaths = {
-            [Language.EN]: '../../../src/languages/en.json',
-            [Language.VI]: '../../../src/languages/vi.json',
-            [Language.KO]: '../../../src/languages/ko.json'
+            [Language.EN]: 'src/config/languages/en.json',
+            [Language.VI]: 'src/config/languages/vi.json',
+            [Language.KO]: 'src/config/languages/ko.json'
         };
 
-        const filePath = path.join(__dirname,  (languagePaths[(lang === 'vi') ? 'vi' : (lang === 'ko') ? 'ko' : 'en']));
+        // const filePath = path.join(__dirname,  (languagePaths[lang]));
+
+        const filePath = languagePaths[lang];
 
         try {
             const data = fs.readFileSync(filePath, { encoding: 'utf8', flag: 'r' });
@@ -42,6 +46,7 @@ export class SiteController {
                 data: jsonData
             };
         } catch (error) {
+            console.log(error);
             throw new BadRequestException('Error reading language file');
         }
     }
