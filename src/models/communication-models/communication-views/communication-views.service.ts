@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationViewDto } from './dto/create-communication-view.dto';
-import { UpdateCommunicationViewDto } from './dto/update-communication-view.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CommunicationView } from './entities/communication-view.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CommunicationViewsService {
-  create(_createCommunicationViewDto: CreateCommunicationViewDto) {
-    return 'This action adds a new communicationView';
+  constructor(
+    @InjectRepository(CommunicationView)
+    private readonly communicationViewRepository:Repository<CommunicationView>
+  ){}
+  async create(createCommunicationViewDto: CreateCommunicationViewDto) {
+    try {
+
+      const newCommunicationLike = this.communicationViewRepository.create(
+        createCommunicationViewDto,
+      );
+      return await this.communicationViewRepository.save(newCommunicationLike);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException(
+        'Error creating or deleting communication views',
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all communicationViews`;
+  async findOne(id: number) {
+    return await this.communicationViewRepository.find({
+      where: {
+        communicationId: id,
+      },
+      relations: ['profile']
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} communicationView`;
-  }
-
-  update(id: number, _updateCommunicationViewDto: UpdateCommunicationViewDto) {
-    return `This action updates a #${id} communicationView`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} communicationView`;
-  }
 }

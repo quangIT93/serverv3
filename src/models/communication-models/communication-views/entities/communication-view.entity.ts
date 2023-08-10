@@ -1,15 +1,23 @@
-import { Entity, PrimaryColumn } from "typeorm";
+import { Profile } from 'src/models/profile-models/profiles/entities';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
 @Entity('communication_views')
 export class CommunicationView {
+  @PrimaryColumn({ type: 'int', nullable: false, name: 'communication_id' })
+  communicationId!: number;
 
-    @PrimaryColumn({ type: 'int', nullable: false, name: 'communication_id' })
-    communicationId!: number;
+  @PrimaryColumn({
+    type: 'varchar',
+    length: 50,
+    nullable: false,
+    name: 'account_id',
+  })
+  accountId!: string;
 
-    @PrimaryColumn({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
-    accountId!: string;
+  @Column({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt!: Date;
 
-    @PrimaryColumn({ type: 'date', nullable: false, name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt!: Date;
-
+  @ManyToOne(() => Profile, profile => profile.communicationLikes) 
+  @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+  profile!: Profile;
 }

@@ -1,34 +1,57 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Req,
+  UseGuards,
+  HttpStatus,
+  BadRequestException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { CommunicationViewsService } from './communication-views.service';
 import { CreateCommunicationViewDto } from './dto/create-communication-view.dto';
-import { UpdateCommunicationViewDto } from './dto/update-communication-view.dto';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { CommunicationViewInterceptor } from './interceptors/communication-views.interceptor';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('communication-views')
 @Controller('communication-views')
 export class CommunicationViewsController {
-  constructor(private readonly communicationViewsService: CommunicationViewsService) {}
+  constructor(
+    private readonly communicationViewsService: CommunicationViewsService,
+  ) {}
 
   @Post()
-  create(@Body() createCommunicationViewDto: CreateCommunicationViewDto) {
-    return this.communicationViewsService.create(createCommunicationViewDto);
-  }
+  @UseGuards(AuthGuard)
+  async create(
+    @Body() createCommunicationViewDto: CreateCommunicationViewDto,
+    @Req() req: CustomRequest,
+  ) {
+    createCommunicationViewDto.accountId = req.user?.id ? req.user.id : '';
 
-  @Get()
-  findAll() {
-    return this.communicationViewsService.findAll();
+    return {
+      status: HttpStatus.CREATED,
+      data: await this.communicationViewsService.create(
+        createCommunicationViewDto,
+      ),
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.communicationViewsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommunicationViewDto: UpdateCommunicationViewDto) {
-    return this.communicationViewsService.update(+id, updateCommunicationViewDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.communicationViewsService.remove(+id);
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationViewInterceptor)
+  async findOne(@Param('id') id: number) {
+    try {
+      return await this.communicationViewsService.findOne(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error find all communication views');
+    }
   }
 }
