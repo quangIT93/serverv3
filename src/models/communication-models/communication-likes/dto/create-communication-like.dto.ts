@@ -12,8 +12,8 @@ export class CreateCommunicationLikeDto {
   communicationId!: number;
 
   @ApiProperty({
-    type: 'number',
-    format: 'number',
+    type: 'string',
+    format: 'string',
     required: true,
     default: 'Test',
   })
