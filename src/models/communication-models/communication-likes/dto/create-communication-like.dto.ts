@@ -6,7 +6,7 @@ export class CreateCommunicationLikeDto {
     type: 'number',
     format: 'number',
     required: true,
-    default: 'Test',
+    default: 1,
   })
   @IsNotEmpty()
   communicationId!: number;
