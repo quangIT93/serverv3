@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
+import { Profile } from 'src/models/profile-models/profiles/entities';
 
 @Entity('communications')
 export class Communication {
@@ -40,4 +41,8 @@ export class Communication {
 
   @OneToMany(() => CommunicationCategory, communicationCategory => communicationCategory.communication)
   communicationCategories!: CommunicationCategory[];
+
+  @ManyToOne(() => Profile, profile => profile.communications) 
+  @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+  profile!: Profile;
 }

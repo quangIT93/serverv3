@@ -186,4 +186,17 @@ export class CommunicationsController {
       throw new BadRequestException('Error search communication');
     }
   }
+
+  @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  async getByCommunicationId(@Param('id') id: string) {
+    try {
+      return await this.communicationsService.getCommunicationByCommunicationId(+id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error find communication by communicationId');
+    }
+  }
 }

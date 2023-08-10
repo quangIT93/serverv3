@@ -47,7 +47,7 @@ export class CommunicationLikesService {
         where: {
           communicationId: id,
         },
-        relations: ['profile']
+        relations: ['profile'],
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -57,4 +57,19 @@ export class CommunicationLikesService {
     }
   }
 
+  async countCommunicationLikes(id: number) {
+    try {
+      const likeCount = await this.communicationsLikeRepository.count({
+        where: {
+          communicationId: id,
+        },
+      });
+      return likeCount;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error counting communication likes');
+    }
+  }
 }

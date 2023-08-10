@@ -35,5 +35,19 @@ export class CommunicationViewsService {
       relations: ['profile']
     });
   }
-
+  async countCommunicationViews(id: number) {
+    try {
+      const likeCount = await this.communicationViewRepository.count({
+        where: {
+          communicationId: id,
+        },
+      });
+      return likeCount;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error counting communication likes');
+    }
+  }
 }

@@ -1,27 +1,28 @@
 import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { CommunicationLike } from '../entities/communication-like.entity';
 
-export class CommunicationLikeSerialization  {
-    communicationId!: number;
-    accountId!: string;
-    createdAt!: number;
-    updatedAt!: number;
-    avartar!: string;
-    name!: string;
+export class CommunicationLikeSerialization {
+  communicationId!: number;
+  accountId!: string;
+  createdAt!: number;
+  updatedAt!: number;
+  avatar!: string | null;
+  name!: string;
 
-    [key: string]: any;
+  [key: string]: any;
 
+  constructor(communicationLike: CommunicationLike) {
+    this.communicationId = communicationLike.communicationId;
+    this.accountId = communicationLike.accountId;
+    this.createdAt = new Date(communicationLike.createdAt).getTime();
+    this.updatedAt = new Date(communicationLike.updatedAt).getTime();
+    this.avatar = communicationLike.profile.avatar ? `${BUCKET_IMAGE_AVATAR}/${communicationLike.profile.avatar}` : null;
+    this.name = communicationLike.profile.name;
+  }
 
-    constructor(communicationLike: CommunicationLike) {
-        this.communicationId = communicationLike.communicationId;
-        this.accountId = communicationLike.accountId;
-        this.createdAt = new Date(communicationLike.createdAt).getTime();
-        this.updatedAt = new Date(communicationLike.updatedAt).getTime();
-        this.avartar = `${BUCKET_IMAGE_AVATAR}/${communicationLike.profile.avatar}`;
-        this.name = communicationLike.profile.name
-    }
-
-    fromEntity(communicationLike: CommunicationLike): CommunicationLikeSerialization {
-        return new CommunicationLikeSerialization(communicationLike);
-    }
+  fromEntity(
+    communicationLike: CommunicationLike,
+  ): CommunicationLikeSerialization {
+    return new CommunicationLikeSerialization(communicationLike);
+  }
 }

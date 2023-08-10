@@ -43,6 +43,7 @@ export class CommunicationsService {
         'communicationImages',
         'communicationCategories',
         'communicationCategories.parentCategory',
+        'profile',
       ],
     });
   }
@@ -56,6 +57,7 @@ export class CommunicationsService {
         'communicationImages',
         'communicationCategories',
         'communicationCategories.parentCategory',
+        'profile',
       ],
     });
   }
@@ -86,7 +88,9 @@ export class CommunicationsService {
     });
 
     if (!exitsCommunication) {
-      throw new BadRequestException('Communication not found');
+      throw new BadRequestException(
+        'Communication not found or communication does not exist of user',
+      );
     }
 
     updateCommunicationDto.status = 0;
@@ -98,10 +102,12 @@ export class CommunicationsService {
     await this.communicationRepository.save(newUpdate);
   }
 
-  async searchCommunication(searchTitle : string) {
+  async searchCommunication(searchTitle: string) {
     const communications = await this.communicationRepository
       .createQueryBuilder('communications')
-      .where('communications.title like :search',  { search: '%' + searchTitle + '%' }) 
+      .where('communications.title like :search', {
+        search: '%' + searchTitle + '%',
+      })
       .leftJoinAndSelect(
         'communications.communicationImages',
         'communicationImages',
@@ -115,8 +121,21 @@ export class CommunicationsService {
         'parentCategory',
       )
       .getMany();
-  
+
     return communications;
   }
-  
+
+  async getCommunicationByCommunicationId(id: number) {
+    return await this.communicationRepository.find({
+      where: {
+        id,
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+      ],
+    });
+  }
 }

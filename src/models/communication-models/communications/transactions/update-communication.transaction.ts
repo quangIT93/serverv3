@@ -86,7 +86,7 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
 
         return newCommunication;
       }
-      throw new Error('Communication not found'); 
+      throw new Error('Communication not found or communication does not exist of user'); 
 
       // save
     } catch (error) {

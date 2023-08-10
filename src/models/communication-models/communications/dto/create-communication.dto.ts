@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional, MaxLength } from "class-validator";
 
 export class CreateCommunicationDto {
 
@@ -7,12 +7,14 @@ export class CreateCommunicationDto {
     @ApiProperty({type: 'string',format: 'string', required: true, default: 'Test'})
     accountId!:string;
 
-    @ApiProperty({type: 'string',format: 'string', required: true, default: 'Test'})
+    @ApiProperty({type: 'string',format: 'string', maxLength: 255 , required: true, default: 'Test'})
     @IsNotEmpty()
+    @MaxLength(255, { message: 'title length must not exceed 255 characters' })
     title!:string;
 
-    @ApiProperty({type: 'string',format: 'string', required: true, default: 'Test'})
+    @ApiProperty({type: 'string',format: 'string',maxLength: 1000 , required: true, default: 'Test'})
     @IsNotEmpty()
+    @MaxLength(1000, { message: 'title length must not exceed 1000 characters' })
     content!:string;
 
     @ApiProperty({type: 'number',format: 'number', required: true, default: 1})
