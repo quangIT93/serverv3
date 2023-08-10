@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Communication } from "../../communications/entities/communication.entity";
 
 @Entity('communication_images')
 export class CommunicationImage {
@@ -20,4 +21,8 @@ export class CommunicationImage {
 
     @Column({ type: 'date', nullable: false, name: 'updated_at', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt!: Date;
+
+    @ManyToOne(() => Communication, communication => communication.communicationImages)
+    @JoinColumn({name: 'communication_id'})
+    communication!: Communication
 }

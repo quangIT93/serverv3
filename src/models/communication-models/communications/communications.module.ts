@@ -8,6 +8,7 @@ import { CreateCommunicationTransaction } from './transactions/create-communicat
 import { CommunicationImagesModule } from '../communication-images/communication-images.module';
 import { CommunicationCategoriesModule } from '../communication-categories/communication-categories.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
+import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
     AWSModule
   ],
   controllers: [CommunicationsController],
-  providers: [CommunicationsService, CreateCommunicationTransaction]
+  providers: [CommunicationsService, CreateCommunicationTransaction, UpdateCommunicationTransaction],
+  exports: [CommunicationsService]
 })
 export class CommunicationsModule {}

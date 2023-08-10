@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
 import { CommunicationImagesService } from './communication-images.service';
 import { CreateCommunicationImageDto } from './dto/create-communication-image.dto';
 import { UpdateCommunicationImageDto } from './dto/update-communication-image.dto';
@@ -27,8 +27,4 @@ export class CommunicationImagesController {
     return this.communicationImagesService.update(+id, updateCommunicationImageDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.communicationImagesService.remove(+id);
-  }
 }

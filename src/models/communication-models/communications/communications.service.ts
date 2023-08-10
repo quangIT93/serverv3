@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Communication } from './entities/communication.entity';
 import { Repository } from 'typeorm';
-import { Observable, from, map } from 'rxjs';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
+import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 
 @Injectable()
 export class CommunicationsService {
@@ -15,47 +15,108 @@ export class CommunicationsService {
     @InjectRepository(Communication)
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
-    private readonly awsService: AWSService
-    ){}
-  async create(images : any, createCommunicationDto: CreateCommunicationDto)  {
+    private readonly awsService: AWSService,
+    private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
+  ) {}
+  async create(images: any, createCommunicationDto: CreateCommunicationDto) {
     try {
-      const newCommunication = await this.createCommunicationTransaction.run(createCommunicationDto)
+      const newCommunication = await this.createCommunicationTransaction.run(
+        createCommunicationDto,
+      );
 
       if (images) {
-        const image = await this.awsService.uploadMutilpleFiles(images, {
+        await this.awsService.uploadMutilpleFiles(images, {
           BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
           id: String(newCommunication.id),
         });
-
-        console.log(image);
       }
 
-      return newCommunication
+      return newCommunication;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-  findAll() {
-    return from(this.communicationRepository.find())
-      .pipe(
-        map((communication: Communication[] | null) => communication || undefined)
+  async findAll() {
+    return await this.communicationRepository.find({
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+      ],
+    });
+  }
+
+  async findCommunicationById(id: string) {
+    return await this.communicationRepository.find({
+      where: {
+        accountId: id,
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+      ],
+    });
+  }
+
+  async update(updateCommunicationDto: UpdateCommunicationDto, images: any) {
+    try {
+      const newCommunication = await this.updateCommunicationTransaction.run(
+        updateCommunicationDto,
       );
+      if (images) {
+        await this.awsService.uploadMutilpleFiles(images, {
+          BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
+          id: String(newCommunication.id),
+        });
+      }
+
+      return newCommunication;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findCommunicationById(id: number): Observable<Communication | undefined> {
-    return from(this.communicationRepository
-    .findOne({ where: { id } }))
-    .pipe(
-      map((communication: Communication | null) => communication || undefined)
+  async remove(updateCommunicationDto: UpdateCommunicationDto) {
+    const exitsCommunication = await this.communicationRepository.findOne({
+      where: {
+        accountId: updateCommunicationDto.accountId,
+      },
+    });
+
+    if (!exitsCommunication) {
+      throw new BadRequestException('Communication not found');
+    }
+
+    updateCommunicationDto.status = 0;
+
+    const newUpdate = this.communicationRepository.create(
+      updateCommunicationDto,
     );
+
+    await this.communicationRepository.save(newUpdate);
   }
 
-  update(id: number, _updateCommunicationDto: UpdateCommunicationDto) {
-    return `This action updates a #${id} communication`;
+  async searchCommunication(searchTitle : string) {
+    const communications = await this.communicationRepository
+      .createQueryBuilder('communications')
+      .where('communications.title like :search',  { search: '%' + searchTitle + '%' }) 
+      .leftJoinAndSelect(
+        'communications.communicationImages',
+        'communicationImages',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationCategories',
+        'communicationCategories',
+      )
+      .leftJoinAndSelect(
+        'communicationCategories.parentCategory',
+        'parentCategory',
+      )
+      .getMany();
+  
+    return communications;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} communication`;
-  }
+  
 }

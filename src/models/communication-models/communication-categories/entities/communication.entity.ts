@@ -1,5 +1,6 @@
 import { ParentCategory } from "src/models/categories/parents/entities/parent.entity";
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Communication } from "../../communications/entities/communication.entity";
 
 @Entity('communication_categories')
 export class CommunicationCategory {
@@ -13,4 +14,8 @@ export class CommunicationCategory {
     @ManyToOne(() => ParentCategory, parentCategory => parentCategory.id)
     @JoinColumn({ name: 'category_id' })
     parentCategory!: ParentCategory;
+
+    @ManyToOne(() => Communication, communication => communication.communicationCategories)
+    @JoinColumn({ name: 'communication_id' })
+    communication!: Communication
 }

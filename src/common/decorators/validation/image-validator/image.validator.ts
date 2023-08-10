@@ -20,7 +20,6 @@ export class ImageValidator extends FileValidator<{ mime?: RegExp }> {
     }
 
     async isValid(file: any) {
-        console.log('file', file);
 
         const { mime } = this.validationOptions;
 

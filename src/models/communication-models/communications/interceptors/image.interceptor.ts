@@ -26,66 +26,49 @@ import { createResizeImage } from 'src/common/helper/transform/resize-image';
 
 @Injectable()
 export class CommunicationImagesPipe
-    implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File>>
+  implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File>>
 {
-    constructor() { }
-    MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 6MB
-    // MAX_EACH_SIZE = 1024 * 1024 * 2; // 1MB
+  constructor() {}
+  MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 5MB
+  // MAX_EACH_SIZE = 1024 * 1024 * 2; // 1MB
 
-    async transform(files: any): Promise<any> {
-        try {
-            if (!files) {
-                return {
-                    images: null,
-                };
-            }
+  async transform(files: any): Promise<any> {
+    try {
+      if (!files) {
+        return {
+          images: null,
+        };
+      }
 
-            if (Array.isArray(files)) {
-                return {
-                    images: files
-                        ? await Promise.all(
-                            files.map(async (image: Express.Multer.File) => {
-                                return await createResizeImage(image, {
-                                    width: 800,
-                                    height: 600,
-                                    ext: 'jpg',
-                                });
-                            }),
-                        )
-                        : null,
-                };
-            }
+      const { images } = files;
 
-            const { images } = files;
-
-
-            if (Array.isArray(images)) {
-                if (images.length > 5) {
-                    throw new Error('Images must be less than 5 files');
-                }
-
-                for (const image of images) {
-                    if (!(await new ImageValidator().isValid(image.buffer))) {
-                        throw new Error('Images must be image');
-                    }
-                }
-            }
-
-            return {
-                images: images
-                    ? await Promise.all(
-                        images.map(async (image: Express.Multer.File) => {
-                            return await createResizeImage(image, {
-                                width: 800,
-                                height: 600,
-                                ext: 'jpg',
-                            });
-                        }),
-                    )
-                    : null,
-            };
-        } catch (error) {
-            throw error;
+      if (Array.isArray(images)) {
+        if (images.length > 5) {
+          throw new Error('Images must be less than 5 files');
         }
+
+        for (const image of images) {
+          if (!(await new ImageValidator().isValid(image.buffer))) {
+            throw new Error('Images must be image');
+          }
+        }
+      }
+
+      return {
+        images: images
+          ? await Promise.all(
+              images.map(async (image: Express.Multer.File) => {
+                return await createResizeImage(image, {
+                  width: 500,
+                  height: 500,
+                  ext: 'jpg',
+                });
+              }),
+            )
+          : null,
+      };
+    } catch (error) {
+      throw error;
     }
+  }
 }

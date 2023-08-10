@@ -5,7 +5,6 @@ import { Language } from '../enum';
 
 export interface CustomRequest extends Request {
     // Add custom properties here
-
     // default language is Vietnamese
     lang: Language;
 
