@@ -5,7 +5,6 @@ export class CommunicationLikeSerialization {
   communicationId!: number;
   accountId!: string;
   createdAt!: number;
-  updatedAt!: number;
   avatar!: string | null;
   name!: string;
 
@@ -15,7 +14,6 @@ export class CommunicationLikeSerialization {
     this.communicationId = communicationLike.communicationId;
     this.accountId = communicationLike.accountId;
     this.createdAt = new Date(communicationLike.createdAt).getTime();
-    this.updatedAt = new Date(communicationLike.updatedAt).getTime();
     this.avatar = communicationLike.profile.avatar ? `${BUCKET_IMAGE_AVATAR}/${communicationLike.profile.avatar}` : null;
     this.name = communicationLike.profile.name;
   }

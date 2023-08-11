@@ -23,6 +23,9 @@ export class CommunicationSerialization {
   communicationImages!: string[];
   communicationCategories!: CommunicationCategory[] | any;
   profile!: {};
+  totalLikes!: number | null;
+  totalViews!: number | null;
+  totalComments!: number | null;
 
   [key: string]: any;
 
@@ -49,6 +52,10 @@ export class CommunicationSerialization {
         ? `${BUCKET_IMAGE_AVATAR}/${communication.profile.avatar}`
         : null,
     };
+    this.totalLikes = communication.communicationLikes.length ? communication.communicationLikes.length : 0;
+    this.totalViews = communication.communicationViews.length ? communication.communicationViews.length : 0;
+    this.totalComments = communication.communicationComments.length ? communication.communicationComments.length : 0;
+
   }
 
   fromEntity(

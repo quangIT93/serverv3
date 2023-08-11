@@ -7,6 +7,9 @@ import { CommunicationCategoriesService } from '../../communication-categories/c
 import { CommunicationImagesService } from '../../communication-images/communication-images.service';
 import { CreateCommunicationImageDto } from '../../communication-images/dto/create-communication-image.dto';
 import { CreateCommunicationCategoriesDto } from '../../communication-categories/dto/create-communication-categories.dto';
+import { Image } from '../../communication-comments/interfaces/communication-comment.interface';
+import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
+import { AWSService } from 'src/services/aws/aws.service';
 
 @Injectable()
 export class UpdateCommunicationTransaction extends BaseTransaction<
@@ -17,6 +20,8 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
     dataSource: DataSource,
     private readonly communicationCategoriesService: CommunicationCategoriesService,
     private readonly communicationImagesService: CommunicationImagesService,
+    private readonly awsService: AWSService,
+
   ) {
     super(dataSource);
   }
@@ -73,10 +78,24 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
         // create communication images
 
         if (updateCommunicationDto.images) {
-          const newCommunicationImageDto = updateCommunicationDto.images?.map(
+          const newCommunicationImageDto = (
+            updateCommunicationDto.images as any as Image[]
+          )?.map(
             (image) =>
-              new CreateCommunicationImageDto(updateCommunicationDto.id, image),
+              new CreateCommunicationImageDto(
+                updateCommunicationDto.id,
+                image.originalname,
+              ),
           );
+
+          const imageBuffer = updateCommunicationDto.images
+          ? updateCommunicationDto.images.map((image: any) => image)
+          : [];
+
+          await this.awsService.uploadMutilpleFiles(imageBuffer, {
+            BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
+            id: String(newCommunication.id),
+          });
 
           await this.communicationImagesService.createMany(
             newCommunicationImageDto as CreateCommunicationImageDto[],
@@ -84,13 +103,16 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
           );
         }
 
+
         return newCommunication;
       }
-      throw new Error('Communication not found or communication does not exist of user'); 
+      throw new Error(
+        'Communication not found or communication does not exist of user',
+      );
 
       // save
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }

@@ -55,20 +55,19 @@ export class CommunicationLikesController {
     }
   }
 
-  
-  @Get('count/:id')
-  @UseGuards(AuthGuard)
-  async countCommunicationLike(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return {
-        status: HttpStatus.OK,
-        total : await this.communicationLikesService.countCommunicationLikes(id)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error find all communication likes');
-    }
-  }
+  // @Get('count/:id')
+  // @UseGuards(AuthGuard)
+  // async countCommunicationLike(@Param('id', ParseIntPipe) id: number) {
+  //   try {
+  //     return {
+  //       status: HttpStatus.OK,
+  //       total: await this.communicationLikesService.countCommunicationLikes(id),
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error find all communication likes');
+  //   }
+  // }
 }

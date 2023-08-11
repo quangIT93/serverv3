@@ -10,7 +10,6 @@ import {
   BadRequestException,
   UseInterceptors,
   ClassSerializerInterceptor,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { CommunicationViewsService } from './communication-views.service';
 import { CreateCommunicationViewDto } from './dto/create-communication-view.dto';
@@ -56,19 +55,19 @@ export class CommunicationViewsController {
     }
   }
 
-  @Get('count/:id')
-  @UseGuards(AuthGuard)
-  async countCommunicationLike(@Param('id', ParseIntPipe) id: number) {
-    try {
-      return {
-        status: HttpStatus.OK,
-        total : await this.communicationViewsService.countCommunicationViews(id)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error find all communication likes');
-    }
-  }
+  // @Get('count/:id')
+  // @UseGuards(AuthGuard)
+  // async countCommunicationLike(@Param('id', ParseIntPipe) id: number) {
+  //   try {
+  //     return {
+  //       status: HttpStatus.OK,
+  //       total : await this.communicationViewsService.countCommunicationViews(id)
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error find all communication likes');
+  //   }
+  // }
 }

@@ -7,7 +7,9 @@ import { CommunicationImagesService } from '../../communication-images/communica
 import { CommunicationCategoriesService } from '../../communication-categories/communication-categories.service';
 import { CreateCommunicationImageDto } from '../../communication-images/dto/create-communication-image.dto';
 import { CreateCommunicationCategoriesDto } from '../../communication-categories/dto/create-communication-categories.dto';
-
+import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
+import { Image } from '../../communication-comments/interfaces/communication-comment.interface';
+import { AWSService } from 'src/services/aws/aws.service';
 @Injectable()
 export class CreateCommunicationTransaction extends BaseTransaction<
   CreateCommunicationDto,
@@ -17,6 +19,7 @@ export class CreateCommunicationTransaction extends BaseTransaction<
     dataSource: DataSource,
     private communicationImagesService: CommunicationImagesService,
     private communicationCategoriesService: CommunicationCategoriesService,
+    private readonly awsService: AWSService,
   ) {
     super(dataSource);
   }
@@ -31,9 +34,16 @@ export class CreateCommunicationTransaction extends BaseTransaction<
       );
       const newCommunication = await manager.save(newCommunicationEntity);
 
-      const newCommunicationImageDto = createCommunicationDto.images?.map(
-        (image) => new CreateCommunicationImageDto(newCommunication.id, image),
+      const newCommunicationImageDto = (
+        createCommunicationDto.images as any as Image[]
+      )?.map(
+        (image) =>
+          new CreateCommunicationImageDto(
+            newCommunication.id,
+            image.originalname,
+          ),
       );
+
       const newCommunicationCategoriesDto =
         createCommunicationDto.categoryId?.map(
           (category) =>
@@ -50,6 +60,17 @@ export class CreateCommunicationTransaction extends BaseTransaction<
         newCommunicationCategoriesDto as CreateCommunicationCategoriesDto[],
         manager,
       );
+
+      const imageBuffer = createCommunicationDto.images
+        ? createCommunicationDto.images.map((image: any) => image)
+        : [];
+
+      if (createCommunicationDto.images) {
+        await this.awsService.uploadMutilpleFiles(imageBuffer, {
+          BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
+          id: String(newCommunication.id),
+        });
+      }
 
       return newCommunication;
     } catch (error) {

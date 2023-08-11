@@ -1,26 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCommunicationCommentDto } from './dto/create-communication-comment.dto';
 import { UpdateCommunicationCommentDto } from './dto/update-communication-comment.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CommunicationComment } from './entities/communication-comment.entity';
+import { Repository } from 'typeorm';
+import { CreateCommunicationCommentTransaction } from './transactions/create-communication-comment.transaction';
+import { UpdateCommunicationCommentTransaction } from './transactions/update-communication-comment.transaction';
 
 @Injectable()
 export class CommunicationCommentsService {
-  create(_createCommunicationCommentDto: CreateCommunicationCommentDto) {
-    return 'This action adds a new communicationComment';
+  constructor(
+    @InjectRepository(CommunicationComment)
+    private readonly communicationCommentRepository: Repository<CommunicationComment>,
+    private readonly createCommunicationCommentTransaction: CreateCommunicationCommentTransaction,
+    private readonly updateCommunicationCommentTransaction: UpdateCommunicationCommentTransaction,
+  ) {}
+  async create(createCommunicationCommentDto: CreateCommunicationCommentDto) {
+    try {
+      const newCommunicationComment =
+        await this.createCommunicationCommentTransaction.run(
+          createCommunicationCommentDto,
+        );
+
+      return newCommunicationComment;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  findAll() {
-    return `This action returns all communicationComments`;
+  async findOne(id: number) {
+    return await this.communicationCommentRepository.find({
+      where: { communicationId: id },
+      relations: ['communicationCommentImages', 'profile'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} communicationComment`;
-  }
+  async update(updateCommunicationCommentDto: UpdateCommunicationCommentDto) {
+    try {
+      const newCommunicationComment =
+        await this.updateCommunicationCommentTransaction.run(
+          updateCommunicationCommentDto,
+        );
 
-  update(id: number, _updateCommunicationCommentDto: UpdateCommunicationCommentDto) {
-    return `This action updates a #${id} communicationComment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} communicationComment`;
+      return newCommunicationComment;
+    } catch (error) {
+      throw error;
+    }
   }
 }

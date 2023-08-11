@@ -26,7 +26,6 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationInterceptor } from './interceptors/communication.interceptor';
 
-
 @ApiTags('communications')
 @Controller('communications')
 export class CommunicationsController {
@@ -61,14 +60,11 @@ export class CommunicationsController {
 
       createCommunicationDto.accountId = req.user?.id || '';
       createCommunicationDto.images = images
-        ? images.map((image: any) => image.originalname)
-        : [];
 
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
         message: 'Create communication successfully',
         data: await this.communicationsService.create(
-          images,
           createCommunicationDto,
         ),
       });
@@ -140,10 +136,8 @@ export class CommunicationsController {
       updateCommunicationDto.id = id;
       updateCommunicationDto.accountId = req.user?.id;
       updateCommunicationDto.images = images
-        ? images.map((image: any) => image.originalname)
-        : [];
-
-      await this.communicationsService.update(updateCommunicationDto, images);
+    
+      await this.communicationsService.update(updateCommunicationDto);
       return {
         status: HttpStatus.OK,
         message: 'Updated communication successfully',
@@ -191,12 +185,16 @@ export class CommunicationsController {
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   async getByCommunicationId(@Param('id') id: string) {
     try {
-      return await this.communicationsService.getCommunicationByCommunicationId(+id);
+      return await this.communicationsService.getCommunicationByCommunicationId(
+        +id,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error find communication by communicationId');
+      throw new BadRequestException(
+        'Error find communication by communicationId',
+      );
     }
   }
 }

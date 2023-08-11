@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCommunicationCommentImageDto } from './dto/create-communication-comment-image.dto';
-import { UpdateCommunicationCommentImageDto } from './dto/update-communication-comment-image.dto';
+import { EntityManager } from 'typeorm';
+import { CommunicationCommentImage } from './entities/communication-comment-image.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CommunicationCommentImagesService {
-  create(_createCommunicationCommentImageDto: CreateCommunicationCommentImageDto) {
-    return 'This action adds a new communicationCommentImage';
+  constructor(
+    @InjectRepository(CommunicationCommentImage)
+    private readonly globalEntityManager: EntityManager
+  ){
+
+  }
+  async createMany(
+    createCommunicationCommentImageDto: CreateCommunicationCommentImageDto[],
+    transactionalManager?: EntityManager,
+  ) {
+    const manager = transactionalManager ?? this.globalEntityManager;
+
+    return await manager
+      .getRepository(CommunicationCommentImage)
+      .save(createCommunicationCommentImageDto);
   }
 
-  findAll() {
-    return `This action returns all communicationCommentImages`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} communicationCommentImage`;
-  }
-
-  update(id: number, _updateCommunicationCommentImageDto: UpdateCommunicationCommentImageDto) {
-    return `This action updates a #${id} communicationCommentImage`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} communicationCommentImage`;
+  async delete(commentId: number, transactionalManager?: EntityManager) {
+    const manager = transactionalManager ?? this.globalEntityManager;
+    await manager.getRepository(CommunicationCommentImage).delete({ commentId });
   }
 }

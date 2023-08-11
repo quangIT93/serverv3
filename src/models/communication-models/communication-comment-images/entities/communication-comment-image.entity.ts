@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CommunicationComment } from "../../communication-comments/entities/communication-comment.entity";
 
 @Entity('communication_comment_images')
 export class CommunicationCommentImage {
@@ -6,7 +7,7 @@ export class CommunicationCommentImage {
     @PrimaryGeneratedColumn('increment')
     id!: number;
 
-    @Column({ type: 'int', nullable: false, name: 'comment_id' })
+    @Column({ type: 'int', nullable: false, name: 'comment_id'})
     commentId!: number;
 
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'image' })
@@ -20,4 +21,8 @@ export class CommunicationCommentImage {
 
     @Column({ type: 'date', nullable: false, name: 'updated_at', default: () => 'CURRENT_TIMESTAMP' })
     updatedAt!: Date;
+
+    @ManyToOne(() => CommunicationComment, communicationComment => communicationComment.communicationCommentImages)
+    @JoinColumn({name: 'comment_id'})
+    communicationComment!: CommunicationComment;
 }

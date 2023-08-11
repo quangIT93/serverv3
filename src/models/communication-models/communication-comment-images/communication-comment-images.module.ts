@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CommunicationCommentImagesService } from './communication-comment-images.service';
-import { CommunicationCommentImagesController } from './communication-comment-images.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommunicationCommentImage } from './entities/communication-comment-image.entity';
 
@@ -10,7 +9,8 @@ import { CommunicationCommentImage } from './entities/communication-comment-imag
       CommunicationCommentImage
     ])
   ],
-  controllers: [CommunicationCommentImagesController],
-  providers: [CommunicationCommentImagesService]
+  controllers: [],
+  providers: [CommunicationCommentImagesService],
+  exports: [CommunicationCommentImagesService]
 })
 export class CommunicationCommentImagesModule {}

@@ -3,10 +3,8 @@ import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Communication } from './entities/communication.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
-import { AWSService } from 'src/services/aws/aws.service';
-import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 
 @Injectable()
@@ -15,21 +13,13 @@ export class CommunicationsService {
     @InjectRepository(Communication)
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
-    private readonly awsService: AWSService,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
   ) {}
-  async create(images: any, createCommunicationDto: CreateCommunicationDto) {
+  async create(createCommunicationDto: CreateCommunicationDto) {
     try {
       const newCommunication = await this.createCommunicationTransaction.run(
         createCommunicationDto,
       );
-
-      if (images) {
-        await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
-          id: String(newCommunication.id),
-        });
-      }
 
       return newCommunication;
     } catch (error) {
@@ -44,7 +34,13 @@ export class CommunicationsService {
         'communicationCategories',
         'communicationCategories.parentCategory',
         'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments'
       ],
+      order: {
+        createdAt: 'DESC',
+      },
     });
   }
 
@@ -58,21 +54,17 @@ export class CommunicationsService {
         'communicationCategories',
         'communicationCategories.parentCategory',
         'profile',
+        'communicationViews',
+        'communicationLikes',
       ],
     });
   }
 
-  async update(updateCommunicationDto: UpdateCommunicationDto, images: any) {
+  async update(updateCommunicationDto: UpdateCommunicationDto) {
     try {
       const newCommunication = await this.updateCommunicationTransaction.run(
         updateCommunicationDto,
       );
-      if (images) {
-        await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
-          id: String(newCommunication.id),
-        });
-      }
 
       return newCommunication;
     } catch (error) {
@@ -103,24 +95,18 @@ export class CommunicationsService {
   }
 
   async searchCommunication(searchTitle: string) {
-    const communications = await this.communicationRepository
-      .createQueryBuilder('communications')
-      .where('communications.title like :search', {
-        search: '%' + searchTitle + '%',
-      })
-      .leftJoinAndSelect(
-        'communications.communicationImages',
+    const communications = await this.communicationRepository.find({
+      relations: [
+        'communicationLikes',
+        'communicationViews',
+        'profile',
         'communicationImages',
-      )
-      .leftJoinAndSelect(
-        'communications.communicationCategories',
         'communicationCategories',
-      )
-      .leftJoinAndSelect(
-        'communicationCategories.parentCategory',
-        'parentCategory',
-      )
-      .getMany();
+      ],
+      where: {
+        title: ILike(`%${searchTitle}%`),
+      },
+    });
 
     return communications;
   }
@@ -135,6 +121,8 @@ export class CommunicationsService {
         'communicationCategories',
         'communicationCategories.parentCategory',
         'profile',
+        'communicationViews',
+        'communicationLikes',
       ],
     });
   }

@@ -2,6 +2,9 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
+import { CommunicationLike } from '../../communication-likes/entities/communication-like.entity';
+import { CommunicationView } from '../../communication-views/entities/communication-view.entity';
+import { CommunicationComment } from '../../communication-comments/entities/communication-comment.entity';
 
 @Entity('communications')
 export class Communication {
@@ -45,4 +48,13 @@ export class Communication {
   @ManyToOne(() => Profile, profile => profile.communications) 
   @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
   profile!: Profile;
+
+  @OneToMany(() => CommunicationLike, communicationLike => communicationLike.communication)
+  communicationLikes!: CommunicationLike[]
+
+  @OneToMany(() => CommunicationImage, communicationImage => communicationImage.communication)
+  communicationViews!: CommunicationView[];
+
+  @OneToMany(() => CommunicationComment, communicationComment => communicationComment.communications)
+  communicationComments!: CommunicationComment[]
 }

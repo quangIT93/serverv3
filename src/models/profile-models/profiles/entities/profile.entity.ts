@@ -9,6 +9,7 @@ import { Province } from "src/models/locations/provinces/entities";
 import { CommunicationLike } from "src/models/communication-models/communication-likes/entities/communication-like.entity";
 import { CommunicationView } from "src/models/communication-models/communication-views/entities/communication-view.entity";
 import { Communication } from "src/models/communication-models/communications/entities/communication.entity";
+import { CommunicationComment } from "src/models/communication-models/communication-comments/entities/communication-comment.entity";
 
 @Entity('profiles') // table name
 export class Profile {
@@ -111,4 +112,7 @@ export class Profile {
     @OneToMany(() => Communication, communication => communication.profile)
     @JoinColumn({name: 'id', referencedColumnName: 'accountId' })
     communications!: Communication[];
+    
+    @OneToMany(() => CommunicationComment, commmunicationComment => commmunicationComment.profile)
+    communicationComments!: CommunicationComment[];
 }
