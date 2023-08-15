@@ -17,7 +17,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostNormallyInterceptor } from './interceptors/posts-normally.interceptor';
@@ -33,6 +33,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreatePostByAdminController } from './controller';
 import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
 import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
+import { NewestPostQueriesDto } from './dto/newest-queries.dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -46,6 +47,17 @@ export class PostsController {
     @Get('account/:accountId')
     async findByAccountId(@Param('accountId') accountId: string) {
         return this.postsService.findByAccountId(accountId);
+    }
+
+    @Get('newest')
+    @UseGuards(AuthNotRequiredGuard)
+    @UseInterceptors(PostNormallyInterceptor)
+    async getNewestPosts(
+        @Query() queries: NewestPostQueriesDto,
+        @Req() req: any,
+    ) {
+        const { limit, page } = req;
+        return this.postsService.getNewestPosts(limit, page, queries);
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -91,6 +103,7 @@ export class PostsController {
     }
 
 
+    @ApiBasicAuth()
     @Post('by-admin')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -116,6 +129,7 @@ export class PostsController {
      * 5. Create post categories
      * 
      */
+    @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
     @Post('by-worker')
     @Roles(Role.WORKER, Role.ADMIN)
@@ -149,4 +163,7 @@ export class PostsController {
         return new CreatePostByAdminController(this.postsService, req, res, this.postNotification)
         .createPostByAdminController({dto, images});
     }
+
+
+
 }

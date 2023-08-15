@@ -54,15 +54,6 @@ export class HotTopicQueriesDto {
     }
 
     static from(plain: string) {
-        // const temp = plain.split('&');
-        // const queries: {[key: string]: string} = {
-
-        // };
-        // temp.forEach((item) => {
-        //     const [key, value] = item.split('=')
-        //     queries[key] = value;
-        // });
-
         return plainToClass(HotTopicQueriesDto, plain);
     }
 }

@@ -302,6 +302,8 @@ export class CreatePostByAdminDto {
         post.expiredDate = this.expiredDate ? new Date(+this.expiredDate) : null;
         post.isInHouseData = '1';
         post.status = 1;
+        post.url = this.siteUrl;
+        post.companyResourceId = this.companyResourceId;
         // post.images = this.images;
 
         return post;
