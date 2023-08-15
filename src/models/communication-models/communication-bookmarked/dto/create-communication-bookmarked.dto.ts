@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateCommunicationViewDto {
+export class CreateCommunicationBookmarkedDto {
+  accountId!: string;
+
   @ApiProperty({
     type: 'number',
-    format: 'number',
+    maxLength: 11,
     required: true,
-    default: 1,
+    nullable: false,
   })
   @IsNotEmpty()
   communicationId!: number;
-
-  accountId!: string;
 }

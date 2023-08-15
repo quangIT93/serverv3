@@ -1,26 +1,22 @@
-// import { Exclude, Expose, Transform } from 'class-transformer';
 import { Language } from 'src/common/enum';
 import { Communication } from '../entities/communication.entity';
-// import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
 import {
   BUCKET_IMAGE_AVATAR,
   BUCKET_IMAGE_COMMUNICATION,
 } from 'src/common/constants';
 import { categoryTranslator } from 'src/common/helper/translators/category.translator';
-// import { categoryTranslator } from 'src/common/helper/translators';
+import { timeToTextTransform } from 'src/common/helper/transform/timeToText.transform';
 
 export class CommunicationSerialization {
   id!: number;
-  // accountId!: string;
   title!: string;
   content!: string;
   address!: string;
   status!: number;
   salaryMax!: number;
-  createdAt!: number;
-  updatedAt!: number;
-  communicationImages!: string[];
+  createdAtText!: string;
+  communicationImages!: string[] | null;
   communicationCategories!: CommunicationCategory[] | any;
   profile!: {};
   totalLikes!: number | null;
@@ -32,15 +28,18 @@ export class CommunicationSerialization {
   constructor(communication: Communication, lang = Language.VI) {
     this.id = communication.id;
     this.title = communication.title;
-    // this.accountId = communication.accountId;
     this.content = communication.content;
     this.status = communication.status;
-    this.createdAt = new Date(communication.createdAt).getTime();
-    this.updatedAt = new Date(communication.updatedAt).getTime();
-    this.communicationImages = communication.communicationImages.map(
-      (image) =>
-        `${BUCKET_IMAGE_COMMUNICATION}/${communication.id}/${image.image}`,
+    this.createdAtText = timeToTextTransform(
+      communication.createdAt.getTime(),
+      lang,
     );
+    this.communicationImages = communication.communicationImages
+      ? communication.communicationImages?.map(
+          (image) =>
+            `${BUCKET_IMAGE_COMMUNICATION}/${communication.id}/${image.image}`,
+        )
+      : null;
     this.communicationCategories = communication.communicationCategories.map(
       (category) => {
         return categoryTranslator(category.parentCategory, lang);
@@ -52,10 +51,15 @@ export class CommunicationSerialization {
         ? `${BUCKET_IMAGE_AVATAR}/${communication.profile.avatar}`
         : null,
     };
-    this.totalLikes = communication.communicationLikes.length ? communication.communicationLikes.length : 0;
-    this.totalViews = communication.communicationViews.length ? communication.communicationViews.length : 0;
-    this.totalComments = communication.communicationComments.length ? communication.communicationComments.length : 0;
-
+    this.totalLikes = communication.communicationLikes
+      ? communication.communicationLikes.length
+      : 0;
+    this.totalViews = communication.communicationViews
+      ? communication.communicationViews.length
+      : 0;
+    this.totalComments = communication.communicationComments
+      ? communication.communicationComments.length
+      : 0;
   }
 
   fromEntity(

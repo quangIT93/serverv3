@@ -7,12 +7,11 @@ export class CreateCommunicationCommentDto {
   @IsNumber()
   communicationId!: number;
 
-  @ApiProperty({ type: 'varchar', maxLength: 50, nullable: false })
   accountId!: string;
 
-  @ApiProperty({ type: 'varchar', maxLength: 500, nullable: false })
+  @ApiProperty({type: 'string',format: 'string',maxLength: 1000 , required: true, default: 'Content'})
   @IsNotEmpty()
-  @MaxLength(500, { message: 'content length must not exceed 500 characters' })
+  @MaxLength(1000, { message: 'content length must not exceed 1000 characters' })
   content!: string;
 
   @ApiProperty({

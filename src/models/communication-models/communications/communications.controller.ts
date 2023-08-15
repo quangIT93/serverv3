@@ -15,18 +15,22 @@ import {
   BadRequestException,
   Put,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationInterceptor } from './interceptors/communication.interceptor';
+import { Roles } from 'src/authentication/roles.decorator';
+import { Role } from 'src/common/enum';
+import { RoleGuard } from 'src/authentication/role.guard';
 
-@ApiTags('communications')
+@ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
   constructor(private readonly communicationsService: CommunicationsService) {}
@@ -59,14 +63,12 @@ export class CommunicationsController {
       }
 
       createCommunicationDto.accountId = req.user?.id || '';
-      createCommunicationDto.images = images
+      createCommunicationDto.images = images;
 
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
         message: 'Create communication successfully',
-        data: await this.communicationsService.create(
-          createCommunicationDto,
-        ),
+        data: await this.communicationsService.create(createCommunicationDto),
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -79,14 +81,44 @@ export class CommunicationsController {
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Req() req: CustomRequest) {
+  @ApiQuery({
+    name: 'sort',
+    description: 'cm (comments), l (likes), v (views).',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  async findAll(
+    @Req() req: CustomRequest,
+    @Query('sort') sort: string,
+    @Query('limit') limit: string,
+    @Query('page') page: string,
+  ) {
     try {
       const id = req.user?.id;
+
       if (!id) {
         return null;
       }
 
-      return await this.communicationsService.findAll();
+      if (sort) {
+        return await this.communicationsService.findAll(
+          limit ? +limit : 20,
+          page ? +page : 1,
+          sort,
+        );
+      }
+
+      return await this.communicationsService.findAll(
+        limit ? +limit : 20,
+        page ? +page : 1,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -95,17 +127,48 @@ export class CommunicationsController {
     }
   }
 
-  @Get('by-accountId')
+  @Get('/by-account')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @UseGuards(AuthGuard)
-  async findOne(@Req() req: CustomRequest) {
+  @ApiQuery({
+    name: 'sort',
+    description: 'cm (comments), l (likes), v (views).',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  async findOne(
+    @Req() req: CustomRequest,
+    @Query('sort') sort: string,
+    @Query('limit') limit: string,
+    @Query('page') page: string,
+  ) {
     try {
       const id = req.user?.id ? req.user?.id : '';
       if (id === '') {
         throw new BadRequestException('User not found');
       }
 
-      return await this.communicationsService.findCommunicationById(id);
+      if (sort) {
+        return await this.communicationsService.findCommunicationByAccountId(
+          id,
+          limit ? +limit : 20,
+          page ? +page : 1,
+          sort,
+        );
+      }
+
+      return await this.communicationsService.findCommunicationByAccountId(
+        id,
+        limit ? +limit : 20,
+        page ? +page : 1,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -116,6 +179,11 @@ export class CommunicationsController {
 
   @UseGuards(AuthGuard)
   @Put(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
   @UseInterceptors(
     ClassSerializerInterceptor,
     FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], {
@@ -135,8 +203,8 @@ export class CommunicationsController {
       const { images } = listImages;
       updateCommunicationDto.id = id;
       updateCommunicationDto.accountId = req.user?.id;
-      updateCommunicationDto.images = images
-    
+      updateCommunicationDto.images = images;
+
       await this.communicationsService.update(updateCommunicationDto);
       return {
         status: HttpStatus.OK,
@@ -150,14 +218,20 @@ export class CommunicationsController {
     }
   }
 
-  @Delete(':id')
-  @UseGuards(AuthGuard)
+  @Delete('/by-admin/:id')
+  @UseGuards(AuthGuard, RoleGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
+  @Roles(Role.ADMIN)
   async remove(
     @Param('id') id: number,
-    @Req() req: CustomRequest,
+    // @Req() req: CustomRequest,
     @Body() updateCommunicationDto: UpdateCommunicationDto,
   ) {
-    updateCommunicationDto.accountId = req.user?.id ? req.user.id : '';
+    // updateCommunicationDto.accountId = req.user?.id ? req.user.id : '';
     updateCommunicationDto.id = id;
     await this.communicationsService.remove(updateCommunicationDto);
     return {
@@ -166,22 +240,90 @@ export class CommunicationsController {
     };
   }
 
-  @Get('by-name')
-  @UseGuards(AuthGuard)
+  // @Get('by-name')
+  // @UseGuards(AuthGuard)
+  // @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  // async getByName(@Req() req: any) {
+  //   try {
+  //     const search = req.query.search;
+  //     return await this.communicationsService.searchCommunication(search);
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error search communication');
+  //   }
+  // }
+
+  @Get('/today')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  async getByName(@Req() req: any) {
+  @UseGuards(AuthGuard)
+  @ApiQuery({
+    name: 'sort',
+    description: 'cm (comments), l (likes), v (views).',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  async getCommunicationToday(
+    @Query('sort') sort: string,
+    @Query('limit') limit: string,
+    @Query('page') page: string,
+  ) {
     try {
-      const search = req.query.search;
-      return await this.communicationsService.searchCommunication(search);
+      if (sort) {
+        return await this.communicationsService.getCommunicationToday(
+          limit ? +limit : 20,
+          page ? +page : 1,
+          sort,
+        );
+      }
+
+      return await this.communicationsService.getCommunicationToday(
+        limit ? +limit : 20,
+        page ? +page : 1,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error search communication');
+      throw new BadRequestException('Error find communication today');
+    }
+  }
+
+  @Get('/share/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
+  @UseGuards(AuthGuard)
+  async shareCommunication(@Param('id') id: string) {
+    try {
+      return {
+        status: HttpStatus.OK,
+        data: await this.communicationsService.shareCommunication(+id),
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error share communication');
     }
   }
 
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   async getByCommunicationId(@Param('id') id: string) {
     try {

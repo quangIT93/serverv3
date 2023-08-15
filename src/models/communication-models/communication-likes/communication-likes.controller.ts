@@ -16,10 +16,10 @@ import { CommunicationLikesService } from './communication-likes.service';
 import { CreateCommunicationLikeDto } from './dto/create-communication-like.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { CommunicationLikeInterceptor } from './interceptors/communication-likes.interceptor';
 
-@ApiTags('communication-likes')
+@ApiTags('Communication-likes')
 @Controller('communication-likes')
 export class CommunicationLikesController {
   constructor(
@@ -43,6 +43,11 @@ export class CommunicationLikesController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.', 
+    required: true,
+  })
   @UseInterceptors(ClassSerializerInterceptor, CommunicationLikeInterceptor)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     try {

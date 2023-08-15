@@ -10,12 +10,6 @@ export class CreateCommunicationLikeDto {
   })
   @IsNotEmpty()
   communicationId!: number;
-
-  @ApiProperty({
-    type: 'string',
-    format: 'string',
-    required: true,
-    default: 'Test',
-  })
+  
   accountId!: string;
 }

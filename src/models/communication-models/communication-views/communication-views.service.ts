@@ -13,10 +13,10 @@ export class CommunicationViewsService {
   async create(createCommunicationViewDto: CreateCommunicationViewDto) {
     try {
 
-      const newCommunicationLike = this.communicationViewRepository.create(
+      const newCommunicationView = this.communicationViewRepository.create(
         createCommunicationViewDto,
       );
-      return await this.communicationViewRepository.save(newCommunicationLike);
+      return await this.communicationViewRepository.save(newCommunicationView);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

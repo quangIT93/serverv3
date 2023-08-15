@@ -36,7 +36,7 @@ export class CommunicationComment {
   status!: number;
 
   @Column({
-    type: 'date',
+    type: 'datetime',
     nullable: false,
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',
@@ -44,7 +44,7 @@ export class CommunicationComment {
   createdAt!: Date;
 
   @Column({
-    type: 'date',
+    type: 'datetime',
     nullable: false,
     name: 'updated_at',
     default: () => 'CURRENT_TIMESTAMP',

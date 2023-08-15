@@ -16,9 +16,9 @@ import { CreateCommunicationViewDto } from './dto/create-communication-view.dto'
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CommunicationViewInterceptor } from './interceptors/communication-views.interceptor';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('communication-views')
+@ApiTags('Communication-views')
 @Controller('communication-views')
 export class CommunicationViewsController {
   constructor(
@@ -43,6 +43,11 @@ export class CommunicationViewsController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
   @UseInterceptors(ClassSerializerInterceptor, CommunicationViewInterceptor)
   async findOne(@Param('id') id: number) {
     try {

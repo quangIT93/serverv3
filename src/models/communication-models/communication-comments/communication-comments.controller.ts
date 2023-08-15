@@ -19,12 +19,12 @@ import { CreateCommunicationCommentDto } from './dto/create-communication-commen
 import { UpdateCommunicationCommentDto } from './dto/update-communication-comment.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationCommmentImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationCommentInterceptor } from './interceptors/communication-comment.interceptor';
 
-@ApiTags('communication-comments')
+@ApiTags('Communication-comments')
 @Controller('communication-comments')
 export class CommunicationCommentsController {
   constructor(
@@ -67,6 +67,11 @@ export class CommunicationCommentsController {
     });
   }
   @Get(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
   @UseInterceptors(ClassSerializerInterceptor, CommunicationCommentInterceptor)
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
@@ -75,7 +80,7 @@ export class CommunicationCommentsController {
 
   @Put(':communicationId/:commentId')
   @UseGuards(AuthGuard)
-    @UseInterceptors(
+  @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 1 }], {
       limits: {
         fileSize: 1024 * 1024 * 1,

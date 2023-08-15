@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseTransaction } from 'src/providers/database/mariadb/transaction';
 import { CreateCommunicationCommentDto } from '../dto/create-communication-comment.dto';
 import { CommunicationComment } from '../entities/communication-comment.entity';
@@ -32,26 +32,26 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
       );
       const newComment = await manager.save(newCommentEntity);
 
-      const newCommunicationCommentImageDto = (
-        createCommunicationCommentDto.images as any as Image[]
-      )?.map(
-        (image) =>
-          new CreateCommunicationCommentImageDto(
-            newComment.id,
-            image.originalname,
-          ),
-      );
-
-      await this.communicationCommentImagesService.createMany(
-        newCommunicationCommentImageDto as CreateCommunicationCommentImageDto[],
-        manager,
-      );
-
-      const imageBuffer = createCommunicationCommentDto.images
-      ? createCommunicationCommentDto.images.map((image: any) => image)
-      : [];
-
       if (createCommunicationCommentDto.images) {
+        const newCommunicationCommentImageDto = (
+          createCommunicationCommentDto.images as any as Image[]
+        )?.map(
+          (image) =>
+            new CreateCommunicationCommentImageDto(
+              newComment.id,
+              image.originalname,
+            ),
+        );
+
+        await this.communicationCommentImagesService.createMany(
+          newCommunicationCommentImageDto as CreateCommunicationCommentImageDto[],
+          manager,
+        );
+
+        const imageBuffer = createCommunicationCommentDto.images
+          ? createCommunicationCommentDto.images.map((image: any) => image)
+          : [];
+
         await this.awsService.uploadMutilpleFiles(imageBuffer, {
           BUCKET: BUCKET_IMAGE_COMMUNICATION_COMMENT_UPLOAD,
           id: String(newComment.id),
@@ -60,7 +60,7 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
 
       return newComment;
     } catch (error) {
-      throw new Error('Method not implemented.');
+      throw new BadRequestException('Method not implemented.');
     }
   }
 }

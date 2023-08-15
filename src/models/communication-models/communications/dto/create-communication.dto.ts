@@ -4,7 +4,6 @@ import { IsNotEmpty, IsOptional, MaxLength } from "class-validator";
 export class CreateCommunicationDto {
 
     @IsOptional()
-    @ApiProperty({type: 'string',format: 'string', required: true, default: 'Test'})
     accountId!:string;
 
     @ApiProperty({type: 'string',format: 'string', maxLength: 255 , required: true, default: 'Test'})

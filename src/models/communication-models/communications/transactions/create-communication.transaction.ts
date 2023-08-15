@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseTransaction } from 'src/providers/database/mariadb/transaction';
 import { CreateCommunicationDto } from '../dto/create-communication.dto';
 import { Communication } from '../entities/communication.entity';
@@ -74,7 +74,7 @@ export class CreateCommunicationTransaction extends BaseTransaction<
 
       return newCommunication;
     } catch (error) {
-      throw new Error('Create communication failed.');
+      throw new BadRequestException('Create communication failed.');
     }
   }
 }

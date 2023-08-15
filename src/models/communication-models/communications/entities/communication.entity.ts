@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
@@ -39,22 +46,37 @@ export class Communication {
   })
   updatedAt!: Date;
 
-  @OneToMany(() => CommunicationImage, communicationImage => communicationImage.communication)
+  @OneToMany(
+    () => CommunicationImage,
+    (communicationImage) => communicationImage.communication,
+  )
   communicationImages!: CommunicationImage[];
 
-  @OneToMany(() => CommunicationCategory, communicationCategory => communicationCategory.communication)
+  @OneToMany(
+    () => CommunicationCategory,
+    (communicationCategory) => communicationCategory.communication,
+  )
   communicationCategories!: CommunicationCategory[];
 
-  @ManyToOne(() => Profile, profile => profile.communications) 
+  @ManyToOne(() => Profile, (profile) => profile.communications)
   @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
   profile!: Profile;
 
-  @OneToMany(() => CommunicationLike, communicationLike => communicationLike.communication)
-  communicationLikes!: CommunicationLike[]
+  @OneToMany(
+    () => CommunicationLike,
+    (communicationLike) => communicationLike.communication,
+  )
+  communicationLikes!: CommunicationLike[];
 
-  @OneToMany(() => CommunicationImage, communicationImage => communicationImage.communication)
+  @OneToMany(
+    () => CommunicationImage,
+    (communicationImage) => communicationImage.communication,
+  )
   communicationViews!: CommunicationView[];
 
-  @OneToMany(() => CommunicationComment, communicationComment => communicationComment.communications)
-  communicationComments!: CommunicationComment[]
+  @OneToMany(
+    () => CommunicationComment,
+    (communicationComment) => communicationComment.communications,
+  )
+  communicationComments!: CommunicationComment[];
 }
