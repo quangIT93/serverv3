@@ -8,8 +8,6 @@ import {
     BUCKET_IMAGE_COMPANY_ICON,
     BUCKET_IMAGE_POST,
 } from 'src/common/constants';
-import { jobTypeTranslator } from 'src/common/helper/translators/jobType.translator';
-import { salaryTypeTranslator } from 'src/common/helper/translators/salaryTypeTranslator';
 
 export class PostNormally {
     id!: number;
@@ -23,8 +21,14 @@ export class PostNormally {
     createdAtText!: string;
     moneyType!: string;
     image!: string | null;
-    jobType!: any;
-    salaryType!: any;
+    jobType!: {
+        id: number;
+        name: string;
+    };
+    salaryType!: {
+        id: number;
+        name: string;
+    };
 
     location!: {
         ward: {
@@ -63,9 +67,19 @@ export class PostNormally {
                 : post.categories
                     ? post.categories[0]?.parentCategory.image
                     : null;
-        this.jobType = jobTypeTranslator(post.jobTypeData, lang);
+        this.jobType = {
+            id: post.jobTypeData?.id,
+            name:
+                lang === Language.VI ? post.jobTypeData?.name :
+                    lang === Language.EN ? post.jobTypeData?.nameEn : post.jobTypeData?.nameKo,
+        }
 
-        this.salaryType = salaryTypeTranslator(post.salaryTypeData, lang);
+        this.salaryType = {
+            id: post.salaryTypeData?.id,
+            name:
+                lang === Language.VI ? post.salaryTypeData?.value :
+                    lang === Language.EN ? post.salaryTypeData?.valueEn : post.salaryTypeData?.valueKo,
+        }
 
         this.location = {
             ward: {

@@ -86,6 +86,10 @@ export class PostsQueryBuilder {
         LIMIT ${limit} OFFSET ${page * limit}
         `);
 
+        if (listIds.length === 0) {
+            return [];
+        }
+
         return this.init()
             .innerJoinAndSelect('posts.categories', 'categories')
             .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
