@@ -60,9 +60,6 @@ export class PageAndLimitMiddleware implements NestMiddleware {
         delete req.query['page'];
         delete req.query['limit'];
 
-        console.log('page', req.page);
-        console.log('limit', req.limit);
-
         next();
     }
 
