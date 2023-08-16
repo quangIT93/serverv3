@@ -16,12 +16,13 @@ import {
   Put,
   ParseIntPipe,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBasicAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationImagesPipe } from './interceptors/image.interceptor';
@@ -29,41 +30,36 @@ import { CommunicationInterceptor } from './interceptors/communication.intercept
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
 import { RoleGuard } from 'src/authentication/role.guard';
+import { ResizeImageResult } from 'src/common/helper/transform/resize-image';
 
 @ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
   constructor(private readonly communicationsService: CommunicationsService) {}
 
-  @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
+  @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(
-    FileFieldsInterceptor([{ name: 'images', maxCount: 5 }], {
-      limits: {
-        fileSize: 1024 * 1024 * 5,
-      },
-    }),
+    FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]),
   )
   async create(
     @Body() createCommunicationDto: CreateCommunicationDto,
     @Req() req: CustomRequest,
     @Res() res: any,
     @UploadedFiles(CommunicationImagesPipe)
-    listImages: any | undefined,
+    listImages: ResizeImageResult[] | undefined,
   ) {
     try {
-      const { images } = listImages;
 
-      if (req.user?.id === undefined) {
-        return res.status(HttpStatus.UNAUTHORIZED).json({
-          status: HttpStatus.UNAUTHORIZED,
-          message: 'Unauthorized',
-        });
+      if (!req.user?.id) {
+        return new UnauthorizedException();
       }
 
-      createCommunicationDto.accountId = req.user?.id || '';
-      createCommunicationDto.images = images;
+      createCommunicationDto.accountId = req.user.id;
+      
+      createCommunicationDto.images = listImages;
 
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
@@ -277,17 +273,10 @@ export class CommunicationsController {
     @Query('page') page: string,
   ) {
     try {
-      if (sort) {
-        return await this.communicationsService.getCommunicationToday(
-          limit ? +limit : 20,
-          page ? +page : 1,
-          sort,
-        );
-      }
-
       return await this.communicationsService.getCommunicationToday(
         limit ? +limit : 20,
         page ? +page : 1,
+        sort,
       );
     } catch (error) {
       if (error instanceof Error) {

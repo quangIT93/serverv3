@@ -8,7 +8,6 @@ import { CommunicationCategoriesService } from '../../communication-categories/c
 import { CreateCommunicationImageDto } from '../../communication-images/dto/create-communication-image.dto';
 import { CreateCommunicationCategoriesDto } from '../../communication-categories/dto/create-communication-categories.dto';
 import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
-import { Image } from '../../communication-comments/interfaces/communication-comment.interface';
 import { AWSService } from 'src/services/aws/aws.service';
 @Injectable()
 export class CreateCommunicationTransaction extends BaseTransaction<
@@ -34,47 +33,39 @@ export class CreateCommunicationTransaction extends BaseTransaction<
       );
       const newCommunication = await manager.save(newCommunicationEntity);
 
-      const newCommunicationImageDto = (
-        createCommunicationDto.images as any as Image[]
-      )?.map(
-        (image) =>
-          new CreateCommunicationImageDto(
-            newCommunication.id,
-            image.originalname,
-          ),
-      );
-
-      const newCommunicationCategoriesDto =
-        createCommunicationDto.categoryId?.map(
-          (category) =>
-            new CreateCommunicationCategoriesDto(newCommunication.id, category),
-        );
-
-      // save in communication images
-      await this.communicationImagesService.createMany(
-        newCommunicationImageDto as CreateCommunicationImageDto[],
-        manager,
-      );
-      // save in communication category
-      await this.communicationCategoriesService.createMany(
-        newCommunicationCategoriesDto as CreateCommunicationCategoriesDto[],
-        manager,
-      );
-
-      const imageBuffer = createCommunicationDto.images
-        ? createCommunicationDto.images.map((image: any) => image)
-        : [];
-
       if (createCommunicationDto.images) {
-        await this.awsService.uploadMutilpleFiles(imageBuffer, {
-          BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
-          id: String(newCommunication.id),
-        });
-      }
+        const imagesUploaded = await this.awsService.uploadMutilpleFiles(
+          createCommunicationDto.images,
+          {
+            BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
+            id: newCommunication.id,
+          });
 
-      return newCommunication;
-    } catch (error) {
-      throw new BadRequestException('Create communication failed.');
-    }
+        const createCommunicationImagesDto: CreateCommunicationImageDto[] = imagesUploaded.map(
+          (image) => {
+            return new CreateCommunicationImageDto(newCommunication.id, image.originalname);
+          });
+
+        await this.communicationImagesService.createMany(
+          createCommunicationImagesDto,
+          manager,
+        );
+      };
+
+      if (createCommunicationDto.categoryId) {
+        const createCommunicationCategoriesDto: CreateCommunicationCategoriesDto[] = createCommunicationDto.categoryId.map(
+          (categoryId) => {
+            return new CreateCommunicationCategoriesDto(newCommunication.id, categoryId);
+          });
+
+        await this.communicationCategoriesService.createMany(
+          createCommunicationCategoriesDto,
+          manager,
+        );
+      };
+      return newCommunication;      
+  } catch(error) {
+    throw new BadRequestException('Create communication failed.');
   }
+}
 }

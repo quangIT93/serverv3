@@ -28,7 +28,7 @@ import { createResizeImage } from 'src/common/helper/transform/resize-image';
 export class CommunicationImagesPipe
   implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File>>
 {
-  constructor() {}
+  constructor() { }
   MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 5MB
   // MAX_EACH_SIZE = 1024 * 1024 * 2; // 1MB
 
@@ -54,19 +54,15 @@ export class CommunicationImagesPipe
         }
       }
 
-      return {
-        images: images
-          ? await Promise.all(
-              images.map(async (image: Express.Multer.File) => {
-                return await createResizeImage(image, {
-                  width: 500,
-                  height: 500,
-                  ext: 'jpg',
-                });
-              }),
-            )
-          : null,
-      };
+      return await Promise.all(
+        images.map(async (image: Express.Multer.File) => {
+          return await createResizeImage(image, {
+            width: 500,
+            height: 500,
+            ext: 'jpg',
+          });
+        }),
+      );
     } catch (error) {
       throw error;
     }
