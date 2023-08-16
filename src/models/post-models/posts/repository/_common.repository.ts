@@ -84,9 +84,11 @@ export class PostsQueryBuilder {
                 : ''
             }
             WHERE posts.status = 1
+                AND ${this.expiredDateCondition}
+                AND ${this.endDateCondition}
             GROUP BY posts.id
             ORDER BY created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
-            LIMIT ${limit} OFFSET ${page * limit}
+            LIMIT ${limit} OFFSET ${page * (limit - 1)}
         `);
 
         // const listIds = await this.init()
