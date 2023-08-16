@@ -107,18 +107,13 @@ export class PostsQueryBuilder {
         //     // .offset(page * limit)
         //     .getMany();
 
-        // return listIds;
-
-        console.log(listIds);
-        console.log(limit, page);
-
         return this.init()
             .innerJoinAndSelect('posts.categories', 'categories')
             .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
             .innerJoinAndSelect('posts.ward', 'ward')
             .innerJoinAndSelect('ward.district', 'district')
             .innerJoinAndSelect('district.province', 'province')
-            .innerJoinAndSelect('posts.postImages', 'postImages')
+            .leftJoinAndSelect('posts.postImages', 'postImages')
             .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
             .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
             .innerJoinAndSelect('posts.companyResource', 'companyResource')
