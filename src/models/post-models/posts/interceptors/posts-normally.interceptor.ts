@@ -39,7 +39,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
                 const length = posts.length;
 
-                if (length === _context.switchToHttp().getRequest().checkOverLimit) {
+                if (length === _context.switchToHttp().getRequest().limit) {
                     posts.pop();                
                 }
 
