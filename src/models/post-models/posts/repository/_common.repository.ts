@@ -61,29 +61,40 @@ export class PostsQueryBuilder {
         limit: number,
         _queries?: NewestPostQueriesDto,
     ): Promise<Post[]> {
+        /**
+         * This query is only true if all posts have limit 2 categories
+         * If a post has more than 2 categories, this query will be wrong in some cases
+         * 
+         */
         const listIds = await this.repository.query(`
-        SELECT
-            posts.id
-        FROM posts
-        INNER JOIN wards ON wards.id = posts.ward_id ${_queries?.districtIds
-                ? `AND wards.district_id IN (${_queries.districtIds})`
-                : ''
-            }
-        INNER JOIN districts ON districts.id = wards.district_id ${_queries?.provinceId
-                ? `AND districts.province_id = ${_queries.provinceId}`
-                : ''
-            }
-        INNER JOIN posts_categories ON posts_categories.post_id = posts.id ${_queries?.childrenCategoryId
-                ? `AND posts_categories.category_id IN (${_queries.childrenCategoryId})`
-                : ''
-            }
-        INNER JOIN child_categories ON child_categories.id = posts_categories.category_id ${_queries?.parentCategoryId
-                ? `AND child_categories.parent_category_id = ${_queries.parentCategoryId}`
-                : ''
-            }
-        WHERE posts.status = 1 AND company_resource_id IS NOT NULL
-        order by created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
-        LIMIT ${limit} OFFSET ${page * limit}
+        SELECT * FROM (
+            SELECT
+                posts.id, posts.company_resource_id, posts.created_at_date
+            FROM posts
+            INNER JOIN wards ON wards.id = posts.ward_id ${_queries?.districtIds
+                    ? `AND wards.district_id IN (${_queries.districtIds})`
+                    : ''
+                }
+            INNER JOIN districts ON districts.id = wards.district_id ${_queries?.provinceId
+                    ? `AND districts.province_id = ${_queries.provinceId}`
+                    : ''
+                }
+            INNER JOIN posts_categories ON posts_categories.post_id = posts.id 
+            ${_queries?.childrenCategoryId
+                    ? `AND posts_categories.category_id IN (${_queries.childrenCategoryId})`
+                    : ''
+                }
+            INNER JOIN child_categories ON child_categories.id = posts_categories.category_id ${_queries?.parentCategoryId
+                    ? `AND child_categories.parent_category_id = ${_queries.parentCategoryId}`
+                    : ''
+                }
+            WHERE posts.status = 1 AND company_resource_id IS NOT NULL
+            order by created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
+            LIMIT ${limit * 2} OFFSET ${page * limit}
+        ) as posts
+        GROUP BY posts.id
+        ORDER BY created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
+        LIMIT ${limit}
         `);
 
         if (listIds.length === 0) {
