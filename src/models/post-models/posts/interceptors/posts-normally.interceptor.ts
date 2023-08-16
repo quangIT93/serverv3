@@ -38,8 +38,10 @@ export class PostNormallyInterceptor implements NestInterceptor {
             map((posts: Post[]) => {
 
                 const length = posts.length;
+                let isOver = true;
 
                 if (length === _context.switchToHttp().getRequest().limit) {
+                    isOver = false;
                     posts.pop();                
                 }
 
@@ -64,7 +66,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
                 return {
                     status: _context.switchToHttp().getResponse().statusCode,
                     message: _context.switchToHttp().getResponse().statusMessage,
-                    is_over: length < _context.switchToHttp().getRequest().checkOverLimit,
+                    is_over: isOver,
                     data,
                 }
             }),
