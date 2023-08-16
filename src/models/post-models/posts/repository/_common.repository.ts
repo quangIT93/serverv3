@@ -118,14 +118,13 @@ export class PostsQueryBuilder {
             .innerJoinAndSelect('posts.postImages', 'postImages')
             .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
             .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
-            // .innerJoinAndSelect('posts.companyResource', 'companyResource')
+            .innerJoinAndSelect('posts.companyResource', 'companyResource')
             .where(`posts.id IN (:...ids)`, {
                 ids: listIds.map((item: any) => item.id),
             })
             .orderBy(
                 `FIELD(posts.id, ${listIds.map((item: any) => item.id).join(',')})`,
             )
-            .addOrderBy(`FIELD(posts.companyResourceId, 2)`, 'DESC')
             .getMany();
     }
 }
