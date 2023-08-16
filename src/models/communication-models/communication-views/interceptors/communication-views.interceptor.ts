@@ -8,9 +8,12 @@ export class CommunicationViewInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((communicationView: CommunicationView[]) => {
 
+        const lang = _context.switchToHttp().getRequest().lang;
+
         const data = communicationView?.map((communicationView: CommunicationView) => {
           const communicationViewSerialization = new CommunicationViewSerialization(
-            communicationView
+            communicationView,
+            lang
           );
           return communicationViewSerialization;
         });

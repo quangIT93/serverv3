@@ -25,7 +25,6 @@ export class CreateCommunicationDto {
     images!: any;
 
     @ApiProperty({ type: 'array', items: { type: 'number', format: 'number' }, required: false })
-    @MaxLength(2, { message: 'categoryId length must not exceed 5' })
     @IsOptional()
     categoryId!: number[];
 }

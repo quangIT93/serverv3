@@ -1,40 +1,35 @@
-import { BUCKET_IMAGE_COMMUNICATION } from 'src/common/constants';
+import { Exclude, Expose } from 'class-transformer';
 import { CommunicationBookmarked } from '../entities/communication-bookmarked.entity';
+import { Communication } from '../../communications/entities/communication.entity';
+import { CommunicationSerialization } from '../../communications/serialization/communication.serialization';
+import { Language } from 'src/common/enum';
 
-export class CommunicationBookmarkedSerialization {
-  communicationId!: number;
-  // accountId!: string;
-  createdAt!: number;
-  communicaton!: {};
+export class CommunicationBookmarkedSerialization extends CommunicationBookmarked {
+  @Exclude({ toPlainOnly: true })
+  lang!: Language;
 
-  [key: string]: any;
-
-  constructor(communicationBookmarked: CommunicationBookmarked) {
-    this.communicationId = communicationBookmarked.communicationId;
-    // this.accountId = communicationBookmarked.accountId;
-    this.createdAt = new Date(communicationBookmarked.createdAt).getTime();
-    this.communicaton = {
-      title: communicationBookmarked.communication?.title
-        ? communicationBookmarked.communication?.title
-        : '',
-      content: communicationBookmarked.communication?.content
-        ? communicationBookmarked.communication?.content
-        : '',
-      createdAt: new Date(communicationBookmarked.createdAt).getTime(),
-      communicationImages:
-        communicationBookmarked.communication?.communicationImages.map(
-          (image) =>
-            `${BUCKET_IMAGE_COMMUNICATION}/${communicationBookmarked.communication?.id}/${image.image}`,
-        ),
-      communicationLikes: communicationBookmarked.communication?.communicationLikes.length,
-      communicationComments: communicationBookmarked.communication?.communicationComments.length,
-      communicationViews: communicationBookmarked.communication?.communicationViews.length
-    };
+  constructor(
+    communicationBookmarked: CommunicationBookmarked,
+    lang: Language,
+  ) {
+    super();
+    this.lang = lang;
+    Object.assign(this, communicationBookmarked);
   }
 
-  fromEntity(
-    communicationBookmarked: CommunicationBookmarked,
-  ): CommunicationBookmarkedSerialization {
-    return new CommunicationBookmarkedSerialization(communicationBookmarked);
+  @Exclude({ toPlainOnly: true })
+  override accountId!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override createdAt!: Date;
+
+  @Exclude({ toPlainOnly: true })
+  override communication!: Communication;
+
+  @Expose()
+  get communicationData() {
+    return Object.assign(
+      new CommunicationSerialization(this.communication, this.lang),
+    );
   }
 }

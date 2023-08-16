@@ -3,7 +3,7 @@ import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Communication } from './entities/communication.entity';
-import { Between, ILike, Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 
@@ -74,29 +74,35 @@ export class CommunicationsService {
   }
 
   async findAll(limit: number, page: number, sort?: string) {
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     const data = await this.communicationRepository.find({
-        relations: [
-            'communicationImages',
-            'communicationCategories',
-            'communicationCategories.parentCategory',
-            'profile',
-            'communicationViews',
-            'communicationLikes',
-            'communicationComments',
-        ],
-        order: {
-            createdAt: 'DESC',
-        },
-        skip, 
-        take: limit, 
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments',
+        'communicationComments.profile',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
+      skip,
+      take: limit,
     });
 
     // sort by likes, comments, views
     return this.handleSort(data, sort);
   }
 
-  async findCommunicationByAccountId(id: string, limit: number, page: number, sort?: string) {
+  async findCommunicationTodayByAccountId(
+    id: string,
+    limit: number,
+    page: number,
+    sort?: string,
+  ) {
     const now = new Date();
     const startOfDay = new Date(
       now.getFullYear(),
@@ -113,7 +119,7 @@ export class CommunicationsService {
       999,
     );
 
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     const data = await this.communicationRepository.find({
       where: {
         accountId: id,
@@ -126,12 +132,46 @@ export class CommunicationsService {
         'profile',
         'communicationViews',
         'communicationLikes',
+        'communicationComments',
       ],
       order: {
         createdAt: 'DESC',
       },
       skip,
-      take: limit
+      take: limit,
+    });
+
+    return this.handleSort(data, sort);
+  }
+
+  // find by account
+
+  async findCommunicationByAccountId(
+    id: string,
+    limit: number,
+    page: number,
+    sort?: string,
+  ) {
+
+    const skip = (page - 1) * limit;
+    const data = await this.communicationRepository.find({
+      where: {
+        accountId: id,
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
+      skip,
+      take: limit,
     });
 
     return this.handleSort(data, sort);
@@ -150,18 +190,6 @@ export class CommunicationsService {
   }
 
   async remove(updateCommunicationDto: UpdateCommunicationDto) {
-    // const exitsCommunication = await this.communicationRepository.findOne({
-    //   where: {
-    //     accountId: updateCommunicationDto.accountId,
-    //   },
-    // });
-
-    // if (!exitsCommunication) {
-    //   throw new BadRequestException(
-    //     'Communication not found or communication does not exist of user',
-    //   );
-    // }
-
     updateCommunicationDto.status = 0;
 
     const newUpdate = this.communicationRepository.create(
@@ -171,31 +199,8 @@ export class CommunicationsService {
     await this.communicationRepository.save(newUpdate);
   }
 
-  async searchCommunication(searchTitle: string) {
-    const communications = await this.communicationRepository.find({
-      relations: [
-        'communicationLikes',
-        'communicationViews',
-        'profile',
-        'communicationImages',
-        'communicationCategories',
-      ],
-      where: {
-        title: ILike(`%${searchTitle}%`),
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
-
-    return communications;
-  }
-
   async getCommunicationByCommunicationId(id: number) {
-    return await this.communicationRepository.find({
-      where: {
-        id,
-      },
+    return this.communicationRepository.findOne({
       relations: [
         'communicationImages',
         'communicationCategories',
@@ -203,14 +208,20 @@ export class CommunicationsService {
         'profile',
         'communicationViews',
         'communicationLikes',
+        'communicationComments',
+        'communicationComments.profile',
+        'communicationComments.communicationCommentImages'
       ],
+      where: {
+        id,
+      },
       order: {
         createdAt: 'DESC',
       },
     });
   }
 
-  async getCommunicationToday(limit: number , page : number, sort?: string) {
+  async getCommunicationToday(limit: number, page: number, sort?: string) {
     const now = new Date();
     const startOfDay = new Date(
       now.getFullYear(),
@@ -226,8 +237,7 @@ export class CommunicationsService {
       59,
       999,
     );
-    console.log(page, limit)
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     const data = await this.communicationRepository.find({
       where: {
         createdAt: Between(startOfDay, endOfDay),
@@ -239,21 +249,22 @@ export class CommunicationsService {
         'profile',
         'communicationViews',
         'communicationLikes',
+        'communicationComments',
       ],
       order: {
         createdAt: 'DESC',
       },
       skip,
-      take: limit
+      take: limit,
     });
 
     return this.handleSort(data, sort);
   }
 
-  async shareCommunication(id : number) {
+  async shareCommunication(id: number) {
     return {
       id,
-      share_link : 'https://hijob.site/'
-    }
+      share_link: 'https://hijob.site/',
+    };
   }
 }

@@ -32,9 +32,10 @@ export class CommunicationBookmarkedController {
     @Body() createCommunicationBookmarkedDto: CreateCommunicationBookmarkedDto,
   ) {
     try {
-      createCommunicationBookmarkedDto.accountId = req.user?.id
-        ? req.user.id
-        : '';
+      if (!req.user?.id) {
+        throw new BadRequestException('Authorization');
+      }
+      createCommunicationBookmarkedDto.accountId = req.user?.id;
       return {
         status: HttpStatus.CREATED,
         data: await this.communicationBookmarkedService.create(
@@ -57,7 +58,7 @@ export class CommunicationBookmarkedController {
   )
   async findOne(@Req() req: CustomRequest) {
     try {
-      const id = req.user?.id ? req.user.id : '';
+      const id = req.user?.id;
 
       if (!id) throw new BadRequestException('Authorization');
 

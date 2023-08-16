@@ -1,19 +1,15 @@
 import { Language } from 'src/common/enum';
 import { Communication } from '../entities/communication.entity';
 import { Exclude, Expose, Transform } from 'class-transformer';
-import {
-  BUCKET_IMAGE_AVATAR,
-  BUCKET_IMAGE_COMMUNICATION,
-} from 'src/common/constants';
+import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { CommunicationLike } from '../../communication-likes/entities/communication-like.entity';
 import { CommunicationComment } from '../../communication-comments/entities/communication-comment.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { CommunicationView } from '../../communication-views/entities/communication-view.entity';
-import timeToTextTransform from 'src/common/helper/transform/timeToText.transform';
 
-export class CommunicationSerialization extends Communication {
+export class CommunicationCreateSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   lang!: Language;
 
@@ -31,11 +27,6 @@ export class CommunicationSerialization extends Communication {
 
   @Transform(({ value }) => new Date(value).getTime())
   override createdAt!: Date;
-
-  @Expose()
-  get createdAtText() {
-    return timeToTextTransform(this.createdAt.getTime(), this.lang);
-  }
 
   @Exclude({ toPlainOnly: true })
   override updatedAt!: Date;
@@ -81,13 +72,5 @@ export class CommunicationSerialization extends Communication {
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
         : null,
     };
-  }
-
-  @Expose()
-  get communicationImagesData() {
-    if (!this.communicationImages) return null;
-    return this.communicationImages.map((image: any) => {
-      return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
-    });
   }
 }

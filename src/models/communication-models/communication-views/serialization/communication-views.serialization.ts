@@ -2,33 +2,46 @@ import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { CommunicationView } from '../entities/communication-view.entity';
 import { timeToTextTransform } from 'src/common/helper/transform/timeToText.transform';
 import { Language } from 'src/common/enum';
+import { Exclude, Expose } from 'class-transformer';
+import { Profile } from 'src/models/profile-models/profiles/entities';
 
-export class CommunicationViewSerialization {
-  communicationId!: number;
-  accountId!: string;
-  createdAtText!: string;
-  avatar!: string | null;
-  name!: string;
+export class CommunicationViewSerialization extends CommunicationView {
 
-  [key: string]: any;
+  @Exclude({ toPlainOnly: true })
+  lang!: Language;
 
-  constructor(communicationView: CommunicationView, lang = Language.VI) {
-    this.communicationId = communicationView.communicationId;
-    this.accountId = communicationView.accountId;
-    this.createdAtText = timeToTextTransform(
-      communicationView.createdAt.getTime(),
-      lang,
-    );
-    this.avatar = communicationView.profile.avatar
-      ? `${BUCKET_IMAGE_AVATAR}/${communicationView.profile.avatar}`
-      : null;
-    this.name = communicationView.profile.name;
+  constructor(communicationView: CommunicationView, lang: Language) {
+    super();
+    this.lang = lang;
+    Object.assign(this, communicationView);
   }
 
-  fromEntity(
-    communicationView: CommunicationView,
-    lang = Language.VI,
-  ): CommunicationViewSerialization {
-    return new CommunicationViewSerialization(communicationView, lang);
+  @Expose({ toPlainOnly: true })
+  override communicationId!: number;
+
+  @Exclude({ toPlainOnly: true })
+  override createdAt!: Date;
+
+  @Exclude({ toPlainOnly: true })
+  override accountId!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override profile!: Profile;
+
+  @Expose()
+  get createdAtText() {
+    return timeToTextTransform(this.createdAt.getTime(), this.lang);
+  }
+
+  @Expose()
+  get avatar() {
+    return this.profile
+      ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
+      : null;
+  }
+
+  @Expose()
+  get name() {
+    return this.profile ? this.profile.name : null;
   }
 }

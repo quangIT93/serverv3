@@ -28,9 +28,8 @@ import { createResizeImage } from 'src/common/helper/transform/resize-image';
 export class CommunicationImagesPipe
   implements PipeTransform<Express.Multer.File, Promise<Express.Multer.File>>
 {
-  constructor() { }
+  constructor() {}
   MAX_TOTAL_SIZE = 1024 * 1024 * 5; // 5MB
-  // MAX_EACH_SIZE = 1024 * 1024 * 2; // 1MB
 
   async transform(files: any): Promise<any> {
     try {
@@ -41,6 +40,10 @@ export class CommunicationImagesPipe
       }
 
       const { images } = files;
+
+      if (!images) {
+        return
+      }
 
       if (Array.isArray(images)) {
         if (images.length > 5) {

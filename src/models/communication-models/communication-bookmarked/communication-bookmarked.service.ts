@@ -57,6 +57,7 @@ export class CommunicationBookmarkedService {
         'communication.communicationLikes',
         'communication.communicationViews',
         'communication.communicationComments',
+        'communication.profile',
       ],
     });
   }

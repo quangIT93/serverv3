@@ -22,7 +22,7 @@ export class CommunicationBookmarked {
   @JoinColumn({ name: 'account_id' })
   user: User | undefined;
 
-  @ManyToOne(() => Communication, communication => communication.id)
+  @ManyToOne(() => Communication, (communication) => communication.id)
   @JoinColumn({ name: 'communication_id' })
   communication: Communication | undefined;
 }

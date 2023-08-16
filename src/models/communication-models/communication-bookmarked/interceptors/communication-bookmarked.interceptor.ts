@@ -7,13 +7,18 @@ export class CommunicationBookmarkedInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((communicationBookmarked: CommunicationBookmarked[]) => {
+        const lang = _context.switchToHttp().getRequest().lang;
 
-        const data = communicationBookmarked?.map((communicationBookmarked: CommunicationBookmarked) => {
-          const communicationBookmarkedSerialization = new CommunicationBookmarkedSerialization(
-            communicationBookmarked
-          );
-          return communicationBookmarkedSerialization;
-        });
+        const data = communicationBookmarked?.map(
+          (communicationBookmarked: CommunicationBookmarked) => {
+            const communicationBookmarkedSerialization =
+              new CommunicationBookmarkedSerialization(
+                communicationBookmarked,
+                lang,
+              );
+            return communicationBookmarkedSerialization;
+          },
+        );
 
         return {
           status: _context.switchToHttp().getResponse().statusCode,

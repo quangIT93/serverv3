@@ -39,33 +39,40 @@ export class CreateCommunicationTransaction extends BaseTransaction<
           {
             BUCKET: BUCKET_IMAGE_COMMUNICATION_UPLOAD,
             id: newCommunication.id,
-          });
+          },
+        );
 
-        const createCommunicationImagesDto: CreateCommunicationImageDto[] = imagesUploaded.map(
-          (image) => {
-            return new CreateCommunicationImageDto(newCommunication.id, image.originalname);
+        const createCommunicationImagesDto: CreateCommunicationImageDto[] =
+          imagesUploaded.map((image) => {
+            return new CreateCommunicationImageDto(
+              newCommunication.id,
+              image.originalname,
+            );
           });
 
         await this.communicationImagesService.createMany(
           createCommunicationImagesDto,
           manager,
         );
-      };
+      }
 
       if (createCommunicationDto.categoryId) {
-        const createCommunicationCategoriesDto: CreateCommunicationCategoriesDto[] = createCommunicationDto.categoryId.map(
-          (categoryId) => {
-            return new CreateCommunicationCategoriesDto(newCommunication.id, categoryId);
+        const createCommunicationCategoriesDto: CreateCommunicationCategoriesDto[] =
+          createCommunicationDto.categoryId.map((categoryId) => {
+            return new CreateCommunicationCategoriesDto(
+              newCommunication.id,
+              categoryId,
+            );
           });
 
         await this.communicationCategoriesService.createMany(
           createCommunicationCategoriesDto,
           manager,
         );
-      };
-      return newCommunication;      
-  } catch(error) {
-    throw new BadRequestException('Create communication failed.');
+      }
+      return newCommunication;
+    } catch (error) {
+      throw new BadRequestException('Create communication failed.');
+    }
   }
-}
 }
