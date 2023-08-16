@@ -107,9 +107,10 @@ export class PostsQueryBuilder {
         //     // .offset(page * limit)
         //     .getMany();
 
-        // console.log(page, limit, listIds.length);
-
         // return listIds;
+
+        console.log(listIds);
+        console.log(limit, page);
 
         return this.init()
             .innerJoinAndSelect('posts.categories', 'categories')
