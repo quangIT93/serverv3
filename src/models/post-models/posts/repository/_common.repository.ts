@@ -84,8 +84,8 @@ export class PostsQueryBuilder {
                 : ''
             }
             WHERE posts.status = 1
-                AND ${this.expiredDateCondition}
-                AND ${this.endDateCondition}
+                AND (posts.expired_date IS NULL OR posts.expired_date >= NOW())
+                AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
             GROUP BY posts.id
             ORDER BY created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
             LIMIT ${limit} OFFSET ${page * (limit - 1)}
