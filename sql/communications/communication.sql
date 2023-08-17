@@ -18,3 +18,8 @@ CREATE TABLE
         PRIMARY KEY (account_id, communication_id),
         Constraint FK_Accounts_Communications_bookmarks FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
         Constraint FK_Communications_Communication_bookmarks FOREIGN KEY (communication_id) REFERENCES communications (id) ON DELETE CASCADE ON UPDATE NO ACTION )
+
+
+
+
+ALTER TABLE communications ADD type TINYINT(11) NOT NULL DEFAULT 1

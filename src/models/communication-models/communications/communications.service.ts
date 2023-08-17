@@ -6,6 +6,7 @@ import { Communication } from './entities/communication.entity';
 import { Between, Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
+import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
 
 @Injectable()
 export class CommunicationsService {
@@ -14,6 +15,7 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction,
   ) {}
 
   handleSort(data: Communication[], sort?: string) {
@@ -152,7 +154,6 @@ export class CommunicationsService {
     page: number,
     sort?: string,
   ) {
-
     const skip = (page - 1) * limit;
     const data = await this.communicationRepository.find({
       where: {
@@ -189,16 +190,6 @@ export class CommunicationsService {
     }
   }
 
-  async remove(updateCommunicationDto: UpdateCommunicationDto) {
-    updateCommunicationDto.status = 0;
-
-    const newUpdate = this.communicationRepository.create(
-      updateCommunicationDto,
-    );
-
-    await this.communicationRepository.save(newUpdate);
-  }
-
   async getCommunicationByCommunicationId(id: number) {
     return this.communicationRepository.findOne({
       relations: [
@@ -210,7 +201,7 @@ export class CommunicationsService {
         'communicationLikes',
         'communicationComments',
         'communicationComments.profile',
-        'communicationComments.communicationCommentImages'
+        'communicationComments.communicationCommentImages',
       ],
       where: {
         id,
@@ -220,6 +211,8 @@ export class CommunicationsService {
       },
     });
   }
+
+  // Get today communication
 
   async getCommunicationToday(limit: number, page: number, sort?: string) {
     const now = new Date();
@@ -261,10 +254,73 @@ export class CommunicationsService {
     return this.handleSort(data, sort);
   }
 
+  // Share communication
+
   async shareCommunication(id: number) {
     return {
       id,
       share_link: 'https://hijob.site/',
     };
+  }
+
+  // update by admin
+
+  async updateByAdmin(updateCommunicationDto: UpdateCommunicationDto) {
+    try {
+      const newCommunication =
+        await this.updateCommunicationAdminTransaction.run(
+          updateCommunicationDto,
+        );
+
+      return newCommunication;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // find five working story 
+
+  async findFiveWorking() {
+    return await this.communicationRepository.find({
+      where: {
+        type: 1
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 5 
+    });
+  }
+
+  // find five new hijob 
+
+  async findFiveNewJob() {
+    return await this.communicationRepository.find({
+      where: {
+        type: 0
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 5 
+    });
   }
 }

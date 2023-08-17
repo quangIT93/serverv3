@@ -11,7 +11,7 @@ import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
 import { AWSService } from 'src/services/aws/aws.service';
 
 @Injectable()
-export class UpdateCommunicationTransaction extends BaseTransaction<
+export class UpdateCommunicationAdminTransaction extends BaseTransaction<
   UpdateCommunicationDto,
   Communication
 > {
@@ -37,7 +37,6 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
       const existingCommunication = await manager.findOne(Communication, {
         where: {
           id: updateCommunicationDto.id,
-          accountId: updateCommunicationDto.accountId,
         },
       });
 

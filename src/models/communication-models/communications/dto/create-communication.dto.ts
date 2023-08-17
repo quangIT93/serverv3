@@ -20,6 +20,9 @@ export class CreateCommunicationDto {
     // @IsOptional()
     // status!:number;
 
+    @ApiProperty({ type: 'number', format: 'number', required: true, default: 1})
+    type!:number;
+
     @ApiProperty({ type: 'array', items: { type: 'file', format: 'binary' }, required: false })
     @IsOptional()
     images!: any;
@@ -27,4 +30,6 @@ export class CreateCommunicationDto {
     @ApiProperty({ type: 'array', items: { type: 'number', format: 'number' }, required: false })
     @IsOptional()
     categoryId!: number[];
+
+    
 }

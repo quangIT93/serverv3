@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
   UseGuards,
   Req,
   HttpStatus,
@@ -34,15 +33,19 @@ import { CommunicationImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationInterceptor } from './interceptors/communication.interceptor';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
-import { RoleGuard } from 'src/authentication/role.guard';
 import { ResizeImageResult } from 'src/common/helper/transform/resize-image';
 import { CommunicationDetailInterceptor } from './interceptors/communication-detail.interceptor';
 import { CommunicationCreateInterceptor } from './interceptors/communication-create.interceptor';
+import { CommunicationWorkingStoryInterceptor } from './interceptors/communication-working-story.interceptor';
+import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
 
 @ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
   constructor(private readonly communicationsService: CommunicationsService) {}
+
+
+  // create communication by user 
 
   @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
@@ -65,6 +68,8 @@ export class CommunicationsController {
 
       createCommunicationDto.images = listImages;
 
+      createCommunicationDto.type = 1
+
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
         message: 'Create communication successfully',
@@ -77,6 +82,8 @@ export class CommunicationsController {
       throw new BadRequestException('Error creating communication');
     }
   }
+
+  // Get all communication working story
 
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @UseGuards(AuthGuard)
@@ -116,7 +123,51 @@ export class CommunicationsController {
     }
   }
 
-  // communication today by account
+  // Get five working story
+
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationWorkingStoryInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('working-story')
+  async findFiveWorkingStory(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        return null;
+      }
+
+      return await this.communicationsService.findFiveWorking()
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error finding communication');
+    }
+  }
+
+  // Get five hijob news
+
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationNewsInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('news')
+  async findFiveHiJobNews(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        return null;
+      }
+
+      return await this.communicationsService.findFiveNewJob()
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error finding communication');
+    }
+  }
+
+  // Communication today by account
 
   @Get('/today/by-account')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
@@ -156,7 +207,7 @@ export class CommunicationsController {
     }
   }
 
-  // communication by account
+  // Communication by account
 
   @Get('by-account')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationCreateInterceptor)
@@ -196,6 +247,8 @@ export class CommunicationsController {
     }
   }
 
+  // Update communication by user
+
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   @UseGuards(AuthGuard)
@@ -230,27 +283,7 @@ export class CommunicationsController {
     }
   }
 
-  // Delete communication by admin
-
-  @Delete('/by-admin/:id')
-  @UseGuards(AuthGuard, RoleGuard)
-  @ApiParam({
-    name: 'id',
-    description: 'id of communication.',
-    required: true,
-  })
-  @Roles(Role.ADMIN)
-  async remove(
-    @Param('id') id: number,
-    @Body() updateCommunicationDto: UpdateCommunicationDto,
-  ) {
-    updateCommunicationDto.id = id;
-    await this.communicationsService.remove(updateCommunicationDto);
-    return {
-      status: HttpStatus.OK,
-      message: 'Delete communication successfully',
-    };
-  }
+  // Get all job todays
 
   @Get('/today')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
@@ -285,6 +318,8 @@ export class CommunicationsController {
     }
   }
 
+  // Share communication
+
   @Get('/share/:id')
   @ApiParam({
     name: 'id',
@@ -306,6 +341,8 @@ export class CommunicationsController {
     }
   }
 
+  // Get detail communication
+
   @UseInterceptors(ClassSerializerInterceptor, CommunicationDetailInterceptor)
   @UseGuards(AuthGuard)
   @Get('/detail/:id')
@@ -326,4 +363,80 @@ export class CommunicationsController {
       );
     }
   }
+
+  // Create communication by admin
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBasicAuth()
+  @Post('by-admin')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+  async createByAdmin(
+    @Body() createCommunicationDto: CreateCommunicationDto,
+    @Req() req: CustomRequest,
+    @Res() res: any,
+    @UploadedFiles(CommunicationImagesPipe)
+    listImages: ResizeImageResult[] | undefined,
+  ) {
+    try {
+      if (!req.user?.id) {
+        return new UnauthorizedException();
+      }
+
+      createCommunicationDto.accountId = req.user.id;
+
+      createCommunicationDto.images = listImages;
+
+      createCommunicationDto.type = 0
+
+      return res.status(HttpStatus.CREATED).json({
+        status: HttpStatus.CREATED,
+        message: 'Create communication successfully',
+        data: await this.communicationsService.create(createCommunicationDto),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error creating communication');
+    }
+  }
+
+
+  // Update by admin 
+
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  @Put('/by-admin/:id')
+  @ApiParam({
+    name: 'id',
+    description: 'id of communication.',
+    required: true,
+  })
+  async updateByAdmin(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCommunicationDto: UpdateCommunicationDto,
+    @UploadedFiles(CommunicationImagesPipe)
+    listImages: ResizeImageResult[] | undefined,
+  ) {
+    try {
+      updateCommunicationDto.id = id;
+      updateCommunicationDto.images = listImages;
+
+      await this.communicationsService.updateByAdmin(updateCommunicationDto);
+      return {
+        status: HttpStatus.OK,
+        message: 'Updated communication successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error update communication');
+    }
+  }
+
 }

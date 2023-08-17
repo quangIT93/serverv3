@@ -30,6 +30,9 @@ export class Communication {
   @Column({ type: 'tinyint', nullable: false, name: 'status', default: 1 })
   status!: number;
 
+  @Column({ type: 'tinyint', nullable: false, name: 'type', default: 1})
+  type!:number;
+
   @Column({
     type: 'datetime',
     nullable: false,

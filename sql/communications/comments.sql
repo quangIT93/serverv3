@@ -12,3 +12,4 @@ CREATE TABLE IF NOT EXISTS `communication_comments` (
     Constraint FK_Accounts_CommunicationComments FOREIGN KEY (account_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     Constraint FK_CommunicationComments_CommunicationComments FOREIGN KEY (parent_comment_id) REFERENCES communication_comments (id) ON DELETE CASCADE ON UPDATE NO ACTION
 )
+
