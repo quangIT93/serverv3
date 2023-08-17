@@ -1,59 +1,56 @@
-SELECT
-	company_resource.id as cid,
-    posts.status,
-        posts.id,
-        posts.account_id,
-        posts.title,
-        posts.company_name,
-        posts.ward_id,
-        posts.start_date,
-        posts.end_date,
-        posts.start_time,
-        posts.end_time,
-        posts.salary_min,
-        posts.salary_max,
-        posts.salary_type as salary_type_id,
-        posts.money_type,
-        posts.status,
-        posts.is_inhouse_data,
-        posts.job_type,
-        job_types.name as job_type_name,
-        wards.full_name as ward,
-        wards.name as ward_name,
-        districts.id as district_id,
-        districts.full_name as district,
-        districts.name as district_name,
-        provinces.full_name as province,
-        provinces.name as province_name,
-        provinces.id as province_id,
-        salary_types.value as salary_type,
-        post_images.image AS image,
-        posts.expired_date,
-        company_resource.icon as company_resource_icon,
-        
-        posts.created_at,
-        -- DATE_FORMAT(posts.created_at,'%y/%d/%m') as created_at_format,
-        
-        CONCAT(DATE_FORMAT(posts.created_at,'%y/%d/%m'), posts.company_resource_id) as sort_column
-        FROM (select * from posts order by id desc,DATE_FORMAT(created_at,'%y/%d/%m') desc) posts
-    LEFT JOIN wards
-    ON wards.id = posts.ward_id
-    LEFT JOIN districts
-    ON districts.id = wards.district_id
-    LEFT JOIN provinces
-    ON provinces.id = districts.province_id
-    LEFT JOIN salary_types
-    ON salary_types.id = posts.salary_type
-    LEFT JOIN post_images
-    ON post_images.post_id = posts.id
-    LEFT JOIN post_resource
-    ON post_resource.post_id = posts.id
-    LEFT JOIN (select * from company_resource order by field(company_resource.id,2)) company_resource
-    ON company_resource.id = post_resource.company
-    LEFT JOIN job_types
-    ON job_types.id = posts.job_type
-    WHERE posts.status = 1
-    -- DATE_FORMAT(posts.created_at,'%y/%d/%m') = '23/29/07'
-    GROUP BY posts.id 
-    ORDER BY sort_column DESC
-    LIMIT 100
+-- CREATE TABLE `keyword_districts` (
+--   `keyword_id` int(11) NOT NULL,
+--   `district_id` varchar(20) NOT NULL,
+--   PRIMARY KEY (`keyword_id`,`district_id`),
+--   KEY `district_id` (`district_id`),
+--   CONSTRAINT `keyword_districts_ibfk_1` FOREIGN KEY (`keyword_id`) REFERENCES `keywords_notification` (`id`) ON DELETE CASCADE,
+--   CONSTRAINT `keyword_districts_ibfk_2` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- CREATE TABLE keyword_categories (
+--     keyword_id INTEGER NOT NULL,
+--     category_id INTEGER NOT NULL,
+--     PRIMARY KEY (keyword_id, category_id),
+--     FOREIGN KEY (keyword_id) REFERENCES keywords_notification (id) ON UPDATE CASCADE ON DELETE CASCADE,
+--     FOREIGN KEY (category_id) REFERENCES parent_categories (id)
+-- );
+
+-- CREATE TABLE `keyword_categories` (
+--   `keyword_id` int(11) NOT NULL,
+--   `category_id` int(11) NOT NULL,
+--   PRIMARY KEY (`keyword_id`,`category_id`),
+--   KEY `category_id` (`category_id`),
+--   CONSTRAINT `keyword_categories_ibfk_1` FOREIGN KEY (`keyword_id`) REFERENCES `keywords_notification` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+--   CONSTRAINT `keyword_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `child_categories` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+-- alter table keywords_notification drop CONSTRAINT `FK_Keyword_District`;
+-- alter table keywords_notification drop CONSTRAINT `FK_Keyword_Category`;
+-- alter table keywords_notification drop CONSTRAINT `FK_Keyword_Account`;
+-- alter table keywords_notification drop index `account_id`;
+-- alter table keywords_notification CONSTRAINT `FK_Keyword_Category` FOREIGN KEY (`category_id`) REFERENCES `parent_categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+-- alter table keywords_notification CONSTRAINT `FK_Keyword_District` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+--   CONSTRAINT `keyword_categories_ibfk_1` FOREIGN KEY (`keyword_id`) REFERENCES `keywords_notification` (`id`) ON UPDATE CASCADE,
+--   CONSTRAINT `keyword_categories_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `child_categories` (`id`)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+
+-- alter table keywords_notification add CONSTRAINT `FK_Keyword_Account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+INSERT INTO keyword_districts
+SELECT id, district_id
+FROM keywords_notification
+WHERE district_id IS NOT NULL
+ON DUPLICATE KEY UPDATE keyword_id = VALUES(keyword_id), district_id = VALUES(district_id);
+
+
+-- category_id is id of parent_categories
+-- add to keyword_categories table max 10 child_categories of parent_categories
+INSERT INTO keyword_categories
+SELECT keywords_notification.id, child_categories.id AS category_id
+FROM keywords_notification
+JOIN (SELECT id, parent_category_id FROM child_categories LIMIT 10) AS child_categories
+ON keywords_notification.category_id = child_categories.parent_category_id
+ON DUPLICATE KEY UPDATE keyword_id = VALUES(keyword_id), category_id = VALUES(category_id);

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FcmTokensEntity } from './entities/fcm-tokens.entity';
-import { CreatePostByAdminDto } from '../post-models/posts/dto/admin-create-post.dto';
 import { isArray } from 'class-validator';
+import { CreatePostDto } from '../post-models/posts/dto/create-post.dto';
 
 @Injectable()
 export class FcmTokensService {
@@ -23,7 +23,7 @@ export class FcmTokensService {
         return await this.fcmTokensRepository.delete({ token: fcmToken });
     }
 
-    async getTokensWhenNewPost(post: CreatePostByAdminDto): Promise<FcmTokensEntity[]> {
+    async getTokensWhenNewPost(post: CreatePostDto): Promise<FcmTokensEntity[]> {
         return await this.fcmTokensRepository
             .query(`
                 SELECT fcm_tokens.token, fcm_tokens.account_id as accountId
