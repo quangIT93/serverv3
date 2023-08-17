@@ -5,7 +5,6 @@ import { Post } from './entities';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostsQueryBuilder, countByHotTopicQuery, findByHotTopicQuery } from './repository';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
-import { countByHotTopicQuery, findByHotTopicQuery } from './repository';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
 import { PostsImagesService } from '../posts-images/posts-images.service';
@@ -17,7 +16,7 @@ import { PostCategories } from '../posts-categories/entities/posts-categories.en
 import { CreatePostResourceDto } from '../post-resource/dto/create-post-resource.dto';
 import { PostResourceService } from '../post-resource/post-resource.service';
 import { NewestPostQueriesDto } from './dto/newest-queries.dto';
-import { CreatePostDto } from './dto/create-post.dto';
+// import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class PostsService {
