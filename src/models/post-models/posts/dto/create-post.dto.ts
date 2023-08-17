@@ -122,46 +122,46 @@ export abstract class CreatePostDto {
 
     // new start time
     // format: hh:mm
-    @ApiProperty({
-        type: 'string',
-        format: 'string',
-        pattern: '^[0-9]{2}:[0-9]{2}$',
-        required: true,
-        default: '00:00',
-    })
-    @IsString()
-    @MaxLength(5)
-    newStartTime!: string;
+    // @ApiProperty({
+    //     type: 'string',
+    //     format: 'string',
+    //     pattern: '^[0-9]{2}:[0-9]{2}$',
+    //     required: true,
+    //     default: '00:00',
+    // })
+    // @IsString()
+    // @MaxLength(5)
+    // newStartTime!: string;
 
     // new end time
     // format: hh:mm
+    // @ApiProperty({
+    //     type: 'string',
+    //     format: 'string',
+    //     pattern: '^[0-9]{2}:[0-9]{2}$',
+    //     required: true,
+    //     default: '00:00',
+    // })
+    // @IsString()
+    // @MaxLength(5)
+    // newEndTime!: string;
+
     @ApiProperty({
         type: 'string',
-        format: 'string',
-        pattern: '^[0-9]{2}:[0-9]{2}$',
+        format: 'number',
         required: true,
-        default: '00:00',
+        default: 57600000,
     })
-    @IsString()
-    @MaxLength(5)
-    newEndTime!: string;
-
-    // @ApiProperty({
-    //     type: 'string',
-    //     format: 'number',
-    //     required: true,
-    //     default: 57600000,
-    // })
-    // @IsTimestamp()
+    @IsTimestamp()
     startTime!: number;
 
-    // @ApiProperty({
-    //     type: 'string',
-    //     format: 'number',
-    //     required: true,
-    //     default: 57600000,
-    // })
-    // @IsTimestamp()
+    @ApiProperty({
+        type: 'string',
+        format: 'number',
+        required: true,
+        default: 57600000,
+    })
+    @IsTimestamp()
     endTime!: number;
 
     @ApiProperty({ type: 'number', format: 'number', required: true, default: 0 })

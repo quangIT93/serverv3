@@ -39,12 +39,12 @@ export class CreatePostByAdminDto extends CreatePostDto {
         post.isRemotely = this.isRemotely.toString();
         post.startDate = this.startDate?.toString() || null;
         post.endDate = this.endDate?.toString() || null;
-        // post.startTime = this.startTime?.toString();
-        // post.endTime = this.endTime?.toString();
-        post.startTime = (61200000 + this.newStartTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
-        post.endTime = (61200000 + this.newEndTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
-        post.newStartTime = this.newStartTime;
-        post.newEndTime = this.newEndTime;
+        post.startTime = this.startTime?.toString();
+        post.endTime = this.endTime?.toString();
+        // post.startTime = (61200000 + this.newStartTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
+        // post.endTime = (61200000 + this.newEndTime.split(':').reduce((acc, cur) => acc * 60 + +cur, 0) * 60000).toString();
+        // post.newStartTime = this.newStartTime;
+        // post.newEndTime = this.newEndTime;
         post.salaryMin = this.salaryMin;
         post.salaryMax = this.salaryMax;
         post.salaryType = this.salaryType;
