@@ -68,17 +68,17 @@ export class CommunicationDetailSerialization extends Communication {
 
   @Expose({ toPlainOnly: true })
   get totalLikes() {
-    return this.communicationLikes.length
+    return this.communicationLikes.length;
   }
 
   @Expose({ toPlainOnly: true })
   get totalViews() {
-    return this.communicationViews.length
+    return this.communicationViews.length;
   }
 
   @Expose({ toPlainOnly: true })
   get totalComments() {
-    return this.communicationComments.length
+    return this.communicationComments.length;
   }
 
   @Expose()
@@ -94,9 +94,13 @@ export class CommunicationDetailSerialization extends Communication {
   @Expose()
   get communicationImagesData() {
     if (!this.communicationImages) return null;
-    return this.communicationImages.map((image: any) => {
+    const data = this.communicationImages.map((image: any) => {
       return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
     });
+
+    return {
+      images: data,
+    };
   }
 
   // @Expose()
@@ -116,6 +120,4 @@ export class CommunicationDetailSerialization extends Communication {
       );
     });
   }
-
-
 }

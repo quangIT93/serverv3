@@ -1,8 +1,6 @@
 import { Communication } from '../entities/communication.entity';
 import { Exclude, Expose } from 'class-transformer';
-import {
-  BUCKET_IMAGE_COMMUNICATION,
-} from 'src/common/constants';
+import { BUCKET_IMAGE_COMMUNICATION } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
@@ -65,24 +63,28 @@ export class CommunicationHiJobNewsSerialization extends Communication {
 
   @Expose({ toPlainOnly: true })
   get totalLikes() {
-    return this.communicationLikes.length
+    return this.communicationLikes.length;
   }
 
   @Expose({ toPlainOnly: true })
   get totalViews() {
-    return this.communicationViews.length
+    return this.communicationViews.length;
   }
 
   @Expose({ toPlainOnly: true })
   get totalComments() {
-    return this.communicationComments.length
+    return this.communicationComments.length;
   }
 
   @Expose()
   get communicationImagesData() {
     if (!this.communicationImages) return null;
-    return this.communicationImages.map((image: any) => {
+    const data = this.communicationImages.map((image: any) => {
       return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
     });
+
+    return {
+      images: data,
+    };
   }
 }
