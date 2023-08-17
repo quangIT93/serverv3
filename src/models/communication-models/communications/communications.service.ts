@@ -278,12 +278,12 @@ export class CommunicationsService {
     }
   }
 
-  // find five working story 
+  // find five working story
 
   async findFiveWorking() {
     return await this.communicationRepository.find({
       where: {
-        type: 1
+        type: 1,
       },
       relations: [
         'communicationImages',
@@ -297,16 +297,16 @@ export class CommunicationsService {
       order: {
         createdAt: 'DESC',
       },
-      take: 5 
+      take: 5,
     });
   }
 
-  // find five new hijob 
+  // find five new hijob
 
   async findFiveNewJob() {
     return await this.communicationRepository.find({
       where: {
-        type: 0
+        type: 0,
       },
       relations: [
         'communicationImages',
@@ -320,7 +320,7 @@ export class CommunicationsService {
       order: {
         createdAt: 'DESC',
       },
-      take: 5 
+      take: 5,
     });
   }
 }

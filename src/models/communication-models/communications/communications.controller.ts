@@ -44,8 +44,7 @@ import { CommunicationNewsInterceptor } from './interceptors/communication-news.
 export class CommunicationsController {
   constructor(private readonly communicationsService: CommunicationsService) {}
 
-
-  // create communication by user 
+  // create communication by user
 
   @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
@@ -68,7 +67,7 @@ export class CommunicationsController {
 
       createCommunicationDto.images = listImages;
 
-      createCommunicationDto.type = 1
+      createCommunicationDto.type = 1;
 
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
@@ -86,7 +85,6 @@ export class CommunicationsController {
   // Get all communication working story
 
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @UseGuards(AuthGuard)
   @Get()
   @ApiQuery({
     name: 'sort',
@@ -103,12 +101,7 @@ export class CommunicationsController {
   })
   async findAll(@Req() req: CustomRequest) {
     try {
-      const id = req.user?.id;
       const { limit, page, sort } = req.query;
-
-      if (!id) {
-        return null;
-      }
 
       return await this.communicationsService.findAll(
         limit ? +limit : 20,
@@ -125,18 +118,15 @@ export class CommunicationsController {
 
   // Get five working story
 
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationWorkingStoryInterceptor)
-  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    CommunicationWorkingStoryInterceptor,
+  )
   @Get('working-story')
-  async findFiveWorkingStory(@Req() req: CustomRequest) {
+  async findFiveWorkingStory() {
     try {
-      const id = req.user?.id;
 
-      if (!id) {
-        return null;
-      }
-
-      return await this.communicationsService.findFiveWorking()
+      return await this.communicationsService.findFiveWorking();
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -148,17 +138,11 @@ export class CommunicationsController {
   // Get five hijob news
 
   @UseInterceptors(ClassSerializerInterceptor, CommunicationNewsInterceptor)
-  @UseGuards(AuthGuard)
   @Get('news')
-  async findFiveHiJobNews(@Req() req: CustomRequest) {
+  async findFiveHiJobNews() {
     try {
-      const id = req.user?.id;
 
-      if (!id) {
-        return null;
-      }
-
-      return await this.communicationsService.findFiveNewJob()
+      return await this.communicationsService.findFiveNewJob();
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -287,7 +271,6 @@ export class CommunicationsController {
 
   @Get('/today')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @UseGuards(AuthGuard)
   @ApiQuery({
     name: 'sort',
     description: 'cm (comments), l (likes), v (views).',
@@ -344,7 +327,6 @@ export class CommunicationsController {
   // Get detail communication
 
   @UseInterceptors(ClassSerializerInterceptor, CommunicationDetailInterceptor)
-  @UseGuards(AuthGuard)
   @Get('/detail/:id')
   @ApiParam({
     name: 'id',
@@ -388,7 +370,7 @@ export class CommunicationsController {
 
       createCommunicationDto.images = listImages;
 
-      createCommunicationDto.type = 0
+      createCommunicationDto.type = 0;
 
       return res.status(HttpStatus.CREATED).json({
         status: HttpStatus.CREATED,
@@ -403,8 +385,7 @@ export class CommunicationsController {
     }
   }
 
-
-  // Update by admin 
+  // Update by admin
 
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
@@ -438,5 +419,4 @@ export class CommunicationsController {
       throw new BadRequestException('Error update communication');
     }
   }
-
 }

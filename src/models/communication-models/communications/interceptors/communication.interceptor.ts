@@ -9,7 +9,7 @@ export class CommunicationInterceptor implements NestInterceptor {
       map((communication: Communication[]) => {
         const lang = _context.switchToHttp().getRequest().lang;
 
-        const data = communication.map((communication: Communication) => {
+        const data = communication?.map((communication: Communication) => {
           const communicationSerialization = new CommunicationSerialization(
             communication,
             lang,
