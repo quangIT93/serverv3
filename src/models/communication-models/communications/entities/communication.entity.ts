@@ -72,8 +72,8 @@ export class Communication {
   communicationLikes!: CommunicationLike[];
 
   @OneToMany(
-    () => CommunicationImage,
-    (communicationImage) => communicationImage.communication,
+    () => CommunicationView,
+    (communicationView) => communicationView.communication,
   )
   communicationViews!: CommunicationView[];
 

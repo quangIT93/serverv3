@@ -44,8 +44,10 @@ export class UpdateCommunicationCommentTransaction extends BaseTransaction<
       );
 
       if (existingCommunicationComment) {
+        existingCommunicationComment.content = newUpdateCommunicationCommentEntity.content
+
         newCommunicationComment = await manager.save(
-          newUpdateCommunicationCommentEntity,
+          existingCommunicationComment,
         );
 
         // delete all communication categories where id
