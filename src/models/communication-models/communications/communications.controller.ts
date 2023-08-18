@@ -117,6 +117,49 @@ export class CommunicationsController {
     }
   }
 
+  // Get five hijob news
+
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  @ApiQuery({
+    name: 'sort',
+    description: 'cm (comments), l (likes), v (views).',
+    required: false,
+    enum: ['cm', 'l', 'v'],
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'type',
+    description: '0: new jobs, 1: working story',
+    required: false,
+    enum: [0,1]
+  })
+  @Get('news')
+  async findCommunication(@Req() req: CustomRequest) {
+    try {
+      const { limit, page , sort, type } = req.query;
+
+      return await this.communicationsService.findAllJobByType(
+        limit ? +limit : 5,
+        page ? +page : 0,
+        type ? +type : 0,
+        sort?.toString(),
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error finding communication');
+    }
+  }
+
+  // Communication today by account
 
   @Get('/today/by-account')
   @ApiBasicAuth()

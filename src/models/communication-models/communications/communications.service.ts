@@ -7,9 +7,9 @@ import { Between, Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
-import { CommunicationCommentsService } from '../communication-comments/communication-comments.service';
-import { CommunicationLikesService } from '../communication-likes/communication-likes.service';
-import { CommunicationViewsService } from '../communication-views/communication-views.service';
+// import { CommunicationCommentsService } from '../communication-comments/communication-comments.service';
+// import { CommunicationLikesService } from '../communication-likes/communication-likes.service';
+// import { CommunicationViewsService } from '../communication-views/communication-views.service';
 
 @Injectable()
 export class CommunicationsService {
@@ -20,9 +20,9 @@ export class CommunicationsService {
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
     private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction,
-    private readonly communicationLikesService: CommunicationLikesService,
-    private readonly communicationViewsService: CommunicationViewsService,
-    private readonly communicationCommentsService: CommunicationCommentsService,
+    // private readonly communicationLikesService: CommunicationLikesService,
+    // private readonly communicationViewsService: CommunicationViewsService,
+    // private readonly communicationCommentsService: CommunicationCommentsService,
   ) { }
 
   handleSort(data: Communication[], sort?: string) {
@@ -262,8 +262,17 @@ export class CommunicationsService {
 
   // find five working story
   async findCommunicationsByType(limit: number, page: number, type: number) {
-    const data = await this.communicationRepository.
-      createQueryBuilder('communications')
+    const data = await this.communicationRepository
+    .createQueryBuilder('communications')
+      .select([
+        'communications.id',
+        'communications.title',
+        'communications.content',
+        'communications.type',
+        'communications.createdAt',
+        'communications.updatedAt',
+        'communications.status',
+      ])
       .leftJoinAndSelect('communications.communicationImages', 'communicationImages')
       .leftJoinAndSelect('communications.communicationCategories', 'communicationCategories')
       .leftJoinAndSelect('communications.profile', 'profile')
@@ -272,17 +281,70 @@ export class CommunicationsService {
       .orderBy('communications.createdAt', 'DESC')
       .skip(page * limit)
       .take(limit)
-      .getMany();
+      .getMany()
 
-    await Promise.all(data.map(async (item) => {
-      item.communicationLikesTotal = await this.communicationLikesService.countCommunicationLikes(item.id)
-      item.communicationViewsTotal = await this.communicationViewsService.countCommunicationViews(item.id)
-      item.communicationCommentsTotal = await this.communicationCommentsService.countCommunicationComments(item.id)
-    }));
+    // await Promise.all(data.map(async (item) => {
+    //   item.communicationLikesTotal = await this.communicationLikesService.countCommunicationLikes(item.id)
+    //   item.communicationViewsTotal = await this.communicationViewsService.countCommunicationViews(item.id)
+    //   item.communicationCommentsTotal = await this.communicationCommentsService.countCommunicationComments(item.id)
+    // }));
 
     console.log("data: ", data);
 
     return data;
   }
 
+  // async findFiveWorking() {
+  //   return await this.communicationRepository.find({
+  //     where: {
+  //       type: 1,
+  //     },
+  //     relations: [
+  //       'communicationImages',
+  //       'communicationCategories',
+  //       'communicationCategories.parentCategory',
+  //       'profile',
+  //       'communicationViews',
+  //       'communicationLikes',
+  //       'communicationComments',
+  //     ],
+  //     order: {
+  //       createdAt: 'DESC',
+  //     },
+  //     take: 5,
+  //   });
+  // }
+
+  // find five new hijob
+
+  async findAllJobByType(
+    limit: number,
+    page: number,
+    typeJob: number,
+    sort?: string,
+  ) {
+    const skip = (page) * limit;
+
+    const data = await this.communicationRepository.find({
+      where: {
+        type: typeJob,
+      },
+      relations: [
+        'communicationImages',
+        'communicationCategories',
+        'communicationCategories.parentCategory',
+        'profile',
+        'communicationViews',
+        'communicationLikes',
+        'communicationComments',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
+      skip,
+      take: limit,
+    });
+
+    return this.handleSort(data, sort);
+  }
 }
