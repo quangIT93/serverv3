@@ -13,6 +13,7 @@ import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.modu
     JwtAccessTokenServiceModule
   ],
   controllers: [CommunicationLikesController],
-  providers: [CommunicationLikesService]
+  providers: [CommunicationLikesService],
+  exports: [CommunicationLikesService]
 })
 export class CommunicationLikesModule {}

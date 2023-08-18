@@ -47,4 +47,11 @@ export class CommunicationCommentsService {
       throw error;
     }
   }
+
+  //count communication comments by communication id
+  async countCommunicationComments(communicationId: number) {
+    return await this.communicationCommentRepository.count({
+      where: { communicationId },
+    });
+  }
 }

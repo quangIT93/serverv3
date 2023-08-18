@@ -82,4 +82,11 @@ export class Communication {
     (communicationComment) => communicationComment.communications,
   )
   communicationComments!: CommunicationComment[];
+
+
+  communicationLikesTotal!: any;
+
+  communicationViewsTotal!: number;
+
+  communicationCommentsTotal!: number;
 }

@@ -36,8 +36,7 @@ import { Role } from 'src/common/enum';
 import { ResizeImageResult } from 'src/common/helper/transform/resize-image';
 import { CommunicationDetailInterceptor } from './interceptors/communication-detail.interceptor';
 import { CommunicationCreateInterceptor } from './interceptors/communication-create.interceptor';
-import { CommunicationWorkingStoryInterceptor } from './interceptors/communication-working-story.interceptor';
-import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
+import { RoleGuard } from 'src/authentication/role.guard';
 
 @ApiTags('Communications')
 @Controller('communications')
@@ -82,15 +81,16 @@ export class CommunicationsController {
     }
   }
 
-  // Get all communication working story
-
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @Get()
-  @ApiQuery({
-    name: 'sort',
-    description: 'cm (comments), l (likes), v (views).',
-    required: false,
-  })
+  /**
+   * 
+   * @param req 
+   * @returns 
+   * 
+   * @description
+   * Uses: at home page
+   * Get limit communication by type
+   * Return 2 array: news and working story
+   */
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -99,15 +99,16 @@ export class CommunicationsController {
     name: 'page',
     required: false,
   })
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  @Get()
   async findAll(@Req() req: CustomRequest) {
     try {
-      const { limit, page, sort } = req.query;
+      const { limit = 5 } = req;
 
-      return await this.communicationsService.findAll(
-        limit ? +limit : 20,
-        page ? +page : 1,
-        sort?.toString(),
-      );
+      return {
+        news: await this.communicationsService.findCommunicationsByType(limit, 0, 0),
+        workingStory: await this.communicationsService.findCommunicationsByType(limit, 0, 1),
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -116,42 +117,6 @@ export class CommunicationsController {
     }
   }
 
-  // Get five working story
-
-  @UseInterceptors(
-    ClassSerializerInterceptor,
-    CommunicationWorkingStoryInterceptor,
-  )
-  @Get('working-story')
-  async findFiveWorkingStory() {
-    try {
-
-      return await this.communicationsService.findFiveWorking();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error finding communication');
-    }
-  }
-
-  // Get five hijob news
-
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationNewsInterceptor)
-  @Get('news')
-  async findFiveHiJobNews() {
-    try {
-
-      return await this.communicationsService.findFiveNewJob();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error finding communication');
-    }
-  }
-
-  // Communication today by account
 
   @Get('/today/by-account')
   @ApiBasicAuth()
@@ -356,7 +321,7 @@ export class CommunicationsController {
   @ApiBasicAuth()
   @Post('by-admin')
   @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   async createByAdmin(
     @Body() createCommunicationDto: CreateCommunicationDto,

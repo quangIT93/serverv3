@@ -47,11 +47,8 @@ import { KeywordNotificationsModule } from './models/keyword-models/keyword-noti
 import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
 import { SiteModule } from './models/site/site.module';
 import { CommunicationsModule } from './models/communication-models/communications/communications.module';
-import { CommunicationLikesModule } from './models/communication-models/communication-likes/communication-likes.module';
-import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
 import { CommunicationCategoriesModule } from './models/communication-models/communication-categories/communication-categories.module';
 import { CommunicationImagesModule } from './models/communication-models/communication-images/communication-images.module';
-import { CommunicationCommentsModule } from './models/communication-models/communication-comments/communication-comments.module';
 import { CommunicationCommentImagesModule } from './models/communication-models/communication-comment-images/communication-comment-images.module';
 import { CommunicationBookmarkedModule } from './models/communication-models/communication-bookmarked/communication-bookmarked.module';
 
@@ -106,11 +103,8 @@ import { CommunicationBookmarkedModule } from './models/communication-models/com
 
     // Communication Module
     CommunicationsModule,
-    CommunicationLikesModule,
-    CommunicationViewsModule,
     CommunicationCategoriesModule,
     CommunicationImagesModule,
-    CommunicationCommentsModule,
     CommunicationCommentImagesModule,
     CommunicationBookmarkedModule,
   ],

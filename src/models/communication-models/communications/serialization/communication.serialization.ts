@@ -58,40 +58,45 @@ export class CommunicationSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   override communicationViews!: CommunicationView[];
 
-  @Expose({ toPlainOnly: true })
-  get totalLikes() {
-    return this.communicationLikes.length;
-  }
+  // @Expose({ toPlainOnly: true })
+  // get totalLikes() {
+  //   return this.communicationLikes.length;
+  // }
 
-  @Expose({ toPlainOnly: true })
-  get totalViews() {
-    return this.communicationViews.length;
-  }
+  // @Expose({ toPlainOnly: true })
+  // get totalViews() {
+  //   return this.communicationViews.length;
+  // }
 
-  @Expose({ toPlainOnly: true })
-  get totalComments() {
-    return this.communicationComments.length;
-  }
+  // @Expose({ toPlainOnly: true })
+  // get totalComments() {
+  //   return this.communicationComments.length;
+  // }
 
   @Expose()
   get profileData() {
     return {
       name: this.profile ? this.profile.name : null,
-      avatar: this.profile
+      avatarPath: this.profile
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
         : null,
     };
   }
 
   @Expose()
-  get communicationImagesData() {
-    if (!this.communicationImages) return null;
-    const data = this.communicationImages.map((image: any) => {
-      return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
-    });
+  // get communicationImagesData() {
+  //   if (!this.communicationImages) return null;
+  //   const data = this.communicationImages.map((image: any) => {
+  //     return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
+  //   });
 
-    return {
-      images: data
-    }
+  //   return {
+  //     images: data
+  //   }
+  // }
+  get image() {
+    if (!this.communicationImages || this.communicationImages.length === 0) return null;
+    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`
+    return data;
   }
 }

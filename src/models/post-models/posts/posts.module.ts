@@ -42,9 +42,6 @@ export class PostsModule implements NestModule {
         { path: 'posts/:id', method: RequestMethod.GET },
         { path: 'posts/:id', method: RequestMethod.PUT },
         { path: 'posts', method: RequestMethod.POST },
-        { path: 'communications/by-account', method: RequestMethod.GET },
-        { path: 'communications/today', method: RequestMethod.GET },
-        { path: 'communications', method: RequestMethod.GET },
       )
       .forRoutes(PostsController);
   }

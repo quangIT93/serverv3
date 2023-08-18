@@ -20,6 +20,7 @@ import { UpdateCommunicationCommentTransaction } from './transactions/update-com
   ],
   controllers: [CommunicationCommentsController ],
   providers: [CommunicationCommentsService, CreateCommunicationCommentTransaction, UpdateCommunicationCommentTransaction],
-  exports: [CommunicationCommentsService]
+  exports: [CommunicationCommentsService],
+  
 })
 export class CommunicationCommentsModule {}

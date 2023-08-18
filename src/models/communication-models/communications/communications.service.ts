@@ -7,16 +7,23 @@ import { Between, Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
+import { CommunicationCommentsService } from '../communication-comments/communication-comments.service';
+import { CommunicationLikesService } from '../communication-likes/communication-likes.service';
+import { CommunicationViewsService } from '../communication-views/communication-views.service';
 
 @Injectable()
 export class CommunicationsService {
+
   constructor(
     @InjectRepository(Communication)
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
     private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction,
-  ) {}
+    private readonly communicationLikesService: CommunicationLikesService,
+    private readonly communicationViewsService: CommunicationViewsService,
+    private readonly communicationCommentsService: CommunicationCommentsService,
+  ) { }
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -75,30 +82,6 @@ export class CommunicationsService {
     }
   }
 
-  async findAll(limit: number, page: number, sort?: string) {
-    const skip = (page - 1) * limit;
-    const data = await this.communicationRepository.find({
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-        'communicationComments.profile',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      skip,
-      take: limit,
-    });
-
-    // sort by likes, comments, views
-    return this.handleSort(data, sort);
-  }
-
   async findCommunicationTodayByAccountId(
     id: string,
     limit: number,
@@ -154,7 +137,6 @@ export class CommunicationsService {
     page: number,
     sort?: string,
   ) {
-    const skip = (page - 1) * limit;
     const data = await this.communicationRepository.find({
       where: {
         accountId: id,
@@ -171,8 +153,8 @@ export class CommunicationsService {
       order: {
         createdAt: 'DESC',
       },
-      skip,
       take: limit,
+      skip: page * limit,
     });
 
     return this.handleSort(data, sort);
@@ -279,48 +261,28 @@ export class CommunicationsService {
   }
 
   // find five working story
+  async findCommunicationsByType(limit: number, page: number, type: number) {
+    const data = await this.communicationRepository.
+      createQueryBuilder('communications')
+      .leftJoinAndSelect('communications.communicationImages', 'communicationImages')
+      .leftJoinAndSelect('communications.communicationCategories', 'communicationCategories')
+      .leftJoinAndSelect('communications.profile', 'profile')
+      .where('communications.type = :type', { type })
+      // .groupBy('communications.id')
+      .orderBy('communications.createdAt', 'DESC')
+      .skip(page * limit)
+      .take(limit)
+      .getMany();
 
-  async findFiveWorking() {
-    return await this.communicationRepository.find({
-      where: {
-        type: 1,
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      take: 5,
-    });
+    await Promise.all(data.map(async (item) => {
+      item.communicationLikesTotal = await this.communicationLikesService.countCommunicationLikes(item.id)
+      item.communicationViewsTotal = await this.communicationViewsService.countCommunicationViews(item.id)
+      item.communicationCommentsTotal = await this.communicationCommentsService.countCommunicationComments(item.id)
+    }));
+
+    console.log("data: ", data);
+
+    return data;
   }
 
-  // find five new hijob
-
-  async findFiveNewJob() {
-    return await this.communicationRepository.find({
-      where: {
-        type: 0,
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      take: 5,
-    });
-  }
 }
