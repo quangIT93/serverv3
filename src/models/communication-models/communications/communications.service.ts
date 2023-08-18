@@ -280,33 +280,40 @@ export class CommunicationsService {
 
   // find five working story
 
-  async findFiveWorking() {
-    return await this.communicationRepository.find({
-      where: {
-        type: 1,
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      take: 5,
-    });
-  }
+  // async findFiveWorking() {
+  //   return await this.communicationRepository.find({
+  //     where: {
+  //       type: 1,
+  //     },
+  //     relations: [
+  //       'communicationImages',
+  //       'communicationCategories',
+  //       'communicationCategories.parentCategory',
+  //       'profile',
+  //       'communicationViews',
+  //       'communicationLikes',
+  //       'communicationComments',
+  //     ],
+  //     order: {
+  //       createdAt: 'DESC',
+  //     },
+  //     take: 5,
+  //   });
+  // }
 
   // find five new hijob
 
-  async findFiveNewJob() {
-    return await this.communicationRepository.find({
+  async findAllJobByType(
+    limit: number,
+    page: number,
+    typeJob: number,
+    sort?: string,
+  ) {
+    const skip = (page) * limit;
+
+    const data = await this.communicationRepository.find({
       where: {
-        type: 0,
+        type: typeJob,
       },
       relations: [
         'communicationImages',
@@ -320,7 +327,10 @@ export class CommunicationsService {
       order: {
         createdAt: 'DESC',
       },
-      take: 5,
+      skip,
+      take: limit,
     });
+
+    return this.handleSort(data, sort);
   }
 }
