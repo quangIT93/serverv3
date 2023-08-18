@@ -1,4 +1,6 @@
 {
+    "job_not_found": "Chưa tìm thấy công việc",
+    "ok1": "Đồng ý",
     "login": "Đăng nhập",
     "skip": "Bỏ qua",
     "or": "Hoặc",
@@ -361,6 +363,14 @@
         "easy_communication_with_candidates": "Giao tiếp dễ dàng với Ứng viên"
     },
     "company_page": {
+        "company_logo": "Hình ảnh công ty ",
+        "company_name": "Tên công ty",
+        "tax_code": "Mã số thuế",
+        "address": "Địa chỉ",
+        "website": "Website",
+        "company_size": "Quy mô công ty",
+        "company_décription": "Mô tả công ty",
+        "company_info": "Thông tin công ty",
         "title_page": "HiJob - Thông tin công ty",
         "err_logo_mess": "Vui lòng chọn logo công ty",
         "err_name_mess": "Vui lòng nhập tên công ty",
@@ -390,7 +400,6 @@
         "place_address": "Tên đường, toà nhà, số nhà",
         "finish": "Hoàn thành",
         "field": "Lĩnh vực hoạt động",
-        "company_logo": "Logo công ty",
         "alert_update_success": "Đã chỉnh sửa thông tin công ty thành công!",
         "alert_move_to_profile": "Bạn có muốn quay về trang thông tin cá nhân!"
     },
@@ -506,6 +515,8 @@
         "place_working_location": "Hãy chọn khu vực làm việc"
     },
     "post_page": {
+        "have_not_company_content": "Bài đăng của bạn sẽ được nhiều ứng viên hơn khi có thông tin công ty. Hãy cập nhật thông tin công ty để nhiều ứng viên quan tâm hơn!",
+        "create_company_info": "Tạo thông tin công ty",
         "fill_company": "Điền nhanh thông tin công ty",
         "create_post": "Tạo bài đăng tuyển dụng",
         "job_want_to_auto_fill": "Bài tuyển dụng mà bạn muốn HiJob lấy thông tin tự động",
@@ -563,6 +574,11 @@
         "short_time": "Công việc ngắn hạn"
     },
     "history_page": {
+        "no_job_page":"Không có tin tuyển dụng",
+        "no_application":"Chưa có đơn ứng tuyển",
+        "application" : "đơn ứng tuyển",
+        "applications" : "đơn ứng tuyển",
+        "applied_on": "Đã nộp vào",
         "list_of_articles": "Danh sách bài viết",
         "saved": "Đã lưu",
         "have_been_created": "Đã được tạo",
