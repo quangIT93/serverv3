@@ -16,7 +16,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CommunicationBookmarkedInterceptor } from './interceptors/communication-bookmarked.interceptor';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Communication-bookmarked')
 @Controller('communication-bookmarked')
@@ -26,6 +26,7 @@ export class CommunicationBookmarkedController {
   ) {}
 
   @Post()
+  @ApiBasicAuth()
   @UseGuards(AuthGuard)
   async create(
     @Req() req: CustomRequest,
@@ -51,6 +52,7 @@ export class CommunicationBookmarkedController {
   }
 
   @Get()
+  @ApiBasicAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(
     ClassSerializerInterceptor,

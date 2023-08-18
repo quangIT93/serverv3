@@ -154,6 +154,7 @@ export class CommunicationsController {
   // Communication today by account
 
   @Get('/today/by-account')
+  @ApiBasicAuth()
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @UseGuards(AuthGuard)
   @ApiQuery({
@@ -194,6 +195,7 @@ export class CommunicationsController {
   // Communication by account
 
   @Get('by-account')
+  @ApiBasicAuth()
   @UseInterceptors(ClassSerializerInterceptor, CommunicationCreateInterceptor)
   @UseGuards(AuthGuard)
   @ApiQuery({
@@ -234,6 +236,7 @@ export class CommunicationsController {
   // Update communication by user
 
   @ApiConsumes('multipart/form-data')
+  @ApiBasicAuth()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   @UseGuards(AuthGuard)
   @Put(':id')
@@ -304,6 +307,7 @@ export class CommunicationsController {
   // Share communication
 
   @Get('/share/:id')
+  @ApiBasicAuth()
   @ApiParam({
     name: 'id',
     description: 'id of communication.',
@@ -388,6 +392,7 @@ export class CommunicationsController {
   // Update by admin
 
   @ApiConsumes('multipart/form-data')
+  @ApiBasicAuth()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 5 }]))
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)

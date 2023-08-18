@@ -19,7 +19,7 @@ import { CreateCommunicationCommentDto } from './dto/create-communication-commen
 import { UpdateCommunicationCommentDto } from './dto/update-communication-comment.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationCommmentImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationCommentInterceptor } from './interceptors/communication-comment.interceptor';
@@ -32,6 +32,7 @@ export class CommunicationCommentsController {
   ) {}
 
   @Post()
+  @ApiBasicAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 1 }], {
@@ -80,6 +81,7 @@ export class CommunicationCommentsController {
 
   @Put(':communicationId/:commentId')
   @UseGuards(AuthGuard)
+  @ApiBasicAuth()
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 1 }], {
       limits: {

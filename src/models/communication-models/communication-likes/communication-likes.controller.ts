@@ -16,7 +16,7 @@ import { CommunicationLikesService } from './communication-likes.service';
 import { CreateCommunicationLikeDto } from './dto/create-communication-like.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CommunicationLikeInterceptor } from './interceptors/communication-likes.interceptor';
 
 @ApiTags('Communication-likes')
@@ -27,6 +27,7 @@ export class CommunicationLikesController {
   ) {}
 
   @Post()
+  @ApiBasicAuth()
   @UseGuards(AuthGuard)
   async createOrDelete(
     @Body() createCommunicationLikeDto: CreateCommunicationLikeDto,
@@ -59,20 +60,4 @@ export class CommunicationLikesController {
       throw new BadRequestException('Error find all communication likes');
     }
   }
-
-  // @Get('count/:id')
-  // @UseGuards(AuthGuard)
-  // async countCommunicationLike(@Param('id', ParseIntPipe) id: number) {
-  //   try {
-  //     return {
-  //       status: HttpStatus.OK,
-  //       total: await this.communicationLikesService.countCommunicationLikes(id),
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       throw new BadRequestException(error.message);
-  //     }
-  //     throw new BadRequestException('Error find all communication likes');
-  //   }
-  // }
 }
