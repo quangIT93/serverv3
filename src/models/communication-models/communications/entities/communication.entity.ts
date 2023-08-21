@@ -1,4 +1,6 @@
 import {
+  // AfterLoad,
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -14,7 +16,7 @@ import { CommunicationView } from '../../communication-views/entities/communicat
 import { CommunicationComment } from '../../communication-comments/entities/communication-comment.entity';
 
 @Entity('communications')
-export class Communication {
+export class Communication extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id!: number;
 
@@ -83,10 +85,42 @@ export class Communication {
   )
   communicationComments!: CommunicationComment[];
 
+  communicationLikesCount!: any;
 
-  communicationLikesTotal!: any;
+  communicationViewsCount!: number;
 
-  communicationViewsTotal!: number;
+  communicationCommentsCount!: number;
 
-  communicationCommentsTotal!: number;
+  // @AfterLoad()
+  // async countCommunicationComments() {
+  //   this.communicationCommentsCount = await Communication.createQueryBuilder(
+  //     'communication',
+  //   )
+  //     .innerJoinAndSelect(
+  //       'communication.communicationComments',
+  //       'communicationComments',
+  //     )
+  //     .where('communication.id = :id', { id: this.id })
+  //     .getCount();
+  // }
+
+  // @AfterLoad()
+  // async countCommunicationLikes() {
+  //   this.communicationLikesCount = await Communication.createQueryBuilder(
+  //     'communication',
+  //   )
+  //     .innerJoinAndSelect('communication.communicationLikes', 'communicationLikes')
+  //     .where('communication.id = :id', { id: this.id })
+  //     .getCount();
+  // }
+
+  // @AfterLoad()
+  // async countCommunicationViews() {
+  //   this.communicationViewsCount = await Communication.createQueryBuilder(
+  //     'communication',
+  //   )
+  //     .innerJoinAndSelect('communication.communicationViews', 'communicationViews')
+  //     .where('communication.id = :id', { id: this.id })
+  //     .getCount();
+  // }
 }

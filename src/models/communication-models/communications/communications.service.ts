@@ -13,17 +13,16 @@ import { UpdateCommunicationAdminTransaction } from './transactions/update-commu
 
 @Injectable()
 export class CommunicationsService {
-
   constructor(
     @InjectRepository(Communication)
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
     private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction,
-    // private readonly communicationLikesService: CommunicationLikesService,
-    // private readonly communicationViewsService: CommunicationViewsService,
-    // private readonly communicationCommentsService: CommunicationCommentsService,
-  ) { }
+  ) // private readonly communicationLikesService: CommunicationLikesService,
+  // private readonly communicationViewsService: CommunicationViewsService,
+  // private readonly communicationCommentsService: CommunicationCommentsService,
+  { }
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -261,9 +260,14 @@ export class CommunicationsService {
   }
 
   // find five working story
-  async findCommunicationsByType(limit: number, page: number, type: number) {
-    const data = await this.communicationRepository
-    .createQueryBuilder('communications')
+  async findCommunicationsByType(
+    limit: number,
+    page: number,
+    type: number = 0,
+    sort?: string,
+  ) {
+    const queryBuilder = this.communicationRepository
+      .createQueryBuilder('communications')
       .select([
         'communications.id',
         'communications.title',
@@ -273,49 +277,91 @@ export class CommunicationsService {
         'communications.updatedAt',
         'communications.status',
       ])
-      .leftJoinAndSelect('communications.communicationImages', 'communicationImages')
-      .leftJoinAndSelect('communications.communicationCategories', 'communicationCategories')
+      .addSelect(
+        'COUNT(DISTINCT communicationLikes.communicationId)',
+        'communicationLikesCount',
+      )
+      .addSelect(
+        'COUNT(DISTINCT communicationViews.communicationId)',
+        'communicationViewsCount',
+      )
+      .addSelect(
+        'COUNT(DISTINCT communicationComments.communicationId)',
+        'communicationCommentsCount',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationImages',
+        'communicationImages',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationCategories',
+        'communicationCategories',
+      )
+      .leftJoinAndSelect(
+        'communicationCategories.parentCategory',
+        'parentCategory',
+      )
       .leftJoinAndSelect('communications.profile', 'profile')
+      .leftJoinAndSelect(
+        'communications.communicationViews',
+        'communicationViews',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationViewsCount',
+        'communications.communicationViews',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationLikes',
+        'communicationLikes',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationLikesCount',
+        'communications.communicationLikes',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationComments',
+        'communicationComments',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationCommentsCount',
+        'communications.communicationComments',
+      )
       .where('communications.type = :type', { type })
-      // .groupBy('communications.id')
-      .orderBy('communications.createdAt', 'DESC')
+      .groupBy('communications.id');
+    // .orderBy('communicationLikesCount', 'DESC')
+
+    switch (sort) {
+      case 'l': // likes
+        queryBuilder
+          .orderBy('communicationLikesCount', 'DESC')
+          .addOrderBy('communications.id', 'DESC');
+
+        break;
+
+      case 'v': // views
+        queryBuilder
+          .orderBy('communicationViewsCount', 'DESC')
+          .addOrderBy('communications.id', 'DESC');
+
+        break;
+
+      case 'cm': // comments
+        queryBuilder
+          .orderBy('communicationCommentsCount', 'DESC')
+          .addOrderBy('communications.id', 'DESC');
+
+        break;
+
+      default:
+        queryBuilder.orderBy('communications.id', 'DESC');
+        break;
+    }
+
+    return await queryBuilder
       .skip(page * limit)
       .take(limit)
-      .getMany()
-
-    // await Promise.all(data.map(async (item) => {
-    //   item.communicationLikesTotal = await this.communicationLikesService.countCommunicationLikes(item.id)
-    //   item.communicationViewsTotal = await this.communicationViewsService.countCommunicationViews(item.id)
-    //   item.communicationCommentsTotal = await this.communicationCommentsService.countCommunicationComments(item.id)
-    // }));
-
-    console.log("data: ", data);
-
-    return data;
+      .getMany();
   }
-
-  // async findFiveWorking() {
-  //   return await this.communicationRepository.find({
-  //     where: {
-  //       type: 1,
-  //     },
-  //     relations: [
-  //       'communicationImages',
-  //       'communicationCategories',
-  //       'communicationCategories.parentCategory',
-  //       'profile',
-  //       'communicationViews',
-  //       'communicationLikes',
-  //       'communicationComments',
-  //     ],
-  //     order: {
-  //       createdAt: 'DESC',
-  //     },
-  //     take: 5,
-  //   });
-  // }
-
-  // find five new hijob
 
   async findAllJobByType(
     limit: number,
@@ -323,7 +369,7 @@ export class CommunicationsService {
     typeJob: number,
     sort?: string,
   ) {
-    const skip = (page) * limit;
+    const skip = page * limit;
 
     const data = await this.communicationRepository.find({
       where: {

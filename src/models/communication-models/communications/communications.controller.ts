@@ -15,6 +15,7 @@ import {
   Put,
   ParseIntPipe,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -99,16 +100,35 @@ export class CommunicationsController {
     name: 'page',
     required: false,
   })
+  @ApiQuery({
+    name: 'type',
+    description: '0: new jobs, 1: working story',
+    required: false,
+    enum: [0,1]
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    enum: ['cm', 'l', 'v'],
+    description: 'cm (comments), l (likes), v (views).',
+  })
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @Get()
-  async findAll(@Req() req: CustomRequest) {
+  async findAll(
+    @Req() req: CustomRequest,
+    @Query('type', ParseIntPipe) type: number | undefined,
+    @Query('sort') sort: string,
+  ) {
     try {
-      const { limit = 5 } = req;
 
-      return {
-        news: await this.communicationsService.findCommunicationsByType(limit, 0, 0),
-        workingStory: await this.communicationsService.findCommunicationsByType(limit, 0, 1),
-      }
+      const { limit = 5, page = 0 } = req;
+
+      return await this.communicationsService.findCommunicationsByType(
+        limit,
+        page,
+        type ? type : 0,
+        sort?.toString(),
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -283,17 +303,24 @@ export class CommunicationsController {
   @Get('/today')
   @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
   @ApiQuery({
-    name: 'sort',
-    description: 'cm (comments), l (likes), v (views).',
-    required: false,
-  })
-  @ApiQuery({
     name: 'limit',
     required: false,
   })
   @ApiQuery({
     name: 'page',
     required: false,
+  })
+  @ApiQuery({
+    name: 'type',
+    description: '0: new jobs, 1: working story',
+    required: false,
+    enum: [0,1]
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    enum: ['cm', 'l', 'v'],
+    description: 'cm (comments), l (likes), v (views).',
   })
   async getCommunicationToday(@Req() req: CustomRequest) {
     try {

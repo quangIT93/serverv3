@@ -7,33 +7,16 @@ export class CommunicationInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map(
-        (communication: {
-          news: Communication[];
-          workingStory: Communication[];
-        }) => {
+        (communication: Communication[]) => {
           const lang = _context.switchToHttp().getRequest().lang;
-
-          console.log('CommunicationInterceptor: intercept: lang: ' + lang);
-          console.log(
-            'CommunicationInterceptor: intercept: communication: ' +
-            JSON.stringify(communication),
-          );
-
-          const { news, workingStory } = communication;
-
           return {
             status: _context.switchToHttp().getResponse().statusCode,
             data: {
-              news: news.map((item) => {
-                return Object.assign(
-                  new CommunicationSerialization(item, lang),
-                );
-              }),
-              workingStory: workingStory.map((item) => {
-                return Object.assign(
-                  new CommunicationSerialization(item, lang),
-                );
-              }),
+              communications: communication.map((communication) =>
+                Object.assign(
+                  new CommunicationSerialization(communication, lang),
+                ),
+              ),
             },
 
             message: _context.switchToHttp().getResponse().statusMessage,

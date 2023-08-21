@@ -9,8 +9,8 @@ import {
 import { CommunicationViewsService } from './communication-views.service';
 import { CreateCommunicationViewDto } from './dto/create-communication-view.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { AuthGuard } from 'src/authentication/auth.guard';
 import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 
 @ApiTags('Communication-views')
 @Controller('communication-views')
@@ -21,7 +21,7 @@ export class CommunicationViewsController {
 
   @Post()
   @ApiBasicAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthNotRequiredGuard)
   async create(
     @Body() createCommunicationViewDto: CreateCommunicationViewDto,
     @Req() req: CustomRequest,
