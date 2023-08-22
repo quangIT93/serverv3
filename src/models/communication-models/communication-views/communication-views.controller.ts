@@ -9,7 +9,7 @@ import {
 import { CommunicationViewsService } from './communication-views.service';
 import { CreateCommunicationViewDto } from './dto/create-communication-view.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 
 @ApiTags('Communication-views')
@@ -20,6 +20,7 @@ export class CommunicationViewsController {
   ) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
   @UseGuards(AuthNotRequiredGuard)
   async create(

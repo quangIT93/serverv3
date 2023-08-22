@@ -26,7 +26,7 @@ export class CommunicationBookmarkedService {
           communicationId: createCommunicationBookmarkedDto.communicationId,
           accountId: createCommunicationBookmarkedDto.accountId,
         });
-        return 'Unsave successfully';
+        return;
       }
 
       const newCommunicationBookmarked =

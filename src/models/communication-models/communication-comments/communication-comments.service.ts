@@ -6,6 +6,8 @@ import { CommunicationComment } from './entities/communication-comment.entity';
 import { Repository } from 'typeorm';
 import { CreateCommunicationCommentTransaction } from './transactions/create-communication-comment.transaction';
 import { UpdateCommunicationCommentTransaction } from './transactions/update-communication-comment.transaction';
+import { DeleteCommunicationCommentDto } from './dto/delete-communication-comment.dto';
+import { DeleteCommunicationCommentTransaction } from './transactions/delete-communication-comment.transaction';
 
 @Injectable()
 export class CommunicationCommentsService {
@@ -14,6 +16,7 @@ export class CommunicationCommentsService {
     private readonly communicationCommentRepository: Repository<CommunicationComment>,
     private readonly createCommunicationCommentTransaction: CreateCommunicationCommentTransaction,
     private readonly updateCommunicationCommentTransaction: UpdateCommunicationCommentTransaction,
+    private readonly deleteCommunicationCommentTransaction: DeleteCommunicationCommentTransaction
   ) {}
   async create(createCommunicationCommentDto: CreateCommunicationCommentDto) {
     try {
@@ -53,5 +56,19 @@ export class CommunicationCommentsService {
     return await this.communicationCommentRepository.count({
       where: { communicationId },
     });
+  }
+
+
+  async delete(deleteCommunicationCommentDto : DeleteCommunicationCommentDto) {
+    try {
+      const deleteCommunicationCommentById =
+        await this.deleteCommunicationCommentTransaction.run(
+          deleteCommunicationCommentDto,
+        );
+
+      return deleteCommunicationCommentById;
+    } catch (error) {
+      throw error;
+    }
   }
 }

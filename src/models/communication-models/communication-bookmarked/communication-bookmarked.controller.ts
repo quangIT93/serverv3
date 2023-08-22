@@ -16,7 +16,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CommunicationBookmarkedInterceptor } from './interceptors/communication-bookmarked.interceptor';
-import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Communication-bookmarked')
 @Controller('communication-bookmarked')
@@ -26,6 +26,7 @@ export class CommunicationBookmarkedController {
   ) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
   @UseGuards(AuthGuard)
   async create(
@@ -37,11 +38,19 @@ export class CommunicationBookmarkedController {
         throw new BadRequestException('Authorization');
       }
       createCommunicationBookmarkedDto.accountId = req.user?.id;
+      const data = await this.communicationBookmarkedService.create(
+        createCommunicationBookmarkedDto,
+      );
+
+      if (data) {
+        return {
+          status: HttpStatus.CREATED,
+          data,
+        };
+      }
+
       return {
-        status: HttpStatus.CREATED,
-        data: await this.communicationBookmarkedService.create(
-          createCommunicationBookmarkedDto,
-        ),
+        status: HttpStatus.OK,
       };
     } catch (error) {
       if (error instanceof Error) {

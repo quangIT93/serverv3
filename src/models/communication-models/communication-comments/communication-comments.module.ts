@@ -8,6 +8,7 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { CommunicationCommentImagesModule } from '../communication-comment-images/communication-comment-images.module';
 import { CreateCommunicationCommentTransaction } from './transactions/create-communication-comment.transaction';
 import { UpdateCommunicationCommentTransaction } from './transactions/update-communication-comment.transaction';
+import { DeleteCommunicationCommentTransaction } from './transactions/delete-communication-comment.transaction';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { UpdateCommunicationCommentTransaction } from './transactions/update-com
     AWSModule,
   ],
   controllers: [CommunicationCommentsController ],
-  providers: [CommunicationCommentsService, CreateCommunicationCommentTransaction, UpdateCommunicationCommentTransaction],
+  providers: [CommunicationCommentsService, CreateCommunicationCommentTransaction, UpdateCommunicationCommentTransaction, DeleteCommunicationCommentTransaction],
   exports: [CommunicationCommentsService],
   
 })

@@ -13,16 +13,19 @@ import {
   UploadedFiles,
   ParseIntPipe,
   ClassSerializerInterceptor,
+  Delete,
+  BadGatewayException,
 } from '@nestjs/common';
 import { CommunicationCommentsService } from './communication-comments.service';
 import { CreateCommunicationCommentDto } from './dto/create-communication-comment.dto';
 import { UpdateCommunicationCommentDto } from './dto/update-communication-comment.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBasicAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationCommmentImagesPipe } from './interceptors/image.interceptor';
 import { CommunicationCommentInterceptor } from './interceptors/communication-comment.interceptor';
+import { DeleteCommunicationCommentDto } from './dto/delete-communication-comment.dto';
 
 @ApiTags('Communication-comments')
 @Controller('communication-comments')
@@ -32,6 +35,7 @@ export class CommunicationCommentsController {
   ) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(
@@ -81,6 +85,7 @@ export class CommunicationCommentsController {
 
   @Put(':communicationId/:commentId')
   @UseGuards(AuthGuard)
+  @ApiConsumes('multipart/form-data')
   @ApiBasicAuth()
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'images', maxCount: 1 }], {
@@ -107,5 +112,29 @@ export class CommunicationCommentsController {
     return await this.communicationCommentsService.update(
       updateCommunicationCommentDto,
     );
+  }
+
+  @Delete(':communicationId/:commentId')
+  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard)
+  async delete(
+    @Req() req: CustomRequest,
+    @Param('communicationId', ParseIntPipe) communicationId: number,
+    @Body() deleteCommunicationCommentDto: DeleteCommunicationCommentDto,
+    @Param('commentId', ParseIntPipe) commentId: number
+  ){
+
+    if (!req.user?.id) return new BadGatewayException('Authorization')
+
+    deleteCommunicationCommentDto.communicationId = +communicationId;
+    deleteCommunicationCommentDto.commentId = +commentId;
+    deleteCommunicationCommentDto.accountId = req.user?.id ? req.user.id : '';
+
+    return {
+      status: HttpStatus.OK,
+      message: await this.communicationCommentsService.delete(
+        deleteCommunicationCommentDto
+      )
+    }
   }
 }

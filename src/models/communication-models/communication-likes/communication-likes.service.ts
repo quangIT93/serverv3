@@ -24,7 +24,7 @@ export class CommunicationLikesService {
           communicationId: createCommunicationLikeDto.communicationId,
           accountId: createCommunicationLikeDto.accountId,
         });
-        return 'Unlike successfully';
+        return 
       }
 
       const newCommunicationLike = this.communicationsLikeRepository.create(
@@ -38,22 +38,6 @@ export class CommunicationLikesService {
       throw new BadRequestException(
         'Error creating or deleting communication likes',
       );
-    }
-  }
-
-  async findOne(id: number) {
-    try {
-      return await this.communicationsLikeRepository.find({
-        where: {
-          communicationId: id,
-        },
-        relations: ['profile'],
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error finding communication likes');
     }
   }
 

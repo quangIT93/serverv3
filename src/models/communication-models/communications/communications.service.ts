@@ -18,11 +18,10 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction,
-  ) // private readonly communicationLikesService: CommunicationLikesService,
-  // private readonly communicationViewsService: CommunicationViewsService,
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService,
+  ) // private readonly communicationViewsService: CommunicationViewsService,
   // private readonly communicationCommentsService: CommunicationCommentsService,
-  { }
+  {}
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -79,53 +78,6 @@ export class CommunicationsService {
     } catch (error) {
       throw error;
     }
-  }
-
-  async findCommunicationTodayByAccountId(
-    id: string,
-    limit: number,
-    page: number,
-    sort?: string,
-  ) {
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59,
-      999,
-    );
-
-    const skip = (page - 1) * limit;
-    const data = await this.communicationRepository.find({
-      where: {
-        accountId: id,
-        createdAt: Between(startOfDay, endOfDay),
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      skip,
-      take: limit,
-    });
-
-    return this.handleSort(data, sort);
   }
 
   // find by account
@@ -233,15 +185,6 @@ export class CommunicationsService {
     });
 
     return this.handleSort(data, sort);
-  }
-
-  // Share communication
-
-  async shareCommunication(id: number) {
-    return {
-      id,
-      share_link: 'https://hijob.site/',
-    };
   }
 
   // update by admin
@@ -361,36 +304,5 @@ export class CommunicationsService {
       .skip(page * limit)
       .take(limit)
       .getMany();
-  }
-
-  async findAllJobByType(
-    limit: number,
-    page: number,
-    typeJob: number,
-    sort?: string,
-  ) {
-    const skip = page * limit;
-
-    const data = await this.communicationRepository.find({
-      where: {
-        type: typeJob,
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      skip,
-      take: limit,
-    });
-
-    return this.handleSort(data, sort);
   }
 }
