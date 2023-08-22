@@ -8,6 +8,9 @@ export class CommunicationDetailInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((communication: Communication) => {
         const lang = _context.switchToHttp().getRequest().lang;
+
+        if (!communication) return;
+
         const communicationDetailSerialization =
           new CommunicationDetailSerialization(communication, lang);
         Object.assign(communicationDetailSerialization, communication);

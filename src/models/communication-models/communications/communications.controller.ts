@@ -165,7 +165,7 @@ export class CommunicationsController {
     try {
       const { limit, page , sort, type } = req.query;
 
-      return await this.communicationsService.findAllJobByType(
+      return await this.communicationsService.findCommunicationsByType(
         limit ? +limit : 5,
         page ? +page : 0,
         type ? +type : 0,
@@ -181,44 +181,44 @@ export class CommunicationsController {
 
   // Communication today by account
 
-  @Get('/today/by-account')
-  @ApiBasicAuth()
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @UseGuards(AuthGuard)
-  @ApiQuery({
-    name: 'sort',
-    description: 'cm (comments), l (likes), v (views).',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-  })
-  async findOne(@Req() req: CustomRequest) {
-    try {
-      const { sort, limit, page } = req.query;
-      const id = req.user?.id;
-      if (!id) {
-        throw new BadRequestException('User not found');
-      }
+  // @Get('/today/by-account')
+  // @ApiBasicAuth()
+  // @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  // @UseGuards(AuthGuard)
+  // @ApiQuery({
+  //   name: 'sort',
+  //   description: 'cm (comments), l (likes), v (views).',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'limit',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'page',
+  //   required: false,
+  // })
+  // async findOne(@Req() req: CustomRequest) {
+  //   try {
+  //     const { sort, limit, page } = req.query;
+  //     const id = req.user?.id;
+  //     if (!id) {
+  //       throw new BadRequestException('User not found');
+  //     }
 
-      return await this.communicationsService.findCommunicationTodayByAccountId(
-        id,
-        limit ? +limit : 20,
-        page ? +page : 1,
-        sort?.toString(),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error finding communication');
-    }
-  }
+  //     return await this.communicationsService.findCommunicationTodayByAccountId(
+  //       id,
+  //       limit ? +limit : 20,
+  //       page ? +page : 1,
+  //       sort?.toString(),
+  //     );
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error finding communication');
+  //   }
+  // }
 
   // Communication by account
 
@@ -300,68 +300,68 @@ export class CommunicationsController {
 
   // Get all job todays
 
-  @Get('/today')
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'type',
-    description: '0: new jobs, 1: working story',
-    required: false,
-    enum: [0,1]
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    enum: ['cm', 'l', 'v'],
-    description: 'cm (comments), l (likes), v (views).',
-  })
-  async getCommunicationToday(@Req() req: CustomRequest) {
-    try {
-      const { limit, page, sort } = req.query;
+  // @Get('/today')
+  // @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  // @ApiQuery({
+  //   name: 'limit',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'page',
+  //   required: false,
+  // })
+  // @ApiQuery({
+  //   name: 'type',
+  //   description: '0: new jobs, 1: working story',
+  //   required: false,
+  //   enum: [0,1]
+  // })
+  // @ApiQuery({
+  //   name: 'sort',
+  //   required: false,
+  //   enum: ['cm', 'l', 'v'],
+  //   description: 'cm (comments), l (likes), v (views).',
+  // })
+  // async getCommunicationToday(@Req() req: CustomRequest) {
+  //   try {
+  //     const { limit, page, sort } = req.query;
 
-      return await this.communicationsService.getCommunicationToday(
-        limit ? +limit : 20,
-        page ? +page : 1,
-        sort?.toString(),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error find communication today');
-    }
-  }
+  //     return await this.communicationsService.getCommunicationToday(
+  //       limit ? +limit : 20,
+  //       page ? +page : 1,
+  //       sort?.toString(),
+  //     );
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error find communication today');
+  //   }
+  // }
 
   // Share communication
 
-  @Get('/share/:id')
-  @ApiBasicAuth()
-  @ApiParam({
-    name: 'id',
-    description: 'id of communication.',
-    required: true,
-  })
-  @UseGuards(AuthGuard)
-  async shareCommunication(@Param('id') id: string) {
-    try {
-      return {
-        status: HttpStatus.OK,
-        data: await this.communicationsService.shareCommunication(+id),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error share communication');
-    }
-  }
+  // @Get('/share/:id')
+  // @ApiBasicAuth()
+  // @ApiParam({
+  //   name: 'id',
+  //   description: 'id of communication.',
+  //   required: true,
+  // })
+  // @UseGuards(AuthGuard)
+  // async shareCommunication(@Param('id') id: string) {
+  //   try {
+  //     return {
+  //       status: HttpStatus.OK,
+  //       data: await this.communicationsService.shareCommunication(+id),
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Error share communication');
+  //   }
+  // }
 
   // Get detail communication
 
