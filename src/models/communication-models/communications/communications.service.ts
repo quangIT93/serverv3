@@ -3,7 +3,7 @@ import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Communication } from './entities/communication.entity';
-import { Between, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
@@ -18,9 +18,8 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService,
-  ) // private readonly communicationViewsService: CommunicationViewsService,
-  // private readonly communicationCommentsService: CommunicationCommentsService,
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService,
+  ) // private readonly communicationCommentsService: CommunicationCommentsService,
   {}
 
   handleSort(data: Communication[], sort?: string) {
@@ -143,48 +142,6 @@ export class CommunicationsService {
         createdAt: 'DESC',
       },
     });
-  }
-
-  // Get today communication
-
-  async getCommunicationToday(limit: number, page: number, sort?: string) {
-    const now = new Date();
-    const startOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
-    const endOfDay = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59,
-      999,
-    );
-    const skip = (page - 1) * limit;
-    const data = await this.communicationRepository.find({
-      where: {
-        createdAt: Between(startOfDay, endOfDay),
-      },
-      relations: [
-        'communicationImages',
-        'communicationCategories',
-        'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
-      ],
-      order: {
-        createdAt: 'DESC',
-      },
-      skip,
-      take: limit,
-    });
-
-    return this.handleSort(data, sort);
   }
 
   // update by admin

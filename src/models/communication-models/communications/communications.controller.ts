@@ -136,6 +136,48 @@ export class CommunicationsController {
     }
   }
 
+  // Get five hijob news
+
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  @ApiQuery({
+    name: 'sort',
+    description: 'cm (comments), l (likes), v (views).',
+    required: false,
+    enum: ['cm', 'l', 'v'],
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'type',
+    description: '0: new jobs, 1: working story',
+    required: false,
+    enum: [0, 1],
+  })
+  @Get('news')
+  async findCommunication(@Req() req: CustomRequest) {
+    try {
+      const { limit, page, sort, type } = req.query;
+
+      return await this.communicationsService.findCommunicationsByType(
+        limit ? +limit : 5,
+        page ? +page : 0,
+        type ? +type : 0,
+        sort?.toString(),
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error finding communication');
+    }
+  }
+
   // Communication by account
 
   @Get('by-account')
@@ -211,47 +253,6 @@ export class CommunicationsController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error update communication');
-    }
-  }
-
-  // Get all job todays
-
-  @Get('/today')
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'type',
-    description: '0: new jobs, 1: working story',
-    required: false,
-    enum: [0, 1],
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    enum: ['cm', 'l', 'v'],
-    description: 'cm (comments), l (likes), v (views).',
-  })
-  async getCommunicationToday(@Req() req: CustomRequest) {
-    try {
-      const { limit, page, sort } = req.query;
-
-      return await this.communicationsService.getCommunicationToday(
-        limit ? +limit : 20,
-        page ? +page : 1,
-        sort?.toString(),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error find communication today');
     }
   }
 
