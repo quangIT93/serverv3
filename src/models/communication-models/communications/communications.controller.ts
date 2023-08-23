@@ -39,6 +39,7 @@ import { CommunicationDetailInterceptor } from './interceptors/communication-det
 import { CommunicationCreateInterceptor } from './interceptors/communication-create.interceptor';
 import { RoleGuard } from 'src/authentication/role.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
+import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
 
 @ApiTags('Communications')
 @Controller('communications')
@@ -139,7 +140,7 @@ export class CommunicationsController {
 
   // Get five hijob news
 
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
+  @UseInterceptors(ClassSerializerInterceptor, CommunicationNewsInterceptor)
   @ApiQuery({
     name: 'sort',
     description: 'cm (comments), l (likes), v (views).',
@@ -164,7 +165,12 @@ export class CommunicationsController {
   @Get('news')
   async findCommunication(@Req() req: CustomRequest) {
     try {
-      const { limit, page, sort, type } = req.query;
+      const { sort, type } = req.query;
+
+      const { limit = 5, page = 0 } = req;
+
+      console.log('limit', limit, 'page', page);
+
       const accountId = req.user?.id
 
       return await this.communicationsService.findCommunicationsByType(

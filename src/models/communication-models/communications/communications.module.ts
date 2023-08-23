@@ -48,7 +48,7 @@ export class CommunicationsModule implements NestModule {
       { path: 'communications', method: RequestMethod.GET },
       { path: 'communications/news', method: RequestMethod.GET },
       { path: 'communications/working-story', method: RequestMethod.GET },
-      { path: 'communications/:id', method: RequestMethod.GET },
+      // { path: 'communications/:id', method: RequestMethod.GET },
       { path: 'communications/:id/comments', method: RequestMethod.POST },
     )
   }

@@ -8,6 +8,14 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((communication: Communication[]) => {
         const lang = _context.switchToHttp().getRequest().lang;
+        
+        if (!communication) return null;
+
+        if (communication.length > _context.switchToHttp().getRequest().checkOverLimit ) {
+          communication.pop();
+        }
+
+        // console.log('communication', communication);
 
         const data = communication?.map((communication: Communication) => {
           const communicationSerialization = new CommunicationHiJobNewsSerialization(
