@@ -50,29 +50,63 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
         );
 
         if (updateCommunicationDto.deleteImages) {
-          await this.communicationImagesService.delete(
-            updateCommunicationDto.deleteImages,
-          );
+          let dataImageList: number[] = [];
+          if (!Array.isArray(updateCommunicationDto.deleteImages)) {
+            dataImageList.push(+updateCommunicationDto.deleteImages);
 
-          const BASE_URL =
-            BUCKET_IMAGE_COMMUNICATION_UPLOAD +
-            '/' +
-            existingCommunication.id +
-            '/';
-            const deletedImagesUrls = updateCommunicationDto.deleteImages.map(
-              (imageId) => {
-                if (currentImageIds.includes(imageId)) {
-                  return (
-                    BASE_URL + existingCommunication.communicationImages.find((image) => image.id === imageId)?.image
-                  );
-                } else {
-                  return null; 
-                }
+            await this.communicationImagesService.delete(dataImageList);
+
+            const BASE_URL =
+              BUCKET_IMAGE_COMMUNICATION_UPLOAD +
+              '/' +
+              existingCommunication.id +
+              '/';
+            const deletedImagesUrls = dataImageList.map((imageId) => {
+              if (currentImageIds.includes(imageId)) {
+                return (
+                  BASE_URL +
+                  existingCommunication.communicationImages.find(
+                    (image) => image.id === imageId,
+                  )?.image
+                );
+              } else {
+                return null;
               }
+            });
+
+            if (deletedImagesUrls.length > 0) {
+              await this.awsService.deleteMultipleFiles(
+                deletedImagesUrls as string[],
+              );
+            }
+          } else {
+            await this.communicationImagesService.delete(
+              updateCommunicationDto.deleteImages,
             );
-            
-          if (deletedImagesUrls.length > 0) {
-            await this.awsService.deleteMultipleFiles(deletedImagesUrls as string[]);
+
+            const BASE_URL =
+              BUCKET_IMAGE_COMMUNICATION_UPLOAD +
+              '/' +
+              existingCommunication.id +
+              '/';
+            const deletedImagesUrls = dataImageList.map((imageId) => {
+              if (currentImageIds.includes(imageId)) {
+                return (
+                  BASE_URL +
+                  existingCommunication.communicationImages.find(
+                    (image) => image.id === imageId,
+                  )?.image
+                );
+              } else {
+                return null;
+              }
+            });
+
+            if (deletedImagesUrls.length > 0) {
+              await this.awsService.deleteMultipleFiles(
+                deletedImagesUrls as string[],
+              );
+            }
           }
         }
 

@@ -3,10 +3,11 @@ import { Exclude, Expose, Transform } from 'class-transformer';
 import {
   BUCKET_IMAGE_AVATAR,
   BUCKET_IMAGE_COMMUNICATION,
+  BUCKET_IMAGE_COMMUNICATION_COMMENT,
 } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 // import { categoryTranslator } from 'src/common/helper/translators';
-import { CommunicationCommentSerialization } from '../../communication-comments/serialization/communication-comment.serialization';
+// import { CommunicationCommentSerialization } from '../../communication-comments/serialization/communication-comment.serialization';
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { CommunicationCategory } from '../../communication-categories/entities/communication.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
@@ -14,14 +15,23 @@ import { CommunicationView } from '../../communication-views/entities/communicat
 import { CommunicationComment } from '../../communication-comments/entities/communication-comment.entity';
 import { CommunicationLike } from '../../communication-likes/entities/communication-like.entity';
 import timeToTextTransform from 'src/common/helper/transform/timeToText.transform';
+import { CommunicationBookmarked } from '../../communication-bookmarked/entities/communication-bookmarked.entity';
 
 export class CommunicationDetailSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
-  lang: Language;
+  lang!: Language;
 
-  constructor(communication: Communication, lang: Language) {
+  @Exclude({ toPlainOnly: true })
+  check: boolean;
+
+  constructor(
+    communication: Communication,
+    lang: Language,
+    check: boolean = false,
+  ) {
     super();
     this.lang = lang;
+    this.check = check;
     Object.assign(this, communication);
   }
 
@@ -30,15 +40,6 @@ export class CommunicationDetailSerialization extends Communication {
 
   @Exclude({ toPlainOnly: true })
   override status!: number;
-
-  @Expose({ toPlainOnly: true })
-  override title!: string;
-
-  @Expose({ toPlainOnly: true })
-  override content!: string;
-
-  @Exclude({ toPlainOnly: true })
-  override updatedAt!: Date;
 
   @Transform(({ value }) => new Date(value).getTime())
   override createdAt!: Date;
@@ -49,10 +50,19 @@ export class CommunicationDetailSerialization extends Communication {
   }
 
   @Exclude({ toPlainOnly: true })
-  override communicationImages!: CommunicationImage[];
+  override updatedAt!: Date;
+
+  @Exclude({ toPlainOnly: true })
+  override communicationLikes!: CommunicationLike[];
+
+  @Exclude({ toPlainOnly: true })
+  override communicationComments!: CommunicationComment[];
 
   @Exclude({ toPlainOnly: true })
   override communicationCategories!: CommunicationCategory[];
+
+  @Exclude({ toPlainOnly: true })
+  override communicationImages!: CommunicationImage[];
 
   @Exclude({ toPlainOnly: true })
   override profile!: Profile;
@@ -61,64 +71,70 @@ export class CommunicationDetailSerialization extends Communication {
   override communicationViews!: CommunicationView[];
 
   @Exclude({ toPlainOnly: true })
-  override communicationComments!: CommunicationComment[];
-
-  @Exclude({ toPlainOnly: true })
-  override communicationLikes!: CommunicationLike[];
-
-  @Expose({ toPlainOnly: true })
-  get totalLikes() {
-    return this.communicationLikes.length;
-  }
-
-  @Expose({ toPlainOnly: true })
-  get totalViews() {
-    return this.communicationViews.length;
-  }
-
-  @Expose({ toPlainOnly: true })
-  get totalComments() {
-    return this.communicationComments.length;
-  }
+  override communicationBookmarked!: CommunicationBookmarked[];
 
   @Expose()
-  get profileData() {
-    return {
-      name: this.profile ? this.profile.name : null,
-      avatar: this.profile
-        ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
-        : null,
-    };
-  }
+  get communicationCommentsData() {
+    if (this.communicationComments?.length === 0) return null;
 
-  @Expose()
-  get communicationImagesData() {
-    if (!this.communicationImages) return null;
-    const data = this.communicationImages.map((image: any) => {
+    const data = this.communicationComments.map((data) => {
       return {
-        id: image.id,
-        image : `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`
+        id: data.id,
+        content: data.content,
+        createdAt: data.createdAt.getTime(),
+        createdAtText: timeToTextTransform(this.createdAt.getTime(), this.lang),
+        profile: {
+          name: data.profile ? data.profile.name : null,
+          avatar: data.profile
+            ? `${BUCKET_IMAGE_AVATAR}/${data.profile.avatar}`
+            : null,
+        },
+        communicationCommentImages: {
+          image: data.communicationCommentImages.map((image) => {
+            return {
+              id: image.commentId,
+              image: `${BUCKET_IMAGE_COMMUNICATION_COMMENT}/${image.commentId}/communications/${data.communicationId}/${image.image}`,
+            };
+          }),
+        },
       };
     });
 
     return data;
   }
 
-  // @Expose()
-  // get communicationCategoriesData() {
-  //   if (!this.communicationCategories) return null;
-  //   return this.communicationCategories.map((category) => {
-  //     return categoryTranslator(category.parentCategory, this.lang);
-  //   });
-  // }
+  @Expose()
+  get profileData() {
+    return {
+      name: this.profile ? this.profile.name : null,
+      avatarPath: this.profile
+        ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
+        : null,
+    };
+  }
 
   @Expose()
-  get communicationCommentsData() {
-    if (!this.communicationComments) return null;
-    return this.communicationComments.map((comment) => {
-      return Object.assign(
-        new CommunicationCommentSerialization(comment, this.lang),
-      );
-    });
+  get image() {
+    if (!this.communicationImages || this.communicationImages.length === 0)
+      return null;
+    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`;
+    return data;
+  }
+
+  @Expose()
+  get bookmarked() {
+    return this.communicationBookmarked?.length > 0 || this.check
+      ? true
+      : false;
+  }
+
+  @Expose()
+  get liked() {
+    return this.communicationLikes?.length > 0 ? true : false;
+  }
+
+  @Expose()
+  get viewd() {
+    return this.communicationViews?.length > 0 ? true : false;
   }
 }

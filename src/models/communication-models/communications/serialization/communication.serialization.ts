@@ -21,7 +21,11 @@ export class CommunicationSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   check: boolean;
 
-  constructor(communication: Communication, lang: Language, check: boolean = false) {
+  constructor(
+    communication: Communication,
+    lang: Language,
+    check: boolean = false,
+  ) {
     super();
     this.lang = lang;
     this.check = check;
@@ -66,21 +70,6 @@ export class CommunicationSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   override communicationBookmarked!: CommunicationBookmarked[];
 
-  // @Expose({ toPlainOnly: true })
-  // get totalLikes() {
-  //   return this.communicationLikes.length;
-  // }
-
-  // @Expose({ toPlainOnly: true })
-  // get totalViews() {
-  //   return this.communicationViews.length;
-  // }
-
-  // @Expose({ toPlainOnly: true })
-  // get totalComments() {
-  //   return this.communicationComments.length;
-  // }
-
   @Expose()
   get profileData() {
     return {
@@ -92,26 +81,23 @@ export class CommunicationSerialization extends Communication {
   }
 
   @Expose()
-  // get communicationImagesData() {
-  //   if (!this.communicationImages) return null;
-  //   const data = this.communicationImages.map((image: any) => {
-  //     return `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`;
-  //   });
+  get images() {
+    if (!this.communicationImages) return null;
+    const data = this.communicationImages.map((image: any) => {
+      return {
+        id: image.id,
+        image: `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${image.image}`,
+      };
+    });
 
-  //   return {
-  //     images: data
-  //   }
-  // }
-  get image() {
-    if (!this.communicationImages || this.communicationImages.length === 0)
-      return null;
-    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`;
     return data;
   }
 
   @Expose()
   get bookmarked() {
-    return (this.communicationBookmarked?.length > 0 || this.check) ? true : false;
+    return this.communicationBookmarked?.length > 0 || this.check
+      ? true
+      : false;
   }
 
   @Expose()

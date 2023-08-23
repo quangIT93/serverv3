@@ -121,27 +121,78 @@ export class CommunicationsService {
     }
   }
 
-  async getCommunicationByCommunicationId(id: number) {
-    return this.communicationRepository.findOne({
-      relations: [
-        'communicationImages',
-        'communicationCategories',
+  async getCommunicationByCommunicationId(
+    id: number,
+    accountId?: string
+  ): Promise<Communication | undefined> {
+    const communication = await this.communicationRepository
+      .createQueryBuilder('communications')
+      .select([
+        'communications.id',
+        'communications.title',
+        'communications.content',
+        'communications.type',
+        'communications.createdAt',
+        'communications.updatedAt',
+        'communications.status',
+      ])
+      .leftJoinAndSelect(
+        'communications.communicationImages',
+        'communicationImages'
+      )
+      .leftJoinAndSelect(
+        'communications.communicationCategories',
+        'communicationCategories'
+      )
+      .leftJoinAndSelect(
         'communicationCategories.parentCategory',
-        'profile',
-        'communicationViews',
-        'communicationLikes',
-        'communicationComments',
+        'parentCategory'
+      )
+      .leftJoinAndSelect('communications.profile', 'profile')
+      .leftJoinAndSelect(
+        'communications.communicationViews',
+        'communicationViews'
+      )
+      .leftJoinAndSelect(
+        'communications.communicationLikes',
+        'communicationLikes'
+      )
+      .leftJoinAndSelect(
+        'communications.communicationComments',
+        'communicationComments'
+      )
+      .leftJoin(
         'communicationComments.profile',
+        'communicationComments.profile'
+      )
+      .leftJoinAndSelect(
         'communicationComments.communicationCommentImages',
-      ],
-      where: {
-        id,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+        'communicationCommentImages'
+      )
+      .leftJoinAndSelect(
+        'communicationComments.profile',
+        'communicationCommentsProfile'
+      )
+      .where('communications.id = :id', { id })
+      .getOne();
+  
+    if (communication) {
+      if (accountId) {
+        const communicationLikesCount = communication.communicationLikes.length;
+        const communicationViewsCount = communication.communicationViews.length;
+        const communicationCommentsCount = communication.communicationComments.length;
+  
+        communication.communicationLikesCount = communicationLikesCount;
+        communication.communicationViewsCount = communicationViewsCount;
+        communication.communicationCommentsCount = communicationCommentsCount;
+      }
+  
+      return communication;
+    }
+  
+    return undefined;
   }
+  
 
   // update by admin
 
@@ -224,7 +275,7 @@ export class CommunicationsService {
       )
       .leftJoinAndSelect(
         'communications.communicationLikes',
-        'communicationLikesChecked', 
+        'communicationLikesChecked',
         'communicationLikesChecked.accountId = :accountId',
       )
       .leftJoinAndSelect(
@@ -234,7 +285,7 @@ export class CommunicationsService {
       )
       .leftJoinAndSelect(
         'communications.communicationViews',
-        'communicationViewsChecked', 
+        'communicationViewsChecked',
         'communicationViewsChecked.accountId = :accountId',
       )
       .loadRelationCountAndMap(
@@ -243,7 +294,6 @@ export class CommunicationsService {
       )
       .where('communications.type = :type', { type })
       .groupBy('communications.id');
-    // .orderBy('communicationLikesCount', 'DESC')
 
     queryBuilder.setParameter('accountId', accountId);
 

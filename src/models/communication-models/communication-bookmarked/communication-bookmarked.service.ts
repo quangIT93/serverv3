@@ -53,47 +53,38 @@ export class CommunicationBookmarkedService {
         'communicationBookmarked.communication',
         'communication',
       )
-      .addSelect(
-        'COUNT(DISTINCT communicationLikes.communicationId)',
-        'communicationLikesCount',
-      )
-      .addSelect(
-        'COUNT(DISTINCT communicationViews.communicationId)',
-        'communicationViewsCount',
-      )
-      .addSelect(
-        'COUNT(DISTINCT communicationComments.communicationId)',
-        'communicationCommentsCount',
-      )
       .leftJoinAndSelect(
         'communication.communicationLikes',
         'communicationLikes',
-      )   
-      .loadRelationCountAndMap(
-        'communication.communicationLikesCount',
-        'communication.communicationLikes',
       )
       .leftJoinAndSelect(
         'communication.communicationViews',
         'communicationViews',
       )
-      .loadRelationCountAndMap(
-        'communication.communicationViewsCount',
-        'communication.communicationViews',
-      )
       .leftJoinAndSelect(
         'communication.communicationComments',
         'communicationComments',
-      )
-      .loadRelationCountAndMap(
-        'communication.communicationCommentsCount',
-        'communication.communicationComments',
       )
       .leftJoinAndSelect(
         'communication.communicationImages',
         'communicationImages',
       )
       .leftJoinAndSelect('communication.profile', 'profile')
+      .loadRelationCountAndMap(
+        'communication.communicationLikesCount',
+        'communication.communicationLikes',
+        'communicationLikesCount',
+      )
+      .loadRelationCountAndMap(
+        'communication.communicationViewsCount',
+        'communication.communicationViews',
+        'communicationViewsCount',
+      )
+      .loadRelationCountAndMap(
+        'communication.communicationCommentsCount',
+        'communication.communicationComments',
+        'communicationCommentsCount',
+      )
       .where('communicationBookmarked.accountId = :id', { id });
 
     const result = await queryBuilder.getMany();

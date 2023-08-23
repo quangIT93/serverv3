@@ -273,9 +273,11 @@ export class CommunicationsController {
     description: 'id of communication.',
     required: true,
   })
-  async getByCommunicationId(@Param('id', ParseIntPipe) id: number) {
+  @UseGuards(AuthNotRequiredGuard)
+  async getByCommunicationId(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest) {
     try {
-      return this.communicationsService.getCommunicationByCommunicationId(id);
+      const accountId = req.user?.id
+      return this.communicationsService.getCommunicationByCommunicationId(id, accountId);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

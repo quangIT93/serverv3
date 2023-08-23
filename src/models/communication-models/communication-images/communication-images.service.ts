@@ -41,6 +41,7 @@ export class CommunicationImagesService {
   }
 
   async delete(communicationIds: number[], transactionalManager?: EntityManager) {
+
     const manager = transactionalManager ?? this.globalEntityManager;
     
     if (communicationIds.length === 0) {
