@@ -12,8 +12,8 @@ export class CreateCommunicationCommentImageDto {
     @IsNotEmpty()
     commentId!: number;
 
-    @ApiProperty({type: 'string'})
+    @ApiProperty({ type: 'string' })
     @IsNotEmpty()
-    image!:string;
+    image!: string;
 
 }

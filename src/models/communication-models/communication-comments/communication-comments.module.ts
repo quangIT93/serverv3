@@ -9,19 +9,23 @@ import { CommunicationCommentImagesModule } from '../communication-comment-image
 import { CreateCommunicationCommentTransaction } from './transactions/create-communication-comment.transaction';
 import { UpdateCommunicationCommentTransaction } from './transactions/update-communication-comment.transaction';
 import { DeleteCommunicationCommentTransaction } from './transactions/delete-communication-comment.transaction';
+import { CommunicationNotificationsModule } from '../communication-notifications/communication-notifications.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CommunicationComment
-    ]),
+    TypeOrmModule.forFeature([CommunicationComment]),
     JwtAccessTokenServiceModule,
     CommunicationCommentImagesModule,
     AWSModule,
+    CommunicationNotificationsModule
   ],
-  controllers: [CommunicationCommentsController ],
-  providers: [CommunicationCommentsService, CreateCommunicationCommentTransaction, UpdateCommunicationCommentTransaction, DeleteCommunicationCommentTransaction],
+  controllers: [CommunicationCommentsController],
+  providers: [
+    CommunicationCommentsService,
+    CreateCommunicationCommentTransaction,
+    UpdateCommunicationCommentTransaction,
+    DeleteCommunicationCommentTransaction,
+  ],
   exports: [CommunicationCommentsService],
-  
 })
 export class CommunicationCommentsModule {}
