@@ -5,6 +5,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 @Injectable()
 export class PageAndLimitMiddleware implements NestMiddleware {
     use(req: CustomRequest, res: Response , next: NextFunction): Response<any, Record<string, any>> | void {
+
         if (req.query['page']) {
             if (isNaN(Number(req.query['page']))) {
                 return res.status(400).json({
@@ -52,16 +53,18 @@ export class PageAndLimitMiddleware implements NestMiddleware {
 
         // Check if limit is over 20
         // If list is over 20, we will return 20 items and a boolean value to check if there are more items
-    
-
         req.checkOverLimit = Number(req.query['limit']) || 20;
         
         req.limit = req.checkOverLimit + 1;
+<<<<<<< HEAD
 
         // console.log("middleware", req.page, req.limit)
+=======
+>>>>>>> main
         
         delete req.query['page'];
         delete req.query['limit'];
+
         next();
     }
 

@@ -39,7 +39,7 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
 
       // save new communication comment
       const newComment = await manager.save(newCommentEntity);
-      
+
       // create new communication comment images
       if (createCommunicationCommentDto.images) {
         // create new communication comment images dto
@@ -69,8 +69,6 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
           newCommunicationCommentImageDto as CreateCommunicationCommentImageDto[],
           manager,
         );
-
-
       }
 
 
@@ -80,6 +78,7 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
         newComment.id,
       );
 
+      // CALL TRANSACTION
       await this.communicationNotificationService.create(
         newNotification,
         manager,

@@ -32,6 +32,7 @@
     "emitDecoratorMetadata": true, // https://github.com/Microsoft/TypeScript/issues/2577
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
   },
   "include": ["typings/global.d.ts", "src/**/*", "test/**/*", "bin/**/*"],
   "exclude": ["node_modules"]

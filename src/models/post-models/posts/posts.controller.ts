@@ -17,7 +17,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostNormallyInterceptor } from './interceptors/posts-normally.interceptor';
@@ -33,6 +33,9 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreatePostByAdminController } from './controller';
 import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
 import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
+import { NewestPostQueriesDto } from './dto/newest-queries.dto';
+// import { CreatePostByUserDto } from './dto/user-create-post.dto';
+// import { CreatePostController } from './controller/create-post.controller';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -46,6 +49,17 @@ export class PostsController {
     @Get('account/:accountId')
     async findByAccountId(@Param('accountId') accountId: string) {
         return this.postsService.findByAccountId(accountId);
+    }
+
+    @Get('newest')
+    @UseGuards(AuthNotRequiredGuard)
+    @UseInterceptors(PostNormallyInterceptor)
+    async getNewestPosts(
+        @Query() queries: NewestPostQueriesDto,
+        @Req() req: any,
+    ) {
+        const { limit, page } = req;
+        return this.postsService.getNewestPosts(limit, page, queries);
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -91,6 +105,7 @@ export class PostsController {
     }
 
 
+    @ApiBasicAuth()
     @Post('by-admin')
     @Roles(Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -116,7 +131,9 @@ export class PostsController {
      * 5. Create post categories
      * 
      */
+    @ApiBearerAuth()
     @ApiConsumes('multipart/form-data')
+    @ApiBearerAuth()
     @Post('by-worker')
     @Roles(Role.WORKER, Role.ADMIN)
     @UseGuards(AuthGuard, RoleGuard)
@@ -149,4 +166,54 @@ export class PostsController {
         return new CreatePostByAdminController(this.postsService, req, res, this.postNotification)
         .createPostByAdminController({dto, images});
     }
+
+    /**
+     * 
+     * @param images 
+     * @param dto 
+     * @param req 
+     * @param res 
+     * @returns Post
+     * 
+     * @description
+     * 1. Create post
+     * 2. Upload images to AWS S3
+     * 3. Create post images
+     * 4. Create post resource
+     * 5. Create post categories
+     * 
+     */
+    // @ApiConsumes('multipart/form-data')
+    // @ApiBearerAuth()
+    // @Post('')
+    // @UseGuards(AuthGuard)
+    // @UseInterceptors(FilesInterceptor('images', 5, {
+    //     fileFilter: (_req, _file, cb) => {
+    //         if (!_file.originalname.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/)) {
+    //             return cb(new Error('Only image files are allowed!'), false);
+    //         }
+    //         cb(null, true);
+    //     }
+    // }))
+    // async create(
+    //     @UploadedFiles(
+    //         new ParseFilePipeBuilder()
+    //             .addMaxSizeValidator({ maxSize: 1024 * 1024 * 5 })
+    //             .addValidator(new ImageValidator({ mime: /\/(jpg|jpeg|png|gif|bmp|webp)$/ }))
+    //             .build({
+    //                 fileIsRequired: false,
+    //                 exceptionFactory: (errors) => {
+    //                     return new Error(errors);
+    //                 }
+    //             }),
+    //         PostImagesPipe,
+    //     )
+    //     images: Express.Multer.File[],
+    //     @Body() dto: CreatePostByUserDto,
+    //     @Req() req: CustomRequest,
+    //     @Res() res: Response,
+    // ) {
+    //     return new CreatePostController(this.postsService, req, res, this.postNotification)
+    //     .createPostController({dto, images});
+    // }
 }
