@@ -57,15 +57,15 @@ export class UpdateCommunicationCommentTransaction extends BaseTransaction<
           existingCommunicationComment,
         );
 
-        // delete all communication categories where id
-        await this.communicationCommentImagesService.delete(
-          newCommunicationComment.id,
-          manager,
-        );
-
         // create communication images
 
         if (updateCommunicationCommentDto.images) {
+          // delete all communication categories where id
+          await this.communicationCommentImagesService.delete(
+            newCommunicationComment.id,
+            manager,
+          );
+
           const newCommunicationCommentImageDto = (
             updateCommunicationCommentDto.images as any as Image[]
           )?.map(
