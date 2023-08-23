@@ -23,53 +23,8 @@ export class CreatePostByAdminDto extends CreatePostDto {
     @IsNumber({ allowNaN: false, allowInfinity: false })
     companyResourceId!: number;
 
-<<<<<<< HEAD
-    @ApiProperty({
-        type: 'file',
-        format: 'binary',
-        required: false,
-        isArray: true,
-    })
-    @IsOptional()
-    images?: string[] | [];
-
-
-
-
-    validate(): any {
-        if (this.isDatePeriod === 1) {
-            if (!this.startDate || !this.endDate) {
-                return new BadRequestException('Start date and end date are required when isDatePeriod is true');
-            }
-
-            if (this.startDate > this.endDate) {
-                return new BadRequestException('Start date must be less than end date');
-            }
-        }
-        
-        if (+this.salaryMax < +this.salaryMin) {
-            return new BadRequestException('Salary max must be greater than salary min');
-        }
-        return true
-    }
-
-    // add account id and images to dto
-    addData(accountId: string): void {
-        this.accountId = accountId;
-        
-        // if (images) {
-        //     this.images = [images.thumbnail.originalname, ...images.original.map((image) => image.originalname)]
-        // }
-    }
-
-    // serialization():   {
-    // }
-
-    toEntity(): Post {
-=======
     
     override toEntity(): Post {
->>>>>>> main
         const post = new Post();
         post.accountId = this.accountId;
         post.title = this.title;

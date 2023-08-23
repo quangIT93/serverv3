@@ -56,11 +56,8 @@ export class PageAndLimitMiddleware implements NestMiddleware {
         req.checkOverLimit = Number(req.query['limit']) || 20;
         
         req.limit = req.checkOverLimit + 1;
-<<<<<<< HEAD
 
         // console.log("middleware", req.page, req.limit)
-=======
->>>>>>> main
         
         delete req.query['page'];
         delete req.query['limit'];
