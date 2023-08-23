@@ -3,7 +3,7 @@ import { CreateCommunicationImageDto } from './dto/create-communication-image.dt
 import { UpdateCommunicationImageDto } from './dto/update-communication-image.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommunicationImage } from './entities/communication-image.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 // import { AWSService } from 'src/services/aws/aws.service';
 
 @Injectable()
@@ -40,8 +40,16 @@ export class CommunicationImagesService {
     return `This action updates a #${id} communicationImage`;
   }
 
-  async delete(communicationId: number, transactionalManager?: EntityManager) {
+  async delete(communicationIds: number[], transactionalManager?: EntityManager) {
     const manager = transactionalManager ?? this.globalEntityManager;
-    await manager.getRepository(CommunicationImage).delete({ communicationId });
+    
+    if (communicationIds.length === 0) {
+      return; 
+    }
+  
+    await manager.getRepository(CommunicationImage).delete({
+      id: In(communicationIds), 
+    });
   }
+  
 }

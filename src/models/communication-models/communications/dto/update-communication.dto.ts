@@ -10,4 +10,7 @@ export class UpdateCommunicationDto extends PartialType(CreateCommunicationDto) 
     @ApiProperty({type: 'number',format: 'number', required: true, default: 1})
     @IsOptional()
     status!:number;
+
+    @IsOptional()
+    deleteImages!: number[] | [];
 }

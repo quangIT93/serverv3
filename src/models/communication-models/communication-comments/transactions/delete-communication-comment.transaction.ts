@@ -23,7 +23,6 @@ export class DeleteCommunicationCommentTransaction extends BaseTransaction<
   ): Promise<any> {
     try {
 
-      console.log(deleteCommunicationCommentDto)
         const existingCommunicationComment = await manager.findOne(
           CommunicationComment,
           {

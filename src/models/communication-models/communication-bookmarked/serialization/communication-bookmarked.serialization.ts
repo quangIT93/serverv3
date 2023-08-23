@@ -18,6 +18,9 @@ export class CommunicationBookmarkedSerialization extends CommunicationBookmarke
   }
 
   @Exclude({ toPlainOnly: true })
+  override communicationId!:number;
+
+  @Exclude({ toPlainOnly: true })
   override accountId!: string;
 
   @Exclude({ toPlainOnly: true })

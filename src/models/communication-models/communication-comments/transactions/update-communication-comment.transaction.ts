@@ -28,6 +28,8 @@ export class UpdateCommunicationCommentTransaction extends BaseTransaction<
   ): Promise<CommunicationComment> {
     try {
       let newCommunicationComment;
+      let currentImageIds: number[] = [];
+
       const newUpdateCommunicationCommentEntity = manager.create(
         CommunicationComment,
         updateCommunicationCommentDto,
@@ -43,8 +45,13 @@ export class UpdateCommunicationCommentTransaction extends BaseTransaction<
         },
       );
 
+      existingCommunicationComment?.communicationCommentImages.map((image) => {
+        currentImageIds.push(image.id);
+      });
+
       if (existingCommunicationComment) {
-        existingCommunicationComment.content = newUpdateCommunicationCommentEntity.content
+        existingCommunicationComment.content =
+          newUpdateCommunicationCommentEntity.content;
 
         newCommunicationComment = await manager.save(
           existingCommunicationComment,

@@ -60,7 +60,7 @@ export class CommunicationCommentSerialization extends CommunicationComment {
     if (!this.communicationCommentImages) return null;
     return this.communicationCommentImages.map(
       (image) =>
-        `${BUCKET_IMAGE_COMMUNICATION_COMMENT}/${this.id}/${image.image}`,
+        `${BUCKET_IMAGE_COMMUNICATION_COMMENT}/${this.id}/communications/${this.communicationId}/${image.image}`,
     );
   }
 }
