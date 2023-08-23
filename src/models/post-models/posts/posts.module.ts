@@ -47,5 +47,6 @@ export class PostsModule implements NestModule {
                 { path: 'posts/newest', method: RequestMethod.GET },
                 { path: 'posts/topic/:id', method: RequestMethod.GET },
                 { path: 'posts/account/:accountId', method: RequestMethod.GET },
-            )    }
+            )
+    }
 }

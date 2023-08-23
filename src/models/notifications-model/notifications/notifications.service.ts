@@ -1,26 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { NotificationRepository } from './repository/notification.repository';
+import { DataSource } from 'typeorm';
+// import { CreateNotificationDto } from './dto/create-notification.dto';
+// import { UpdateNotificationDto } from './dto/update-notification.dto';
+
 
 @Injectable()
 export class NotificationsService {
-  create(_reateNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
-  }
+  constructor(
+    private readonly dataSource: DataSource
+  ) {}
+  // create(_reateNotificationDto: CreateNotificationDto) {
+  //   return 'This action adds a new notification';
+  // }
+
 
   findAll() {
-    return `This action returns all notifications`;
+    return new NotificationRepository(
+      this.dataSource
+    ).findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  findAllByAccountId(accountId: string) {
+    return new NotificationRepository(
+      this.dataSource
+    ).findAllByAccountId(accountId);
   }
 
-  update(id: number, _updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} notification`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
-  }
+  // update(id: number, _updateNotificationDto: UpdateNotificationDto) {
+  //   return `This action updates a #${id} notification`;
+  // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} notification`;
+  // }
 }
