@@ -25,4 +25,10 @@ export class CommunicationBookmarked {
   @ManyToOne(() => Communication, (communication) => communication.id)
   @JoinColumn({ name: 'communication_id' })
   communication: Communication | undefined;
+
+  communicationLikesCount!: any;
+
+  communicationViewsCount!: number;
+
+  communicationCommentsCount!: number;
 }

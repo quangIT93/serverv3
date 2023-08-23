@@ -46,19 +46,57 @@ export class CommunicationBookmarkedService {
     }
   }
 
-  findOne(id: string) {
-    return this.communicationBookmarkedRepository.find({
-      where: {
-        accountId: id,
-      },
-      relations: [
+  async findOne(id: string) {
+    const queryBuilder = this.communicationBookmarkedRepository
+      .createQueryBuilder('communicationBookmarked')
+      .leftJoinAndSelect(
+        'communicationBookmarked.communication',
         'communication',
-        'communication.communicationImages',
+      )
+      .addSelect(
+        'COUNT(DISTINCT communicationLikes.communicationId)',
+        'communicationLikesCount',
+      )
+      .addSelect(
+        'COUNT(DISTINCT communicationViews.communicationId)',
+        'communicationViewsCount',
+      )
+      .addSelect(
+        'COUNT(DISTINCT communicationComments.communicationId)',
+        'communicationCommentsCount',
+      )
+      .leftJoinAndSelect(
         'communication.communicationLikes',
+        'communicationLikes',
+      )   
+      .loadRelationCountAndMap(
+        'communication.communicationLikesCount',
+        'communication.communicationLikes',
+      )
+      .leftJoinAndSelect(
         'communication.communicationViews',
+        'communicationViews',
+      )
+      .loadRelationCountAndMap(
+        'communication.communicationViewsCount',
+        'communication.communicationViews',
+      )
+      .leftJoinAndSelect(
         'communication.communicationComments',
-        'communication.profile',
-      ],
-    });
+        'communicationComments',
+      )
+      .loadRelationCountAndMap(
+        'communication.communicationCommentsCount',
+        'communication.communicationComments',
+      )
+      .leftJoinAndSelect(
+        'communication.communicationImages',
+        'communicationImages',
+      )
+      .leftJoinAndSelect('communication.profile', 'profile')
+      .where('communicationBookmarked.accountId = :id', { id });
+
+    const result = await queryBuilder.getMany();
+    return result;
   }
 }

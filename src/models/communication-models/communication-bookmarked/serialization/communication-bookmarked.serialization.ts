@@ -29,7 +29,7 @@ export class CommunicationBookmarkedSerialization extends CommunicationBookmarke
   @Expose()
   get communicationData() {
     return Object.assign(
-      new CommunicationSerialization(this.communication, this.lang),
+      new CommunicationSerialization(this.communication, this.lang, true),
     );
   }
 }

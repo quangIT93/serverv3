@@ -14,6 +14,7 @@ import { Profile } from 'src/models/profile-models/profiles/entities';
 import { CommunicationLike } from '../../communication-likes/entities/communication-like.entity';
 import { CommunicationView } from '../../communication-views/entities/communication-view.entity';
 import { CommunicationComment } from '../../communication-comments/entities/communication-comment.entity';
+import { CommunicationBookmarked } from '../../communication-bookmarked/entities/communication-bookmarked.entity';
 
 @Entity('communications')
 export class Communication extends BaseEntity {
@@ -84,6 +85,9 @@ export class Communication extends BaseEntity {
     (communicationComment) => communicationComment.communications,
   )
   communicationComments!: CommunicationComment[];
+
+  @OneToMany(() => CommunicationBookmarked, communicationBookmarked => communicationBookmarked.communication)
+  communicationBookmarked!: CommunicationBookmarked[];
 
   communicationLikesCount!: any;
 

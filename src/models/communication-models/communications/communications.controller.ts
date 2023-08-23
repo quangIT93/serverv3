@@ -38,6 +38,7 @@ import { ResizeImageResult } from 'src/common/helper/transform/resize-image';
 import { CommunicationDetailInterceptor } from './interceptors/communication-detail.interceptor';
 import { CommunicationCreateInterceptor } from './interceptors/communication-create.interceptor';
 import { RoleGuard } from 'src/authentication/role.guard';
+import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 
 @ApiTags('Communications')
 @Controller('communications')
@@ -120,7 +121,7 @@ export class CommunicationsController {
     @Query('sort') sort: string,
   ) {
     try {
-      const { limit = 5, page = 0 } = req;
+    const { limit = 5, page = 0 } = req;
 
       return await this.communicationsService.findCommunicationsByType(
         limit,
@@ -159,16 +160,19 @@ export class CommunicationsController {
     required: false,
     enum: [0, 1],
   })
+  @UseGuards(AuthNotRequiredGuard)
   @Get('news')
   async findCommunication(@Req() req: CustomRequest) {
     try {
       const { limit, page, sort, type } = req.query;
+      const accountId = req.user?.id
 
       return await this.communicationsService.findCommunicationsByType(
         limit ? +limit : 5,
         page ? +page : 0,
         type ? +type : 0,
         sort?.toString(),
+        accountId
       );
     } catch (error) {
       if (error instanceof Error) {

@@ -12,14 +12,19 @@ import { CommunicationImage } from '../../communication-images/entities/communic
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { CommunicationView } from '../../communication-views/entities/communication-view.entity';
 import timeToTextTransform from 'src/common/helper/transform/timeToText.transform';
+import { CommunicationBookmarked } from '../../communication-bookmarked/entities/communication-bookmarked.entity';
 
 export class CommunicationSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   lang!: Language;
 
-  constructor(communication: Communication, lang: Language) {
+  @Exclude({ toPlainOnly: true })
+  check: boolean;
+
+  constructor(communication: Communication, lang: Language, check: boolean = false) {
     super();
     this.lang = lang;
+    this.check = check;
     Object.assign(this, communication);
   }
 
@@ -58,6 +63,9 @@ export class CommunicationSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   override communicationViews!: CommunicationView[];
 
+  @Exclude({ toPlainOnly: true })
+  override communicationBookmarked!: CommunicationBookmarked[];
+
   // @Expose({ toPlainOnly: true })
   // get totalLikes() {
   //   return this.communicationLikes.length;
@@ -95,8 +103,24 @@ export class CommunicationSerialization extends Communication {
   //   }
   // }
   get image() {
-    if (!this.communicationImages || this.communicationImages.length === 0) return null;
-    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`
+    if (!this.communicationImages || this.communicationImages.length === 0)
+      return null;
+    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`;
     return data;
+  }
+
+  @Expose()
+  get bookmarked() {
+    return (this.communicationBookmarked?.length > 0 || this.check) ? true : false;
+  }
+
+  @Expose()
+  get liked() {
+    return this.communicationLikes?.length > 0 ? true : false;
+  }
+
+  @Expose()
+  get viewd() {
+    return this.communicationViews?.length > 0 ? true : false;
   }
 }

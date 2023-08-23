@@ -18,9 +18,8 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService,
-  ) // private readonly communicationCommentsService: CommunicationCommentsService,
-  {}
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
+  ) {}
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -165,6 +164,7 @@ export class CommunicationsService {
     page: number,
     type: number = 0,
     sort?: string,
+    accountId?: string,
   ) {
     const queryBuilder = this.communicationRepository
       .createQueryBuilder('communications')
@@ -222,6 +222,21 @@ export class CommunicationsService {
         'communications.communicationComments',
         'communicationComments',
       )
+      .leftJoinAndSelect(
+        'communications.communicationLikes',
+        'communicationLikesChecked', 
+        'communicationLikesChecked.accountId = :accountId',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationBookmarked',
+        'communicationBookmarked',
+        'communicationBookmarked.accountId = :accountId',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationViews',
+        'communicationViewsChecked', 
+        'communicationViewsChecked.accountId = :accountId',
+      )
       .loadRelationCountAndMap(
         'communications.communicationCommentsCount',
         'communications.communicationComments',
@@ -229,6 +244,8 @@ export class CommunicationsService {
       .where('communications.type = :type', { type })
       .groupBy('communications.id');
     // .orderBy('communicationLikesCount', 'DESC')
+
+    queryBuilder.setParameter('accountId', accountId);
 
     switch (sort) {
       case 'l': // likes
