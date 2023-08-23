@@ -169,12 +169,10 @@ export class CommunicationsController {
 
       const { limit = 5, page = 0 } = req;
 
-      console.log('limit', limit, 'page', page);
-
       const accountId = req.user?.id
 
       return await this.communicationsService.findCommunicationsByType(
-        limit ? +limit : 5,
+        limit ? +limit - 1 : 5,
         page ? +page : 0,
         type ? +type : 0,
         sort?.toString(),
