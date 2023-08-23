@@ -10,6 +10,7 @@ import { PostResource } from "../../post-resource/entities/post-resource.entity"
 import { Bookmark } from "src/models/bookmarks/entities/bookmark.entity";
 import { Company } from "src/models/company-models/companies/entities/company.entity";
 import { Profile } from "src/models/profile-models/profiles/entities";
+import { CompanyResource } from "src/models/company-resources/entities/company-resources.entity";
 // import { Application } from "src/models/application-model/applications/entities/application.entity";
 
 
@@ -99,11 +100,24 @@ export class Post extends BaseEntity {
     @Column({ type: 'datetime', name: 'created_at', default: 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
 
+    @Column({ type: 'tinyint', default: 0, name: 'created_at_date' })
+    createdAtDate!: Date;
+
     @Column({ type: 'datetime', name: 'updated_at', default: 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updatedAt!: Date;
 
     @Column({ type: 'tinyint', default: 0, name: 'status' })
     status!: number;
+
+    @Column({name: 'company_resource_id', default: 2, type: 'tinyint'})
+    companyResourceId!: number;
+
+    @Column({ type: 'varchar', length: 255, name: 'url', default: 'https://neoworks.vn' })
+    url!: string;
+
+    @ManyToOne(() => CompanyResource, companyResource => companyResource.id)
+    @JoinColumn({ name: 'company_resource_id' })
+    companyResource!: CompanyResource;
 
     // Account relation
     @ManyToOne(() => User, user => user.posts)
@@ -155,10 +169,6 @@ export class Post extends BaseEntity {
     @OneToOne(() => Company, company => company.id)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     companyInformation!: Company;
-
-    // @OneToMany(() => Application, application => application.post)
-    // @JoinColumn({ name: 'id', referencedColumnName: 'postId' })
-    // applications!: Application[];
 
     @ManyToOne(() => Profile, profile => profile.accountId)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })

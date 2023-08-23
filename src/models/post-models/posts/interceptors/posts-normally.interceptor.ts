@@ -10,7 +10,7 @@ import { Post } from '../entities';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
 @Injectable()
 export class PostNormallyInterceptor implements NestInterceptor {
-
+    // 84264,84215,84198,84089,83971,84433,84432,84431,84430,84429,84428
     constructor(
         private bookmarksService: BookmarksService
     ) { }
@@ -36,13 +36,13 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         return next.handle().pipe(
             map((posts: Post[]) => {
-
                 const length = posts.length;
+                let isOver = true;
 
-                if (length === _context.switchToHttp().getRequest().checkOverLimit) {
+                if (length === _context.switchToHttp().getRequest().limit) {
+                    isOver = false;
                     posts.pop();                
                 }
-
                 
                 if (length === 0) {
                     return {
@@ -61,10 +61,11 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
                     return postNormally;
                 });
+
                 return {
                     status: _context.switchToHttp().getResponse().statusCode,
                     message: _context.switchToHttp().getResponse().statusMessage,
-                    is_over: length < _context.switchToHttp().getRequest().checkOverLimit,
+                    is_over: isOver,
                     data,
                 }
             }),

@@ -14,13 +14,11 @@ import {
   HttpStatus,
   ClassSerializerInterceptor,
   ParseIntPipe,
-  // Req,
-  // Res,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { ApiBasicAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import {
   FileFieldsInterceptor,
@@ -45,7 +43,7 @@ export class CompaniesController {
   ) {}
 
   @ApiConsumes('multipart/form-data')
-  @ApiBasicAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(
@@ -124,7 +122,7 @@ export class CompaniesController {
     }
   }
 
-  @ApiBasicAuth('JWT-auth')
+  @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard)
   @Get()
@@ -133,6 +131,7 @@ export class CompaniesController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Get('account')
   findByAccountId(@Req() req: CustomRequest) {
     if (!req.user) {
@@ -145,6 +144,7 @@ export class CompaniesController {
   }
 
   @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
   @Patch(':id')
   @UseInterceptors(
     ClassSerializerInterceptor,
@@ -213,6 +213,7 @@ export class CompaniesController {
   }
 
   @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
   @Patch(':id/images')
   @UseGuards(AuthGuard)
   @UseInterceptors(
@@ -306,7 +307,7 @@ export class CompaniesController {
 
 
   @ApiConsumes('multipart/form-data')
-  @ApiBasicAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string, @Req() req: CustomRequest) {

@@ -35,14 +35,17 @@ import { PostNotificationsModule } from 'src/models/notifications-model/post-not
   exports: [PostsService],
 })
 export class PostsModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(PageAndLimitMiddleware)
-      .exclude(
-        { path: 'posts/:id', method: RequestMethod.GET },
-        { path: 'posts/:id', method: RequestMethod.PUT },
-        { path: 'posts', method: RequestMethod.POST },
-      )
-      .forRoutes(PostsController);
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+        .apply(PageAndLimitMiddleware)
+        .exclude(
+            { path: 'posts/:id', method: RequestMethod.PUT },
+            { path: 'posts', method: RequestMethod.POST },
+            )
+            .forRoutes(
+                { path: 'posts', method: RequestMethod.GET },
+                { path: 'posts/newest', method: RequestMethod.GET },
+                { path: 'posts/topic/:id', method: RequestMethod.GET },
+                { path: 'posts/account/:accountId', method: RequestMethod.GET },
+            )    }
 }
