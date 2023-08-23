@@ -3,10 +3,8 @@ import { BaseTransaction } from 'src/providers/database/mariadb/transaction';
 import { UpdateCommunicationDto } from '../dto/update-communication.dto';
 import { Communication } from '../entities/communication.entity';
 import { DataSource, EntityManager } from 'typeorm';
-import { CommunicationCategoriesService } from '../../communication-categories/communication-categories.service';
 import { CommunicationImagesService } from '../../communication-images/communication-images.service';
 import { CreateCommunicationImageDto } from '../../communication-images/dto/create-communication-image.dto';
-import { CreateCommunicationCategoriesDto } from '../../communication-categories/dto/create-communication-categories.dto';
 import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
 import { AWSService } from 'src/services/aws/aws.service';
 
@@ -17,7 +15,6 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
 > {
   constructor(
     dataSource: DataSource,
-    private readonly communicationCategoriesService: CommunicationCategoriesService,
     private readonly communicationImagesService: CommunicationImagesService,
     private readonly awsService: AWSService,
   ) {
@@ -29,6 +26,7 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
     manager: EntityManager,
   ): Promise<Communication> {
     try {
+      let currentImageIds: number[] = [];
       const newUpdateCommunicationEntity = manager.create(
         Communication,
         updateCommunicationDto,
@@ -39,6 +37,11 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
           id: updateCommunicationDto.id,
           accountId: updateCommunicationDto.accountId,
         },
+        relations: ['communicationImages'],
+      });
+
+      existingCommunication?.communicationImages.map((image) => {
+        currentImageIds.push(image.id);
       });
 
       if (existingCommunication) {
@@ -46,37 +49,36 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
           newUpdateCommunicationEntity,
         );
 
-        // delete all communication categories where id
-        await this.communicationCategoriesService.delete(
-          newCommunication.id,
-          manager,
-        );
-
-        // delete all communication images where id
-        await this.communicationImagesService.delete(
-          newCommunication.id,
-          manager,
-        );
-
-        //  create communication categories
-        if (updateCommunicationDto.categoryId) {
-          const newCommunicationCategoriesDto =
-            updateCommunicationDto.categoryId?.map(
-              (category) =>
-                new CreateCommunicationCategoriesDto(
-                  updateCommunicationDto.id,
-                  category,
-                ),
-            );
-          await this.communicationCategoriesService.createMany(
-            newCommunicationCategoriesDto,
-            manager,
+        if (updateCommunicationDto.deleteImages) {
+          await this.communicationImagesService.delete(
+            updateCommunicationDto.deleteImages,
           );
+
+          const BASE_URL =
+            BUCKET_IMAGE_COMMUNICATION_UPLOAD +
+            '/' +
+            existingCommunication.id +
+            '/';
+            const deletedImagesUrls = updateCommunicationDto.deleteImages.map(
+              (imageId) => {
+                if (currentImageIds.includes(imageId)) {
+                  return (
+                    BASE_URL + existingCommunication.communicationImages.find((image) => image.id === imageId)?.image
+                  );
+                } else {
+                  return null; 
+                }
+              }
+            );
+            
+          if (deletedImagesUrls.length > 0) {
+            await this.awsService.deleteMultipleFiles(deletedImagesUrls as string[]);
+          }
         }
 
         // create communication images
 
-        if (updateCommunicationDto.images) {
+        if (updateCommunicationDto?.images?.length > 0) {
           const imagesUploaded = await this.awsService.uploadMutilpleFiles(
             updateCommunicationDto.images,
             {
@@ -104,7 +106,6 @@ export class UpdateCommunicationTransaction extends BaseTransaction<
       throw new BadRequestException(
         'Communication not found or communication does not exist of user',
       );
-
     } catch (error) {
       throw error;
     }

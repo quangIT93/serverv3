@@ -7,6 +7,7 @@ import { CommunicationCategory } from '../../communication-categories/entities/c
 import { CommunicationImage } from '../../communication-images/entities/communication-image.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { CommunicationView } from '../../communication-views/entities/communication-view.entity';
+import timeToTextTransform from 'src/common/helper/transform/timeToText.transform';
 
 export class CommunicationCreateSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
@@ -26,6 +27,11 @@ export class CommunicationCreateSerialization extends Communication {
 
   @Transform(({ value }) => new Date(value).getTime())
   override createdAt!: Date;
+
+  @Expose()
+  get createdAtText() {
+    return timeToTextTransform(this.createdAt.getTime(), this.lang);
+  }
 
   @Exclude({ toPlainOnly: true })
   override updatedAt!: Date;

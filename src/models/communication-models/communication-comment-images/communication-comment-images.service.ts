@@ -8,10 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class CommunicationCommentImagesService {
   constructor(
     @InjectRepository(CommunicationCommentImage)
-    private readonly globalEntityManager: EntityManager
-  ){
-
-  }
+    private readonly globalEntityManager: EntityManager,
+  ) {}
   async createMany(
     createCommunicationCommentImageDto: CreateCommunicationCommentImageDto[],
     transactionalManager?: EntityManager,
@@ -23,9 +21,10 @@ export class CommunicationCommentImagesService {
       .save(createCommunicationCommentImageDto);
   }
 
-
   async delete(commentId: number, transactionalManager?: EntityManager) {
     const manager = transactionalManager ?? this.globalEntityManager;
-    await manager.getRepository(CommunicationCommentImage).delete({ commentId });
+    await manager
+      .getRepository(CommunicationCommentImage)
+      .delete({ commentId });
   }
 }

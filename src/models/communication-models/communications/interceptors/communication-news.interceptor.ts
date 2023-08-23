@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 import { Communication } from '../entities/communication.entity';
-import { CommunicationHiJobNewsSerialization } from '../serialization/communication-hijob-news.serialization';
+import { CommunicationSerialization } from '../serialization/communication.serialization';
 
 export class CommunicationNewsInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -18,7 +18,7 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
         // console.log('communication', communication);
 
         const data = communication?.map((communication: Communication) => {
-          const communicationSerialization = new CommunicationHiJobNewsSerialization(
+          const communicationSerialization = new CommunicationSerialization(
             communication,
             lang,
           );
