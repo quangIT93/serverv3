@@ -46,6 +46,11 @@ import { KeywordDistrictsModule } from './models/keyword-models/keyword-district
 import { KeywordNotificationsModule } from './models/keyword-models/keyword-notifications/keyword-notifications.module';
 import { TypeNotificationPlatformModule } from './models/keyword-models/type-notification-platform/type-notification-platform.module';
 import { SiteModule } from './models/site/site.module';
+import { CommunicationsModule } from './models/communication-models/communications/communications.module';
+import { CommunicationCategoriesModule } from './models/communication-models/communication-categories/communication-categories.module';
+import { CommunicationImagesModule } from './models/communication-models/communication-images/communication-images.module';
+import { CommunicationCommentImagesModule } from './models/communication-models/communication-comment-images/communication-comment-images.module';
+import { CommunicationBookmarkedModule } from './models/communication-models/communication-bookmarked/communication-bookmarked.module';
 
 @Module({
   imports: [
@@ -75,6 +80,8 @@ import { SiteModule } from './models/site/site.module';
     CompaniesModule,
     CompanyRolesModule,
     CompanySizesModule,
+
+    // Profile Module
     ProfilesModule,
     ProfilesCategoriesModule,
     ProfilesEducationsModule,
@@ -92,7 +99,14 @@ import { SiteModule } from './models/site/site.module';
     KeywordDistrictsModule,
     KeywordNotificationsModule,
     TypeNotificationPlatformModule,
-    SiteModule
+    SiteModule,
+
+    // Communication Module
+    CommunicationsModule,
+    CommunicationCategoriesModule,
+    CommunicationImagesModule,
+    CommunicationCommentImagesModule,
+    CommunicationBookmarkedModule,
   ],
   controllers: [AppController, BannersController],
   providers: [

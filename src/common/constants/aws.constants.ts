@@ -16,3 +16,7 @@ export const BUCKET_IMAGE_DEFAULT = `${BUCKET_IMAGE}/default`
 export const BUCKET_CV = `${BUCKET_PREFIX}/cv-bucket`
 export const BUCKET_IMAGE_PARENT = `images/category`
 export const BUCKET_IMAGE_PARENT_DEFAULT = `images/default-post-image`    
+export const BUCKET_IMAGE_COMMUNICATION = `${BUCKET_IMAGE}/communications`
+export const BUCKET_IMAGE_COMMUNICATION_UPLOAD = `images/communications`
+export const BUCKET_IMAGE_COMMUNICATION_COMMENT = `${BUCKET_IMAGE}/communications-comment`
+export const BUCKET_IMAGE_COMMUNICATION_COMMENT_UPLOAD = `images/communications-comment`

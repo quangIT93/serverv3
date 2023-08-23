@@ -38,7 +38,6 @@ export class ProfilesController {
   @UseInterceptors(
     ClassSerializerInterceptor,
     ProfileDetailInterceptor,
-    // ResponseInterceptor
   )
   @UseGuards(AuthGuard)
   @Get('me')

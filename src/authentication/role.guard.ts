@@ -24,7 +24,8 @@ export class RoleGuard implements CanActivate {
         const hasRole = () => user.role && roles.includes(user.role);
 
         if (user && user.role && hasRole()) {
-            Logger.log('RoleGuard: canActivate: user && user.role && hasRole()');
+
+            Logger.log('RoleGuard: canActivate: ' + user.role + ' ' + user.id);
             return true;
         } else {
             Logger.log('RoleGuard: canActivate: else');
