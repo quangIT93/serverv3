@@ -8,8 +8,8 @@ import { CreateCommunicationCommentImageDto } from '../../communication-comment-
 import { Image } from '../interfaces/communication-comment.interface';
 import { BUCKET_IMAGE_COMMUNICATION_COMMENT_UPLOAD } from 'src/common/constants';
 import { AWSService } from 'src/services/aws/aws.service';
-// import { CreateCommunicationNotificationDto } from '../../communication-notifications/dto/create-communication-notification.dto';
-// import { CommunicationNotificationsService } from '../../communication-notifications/communication-notifications.service';
+import { CreateCommunicationNotificationDto } from '../../communication-notifications/dto/create-communication-notification.dto';
+import { CommunicationNotificationsService } from '../../communication-notifications/communication-notifications.service';
 
 @Injectable()
 export class CreateCommunicationCommentTransaction extends BaseTransaction<
@@ -20,7 +20,7 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
     dataSource: DataSource,
     private readonly communicationCommentImagesService: CommunicationCommentImagesService,
     private readonly awsService: AWSService,
-    // private readonly communicationNotificationService: CommunicationNotificationsService,
+    private readonly communicationNotificationService: CommunicationNotificationsService,
   ) {
     super(dataSource);
   }
@@ -70,15 +70,15 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
       }
 
       // create notifications to owner of communication
-      // const newNotification = new CreateCommunicationNotificationDto(
-      //   newComment.communicationId,
-      //   newComment.id,
-      // );
+      const newNotification = new CreateCommunicationNotificationDto(
+        newComment.communicationId,
+        newComment.id,
+      );
 
-      // await this.communicationNotificationService.create(
-      //   newNotification,
-      //   manager,
-      // );
+      await this.communicationNotificationService.create(
+        newNotification,
+        manager,
+      );
 
       // return new communication comment
       return newComment;
