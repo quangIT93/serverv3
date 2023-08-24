@@ -82,7 +82,7 @@ export class CommunicationDetailSerialization extends Communication {
         id: data.id,
         content: data.content,
         createdAt: data.createdAt.getTime(),
-        createdAtText: timeToTextTransform(this.createdAt.getTime(), this.lang),
+        createdAtText: timeToTextTransform(data.createdAt.getTime(), this.lang),
         profile: {
           name: data.profile ? data.profile.name : null,
           avatar: data.profile
@@ -117,8 +117,12 @@ export class CommunicationDetailSerialization extends Communication {
   get image() {
     if (!this.communicationImages || this.communicationImages.length === 0)
       return null;
-    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`;
+    const data = this.communicationImages?.map((image) => {
+      return `${BUCKET_IMAGE_COMMUNICATION}/${image.communicationId}/${image.image}`;
+    })
+
     return data;
+
   }
 
   @Expose()

@@ -158,6 +158,10 @@ export class CommunicationsService {
         'communicationLikes'
       )
       .leftJoinAndSelect(
+        'communications.communicationBookmarked',
+        'communicationBookmarked'
+      )
+      .leftJoinAndSelect(
         'communications.communicationComments',
         'communicationComments'
       )
