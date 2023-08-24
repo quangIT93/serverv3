@@ -301,6 +301,8 @@ export class CommunicationsService {
 
     queryBuilder.setParameter('accountId', accountId);
 
+    const total = await queryBuilder.getCount();
+
     switch (sort) {
       case 'l': // likes
         queryBuilder
@@ -328,9 +330,14 @@ export class CommunicationsService {
         break;
     }
 
-    return await queryBuilder
+    const data = await queryBuilder
       .skip(page * limit)
       .take(limit)
       .getMany();
+
+    return {
+      total,
+      data,
+    };
   }
 }
