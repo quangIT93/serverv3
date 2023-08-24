@@ -47,6 +47,7 @@ export class CommunicationBookmarkedService {
   }
 
   async findOne(id: string) {
+
     const queryBuilder = this.communicationBookmarkedRepository
       .createQueryBuilder('communicationBookmarked')
       .leftJoinAndSelect(
@@ -85,7 +86,8 @@ export class CommunicationBookmarkedService {
         'communication.communicationComments',
         'communicationCommentsCount',
       )
-      .where('communicationBookmarked.accountId = :id', { id });
+      .where('communicationBookmarked.accountId = :id', { id })
+      .orderBy('communicationBookmarked.createdAt', 'ASC'); 
 
     const result = await queryBuilder.getMany();
     return result;
