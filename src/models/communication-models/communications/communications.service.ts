@@ -267,6 +267,10 @@ export class CommunicationsService {
         break;
     }
 
+    if (listId.length === 0) {
+      return [];
+    }
+
     // get data by id
     return await this.communicationRepository
       .createQueryBuilder('communications')
