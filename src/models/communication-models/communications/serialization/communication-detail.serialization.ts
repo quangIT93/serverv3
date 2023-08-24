@@ -116,7 +116,7 @@ export class CommunicationDetailSerialization extends Communication {
   @Expose()
   get image() {
     if (!this.communicationImages || this.communicationImages.length === 0)
-      return null;
+      return [];
     const data = this.communicationImages?.map((image) => {
       return `${BUCKET_IMAGE_COMMUNICATION}/${image.communicationId}/${image.image}`;
     })
