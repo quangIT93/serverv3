@@ -19,7 +19,7 @@ export class CommunicationsService {
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
     private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
-  ) { }
+  ) {}
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -86,6 +86,12 @@ export class CommunicationsService {
     page: number,
     sort?: string,
   ) {
+    const total = await this.communicationRepository.count({
+      where: {
+        accountId: id,
+      },
+    });
+
     const data = await this.communicationRepository.find({
       where: {
         accountId: id,
@@ -106,7 +112,12 @@ export class CommunicationsService {
       skip: page * limit,
     });
 
-    return this.handleSort(data, sort);
+    const dataSort = this.handleSort(data, sort);
+
+    return {
+      total,
+      data: dataSort,
+    };
   }
 
   async update(updateCommunicationDto: UpdateCommunicationDto) {
@@ -156,6 +167,8 @@ export class CommunicationsService {
       .leftJoinAndSelect(
         'communications.communicationLikes',
         'communicationLikes',
+        'communicationLikes.accountId = :accountId',
+        { accountId: accountId },
       )
       .leftJoinAndSelect(
         'communications.communicationBookmarked',
@@ -225,6 +238,12 @@ export class CommunicationsService {
     // sort by sortQuery
     // get list id with limit and page
     // return list id
+
+    const total = await this.communicationRepository.count({
+      where: {
+        type,
+      },
+    });
     let listId = [];
     switch (sort) {
       case 'l':
@@ -276,7 +295,7 @@ export class CommunicationsService {
     }
 
     // get data by id
-    return await this.communicationRepository
+    const data = await this.communicationRepository
       .createQueryBuilder('communications')
       .select([
         'communications.id',
@@ -316,7 +335,6 @@ export class CommunicationsService {
         'communications.communicationBookmarked',
         'communicationBookmarked',
         'communicationBookmarked.accountId = :_accountId',
-
       )
       .leftJoinAndSelect(
         'communications.communicationLikes',
@@ -333,5 +351,10 @@ export class CommunicationsService {
       )
       .setParameter('_accountId', _accountId)
       .getMany();
+
+    return {
+      total,
+      data,
+    };
   }
 }

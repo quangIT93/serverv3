@@ -216,7 +216,7 @@ export class CommunicationsController {
       return await this.communicationsService.findCommunicationByAccountId(
         id,
         limit ? +limit : 20,
-        page ? +page : 1,
+        page ? +page : 0,
         sort?.toString(),
       );
     } catch (error) {

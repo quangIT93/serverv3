@@ -11,7 +11,6 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CommunicationBookmarkedService } from './communication-bookmarked.service';
-// import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';

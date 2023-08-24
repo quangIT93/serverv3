@@ -6,10 +6,12 @@ import { CommunicationBookmarkedSerialization } from '../serialization/communica
 export class CommunicationBookmarkedInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((communicationBookmarked: CommunicationBookmarked[]) => {
+      map((communicationBookmarked: any) => {
         const lang = _context.switchToHttp().getRequest().lang;
 
-        const data = communicationBookmarked?.map(
+        if (!communicationBookmarked || !communicationBookmarked.data) return null
+
+        const data = communicationBookmarked?.data?.map(
           (communicationBookmarked: CommunicationBookmarked) => {
             const communicationBookmarkedSerialization =
               new CommunicationBookmarkedSerialization(
@@ -22,6 +24,7 @@ export class CommunicationBookmarkedInterceptor implements NestInterceptor {
 
         return {
           status: _context.switchToHttp().getResponse().statusCode,
+          total: communicationBookmarked.total,
           data: data,
           message: _context.switchToHttp().getResponse().statusMessage,
         };
