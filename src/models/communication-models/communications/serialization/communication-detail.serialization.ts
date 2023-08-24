@@ -21,17 +21,12 @@ export class CommunicationDetailSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   lang!: Language;
 
-  @Exclude({ toPlainOnly: true })
-  check: boolean;
-
   constructor(
     communication: Communication,
     lang: Language,
-    check: boolean = false,
   ) {
     super();
     this.lang = lang;
-    this.check = check;
     Object.assign(this, communication);
   }
 
@@ -130,7 +125,7 @@ export class CommunicationDetailSerialization extends Communication {
 
   @Expose()
   get bookmarked() {
-    return this.communicationBookmarked?.length > 0 || this.check
+    return this.communicationBookmarked?.length > 0
       ? true
       : false;
   }

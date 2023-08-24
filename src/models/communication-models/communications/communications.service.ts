@@ -123,7 +123,7 @@ export class CommunicationsService {
 
   async getCommunicationByCommunicationId(
     id: number,
-    _accountId?: string
+    accountId?: string,
   ): Promise<Communication | undefined> {
     const communication = await this.communicationRepository
       .createQueryBuilder('communications')
@@ -138,63 +138,65 @@ export class CommunicationsService {
       ])
       .leftJoinAndSelect(
         'communications.communicationImages',
-        'communicationImages'
+        'communicationImages',
       )
       .leftJoinAndSelect(
         'communications.communicationCategories',
-        'communicationCategories'
+        'communicationCategories',
       )
       .leftJoinAndSelect(
         'communicationCategories.parentCategory',
-        'parentCategory'
+        'parentCategory',
       )
       .leftJoinAndSelect('communications.profile', 'profile')
       .leftJoinAndSelect(
         'communications.communicationViews',
-        'communicationViews'
+        'communicationViews',
       )
       .leftJoinAndSelect(
         'communications.communicationLikes',
-        'communicationLikes'
+        'communicationLikes',
       )
       .leftJoinAndSelect(
         'communications.communicationBookmarked',
-        'communicationBookmarked'
+        'communicationBookmarked',
+        'communicationBookmarked.accountId = :accountId',
+        { accountId: accountId },
       )
       .leftJoinAndSelect(
         'communications.communicationComments',
-        'communicationComments'
+        'communicationComments',
       )
       .leftJoin(
         'communicationComments.profile',
-        'communicationComments.profile'
+        'communicationComments.profile',
       )
       .leftJoinAndSelect(
         'communicationComments.communicationCommentImages',
-        'communicationCommentImages'
+        'communicationCommentImages',
       )
       .leftJoinAndSelect(
         'communicationComments.profile',
-        'communicationCommentsProfile'
+        'communicationCommentsProfile',
       )
       .where('communications.id = :id', { id })
       .getOne();
-  
+
     if (communication) {
-        const communicationLikesCount = communication.communicationLikes.length;
-        const communicationViewsCount = communication.communicationViews.length;
-        const communicationCommentsCount = communication.communicationComments.length;
-  
-        communication.communicationLikesCount = communicationLikesCount;
-        communication.communicationViewsCount = communicationViewsCount;
-        communication.communicationCommentsCount = communicationCommentsCount;
-  
+      const communicationLikesCount = communication.communicationLikes.length;
+      const communicationViewsCount = communication.communicationViews.length;
+      const communicationCommentsCount =
+        communication.communicationComments.length;
+
+      communication.communicationLikesCount = communicationLikesCount;
+      communication.communicationViewsCount = communicationViewsCount;
+      communication.communicationCommentsCount = communicationCommentsCount;
+
       return communication;
     }
-  
+
     return undefined;
   }
-  
 
   // update by admin
 
