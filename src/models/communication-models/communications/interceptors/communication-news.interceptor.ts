@@ -9,7 +9,13 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
       map((communication: any) => {
         const lang = _context.switchToHttp().getRequest().lang;
         
-        if (!communication || !communication.data) return null;
+        if (!communication || !communication.data) 
+        return {
+          status: _context.switchToHttp().getResponse().statusCode,
+          total: communication.total,
+          data: [],
+          message: _context.switchToHttp().getResponse().statusMessage,
+        };
 
         if (communication.length > _context.switchToHttp().getRequest().checkOverLimit ) {
           communication.pop();
