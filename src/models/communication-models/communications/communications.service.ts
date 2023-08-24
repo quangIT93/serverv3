@@ -123,7 +123,7 @@ export class CommunicationsService {
 
   async getCommunicationByCommunicationId(
     id: number,
-    accountId?: string
+    _accountId?: string
   ): Promise<Communication | undefined> {
     const communication = await this.communicationRepository
       .createQueryBuilder('communications')
@@ -181,7 +181,6 @@ export class CommunicationsService {
       .getOne();
   
     if (communication) {
-      if (accountId) {
         const communicationLikesCount = communication.communicationLikes.length;
         const communicationViewsCount = communication.communicationViews.length;
         const communicationCommentsCount = communication.communicationComments.length;
@@ -189,7 +188,6 @@ export class CommunicationsService {
         communication.communicationLikesCount = communicationLikesCount;
         communication.communicationViewsCount = communicationViewsCount;
         communication.communicationCommentsCount = communicationCommentsCount;
-      }
   
       return communication;
     }
