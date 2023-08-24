@@ -106,7 +106,7 @@ export class CommunicationSerialization extends Communication {
   }
 
   @Expose()
-  get viewd() {
+  get view() {
     return this.communicationViews?.length > 0 ? true : false;
   }
 }

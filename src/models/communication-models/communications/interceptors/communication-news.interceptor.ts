@@ -11,6 +11,8 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
         
         if (!communication) return null;
 
+        console.log('communication', communication);
+
         if (communication.length > _context.switchToHttp().getRequest().checkOverLimit ) {
           communication.pop();
         }
