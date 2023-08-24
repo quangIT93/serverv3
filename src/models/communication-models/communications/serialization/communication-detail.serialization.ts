@@ -118,7 +118,10 @@ export class CommunicationDetailSerialization extends Communication {
     if (!this.communicationImages || this.communicationImages.length === 0)
       return [];
     const data = this.communicationImages?.map((image) => {
-      return `${BUCKET_IMAGE_COMMUNICATION}/${image.communicationId}/${image.image}`;
+      return {
+        id : image.id,
+        image : `${BUCKET_IMAGE_COMMUNICATION}/${image.communicationId}/${image.image}`
+      };
     })
 
     return data;
