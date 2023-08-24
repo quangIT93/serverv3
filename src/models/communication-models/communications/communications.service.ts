@@ -239,12 +239,8 @@ export class CommunicationsService {
     // get list id with limit and page
     // return list id
 
-    const total = await this.communicationRepository.count({
-      where: {
-        type,
-      },
-    });
     let listId = [];
+    let total: number = 0;
     switch (sort) {
       case 'l':
         listId = await this.communicationRepository.query(`
@@ -291,7 +287,16 @@ export class CommunicationsService {
     }
 
     if (listId.length === 0) {
-      return [];
+      total = await this.communicationRepository.count({
+        where: {
+          type: type,
+        },
+      })
+
+      return {
+        total,
+        data: []
+      };
     }
 
     // get data by id
