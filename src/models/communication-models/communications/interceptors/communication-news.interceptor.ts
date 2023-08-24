@@ -6,16 +6,20 @@ import { CommunicationSerialization } from '../serialization/communication.seria
 export class CommunicationNewsInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((communication: any) => {
+      map((communication: Communication[]) => {
         const lang = _context.switchToHttp().getRequest().lang;
         
-        if (!communication.data) return null;
+        if (!communication) return null;
+
+        console.log('communication', communication);
 
         if (communication.length > _context.switchToHttp().getRequest().checkOverLimit ) {
           communication.pop();
         }
 
-        const data = communication?.data?.map((communication: Communication) => {
+        // console.log('communication', communication);
+
+        const data = communication?.map((communication: Communication) => {
           const communicationSerialization = new CommunicationSerialization(
             communication,
             lang,
@@ -25,7 +29,6 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
 
         return {
           status: _context.switchToHttp().getResponse().statusCode,
-          total: communication.total,
           data: data,
           message: _context.switchToHttp().getResponse().statusMessage,
         };
