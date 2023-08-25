@@ -15,7 +15,6 @@ import {
   Put,
   ParseIntPipe,
   UnauthorizedException,
-  Ip,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -39,11 +38,12 @@ import { CommunicationCreateInterceptor } from './interceptors/communication-cre
 import { RoleGuard } from 'src/authentication/role.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
+import ip from 'ip'
 
 @ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
-  constructor(private readonly communicationsService: CommunicationsService) {}
+  constructor(private readonly communicationsService: CommunicationsService) { }
 
   // create communication by user
 
@@ -222,10 +222,9 @@ export class CommunicationsController {
   async getByCommunicationId(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: CustomRequest,
-    @Ip() ip: string,
   ) {
     try {
-      const accountId = req.user?.id || ip;
+      const accountId = req.user?.id || ip.address();
       return this.communicationsService.getCommunicationByCommunicationId(
         id,
         accountId,
