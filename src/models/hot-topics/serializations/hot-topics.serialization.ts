@@ -1,12 +1,7 @@
-import {
-    QUERY_CHILDREN_CATEGORY_ID,
-    QUERY_IS_REMOTELY,
-    QUERY_IS_SHORT_TIME_JOBS,
-    QUERY_IS_TODAY_JOBS,
-    QUERY_PARENT_CATEGORY_ID,
-    QUERY_JOB_TYPE,
-} from 'src/common/constants';
 import { HotTopic } from '../entities/hot-posts.entity';
+import generateQuery from 'src/models/post-models/posts/helper/generateQuery.hotopic';
+import { HotTopicQueriesDto } from 'src/models/post-models/posts/dto/hot-topic-queries.dto';
+import { QUERY_LIST_CHILDREN_CATEGORY_ID } from 'src/common/constants';
 
 export class HotTopicSerializer {
     id!: number;
@@ -14,7 +9,7 @@ export class HotTopicSerializer {
     type!: number;
     image!: string;
     themeId!: number;
-    query!: string[];
+    query!: HotTopicQueriesDto;
     count!: number;
     api!: string;
 
@@ -27,38 +22,13 @@ export class HotTopicSerializer {
     }
 
     static fromEntity(entity: HotTopic) {
-        let query: any[] = [];
-
-        switch (entity.type) {
-            case 1:
-                query.push({ [QUERY_IS_REMOTELY]: entity.detailId });
-                break;
-            case 2:
-                query.push({ [QUERY_PARENT_CATEGORY_ID]: entity.detailId });
-                break;
-            case 3:
-                query.push({ [QUERY_CHILDREN_CATEGORY_ID]: entity.detailId });
-                break;
-            case 4:
-                query.push({ [QUERY_IS_SHORT_TIME_JOBS]: entity.detailId });
-                break;
-            case 5:
-                query.push({ [QUERY_IS_TODAY_JOBS]: entity.detailId });
-                break;
-            case 6:
-                query.push({ [QUERY_JOB_TYPE]: entity.detailId });
-                break;
-            default:
-                break;
-        }
-
         return this.from({
             id: entity.id,
             type: entity.type,
             title: entity.title,
             image: entity.image,
             themeId: entity.themeId,
-            query: query,
+            query: entity.id !== 6 ? generateQuery(entity.id) : {[QUERY_LIST_CHILDREN_CATEGORY_ID]: "394,370"},
             api: `/api/v3/posts/topic/${entity.id}`,
         });
     }

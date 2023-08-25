@@ -16,6 +16,7 @@ import { PostCategories } from '../posts-categories/entities/posts-categories.en
 import { CreatePostResourceDto } from '../post-resource/dto/create-post-resource.dto';
 import { PostResourceService } from '../post-resource/post-resource.service';
 import { NewestPostQueriesDto } from './dto/newest-queries.dto';
+import generateQuery from './helper/generateQuery.hotopic';
 // import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
@@ -48,11 +49,44 @@ export class PostsService {
     );
   }
 
-  async findByQuery(query: any, limit: number, page: number): Promise<any[]> {
+  /**
+   * 
+   * @param id 
+   * @param limit 
+   * @param page 
+   * @returns 
+   * 
+   * @description: find posts by hot topic id
+   * 
+   * @example:
+   * 1: Influencer
+   * 2: Remote job
+   * 3: Short time job
+   * 4: Today job
+   * 5: Freelance job
+   * 6: Delivery, Driver
+   * 
+   */
+
+  async findByHotTopicId(id: number, limit: number, page: number) {
+    // generate query and call function
+    let query: HotTopicQueriesDto = generateQuery(id);
+
+    return findByHotTopicQuery(this.postsRepository, query, page, limit);
+  }
+
+  async findByQuery(query: HotTopicQueriesDto, limit: number, page: number): Promise<any[]> {
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }
 
   async countByQuery(query: HotTopicQueriesDto): Promise<number> {
+    return countByHotTopicQuery(this.postsRepository, query);
+  }
+
+  async countByHotTopicId(id: number): Promise<number> {
+    // generate query and call function
+    let query: HotTopicQueriesDto = generateQuery(id);
+
     return countByHotTopicQuery(this.postsRepository, query);
   }
 
@@ -167,5 +201,5 @@ export class PostsService {
   async getNewestPosts(limit: number, page: number, queries?: NewestPostQueriesDto): Promise<any[]> {
     return new PostsQueryBuilder(this.postsRepository)
     .getNewestPosts(page, limit, queries);
-  }
+  }    
 }

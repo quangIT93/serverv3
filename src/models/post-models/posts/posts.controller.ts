@@ -19,7 +19,7 @@ import {
 import { Response } from 'express';
 import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
-import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
+// import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostNormallyInterceptor } from './interceptors/posts-normally.interceptor';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
@@ -67,33 +67,34 @@ export class PostsController {
     @UseGuards(AuthNotRequiredGuard)
     @UseInterceptors(PostNormallyInterceptor)
     async findByTopicId(
-        @Query() hotTopicQueries: HotTopicQueriesDto,
+        // @Query() hotTopicQueries: HotTopicQueriesDto,
         @Req() req: any,
+        @Param('id', ParseIntPipe) id: number,
     ) {
         const { limit, page } = req;
 
-        const {
-            childrenCategoryId,
-            parentCategoryId,
-            isRemotely,
-            isShortTimeJobs,
-            jobType,
-        } = hotTopicQueries;
+        // const {
+        //     childrenCategoryId,
+        //     parentCategoryId,
+        //     isRemotely,
+        //     isShortTimeJobs,
+        //     jobType,
+        // } = hotTopicQueries;
         
-        const query = {
-            childrenCategoryId,
-            parentCategoryId,
-            isRemotely,
-            isShortTimeJobs,
-            jobType,
-        };
+        // const query = {
+        //     childrenCategoryId,
+        //     parentCategoryId,
+        //     isRemotely,
+        //     isShortTimeJobs,
+        //     jobType,
+        // };
 
-        if (Object.keys(query).length === 0) {
-            return [];
-        }
+        // if (Object.keys(query).length === 0) {
+        //     return [];
+        // }
 
 
-        return this.postsService.findByQuery(query, limit, page); 
+        return this.postsService.findByHotTopicId(id, limit, page); 
     }
 
     @UseGuards(AuthNotRequiredGuard)
