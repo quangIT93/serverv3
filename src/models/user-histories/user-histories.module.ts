@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { UserHistoriesService } from './user-histories.service';
-import { UserHistoriesController } from './user-histories.controller';
+// import { UserHistoriesController } from './user-histories.controller';
 
 @Module({
-  controllers: [UserHistoriesController],
+  // controllers: [UserHistoriesController],
   providers: [UserHistoriesService]
 })
 export class UserHistoriesModule {}
