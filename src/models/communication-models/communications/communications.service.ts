@@ -7,9 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
-// import { CommunicationCommentsService } from '../communication-comments/communication-comments.service';
-// import { CommunicationLikesService } from '../communication-likes/communication-likes.service';
-// import { CommunicationViewsService } from '../communication-views/communication-views.service';
+import { CommunicationViewsService } from '../communication-views/communication-views.service';
 
 @Injectable()
 export class CommunicationsService {
@@ -18,8 +16,9 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
-  ) {}
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, 
+    private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
+  ) { }
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -134,7 +133,7 @@ export class CommunicationsService {
 
   async getCommunicationByCommunicationId(
     id: number,
-    accountId?: string,
+    accountId: string,
   ): Promise<Communication | undefined> {
     const communication = await this.communicationRepository
       .createQueryBuilder('communications')
@@ -160,33 +159,24 @@ export class CommunicationsService {
         'parentCategory',
       )
       .leftJoinAndSelect('communications.profile', 'profile')
-      .leftJoinAndSelect(
+      .leftJoin(
         'communications.communicationViews',
         'communicationViews',
+        'communicationViews.accountId = :accountId',
       )
-      .loadRelationCountAndMap(
-        'communications.communicationLikesCount',
-        'communications.communicationLikes',
-      )
-      .leftJoinAndSelect(
+      .leftJoin(
         'communications.communicationLikes',
         'communicationLikes',
         'communicationLikes.accountId = :accountId',
-        { accountId: accountId },
       )
-      .leftJoinAndSelect(
+      .leftJoin(
         'communications.communicationBookmarked',
         'communicationBookmarked',
         'communicationBookmarked.accountId = :accountId',
-        { accountId: accountId },
       )
       .leftJoinAndSelect(
         'communications.communicationComments',
         'communicationComments',
-      )
-      .leftJoin(
-        'communicationComments.profile',
-        'communicationComments.profile',
       )
       .leftJoinAndSelect(
         'communicationComments.communicationCommentImages',
@@ -196,17 +186,28 @@ export class CommunicationsService {
         'communicationComments.profile',
         'communicationCommentsProfile',
       )
+      .loadRelationCountAndMap(
+        'communications.communicationViewsCount',
+        'communications.communicationViews',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationLikesCount',
+        'communications.communicationLikes',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationCommentsCount',
+        'communications.communicationComments',
+      )
       .where('communications.id = :id', { id })
+      .setParameter('accountId', accountId)
       .getOne();
 
     if (communication) {
-      const communicationViewsCount = communication.communicationViews.length;
-      const communicationCommentsCount =
-        communication.communicationComments.length;
-
-      communication.communicationViewsCount = communicationViewsCount;
-      communication.communicationCommentsCount = communicationCommentsCount;
-
+      // console.log(communication);
+      this.communicationViewsService.create({
+        communicationId: id,
+        accountId: accountId,
+      });
       return communication;
     }
 
@@ -221,7 +222,6 @@ export class CommunicationsService {
         await this.updateCommunicationAdminTransaction.run(
           updateCommunicationDto,
         );
-
       return newCommunication;
     } catch (error) {
       throw error;
@@ -368,4 +368,6 @@ export class CommunicationsService {
       data,
     };
   }
+
+  
 }

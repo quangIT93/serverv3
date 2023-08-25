@@ -16,6 +16,7 @@ import {
   ParseIntPipe,
   UnauthorizedException,
   Query,
+  Ip,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -274,9 +275,9 @@ export class CommunicationsController {
     required: true,
   })
   @UseGuards(AuthNotRequiredGuard)
-  async getByCommunicationId(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest) {
+  async getByCommunicationId(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest, @Ip() ip: string ) {
     try {
-      const accountId = req.user?.id
+      const accountId = req.user?.id || ip;
       return this.communicationsService.getCommunicationByCommunicationId(id, accountId);
     } catch (error) {
       if (error instanceof Error) {
