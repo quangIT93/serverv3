@@ -35,8 +35,10 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
 
         return {
           status: _context.switchToHttp().getResponse().statusCode,
-          total: communication.total,
-          data: data,
+          data: {
+            total: communication.total,
+            communications: data,
+          },
           message: _context.switchToHttp().getResponse().statusMessage,
         };
       }),

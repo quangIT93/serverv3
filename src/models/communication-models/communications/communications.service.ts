@@ -164,12 +164,12 @@ export class CommunicationsService {
         'communicationViews',
         'communicationViews.accountId = :accountId',
       )
-      .leftJoin(
+      .leftJoinAndSelect(
         'communications.communicationLikes',
         'communicationLikes',
         'communicationLikes.accountId = :accountId',
       )
-      .leftJoin(
+      .leftJoinAndSelect(
         'communications.communicationBookmarked',
         'communicationBookmarked',
         'communicationBookmarked.accountId = :accountId',
@@ -203,7 +203,6 @@ export class CommunicationsService {
       .getOne();
 
     if (communication) {
-      // console.log(communication);
       this.communicationViewsService.create({
         communicationId: id,
         accountId: accountId,
@@ -293,11 +292,11 @@ export class CommunicationsService {
         where: {
           type: type,
         },
-      })
+      });
 
       return {
         total,
-        data: []
+        data: [],
       };
     }
 
@@ -363,7 +362,8 @@ export class CommunicationsService {
       total: await this.communicationRepository.count({
         where: {
           type: type,
-        }}),
+        },
+      }),
       data,
     };
   }

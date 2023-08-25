@@ -54,7 +54,7 @@ export class CommunicationBookmarkedService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, limit: number , page: number){
 
     const total = await this.communicationBookmarkedRepository.count({
       where: {
@@ -101,7 +101,9 @@ export class CommunicationBookmarkedService {
         'communicationCommentsCount',
       )
       .where('communicationBookmarked.accountId = :id', { id })
-      .orderBy('communicationBookmarked.createdAt', 'ASC');
+      .orderBy('communicationBookmarked.createdAt', 'DESC')
+      .take(limit)
+      .skip(page * limit);
 
     const result = await queryBuilder.getMany();
     return {
