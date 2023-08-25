@@ -164,6 +164,10 @@ export class CommunicationsService {
         'communications.communicationViews',
         'communicationViews',
       )
+      .loadRelationCountAndMap(
+        'communications.communicationLikesCount',
+        'communications.communicationLikes',
+      )
       .leftJoinAndSelect(
         'communications.communicationLikes',
         'communicationLikes',
@@ -196,12 +200,10 @@ export class CommunicationsService {
       .getOne();
 
     if (communication) {
-      const communicationLikesCount = communication.communicationLikes.length;
       const communicationViewsCount = communication.communicationViews.length;
       const communicationCommentsCount =
         communication.communicationComments.length;
 
-      communication.communicationLikesCount = communicationLikesCount;
       communication.communicationViewsCount = communicationViewsCount;
       communication.communicationCommentsCount = communicationCommentsCount;
 
