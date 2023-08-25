@@ -293,11 +293,11 @@ export class CommunicationsService {
         where: {
           type: type,
         },
-      })
+      });
 
       return {
         total,
-        data: []
+        data: [],
       };
     }
 
@@ -363,7 +363,8 @@ export class CommunicationsService {
       total: await this.communicationRepository.count({
         where: {
           type: type,
-        }}),
+        },
+      }),
       data,
     };
   }

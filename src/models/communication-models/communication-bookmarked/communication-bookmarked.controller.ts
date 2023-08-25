@@ -69,10 +69,15 @@ export class CommunicationBookmarkedController {
   async findOne(@Req() req: CustomRequest) {
     try {
       const id = req.user?.id;
+      const { limit, page } = req.query;
 
       if (!id) throw new BadRequestException('Authorization');
 
-      return await this.communicationBookmarkedService.findOne(id);
+      return await this.communicationBookmarkedService.findOne(
+        id,
+        limit ? +limit : 20,
+        page ? +page : 0,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
