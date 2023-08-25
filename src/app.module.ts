@@ -51,6 +51,7 @@ import { CommunicationCategoriesModule } from './models/communication-models/com
 import { CommunicationImagesModule } from './models/communication-models/communication-images/communication-images.module';
 import { CommunicationCommentImagesModule } from './models/communication-models/communication-comment-images/communication-comment-images.module';
 import { CommunicationBookmarkedModule } from './models/communication-models/communication-bookmarked/communication-bookmarked.module';
+import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
 
 @Module({
   imports: [
@@ -107,6 +108,7 @@ import { CommunicationBookmarkedModule } from './models/communication-models/com
     CommunicationImagesModule,
     CommunicationCommentImagesModule,
     CommunicationBookmarkedModule,
+    CommunicationViewsModule
   ],
   controllers: [AppController, BannersController],
   providers: [

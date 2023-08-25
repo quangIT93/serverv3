@@ -7,9 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { UpdateCommunicationTransaction } from './transactions/update-communication.transaction';
 import { UpdateCommunicationAdminTransaction } from './transactions/update-communication-admin.transaction';
-// import { CommunicationCommentsService } from '../communication-comments/communication-comments.service';
-// import { CommunicationLikesService } from '../communication-likes/communication-likes.service';
-// import { CommunicationViewsService } from '../communication-views/communication-views.service';
+import { CommunicationViewsService } from '../communication-views/communication-views.service';
 
 @Injectable()
 export class CommunicationsService {
@@ -18,7 +16,8 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, // private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService,
+    private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
   ) {}
 
   handleSort(data: Communication[], sort?: string) {
@@ -86,6 +85,12 @@ export class CommunicationsService {
     page: number,
     sort?: string,
   ) {
+    const total = await this.communicationRepository.count({
+      where: {
+        accountId: id,
+      },
+    });
+
     const data = await this.communicationRepository.find({
       where: {
         accountId: id,
@@ -106,7 +111,13 @@ export class CommunicationsService {
       skip: page * limit,
     });
 
-    return this.handleSort(data, sort);
+    const dataSort = this.handleSort(data, sort);
+
+    return {
+      total,
+      data: dataSort,
+      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
+    };
   }
 
   async update(updateCommunicationDto: UpdateCommunicationDto) {
@@ -123,7 +134,7 @@ export class CommunicationsService {
 
   async getCommunicationByCommunicationId(
     id: number,
-    accountId?: string
+    accountId: string,
   ): Promise<Communication | undefined> {
     const communication = await this.communicationRepository
       .createQueryBuilder('communications')
@@ -138,61 +149,70 @@ export class CommunicationsService {
       ])
       .leftJoinAndSelect(
         'communications.communicationImages',
-        'communicationImages'
+        'communicationImages',
       )
       .leftJoinAndSelect(
         'communications.communicationCategories',
-        'communicationCategories'
+        'communicationCategories',
       )
       .leftJoinAndSelect(
         'communicationCategories.parentCategory',
-        'parentCategory'
+        'parentCategory',
       )
       .leftJoinAndSelect('communications.profile', 'profile')
-      .leftJoinAndSelect(
+      .leftJoin(
         'communications.communicationViews',
-        'communicationViews'
+        'communicationViews',
+        'communicationViews.accountId = :accountId',
       )
       .leftJoinAndSelect(
         'communications.communicationLikes',
-        'communicationLikes'
+        'communicationLikes',
+        'communicationLikes.accountId = :accountId',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationBookmarked',
+        'communicationBookmarked',
+        'communicationBookmarked.accountId = :accountId',
       )
       .leftJoinAndSelect(
         'communications.communicationComments',
-        'communicationComments'
-      )
-      .leftJoin(
-        'communicationComments.profile',
-        'communicationComments.profile'
+        'communicationComments',
       )
       .leftJoinAndSelect(
         'communicationComments.communicationCommentImages',
-        'communicationCommentImages'
+        'communicationCommentImages',
       )
       .leftJoinAndSelect(
         'communicationComments.profile',
-        'communicationCommentsProfile'
+        'communicationCommentsProfile',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationViewsCount',
+        'communications.communicationViews',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationLikesCount',
+        'communications.communicationLikes',
+      )
+      .loadRelationCountAndMap(
+        'communications.communicationCommentsCount',
+        'communications.communicationComments',
       )
       .where('communications.id = :id', { id })
+      .setParameter('accountId', accountId)
       .getOne();
-  
+
     if (communication) {
-      if (accountId) {
-        const communicationLikesCount = communication.communicationLikes.length;
-        const communicationViewsCount = communication.communicationViews.length;
-        const communicationCommentsCount = communication.communicationComments.length;
-  
-        communication.communicationLikesCount = communicationLikesCount;
-        communication.communicationViewsCount = communicationViewsCount;
-        communication.communicationCommentsCount = communicationCommentsCount;
-      }
-  
+      this.communicationViewsService.create({
+        communicationId: id,
+        accountId: accountId,
+      });
       return communication;
     }
-  
+
     return undefined;
   }
-  
 
   // update by admin
 
@@ -202,7 +222,6 @@ export class CommunicationsService {
         await this.updateCommunicationAdminTransaction.run(
           updateCommunicationDto,
         );
-
       return newCommunication;
     } catch (error) {
       throw error;
@@ -215,9 +234,76 @@ export class CommunicationsService {
     page: number,
     type: number = 0,
     sort?: string,
-    accountId?: string,
+    _accountId?: string,
   ) {
-    const queryBuilder = this.communicationRepository
+    // count all by communication id
+    // sort by sortQuery
+    // get list id with limit and page
+    // return list id
+
+    let listId = [];
+    let total: number = 0;
+    switch (sort) {
+      case 'l':
+        listId = await this.communicationRepository.query(`
+          SELECT communications.id, COUNT(communication_likes.communication_id) as likeCount
+          FROM communications
+          LEFT JOIN communication_likes ON communications.id = communication_likes.communication_id
+          WHERE communications.type = ${type} AND communications.status = 1
+          GROUP BY communications.id
+          ORDER BY likeCount DESC, communications.created_at DESC
+          LIMIT ${limit} OFFSET ${page * limit}
+        `);
+        break;
+      case 'v':
+        listId = await this.communicationRepository.query(`
+          SELECT communications.id, COUNT(communication_views.communication_id) as viewCount
+          FROM communications
+          LEFT JOIN communication_views ON communications.id = communication_views.communication_id
+          WHERE communications.type = ${type} AND communications.status = 1
+          GROUP BY communications.id
+          ORDER BY viewCount DESC
+          LIMIT ${limit} OFFSET ${page * limit}
+        `);
+        break;
+      case 'cm':
+        listId = await this.communicationRepository.query(`
+          SELECT communications.id, COUNT(communication_comments.communication_id) as commentCount
+          FROM communications
+          LEFT JOIN communication_comments ON communications.id = communication_comments.communication_id
+          WHERE communications.type = ${type} AND communications.status = 1
+          GROUP BY communications.id
+          ORDER BY commentCount DESC
+          LIMIT ${limit} OFFSET ${page * limit}
+        `);
+        break;
+      default:
+        listId = await this.communicationRepository.query(`
+          SELECT communications.id
+          FROM communications
+          WHERE communications.type = ${type} AND communications.status = 1
+          ORDER BY communications.created_at DESC
+          LIMIT ${limit} OFFSET ${page * limit}
+        `);
+        break;
+    }
+
+    if (listId.length === 0) {
+      total = await this.communicationRepository.count({
+        where: {
+          type: type,
+        },
+      });
+
+      return {
+        total,
+        is_over: true,
+        data: [],
+      };
+    }
+
+    // get data by id
+    const data = await this.communicationRepository
       .createQueryBuilder('communications')
       .select([
         'communications.id',
@@ -228,18 +314,6 @@ export class CommunicationsService {
         'communications.updatedAt',
         'communications.status',
       ])
-      .addSelect(
-        'COUNT(DISTINCT communicationLikes.communicationId)',
-        'communicationLikesCount',
-      )
-      .addSelect(
-        'COUNT(DISTINCT communicationViews.communicationId)',
-        'communicationViewsCount',
-      )
-      .addSelect(
-        'COUNT(DISTINCT communicationComments.communicationId)',
-        'communicationCommentsCount',
-      )
       .leftJoinAndSelect(
         'communications.communicationImages',
         'communicationImages',
@@ -252,81 +326,50 @@ export class CommunicationsService {
         'communicationCategories.parentCategory',
         'parentCategory',
       )
-      .leftJoinAndSelect('communications.profile', 'profile')
-      .leftJoinAndSelect(
-        'communications.communicationViews',
-        'communicationViews',
-      )
       .loadRelationCountAndMap(
         'communications.communicationViewsCount',
         'communications.communicationViews',
-      )
-      .leftJoinAndSelect(
-        'communications.communicationLikes',
-        'communicationLikes',
       )
       .loadRelationCountAndMap(
         'communications.communicationLikesCount',
         'communications.communicationLikes',
       )
-      .leftJoinAndSelect(
-        'communications.communicationComments',
-        'communicationComments',
-      )
-      .leftJoinAndSelect(
-        'communications.communicationLikes',
-        'communicationLikesChecked',
-        'communicationLikesChecked.accountId = :accountId',
-      )
-      .leftJoinAndSelect(
-        'communications.communicationBookmarked',
-        'communicationBookmarked',
-        'communicationBookmarked.accountId = :accountId',
-      )
-      .leftJoinAndSelect(
-        'communications.communicationViews',
-        'communicationViewsChecked',
-        'communicationViewsChecked.accountId = :accountId',
-      )
       .loadRelationCountAndMap(
         'communications.communicationCommentsCount',
         'communications.communicationComments',
       )
-      .where('communications.type = :type', { type })
-      .groupBy('communications.id');
-
-    queryBuilder.setParameter('accountId', accountId);
-
-    switch (sort) {
-      case 'l': // likes
-        queryBuilder
-          .orderBy('communicationLikesCount', 'DESC')
-          .addOrderBy('communications.id', 'DESC');
-
-        break;
-
-      case 'v': // views
-        queryBuilder
-          .orderBy('communicationViewsCount', 'DESC')
-          .addOrderBy('communications.id', 'DESC');
-
-        break;
-
-      case 'cm': // comments
-        queryBuilder
-          .orderBy('communicationCommentsCount', 'DESC')
-          .addOrderBy('communications.id', 'DESC');
-
-        break;
-
-      default:
-        queryBuilder.orderBy('communications.id', 'DESC');
-        break;
-    }
-
-    return await queryBuilder
-      .skip(page * limit)
-      .take(limit)
+      .leftJoinAndSelect('communications.profile', 'profile')
+      .leftJoinAndSelect(
+        'communications.communicationBookmarked',
+        'communicationBookmarked',
+        'communicationBookmarked.accountId = :_accountId',
+      )
+      .leftJoinAndSelect(
+        'communications.communicationLikes',
+        'communicationLikes',
+        'communicationLikes.accountId = :_accountId',
+      )
+      .where('communications.id IN (:...listId)', {
+        listId: listId.map((item: any) => item.id),
+      })
+      .orderBy(
+        `FIELD(communications.id, ${listId
+          .map((item: any) => item.id)
+          .join(',')})`,
+      )
+      .setParameter('_accountId', _accountId)
       .getMany();
+
+     const check = await this.communicationRepository.count({
+      where: {
+        type: type,
+      },
+    })
+
+    return {
+      total: check,
+      data,
+      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
+    };
   }
 }

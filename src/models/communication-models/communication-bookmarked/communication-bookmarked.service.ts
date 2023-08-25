@@ -1,3 +1,4 @@
+import { CommunicationViewsService } from './../communication-views/communication-views.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,7 +10,8 @@ export class CommunicationBookmarkedService {
   constructor(
     @InjectRepository(CommunicationBookmarked)
     private readonly communicationBookmarkedRepository: Repository<CommunicationBookmarked>,
-  ) {}
+    private readonly communicationViewsService: CommunicationViewsService,
+  ) { }
   async create(
     createCommunicationBookmarkedDto: CreateCommunicationBookmarkedDto,
   ) {
@@ -33,6 +35,12 @@ export class CommunicationBookmarkedService {
         this.communicationBookmarkedRepository.create(
           createCommunicationBookmarkedDto,
         );
+
+      this.communicationViewsService.create({
+        accountId: createCommunicationBookmarkedDto.accountId,
+        communicationId: createCommunicationBookmarkedDto.communicationId,
+      });
+
       return await this.communicationBookmarkedRepository.save(
         newCommunicationBookmarked,
       );
@@ -46,7 +54,14 @@ export class CommunicationBookmarkedService {
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, limit: number , page: number){
+
+    const total = await this.communicationBookmarkedRepository.count({
+      where: {
+        accountId: id
+      }
+    })
+
     const queryBuilder = this.communicationBookmarkedRepository
       .createQueryBuilder('communicationBookmarked')
       .leftJoinAndSelect(
@@ -85,9 +100,17 @@ export class CommunicationBookmarkedService {
         'communication.communicationComments',
         'communicationCommentsCount',
       )
-      .where('communicationBookmarked.accountId = :id', { id });
+      .where('communicationBookmarked.accountId = :id', { id })
+      .orderBy('communicationBookmarked.createdAt', 'DESC')
+      .take(limit)
+      .skip(page * limit);
 
     const result = await queryBuilder.getMany();
-    return result;
+
+    return {
+      total,
+      data: result,
+      is_over: (result.length === total) ? true : (result.length < limit) ? true : false
+    };
   }
 }

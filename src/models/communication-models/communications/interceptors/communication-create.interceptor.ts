@@ -6,20 +6,24 @@ import { CommunicationCreateSerialization } from '../serialization/communication
 export class CommunicationCreateInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((communication: Communication[]) => {
+      map((communication: any) => {
         const lang = _context.switchToHttp().getRequest().lang;
 
-        const data = communication.map((communication: Communication) => {
-          const communicationCreateSerialization = new CommunicationCreateSerialization(
-            communication,
-            lang,
-          );
+        if (!communication || !communication.data) return null;
+
+        const data = communication?.data.map((communication: Communication) => {
+          const communicationCreateSerialization =
+            new CommunicationCreateSerialization(communication, lang);
           return communicationCreateSerialization;
         });
 
         return {
           status: _context.switchToHttp().getResponse().statusCode,
-          data: data,
+          data: {
+            total: communication.total,
+            communications: data,
+            is_over: communication.is_over
+          },
           message: _context.switchToHttp().getResponse().statusMessage,
         };
       }),

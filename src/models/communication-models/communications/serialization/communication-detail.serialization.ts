@@ -21,17 +21,12 @@ export class CommunicationDetailSerialization extends Communication {
   @Exclude({ toPlainOnly: true })
   lang!: Language;
 
-  @Exclude({ toPlainOnly: true })
-  check: boolean;
-
   constructor(
     communication: Communication,
     lang: Language,
-    check: boolean = false,
   ) {
     super();
     this.lang = lang;
-    this.check = check;
     Object.assign(this, communication);
   }
 
@@ -82,7 +77,7 @@ export class CommunicationDetailSerialization extends Communication {
         id: data.id,
         content: data.content,
         createdAt: data.createdAt.getTime(),
-        createdAtText: timeToTextTransform(this.createdAt.getTime(), this.lang),
+        createdAtText: timeToTextTransform(data.createdAt.getTime(), this.lang),
         profile: {
           name: data.profile ? data.profile.name : null,
           avatar: data.profile
@@ -106,6 +101,7 @@ export class CommunicationDetailSerialization extends Communication {
   @Expose()
   get profileData() {
     return {
+      id: this.profile.accountId,
       name: this.profile ? this.profile.name : null,
       avatarPath: this.profile
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
@@ -116,14 +112,21 @@ export class CommunicationDetailSerialization extends Communication {
   @Expose()
   get image() {
     if (!this.communicationImages || this.communicationImages.length === 0)
-      return null;
-    const data = `${BUCKET_IMAGE_COMMUNICATION}/${this.id}/${this.communicationImages[0].image}`;
+      return [];
+    const data = this.communicationImages?.map((image) => {
+      return {
+        id : image.id,
+        image : `${BUCKET_IMAGE_COMMUNICATION}/${image.communicationId}/${image.image}`
+      };
+    })
+
     return data;
+
   }
 
   @Expose()
   get bookmarked() {
-    return this.communicationBookmarked?.length > 0 || this.check
+    return this.communicationBookmarked?.length > 0
       ? true
       : false;
   }
@@ -135,6 +138,6 @@ export class CommunicationDetailSerialization extends Communication {
 
   @Expose()
   get viewd() {
-    return this.communicationViews?.length > 0 ? true : false;
+    return true;
   }
 }

@@ -11,7 +11,6 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CommunicationBookmarkedService } from './communication-bookmarked.service';
-// import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
@@ -70,10 +69,15 @@ export class CommunicationBookmarkedController {
   async findOne(@Req() req: CustomRequest) {
     try {
       const id = req.user?.id;
+      const { limit, page } = req.query;
 
       if (!id) throw new BadRequestException('Authorization');
 
-      return await this.communicationBookmarkedService.findOne(id);
+      return await this.communicationBookmarkedService.findOne(
+        id,
+        limit ? +limit : 20,
+        page ? +page : 0,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
