@@ -106,9 +106,11 @@ export class CommunicationBookmarkedService {
       .skip(page * limit);
 
     const result = await queryBuilder.getMany();
+
     return {
       total,
-      data: result
+      data: result,
+      is_over: (result.length === total) ? true : (result.length < limit) ? true : false
     };
   }
 }

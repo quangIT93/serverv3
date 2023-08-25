@@ -116,6 +116,7 @@ export class CommunicationsService {
     return {
       total,
       data: dataSort,
+      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
     };
   }
 
@@ -296,6 +297,7 @@ export class CommunicationsService {
 
       return {
         total,
+        is_over: true,
         data: [],
       };
     }
@@ -358,13 +360,16 @@ export class CommunicationsService {
       .setParameter('_accountId', _accountId)
       .getMany();
 
+     const check = await this.communicationRepository.count({
+      where: {
+        type: type,
+      },
+    })
+
     return {
-      total: await this.communicationRepository.count({
-        where: {
-          type: type,
-        },
-      }),
+      total: check,
       data,
+      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
     };
   }
 }

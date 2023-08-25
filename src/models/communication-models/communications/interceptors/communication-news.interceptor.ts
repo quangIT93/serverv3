@@ -8,22 +8,10 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((communication: any) => {
         const lang = _context.switchToHttp().getRequest().lang;
-        
-        if (!communication || !communication.data) 
-        {
-          return {
-            status: _context.switchToHttp().getResponse().statusCode,
-            total: communication.total,
-            data: [],
-            message: _context.switchToHttp().getResponse().statusMessage,
-          };
-        }
 
         if (communication.length > _context.switchToHttp().getRequest().checkOverLimit ) {
           communication.pop();
         }
-
-        // console.log('communication', communication);
 
         const data = communication?.data?.map((communication: Communication) => {
           const communicationSerialization = new CommunicationSerialization(
@@ -38,6 +26,7 @@ export class CommunicationNewsInterceptor implements NestInterceptor {
           data: {
             total: communication.total,
             communications: data,
+            is_over: communication.is_over
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };

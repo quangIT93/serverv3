@@ -22,6 +22,7 @@ export class CommunicationCreateInterceptor implements NestInterceptor {
           data: {
             total: communication.total,
             communications: data,
+            is_over: communication.is_over
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };

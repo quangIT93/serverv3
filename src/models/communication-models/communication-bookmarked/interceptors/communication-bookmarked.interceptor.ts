@@ -27,6 +27,7 @@ export class CommunicationBookmarkedInterceptor implements NestInterceptor {
           data: {
             total: communicationBookmarked.total,
             communications: data,
+            is_over: communicationBookmarked.is_over
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };
