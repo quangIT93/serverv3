@@ -85,6 +85,12 @@ export class CommunicationsService {
     page: number,
     sort?: string,
   ) {
+    const total = await this.communicationRepository.count({
+      where: {
+        accountId: id,
+      },
+    });
+
     const data = await this.communicationRepository.find({
       where: {
         accountId: id,
@@ -105,7 +111,12 @@ export class CommunicationsService {
       skip: page * limit,
     });
 
-    return this.handleSort(data, sort);
+    const dataSort = this.handleSort(data, sort);
+
+    return {
+      total,
+      data: dataSort,
+    };
   }
 
   async update(updateCommunicationDto: UpdateCommunicationDto) {
@@ -229,7 +240,9 @@ export class CommunicationsService {
     // sort by sortQuery
     // get list id with limit and page
     // return list id
+
     let listId = [];
+    let total: number = 0;
     switch (sort) {
       case 'l':
         listId = await this.communicationRepository.query(`
@@ -276,11 +289,20 @@ export class CommunicationsService {
     }
 
     if (listId.length === 0) {
-      return [];
+      total = await this.communicationRepository.count({
+        where: {
+          type: type,
+        },
+      })
+
+      return {
+        total,
+        data: []
+      };
     }
 
     // get data by id
-    return await this.communicationRepository
+    const data = await this.communicationRepository
       .createQueryBuilder('communications')
       .select([
         'communications.id',
@@ -320,7 +342,6 @@ export class CommunicationsService {
         'communications.communicationBookmarked',
         'communicationBookmarked',
         'communicationBookmarked.accountId = :_accountId',
-
       )
       .leftJoinAndSelect(
         'communications.communicationLikes',
@@ -337,6 +358,14 @@ export class CommunicationsService {
       )
       .setParameter('_accountId', _accountId)
       .getMany();
+
+    return {
+      total: await this.communicationRepository.count({
+        where: {
+          type: type,
+        }}),
+      data,
+    };
   }
 
   
