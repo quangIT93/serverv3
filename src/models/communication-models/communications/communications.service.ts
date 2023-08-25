@@ -16,9 +16,9 @@ export class CommunicationsService {
     private readonly communicationRepository: Repository<Communication>,
     private readonly createCommunicationTransaction: CreateCommunicationTransaction,
     private readonly updateCommunicationTransaction: UpdateCommunicationTransaction,
-    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService, 
+    private readonly updateCommunicationAdminTransaction: UpdateCommunicationAdminTransaction, // private readonly communicationLikesService: CommunicationLikesService,
     private readonly communicationViewsService: CommunicationViewsService, // private readonly communicationCommentsService: CommunicationCommentsService,
-  ) { }
+  ) {}
 
   handleSort(data: Communication[], sort?: string) {
     if (sort === 'l') {
@@ -367,6 +367,4 @@ export class CommunicationsService {
       data,
     };
   }
-
-  
 }

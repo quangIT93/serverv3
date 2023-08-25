@@ -15,7 +15,6 @@ import {
   Put,
   ParseIntPipe,
   UnauthorizedException,
-  Query,
   Ip,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
@@ -32,7 +31,6 @@ import {
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CommunicationImagesPipe } from './interceptors/image.interceptor';
-import { CommunicationInterceptor } from './interceptors/communication.interceptor';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
 import { ResizeImageResult } from 'src/common/helper/transform/resize-image';
@@ -85,60 +83,6 @@ export class CommunicationsController {
     }
   }
 
-  /**
-   *
-   * @param req
-   * @returns
-   *
-   * @description
-   * Uses: at home page
-   * Get limit communication by type
-   * Return 2 array: news and working story
-   */
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-  })
-  @ApiQuery({
-    name: 'type',
-    description: '0: new jobs, 1: working story',
-    required: false,
-    enum: [0, 1],
-  })
-  @ApiQuery({
-    name: 'sort',
-    required: false,
-    enum: ['cm', 'l', 'v'],
-    description: 'cm (comments), l (likes), v (views).',
-  })
-  @UseInterceptors(ClassSerializerInterceptor, CommunicationInterceptor)
-  @Get()
-  async findAll(
-    @Req() req: CustomRequest,
-    @Query('type', ParseIntPipe) type: number | undefined,
-    @Query('sort') sort: string,
-  ) {
-    try {
-    const { limit = 5, page = 0 } = req;
-
-      return await this.communicationsService.findCommunicationsByType(
-        limit,
-        page,
-        type ? type : 0,
-        sort?.toString(),
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error finding communication');
-    }
-  }
-
   // Get five hijob news
 
   @UseInterceptors(ClassSerializerInterceptor, CommunicationNewsInterceptor)
@@ -170,14 +114,14 @@ export class CommunicationsController {
 
       const { limit = 5, page = 0 } = req;
 
-      const accountId = req.user?.id
+      const accountId = req.user?.id;
 
       return await this.communicationsService.findCommunicationsByType(
         limit ? +limit - 1 : 5,
         page ? +page : 0,
         type ? +type : 0,
         sort?.toString(),
-        accountId
+        accountId,
       );
     } catch (error) {
       if (error instanceof Error) {
@@ -275,10 +219,17 @@ export class CommunicationsController {
     required: true,
   })
   @UseGuards(AuthNotRequiredGuard)
-  async getByCommunicationId(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest, @Ip() ip: string ) {
+  async getByCommunicationId(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: CustomRequest,
+    @Ip() ip: string,
+  ) {
     try {
       const accountId = req.user?.id || ip;
-      return this.communicationsService.getCommunicationByCommunicationId(id, accountId);
+      return this.communicationsService.getCommunicationByCommunicationId(
+        id,
+        accountId,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

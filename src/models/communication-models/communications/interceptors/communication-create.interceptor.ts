@@ -12,10 +12,8 @@ export class CommunicationCreateInterceptor implements NestInterceptor {
         if (!communication || !communication.data) return null;
 
         const data = communication?.data.map((communication: Communication) => {
-          const communicationCreateSerialization = new CommunicationCreateSerialization(
-            communication,
-            lang,
-          );
+          const communicationCreateSerialization =
+            new CommunicationCreateSerialization(communication, lang);
           return communicationCreateSerialization;
         });
 
@@ -23,7 +21,7 @@ export class CommunicationCreateInterceptor implements NestInterceptor {
           status: _context.switchToHttp().getResponse().statusCode,
           data: {
             total: communication.total,
-            communications: data
+            communications: data,
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };
