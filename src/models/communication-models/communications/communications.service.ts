@@ -164,12 +164,12 @@ export class CommunicationsService {
         'communicationViews',
         'communicationViews.accountId = :accountId',
       )
-      .leftJoin(
+      .leftJoinAndSelect(
         'communications.communicationLikes',
         'communicationLikes',
         'communicationLikes.accountId = :accountId',
       )
-      .leftJoin(
+      .leftJoinAndSelect(
         'communications.communicationBookmarked',
         'communicationBookmarked',
         'communicationBookmarked.accountId = :accountId',
@@ -203,7 +203,6 @@ export class CommunicationsService {
       .getOne();
 
     if (communication) {
-      // console.log(communication);
       this.communicationViewsService.create({
         communicationId: id,
         accountId: accountId,

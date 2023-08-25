@@ -101,6 +101,7 @@ export class CommunicationDetailSerialization extends Communication {
   @Expose()
   get profileData() {
     return {
+      id: this.profile.accountId,
       name: this.profile ? this.profile.name : null,
       avatarPath: this.profile
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
@@ -137,6 +138,6 @@ export class CommunicationDetailSerialization extends Communication {
 
   @Expose()
   get viewd() {
-    return this.communicationViews?.length > 0 ? true : false;
+    return true;
   }
 }
