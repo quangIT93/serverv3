@@ -1,3 +1,4 @@
+import { CommunicationViewsService } from './../communication-views/communication-views.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationBookmarkedDto } from './dto/create-communication-bookmarked.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,7 +10,8 @@ export class CommunicationBookmarkedService {
   constructor(
     @InjectRepository(CommunicationBookmarked)
     private readonly communicationBookmarkedRepository: Repository<CommunicationBookmarked>,
-  ) {}
+    private readonly communicationViewsService: CommunicationViewsService,
+  ) { }
   async create(
     createCommunicationBookmarkedDto: CreateCommunicationBookmarkedDto,
   ) {
@@ -33,6 +35,12 @@ export class CommunicationBookmarkedService {
         this.communicationBookmarkedRepository.create(
           createCommunicationBookmarkedDto,
         );
+
+      this.communicationViewsService.create({
+        accountId: createCommunicationBookmarkedDto.accountId,
+        communicationId: createCommunicationBookmarkedDto.communicationId,
+      });
+
       return await this.communicationBookmarkedRepository.save(
         newCommunicationBookmarked,
       );
@@ -93,7 +101,7 @@ export class CommunicationBookmarkedService {
         'communicationCommentsCount',
       )
       .where('communicationBookmarked.accountId = :id', { id })
-      .orderBy('communicationBookmarked.createdAt', 'ASC'); 
+      .orderBy('communicationBookmarked.createdAt', 'ASC');
 
     const result = await queryBuilder.getMany();
     return {

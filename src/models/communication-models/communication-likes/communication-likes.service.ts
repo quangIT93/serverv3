@@ -1,3 +1,4 @@
+import { CommunicationViewsService } from './../communication-views/communication-views.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationLikeDto } from './dto/create-communication-like.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +10,7 @@ export class CommunicationLikesService {
   constructor(
     @InjectRepository(CommunicationLike)
     private readonly communicationsLikeRepository: Repository<CommunicationLike>,
+    private readonly communicationViewsService: CommunicationViewsService,
   ) {}
   async createOrDelete(createCommunicationLikeDto: CreateCommunicationLikeDto) {
     try {
@@ -30,6 +32,12 @@ export class CommunicationLikesService {
       const newCommunicationLike = this.communicationsLikeRepository.create(
         createCommunicationLikeDto,
       );
+
+      this.communicationViewsService.create({
+        accountId: createCommunicationLikeDto.accountId,
+        communicationId: createCommunicationLikeDto.communicationId,
+      })
+
       return await this.communicationsLikeRepository.save(newCommunicationLike);
     } catch (error) {
       if (error instanceof Error) {

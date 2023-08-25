@@ -16,7 +16,6 @@ import {
   ParseIntPipe,
   UnauthorizedException,
   Query,
-  Ip,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -41,11 +40,12 @@ import { CommunicationCreateInterceptor } from './interceptors/communication-cre
 import { RoleGuard } from 'src/authentication/role.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
+import ip from 'ip'
 
 @ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
-  constructor(private readonly communicationsService: CommunicationsService) {}
+  constructor(private readonly communicationsService: CommunicationsService) { }
 
   // create communication by user
 
@@ -123,7 +123,7 @@ export class CommunicationsController {
     @Query('sort') sort: string,
   ) {
     try {
-    const { limit = 5, page = 0 } = req;
+      const { limit = 5, page = 0 } = req;
 
       return await this.communicationsService.findCommunicationsByType(
         limit,
@@ -170,14 +170,14 @@ export class CommunicationsController {
 
       const { limit = 5, page = 0 } = req;
 
-      const accountId = req.user?.id
+      const accountId = req.user?.id;
 
       return await this.communicationsService.findCommunicationsByType(
         limit ? +limit - 1 : 5,
         page ? +page : 0,
         type ? +type : 0,
         sort?.toString(),
-        accountId
+        accountId,
       );
     } catch (error) {
       if (error instanceof Error) {
@@ -275,10 +275,16 @@ export class CommunicationsController {
     required: true,
   })
   @UseGuards(AuthNotRequiredGuard)
-  async getByCommunicationId(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest, @Ip() ip: string ) {
+  async getByCommunicationId(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: CustomRequest,
+  ) {
     try {
-      const accountId = req.user?.id || ip;
-      return this.communicationsService.getCommunicationByCommunicationId(id, accountId);
+      const accountId = req.user?.id || ip.address();
+      return this.communicationsService.getCommunicationByCommunicationId(
+        id,
+        accountId,
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
