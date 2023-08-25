@@ -28,7 +28,7 @@ export class HotTopicSerializer {
             title: entity.title,
             image: entity.image,
             themeId: entity.themeId,
-            query: entity.id !== 6 ? generateQuery(entity.id) : {[QUERY_LIST_CHILDREN_CATEGORY_ID]: "394,370"},
+            query: entity.id !== 6 ? [generateQuery(entity.id)] : [{[QUERY_LIST_CHILDREN_CATEGORY_ID]: "394,370"}],
             api: `/api/v3/posts/topic/${entity.id}`,
         });
     }
