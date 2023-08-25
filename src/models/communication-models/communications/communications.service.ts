@@ -358,7 +358,10 @@ export class CommunicationsService {
       .getMany();
 
     return {
-      total,
+      total: await this.communicationRepository.count({
+        where: {
+          type: type,
+        }}),
       data,
     };
   }
