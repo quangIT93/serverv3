@@ -17,7 +17,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 // import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostNormallyInterceptor } from './interceptors/posts-normally.interceptor';
@@ -51,6 +51,7 @@ export class PostsController {
         return this.postsService.findByAccountId(accountId);
     }
 
+    @ApiQuery({ name: 'threshold', required: false })
     @Get('newest')
     @UseGuards(AuthNotRequiredGuard)
     @UseInterceptors(PostNormallyInterceptor)
@@ -59,7 +60,8 @@ export class PostsController {
         @Req() req: any,
     ) {
         const { limit, page } = req;
-        return this.postsService.getNewestPosts(limit, page, queries);
+        const { threshold } = queries;
+        return this.postsService.getNewestPosts(limit, page, queries, threshold);
     }
 
     @ApiBearerAuth('JWT-auth')
@@ -72,28 +74,6 @@ export class PostsController {
         @Param('id', ParseIntPipe) id: number,
     ) {
         const { limit, page } = req;
-
-        // const {
-        //     childrenCategoryId,
-        //     parentCategoryId,
-        //     isRemotely,
-        //     isShortTimeJobs,
-        //     jobType,
-        // } = hotTopicQueries;
-        
-        // const query = {
-        //     childrenCategoryId,
-        //     parentCategoryId,
-        //     isRemotely,
-        //     isShortTimeJobs,
-        //     jobType,
-        // };
-
-        // if (Object.keys(query).length === 0) {
-        //     return [];
-        // }
-
-
         return this.postsService.findByHotTopicId(id, limit, page); 
     }
 

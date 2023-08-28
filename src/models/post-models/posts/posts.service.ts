@@ -198,8 +198,8 @@ export class PostsService {
     return this.postsRepository.delete(id);
   }
 
-  async getNewestPosts(limit: number, page: number, queries?: NewestPostQueriesDto): Promise<any[]> {
+  async getNewestPosts(limit: number, page: number, queries?: NewestPostQueriesDto, threshold?: number): Promise<any[]> {
     return new PostsQueryBuilder(this.postsRepository)
-    .getNewestPosts(page, limit, queries);
+    .getNewestPosts(page, limit, queries, threshold);
   }    
 }
