@@ -329,7 +329,7 @@ export class CommunicationsController {
       await this.communicationsService.deleteCommunication(+id, accountId);
 
       return {
-        status: HttpStatus.OK,
+        statusCode: HttpStatus.OK,
         message: 'Communication deleted successfully'
       }
     } catch (error) {

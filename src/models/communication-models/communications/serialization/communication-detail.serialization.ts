@@ -79,6 +79,7 @@ export class CommunicationDetailSerialization extends Communication {
         createdAt: data.createdAt.getTime(),
         createdAtText: timeToTextTransform(data.createdAt.getTime(), this.lang),
         profile: {
+          id: data.profile ? data.profile.accountId : null,
           name: data.profile ? data.profile.name : null,
           avatar: data.profile
             ? `${BUCKET_IMAGE_AVATAR}/${data.profile.avatar}`

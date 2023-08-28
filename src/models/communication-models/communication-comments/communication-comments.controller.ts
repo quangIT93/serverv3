@@ -121,20 +121,16 @@ export class CommunicationCommentsController {
     @Req() req: CustomRequest,
     @Param('communicationId', ParseIntPipe) communicationId: number,
     @Body() deleteCommunicationCommentDto: DeleteCommunicationCommentDto,
-    @Param('commentId', ParseIntPipe) commentId: number
-  ){
-
-    if (!req.user?.id) return new BadGatewayException('Authorization')
+    @Param('commentId', ParseIntPipe) commentId: number,
+  ) {
+    if (!req.user?.id) return new BadGatewayException('Authorization');
 
     deleteCommunicationCommentDto.communicationId = +communicationId;
     deleteCommunicationCommentDto.commentId = +commentId;
     deleteCommunicationCommentDto.accountId = req.user?.id ? req.user.id : '';
 
-    return {
-      status: HttpStatus.OK,
-      message: await this.communicationCommentsService.delete(
-        deleteCommunicationCommentDto
-      )
-    }
+    return await this.communicationCommentsService.delete(
+      deleteCommunicationCommentDto,
+    );
   }
 }
