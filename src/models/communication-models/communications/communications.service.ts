@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
 import { UpdateCommunicationDto } from './dto/update-communication.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -116,7 +116,8 @@ export class CommunicationsService {
     return {
       total,
       data: dataSort,
-      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
+      is_over:
+        data.length === total ? true : data.length < limit ? true : false,
     };
   }
 
@@ -360,16 +361,36 @@ export class CommunicationsService {
       .setParameter('_accountId', _accountId)
       .getMany();
 
-     const check = await this.communicationRepository.count({
+    const check = await this.communicationRepository.count({
       where: {
         type: type,
       },
-    })
+    });
 
     return {
       total: check,
       data,
-      is_over: (data.length === total) ? true : (data.length < limit) ? true : false
+      is_over:
+        data.length === total ? true : data.length < limit ? true : false,
     };
+  }
+
+  async deleteCommunication(id: number, accountId: string) {
+    try {
+      const communication = await this.communicationRepository.findOne({
+        where: {
+          id,
+          accountId: accountId,
+        },
+      });
+
+      if (!communication) {
+        throw new BadRequestException('Not found communication');
+      }
+
+      await this.communicationRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
   }
 }

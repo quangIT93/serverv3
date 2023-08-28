@@ -15,6 +15,7 @@ import {
   Put,
   ParseIntPipe,
   UnauthorizedException,
+  Delete,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -311,6 +312,31 @@ export class CommunicationsController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error update communication');
+    }
+  }
+
+  @Delete('delete/:id')
+  @UseGuards(AuthGuard)
+  async deleteCommunication(
+    @Param('id') id: string, @Req() req: CustomRequest
+  ) {
+    try {
+      const accountId = req.user?.id ? req.user.id : '';
+
+      if (!accountId) {
+        throw new BadRequestException('Authentication')
+      }
+      await this.communicationsService.deleteCommunication(+id, accountId);
+
+      return {
+        status: HttpStatus.OK,
+        message: 'Communication deleted successfully'
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error delete communication');
     }
   }
 }
