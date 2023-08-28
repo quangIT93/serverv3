@@ -5,7 +5,6 @@ import { CreateHotTopicDto } from './dto/create-hot-topic.dto';
 // import { HotTopicsInterxceptor } from './interceptors/hot-topics.interceptor';
 import { ResponseInterceptor } from 'src/common/interceptors/response.interceptors';
 import { PostsService } from '../post-models/posts/posts.service';
-import { HotTopicQueriesDto } from '../post-models/posts/dto/hot-topic-queries.dto';
 
 @ApiTags('hot-topics')
 @Controller('topics')
@@ -19,8 +18,9 @@ export class HotPostsController {
   @UseInterceptors(ResponseInterceptor)
   async getHotTopics() {
     const hotTopics = await this.hotTopicService.getHotTopics();
-    return Promise.all(hotTopics.map(async (hotTopic: { query: string[]; }) => {
-      let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
+    return Promise.all(hotTopics.map(async (hotTopic) => {
+      // let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
+      let count = await this.postsService.countByHotTopicId(hotTopic.id);
       return {
           ...hotTopic,
           count

@@ -1,44 +1,15 @@
+explain
 SELECT
-        posts.id,
-        posts.account_id,
-        posts.title,
-        posts.company_name,
-        posts.ward_id,
-        posts.start_date,
-        posts.end_date,
-        posts.start_time,
-        posts.end_time,
-        posts.salary_min,
-        posts.salary_max,
-        posts.salary_type as salary_type_id,
-        posts.money_type,
-        posts.created_at,
-        posts.status,
-        posts.is_inhouse_data,
-        posts.job_type,
-        wards.name as ward_name,
-        districts.id as district_id,
-        districts.name as district_name,
-        provinces.name as province_name,
-        provinces.id as province_id,
-        post_images.image AS image,
-        posts.expired_date,
-        company_resource.icon as company_resource_icon
-        FROM posts use index (rev_id_idx)
-    LEFT JOIN wards
-    ON wards.id = posts.ward_id
-    LEFT JOIN districts
-    ON districts.id = wards.district_id
-    LEFT JOIN provinces
-    ON provinces.id = districts.province_id
-    LEFT JOIN salary_types
-    ON salary_types.id = posts.salary_type
-    LEFT JOIN post_images
-    ON post_images.post_id = posts.id
-    LEFT JOIN post_resource
-    ON post_resource.post_id = posts.id
-    LEFT JOIN company_resource
-    ON company_resource.id = post_resource.company 
-    LEFT JOIN job_types
-    ON job_types.id = posts.job_type
-where  status = 1   order by created_at_date DESC, field(company_resource_id,2) desc,id desc
+	posts.id, posts.company_resource_id
+FROM posts use index(rev_id_idx)
+INNER JOIN wards ON posts.ward_id = wards.id
+INNER JOIN districts ON districts.id = wards.district_id
+INNER JOIN (SELECT * FROM posts_categories GROUP BY post_id) as posts_categories ON posts_categories.post_id = posts.id
+INNER JOIN child_categories ON child_categories.id = posts_categories.category_id
+WHERE posts.status = 1
+	AND (posts.expired_date IS NULL OR posts.expired_date >= NOW())
+	AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
+    WHERE (posts.company_resource_id = 2 AND id < 84215) OR (posts.company_resource_id != 2 AND id < 84215)
+GROUP BY posts.id
+ORDER BY created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
+LIMIT 21 OFFSET 0
