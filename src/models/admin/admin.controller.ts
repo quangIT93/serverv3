@@ -30,7 +30,13 @@ export class AdminController {
                 throw new BadRequestException('Max 10 mail in 1 request');
             }
             
-            return this.adminService.sendAdsMail(data, req.user.id);
+            await this.adminService.sendAdsMail(data, req.user.id);
+
+            return {
+                status: 200,
+                message: 'Send mail successfully'
+            }
+
         } catch (error) {
             throw new BadRequestException('Send mail failed');
         }
