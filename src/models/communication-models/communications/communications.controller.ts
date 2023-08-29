@@ -206,7 +206,7 @@ export class CommunicationsController {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error update communication');
+      throw new BadRequestException('Error update communication')
     }
   }
 
@@ -226,6 +226,7 @@ export class CommunicationsController {
   ) {
     try {
       const accountId = req.user?.id || ip.address();
+
       return this.communicationsService.getCommunicationByCommunicationId(
         id,
         accountId,
@@ -299,6 +300,7 @@ export class CommunicationsController {
     listImages: ResizeImageResult[] | undefined,
   ) {
     try {
+
       updateCommunicationDto.id = id;
       updateCommunicationDto.images = listImages;
 
@@ -327,6 +329,28 @@ export class CommunicationsController {
         throw new BadRequestException('Authentication')
       }
       await this.communicationsService.deleteCommunication(+id, accountId);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Communication deleted successfully'
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error delete communication');
+    }
+  }
+
+
+  @Delete('by-admin/:id')
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  async deleteCommunicationByAdmin (
+    @Param('id') id: string,
+  ){
+    try {
+      await this.communicationsService.deleteCommunicationByAdmin(+id);
 
       return {
         statusCode: HttpStatus.OK,

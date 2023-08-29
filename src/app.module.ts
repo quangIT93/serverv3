@@ -52,6 +52,8 @@ import { CommunicationImagesModule } from './models/communication-models/communi
 import { CommunicationCommentImagesModule } from './models/communication-models/communication-comment-images/communication-comment-images.module';
 import { CommunicationBookmarkedModule } from './models/communication-models/communication-bookmarked/communication-bookmarked.module';
 import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
+import { AdminModule } from './models/admin/admin.module';
+import { MailLoggerModule } from './models/log/mail-logger/mail-logger.module';
 
 @Module({
   imports: [
@@ -108,7 +110,12 @@ import { CommunicationViewsModule } from './models/communication-models/communic
     CommunicationImagesModule,
     CommunicationCommentImagesModule,
     CommunicationBookmarkedModule,
-    CommunicationViewsModule
+    CommunicationViewsModule,
+
+    //admin
+    AdminModule,
+
+    MailLoggerModule,
   ],
   controllers: [AppController, BannersController],
   providers: [

@@ -35,7 +35,7 @@ export class CommunicationViewSerialization extends CommunicationView {
 
   @Expose()
   get avatar() {
-    return this.profile
+    return (this.profile && this.profile?.avatar)
       ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
       : null;
   }

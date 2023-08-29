@@ -10,6 +10,7 @@ export default registerAs('database', () => ({
     database: process.env["DB_DATABASE"],
     // synchronize: process.env.DB_SYNCHRONIZE,
     logging: process.env["DB_LOGGING"],
+    mode: process.env["APP_ENV"],
     entities: [
         // process.env.DB_ENTITIES
     ],

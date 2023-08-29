@@ -5,6 +5,8 @@
     "tsConfigPath": "tsconfig.build.json",
     "deleteOutDir": true,
     "plugins": [],
-    "assets": ["mail/templates", "mail/assets"]
+    "collection": "@nestjs/schematics",
+    "assets": ["services/mail/templates"],
+    "watchAssets": true
   }
 }

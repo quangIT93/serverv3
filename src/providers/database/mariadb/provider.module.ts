@@ -4,17 +4,15 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
 import { MariadbConfigService } from "src/config/database/mariadb/config.service";
 import { MariadbConfigModule } from "src/config/database/mariadb/config.module";
 import { DataSource } from "typeorm";
-import { AppConfigService } from "src/config/app/config.service";
-import { AppConfigModule } from "src/config/app/config.module";
 
 @Module({
     imports: [
         TypeOrmModule.forRootAsync({
             // name: 'aiwork_gig_app',
-            imports: [MariadbConfigModule, AppConfigModule],
-            inject: [MariadbConfigService, AppConfigService],
+            imports: [MariadbConfigModule],
+            inject: [MariadbConfigService],
             // useClass: MariadbConfigService,
-            useFactory: async (mariadbConfigService: MariadbConfigService, appconfigService: AppConfigService) => ({
+            useFactory: async (mariadbConfigService: MariadbConfigService) => ({
                 type: 'mysql',
                 host: mariadbConfigService.host,
                 port: mariadbConfigService.port,
@@ -23,7 +21,7 @@ import { AppConfigModule } from "src/config/app/config.module";
                 database: mariadbConfigService.database,
                 // synchronize: true,
                 // autoLoadEntities: true,
-                logging: appconfigService.mode === 'development' ? true : true,
+                logging: mariadbConfigService.mode === 'development' ? true : false,
                 entities: [...mariadbConfigService.entities],
                 // entities: 
                 // migrations: mariadbConfigService.migrations,
