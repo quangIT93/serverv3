@@ -16,4 +16,5 @@ export class AdsMailOptionsDto {
     // @IsNotEmpty()
     // @IsString()
     // link: string;
+    [key: string]: any;
 }

@@ -19,6 +19,7 @@ export class AdminService {
             const mailSet = new Set();
             data.forEach((item) => {
                 mailSet.add(item.to);
+                item['subject'] = "Nền tảng tuyển dụng mới";
             });
 
             if (mailSet.size !== data.length) {
