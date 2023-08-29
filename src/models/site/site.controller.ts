@@ -4,17 +4,20 @@ import { Language } from "src/common/enum";
 import * as fs from 'fs';
 // import path from 'path'; 
 import { CustomRequest } from "src/common/interfaces/customRequest.interface";
+import { SiteService } from "./site.service";
 
 @ApiTags('Site')
 @Controller('site')
 export class SiteController {
-    constructor() {}
+    constructor(
+        private readonly siteService: SiteService
+    ) {}
 
     @Get('jobs')
-    getJobs() {
+    async getJobs() {
         return {
             data: {
-                total: 74953,
+                total: await this.siteService.countAllPosts(),
             }
         };
     }

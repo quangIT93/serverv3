@@ -29,6 +29,11 @@ export class NewestPostQueriesDto {
     @IsOptional()
     [QUERY_PROVINCES]?: string;
 
+    @ApiProperty({ type: 'number', required: false, format: 'number' })
+    @IsNumber()
+    @IsOptional()
+    threshold?: number;
+
 
     [key: string]: any;
 

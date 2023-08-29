@@ -7,6 +7,7 @@ import {
     QUERY_IS_SHORT_TIME_JOBS,
     QUERY_IS_TODAY_JOBS,
     QUERY_JOB_TYPE,
+    QUERY_LIST_CHILDREN_CATEGORY_ID,
     QUERY_PARENT_CATEGORY_ID,
 } from 'src/common/constants';
 import { HotTopicQueriesDto } from '../dto/hot-topic-queries.dto';
@@ -49,6 +50,16 @@ function __init__(respository: Repository<Post>, query: HotTopicQueriesDto) {
         });
     }
 
+    if (query[QUERY_LIST_CHILDREN_CATEGORY_ID]) {
+        queryBuilder.andWhere(
+            `categories.id IN (:...${QUERY_LIST_CHILDREN_CATEGORY_ID})`,
+            {
+                [QUERY_LIST_CHILDREN_CATEGORY_ID]:
+                    query[QUERY_LIST_CHILDREN_CATEGORY_ID],
+            },
+        );
+    }
+
     return queryBuilder;
 }
 
@@ -66,6 +77,7 @@ export function findByHotTopicQuery(
     page: number,
     limit: number,
 ) {
+    console.log(query);
     const queryBuilder = __init__(respository, query);
     return queryBuilder
         .orderBy('posts.createdAt', 'DESC')

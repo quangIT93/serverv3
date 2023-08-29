@@ -59,10 +59,23 @@ export class PostsQueryBuilder {
      *
      */
     async getNewestPosts(
-        page: number,
+        _page: number,
         limit: number,
         _queries?: NewestPostQueriesDto,
+        _threshold?: number,
     ): Promise<Post[]> {
+        let lastCompanyResourceId = null;
+
+        if (_threshold) {
+            lastCompanyResourceId = await this.repository
+                .createQueryBuilder('posts')
+                .select(['posts.companyResourceId'])
+                .where(`posts.id = :id`, {
+                    id: _threshold,
+                })
+                .getOne();
+        }
+
         const listIds = await this.repository.query(`
             SELECT
                 posts.id
@@ -86,26 +99,14 @@ export class PostsQueryBuilder {
             WHERE posts.status = 1
                 AND (posts.expired_date IS NULL OR posts.expired_date >= NOW())
                 AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
+                AND ${lastCompanyResourceId ? lastCompanyResourceId.companyResourceId  === 2
+                ? `(posts.company_resource_id != 2 OR posts.id < ${_threshold})`
+                : `(posts.id < ${_threshold} AND posts.company_resource_id != 2)` : '1=1'
+            }
             GROUP BY posts.id
             ORDER BY created_at_date DESC, field(company_resource_id,2) desc, posts.id desc
-            LIMIT ${limit} OFFSET ${page * (limit - 1)}
+            LIMIT ${limit}
         `);
-
-        // const listIds = await this.init()
-        //     .innerJoinAndSelect('posts.ward', 'ward')
-        //     .innerJoinAndSelect('ward.district', 'district')
-        //     .innerJoinAndSelect('district.province', 'province')
-        //     .innerJoinAndSelect('posts.categories', 'categories')
-        //     .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
-        //     .where(this.statusCondition)
-        //     .andWhere(this.expiredDateCondition)
-        //     .andWhere(this.endDateCondition)
-        //     .orderBy('posts.createdAtDate', 'DESC')
-        //     .addOrderBy('FIELD(posts.companyResourceId, 2)', 'DESC')
-        //     .addOrderBy('posts.id', 'DESC')
-        //     // .take(limit)
-        //     // .offset(page * limit)
-        //     .getMany();
 
         return this.init()
             .innerJoinAndSelect('posts.categories', 'categories')
