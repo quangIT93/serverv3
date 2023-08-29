@@ -35,6 +35,11 @@ export class MariadbConfigService {
         return this.mariadbConfig.get<string>('database.database')
     }
 
+    get mode(): string | undefined {
+        return this.mariadbConfig.get<string>('database.mode')
+    }
+
+
     // get synchronize(): boolean {
     //     return this.mariadbConfig.get<boolean>('database.synchronize')
     // }

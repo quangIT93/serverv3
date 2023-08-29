@@ -13,14 +13,12 @@ import { Injectable } from "@nestjs/common";
 export class MailService {
     constructor(private sender: MailerService) { }
 
-    async sendUserConfirmation(email: string) {
-        await this.sender.sendMail({
-            to: email,
-            subject: "Welcome to NestJS Boilerplate",
-            context: {
-                email,
-            },
-            html: "<h1>Welcome to NestJS Boilerplate</h1>",
+    async sendMailWithTemplate(pathFile: string, data: any) {
+        return await this.sender.sendMail({
+            to: data.to,
+            subject: data.subject,
+            // context: data.context,
+            template: pathFile,
         });
     }
 
@@ -43,4 +41,5 @@ export class MailService {
             html: "<h1>Welcome to NestJS Boilerplate</h1>",
         });
     }
+
 }
