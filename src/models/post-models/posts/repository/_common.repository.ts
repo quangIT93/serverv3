@@ -79,7 +79,7 @@ export class PostsQueryBuilder {
         const listIds = await this.repository.query(`
             SELECT
                 posts.id
-            FROM posts
+            FROM posts USE INDEX(rev_id_idx)
             INNER JOIN wards ON wards.id = posts.ward_id ${_queries?.districtIds
                 ? `AND wards.district_id IN (${_queries.districtIds})`
                 : ''
