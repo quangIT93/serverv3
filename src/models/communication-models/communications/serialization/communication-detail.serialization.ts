@@ -81,7 +81,7 @@ export class CommunicationDetailSerialization extends Communication {
         profile: {
           id: data.profile ? data.profile.accountId : null,
           name: data.profile ? data.profile.name : null,
-          avatar: data.profile
+          avatar: (data.profile && data.profile?.avatar)
             ? `${BUCKET_IMAGE_AVATAR}/${data.profile.avatar}`
             : null,
         },
@@ -104,7 +104,7 @@ export class CommunicationDetailSerialization extends Communication {
     return {
       id: this.profile.accountId,
       name: this.profile ? this.profile.name : null,
-      avatarPath: this.profile
+      avatarPath: (this.profile && this.profile?.avatar)
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
         : null,
     };

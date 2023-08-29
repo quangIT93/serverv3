@@ -393,4 +393,23 @@ export class CommunicationsService {
       throw error;
     }
   }
+
+
+  async deleteCommunicationByAdmin(id: number) {
+    try {
+      const communication = await this.communicationRepository.findOne({
+        where: {
+          id
+        },
+      });
+
+      if (!communication) {
+        throw new BadRequestException('Not found communication');
+      }
+
+      await this.communicationRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

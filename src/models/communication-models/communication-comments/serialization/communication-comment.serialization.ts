@@ -49,7 +49,7 @@ export class CommunicationCommentSerialization extends CommunicationComment {
   get profileData() {
     return {
       name: this.profile ? this.profile.name : null,
-      avatar: this.profile
+      avatar: (this.profile && this.profile?.avatar)
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
         : null,
     };

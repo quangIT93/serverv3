@@ -35,7 +35,7 @@ export class UpdateCommunicationAdminTransaction extends BaseTransaction<
       const existingCommunication = await manager.findOne(Communication, {
         where: {
           id: updateCommunicationDto.id,
-          accountId: updateCommunicationDto.accountId,
+          type: 0
         },
         relations: ['communicationImages'],
       });
