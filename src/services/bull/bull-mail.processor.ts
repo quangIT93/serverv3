@@ -21,7 +21,7 @@ export class BullMailProcessor {
     async sendMail(job: any) {
         try {
             // show all jobs in queue
-            await this.mailService.sendMailTest(job.data);
+            await this.mailService.sendMailWithTemplate('ads-mail.hbs', job.data);
         }
         catch (error) {
             Logger.error(`Failed job ${job.id} of type ${job.name}: ${error}`);
