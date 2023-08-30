@@ -16,7 +16,7 @@ export class MailService {
     async sendMailWithTemplate(pathFile: string, data: any) {
         return await this.sender.sendMail({
             to: data.to,
-            subject: data.subject,
+            subject: "Trải nghiệm miễn phí dịch vụ tuyển dụng mới nhất trên HiJob nhé bạn!",
             // context: data.context,
             template: pathFile,
         });

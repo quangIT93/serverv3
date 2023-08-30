@@ -127,7 +127,7 @@ export class PostDetailSeialization extends Post {
             return {
                 id: image.id,
                 url: `${BUCKET_IMAGE_POST}/${this.id}/${image.image}`,
-            }
+        }
         });
     }
 
@@ -138,7 +138,7 @@ export class PostDetailSeialization extends Post {
             id: this.postResource?.company ? this.postResource.company : null,
             name: this.postResource.companyResource.name,
             logo: this.postResource.companyResource.logo ? `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}` : null,
-            postUrl: this.postResource.url ? this.postResource.url : null,
+            postUrl: this.postResource.url ? this.postResource.url : "https:///hijob.site",
         }
     }
 

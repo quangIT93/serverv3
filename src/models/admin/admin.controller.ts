@@ -34,6 +34,7 @@ export class AdminController {
             await this.adminService.sendAdsMail(data, req.user.id);
 
             return res.status(200).json({
+                statusCode: 200,
                 message: 'Send mail successfully'
             });
 

@@ -37,6 +37,7 @@ export class AdminService {
             await this.mailLoggerService.create(mailLogger);
 
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }
