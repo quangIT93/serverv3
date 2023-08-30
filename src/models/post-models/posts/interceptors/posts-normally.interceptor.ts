@@ -52,7 +52,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
                         is_over: true,
                     }
                 }
-                const data = posts.map((post: Post) => {
+                const data = posts.map((post: Post) => {                    
                     const postNormally = new PostNormally(post, lang);
 
                     if (bookmarks.includes(postNormally.id)) {

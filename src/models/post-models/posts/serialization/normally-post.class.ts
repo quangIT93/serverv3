@@ -104,10 +104,10 @@ export class PostNormally {
         };
 
         this.companyResourceData = {
-            ...post.postResource?.companyResource,
-            logo: post.postResource?.companyResource?.logo
-                ? `${BUCKET_IMAGE_COMPANY_ICON}/${post.postResource?.companyResource?.logo}`
-                : `${BUCKET_IMAGE_COMPANY_ICON}/${post.companyResource?.logo}`,
+            ...post.companyResource,
+            logo: post.companyResource?.logo
+                ? `${BUCKET_IMAGE_COMPANY_ICON}/${post.companyResource?.logo}`
+                : null,
         };
     }
 

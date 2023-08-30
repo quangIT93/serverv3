@@ -108,6 +108,10 @@ export class PostsQueryBuilder {
             LIMIT ${limit}
         `);
 
+        if (!listIds.length) {
+            return [];
+        }
+
         return this.init()
             .innerJoinAndSelect('posts.categories', 'categories')
             .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
@@ -150,8 +154,8 @@ export function InitQuerySelectNormallyPost(respository: Repository<Post>) {
         .leftJoinAndSelect('posts.postImages', 'postImages')
         .leftJoinAndSelect('posts.jobTypeData', 'jobTypeData')
         .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
-        .leftJoinAndSelect('posts.postResource', 'postResource')
-        .leftJoinAndSelect('postResource.companyResource', 'companyResource')
+        .leftJoinAndSelect('posts.companyResource', 'companyResource')
+        // .leftJoinAndSelect('companyResource', 'companyResource')
         .where(`posts.status = 1`)
         .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`)
         .andWhere(

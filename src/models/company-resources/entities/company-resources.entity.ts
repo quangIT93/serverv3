@@ -11,7 +11,7 @@ export class CompanyResource {
     name!: string;
 
     @Column({ type: 'varchar', length: 255, name: 'icon' })
-    logo!: string;
+    logo!: string | null;
 
     @OneToMany(() => PostResource, postResource => postResource.companyResource)
     @JoinColumn({ name: 'id' })

@@ -21,8 +21,13 @@ export class MailLoggerService {
     return `This action returns all mailLogger`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} mailLogger`;
+  findOne(recipient: string, subject: string) {
+    return this.mailLoggerRepository.findOne({
+      where: {
+        recipient,
+        subject
+      }
+    });
   }
 
   update(id: number, _updateMailLoggerDto: UpdateMailLoggerDto) {

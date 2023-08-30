@@ -9,7 +9,6 @@ import { jobTypeTranslator } from "src/common/helper/translators/jobType.transla
 import { JobType } from "src/models/job-types/entities/job-type.entity";
 import { BUCKET_IMAGE_AVATAR, BUCKET_IMAGE_COMPANY_ICON, BUCKET_IMAGE_POST } from "src/common/constants";
 import { PostImages } from "../../posts-images/entities/post-images.entity";
-import { PostResource } from "../../post-resource/entities/post-resource.entity";
 import { salaryTypeTranslator } from "src/common/helper/translators/salaryTypeTranslator";
 import { timeToTextTransform } from "src/common/helper/transform/timeToText.transform";
 
@@ -47,7 +46,7 @@ export class PostDetailSeialization extends Post {
     override jobTypeData!: JobType;
     
     @Exclude({ toPlainOnly: true })
-    override postResource!: PostResource;
+    override companyResource!: any;
 
     @Exclude({ toPlainOnly: true })
     override salaryType!: number;
@@ -133,12 +132,12 @@ export class PostDetailSeialization extends Post {
 
     @Expose()
     get companyResourceData() {
-        if (!this.postResource) return null;
+        if (!this.companyResource) return null;
         return {
-            id: this.postResource?.company ? this.postResource.company : null,
-            name: this.postResource.companyResource.name,
-            logo: this.postResource.companyResource.logo ? `${BUCKET_IMAGE_COMPANY_ICON}/${this.postResource.companyResource.logo}` : null,
-            postUrl: this.postResource.url ? this.postResource.url : "https:///hijob.site",
+            id: this.companyResource ? this.companyResource.id : null,
+            name: this.companyResource.name,
+            logo: this.companyResource.logo ? `${BUCKET_IMAGE_COMPANY_ICON}/${this.companyResource.logo}` : null,
+            postUrl: this.url ? this.url : "https:///hijob.site",
         }
     }
 

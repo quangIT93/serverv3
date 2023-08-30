@@ -15,11 +15,13 @@ export class AdminService {
     async sendAdsMail(data: AdsMailOptionsDto[], accountId: string) {
         try {
 
+            
+
             // create set of mail
             const mailSet = new Set();
             data.forEach((item) => {
                 mailSet.add(item.to);
-                item['subject'] = "Nền tảng tuyển dụng mới";
+                item['subject'] = "Trải nghiệm miễn phí dịch vụ tuyển dụng mới nhất trên HiJob nhé bạn";
             });
 
             if (mailSet.size !== data.length) {
