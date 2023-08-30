@@ -27,7 +27,7 @@ export class AdminController {
             }
             
             // max 10 mail in 1 request
-            if (data.length > 10) {
+            if (data.length > 200) {
                 throw new BadRequestException('Max 10 mail in 1 request');
             }
             
