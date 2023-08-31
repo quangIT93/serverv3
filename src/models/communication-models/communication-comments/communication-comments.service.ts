@@ -38,9 +38,9 @@ export class CommunicationCommentsService {
         .where('communication_comments.id = :id', { id: newCommunicationComment.id })
         .getOne();
 
-        // console.log("ownerCommunication", ownerCommunication);
+        console.log("ownerCommunication", ownerCommunication);
 
-        // console.log("newCommunicationComment", newCommunicationComment);
+        console.log("newCommunicationComment", newCommunicationComment);
 
         if (ownerCommunication && newCommunicationComment.accountId !== ownerCommunication.communications.accountId) {
           const fcmTokens = await this.fcmTokensService.readByAccountId(
