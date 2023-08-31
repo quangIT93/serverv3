@@ -10,6 +10,8 @@ import { CreateCommunicationCommentTransaction } from './transactions/create-com
 import { UpdateCommunicationCommentTransaction } from './transactions/update-communication-comment.transaction';
 import { DeleteCommunicationCommentTransaction } from './transactions/delete-communication-comment.transaction';
 import { CommunicationNotificationsModule } from '../communication-notifications/communication-notifications.module';
+import { FirebaseMessagingService } from 'src/services/firebase/messaging/firebase-messaging.service';
+import { FcmTokensModule } from 'src/models/fcm-tokens/fcm-tokens.module';
 
 @Module({
   imports: [
@@ -17,7 +19,8 @@ import { CommunicationNotificationsModule } from '../communication-notifications
     JwtAccessTokenServiceModule,
     CommunicationCommentImagesModule,
     AWSModule,
-    CommunicationNotificationsModule
+    CommunicationNotificationsModule,
+    FcmTokensModule,
   ],
   controllers: [CommunicationCommentsController],
   providers: [
@@ -25,6 +28,7 @@ import { CommunicationNotificationsModule } from '../communication-notifications
     CreateCommunicationCommentTransaction,
     UpdateCommunicationCommentTransaction,
     DeleteCommunicationCommentTransaction,
+    FirebaseMessagingService
   ],
   exports: [CommunicationCommentsService],
 })

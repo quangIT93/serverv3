@@ -39,6 +39,9 @@ export class FirebaseMessagingService implements FirebaseMessagingInterface {
         const jobs = await firebase.messaging().sendEachForMulticast(
             message,            
         ).then((response) => {
+
+            Logger.log(response.responses);
+
             return response.responses;
         })
 

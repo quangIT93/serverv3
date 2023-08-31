@@ -1,3 +1,5 @@
+import { FcmTokensService } from 'src/models/fcm-tokens/fcm-tokens.service';
+import { FirebaseMessagingService } from 'src/services/firebase/messaging/firebase-messaging.service';
 import { Injectable } from '@nestjs/common';
 import { CreateCommunicationCommentDto } from './dto/create-communication-comment.dto';
 import { UpdateCommunicationCommentDto } from './dto/update-communication-comment.dto';
@@ -16,7 +18,9 @@ export class CommunicationCommentsService {
     private readonly communicationCommentRepository: Repository<CommunicationComment>,
     private readonly createCommunicationCommentTransaction: CreateCommunicationCommentTransaction,
     private readonly updateCommunicationCommentTransaction: UpdateCommunicationCommentTransaction,
-    private readonly deleteCommunicationCommentTransaction: DeleteCommunicationCommentTransaction
+    private readonly deleteCommunicationCommentTransaction: DeleteCommunicationCommentTransaction,
+    private readonly firebaseMessagingService: FirebaseMessagingService,
+    private readonly fcmTokensService: FcmTokensService,
   ) {}
   async create(createCommunicationCommentDto: CreateCommunicationCommentDto) {
     try {
@@ -24,6 +28,47 @@ export class CommunicationCommentsService {
         await this.createCommunicationCommentTransaction.run(
           createCommunicationCommentDto,
         );
+
+
+        if (newCommunicationComment) {
+        // get fcm token of user whom created post
+        const ownerCommunication = await this.communicationCommentRepository
+        .createQueryBuilder('communication_comments')
+        .leftJoinAndSelect('communication_comments.communications', 'communication')
+        .where('communication_comments.id = :id', { id: newCommunicationComment.id })
+        .getOne();
+
+        // console.log("ownerCommunication", ownerCommunication);
+
+        // console.log("newCommunicationComment", newCommunicationComment);
+
+        if (ownerCommunication && newCommunicationComment.accountId !== ownerCommunication.communications.accountId) {
+          const fcmTokens = await this.fcmTokensService.readByAccountId(
+            ownerCommunication.communications.accountId,
+          );
+
+          if (fcmTokens.length > 0) {
+            const notification = {
+              title: 'New comment',
+              body: newCommunicationComment.content,
+            };
+
+            const data = {
+              "type": 'new-comment',
+              "communication_id": newCommunicationComment.communicationId,
+              "comment_id": newCommunicationComment.id,
+            }
+
+            this.firebaseMessagingService.sendMulticast(
+              fcmTokens.map((fcmToken) => fcmToken.token),
+              notification,
+              false,
+              data,
+            );
+          }
+        }
+      }
+
 
       return newCommunicationComment;
     } catch (error) {

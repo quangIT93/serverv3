@@ -68,5 +68,5 @@ export class CommunicationComment {
 
   @ManyToOne(() => Communication, communication => communication.communicationComments)
   @JoinColumn({name: 'communication_id'})
-  communications!: Communication[]
+  communications!: Communication;
 }
