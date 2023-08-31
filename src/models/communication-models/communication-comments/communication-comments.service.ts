@@ -49,14 +49,14 @@ export class CommunicationCommentsService {
 
           if (fcmTokens.length > 0) {
             const notification = {
-              title: 'New comment',
+              title: "Bình luận mới",
               body: newCommunicationComment.content,
             };
 
             const data = {
               "type": 'new-comment',
-              "communication_id": newCommunicationComment.communicationId,
-              "comment_id": newCommunicationComment.id,
+              "communication_id": newCommunicationComment.communicationId.toString(),
+              "comment_id": newCommunicationComment.id.toString(),
             }
 
             this.firebaseMessagingService.sendMulticast(
