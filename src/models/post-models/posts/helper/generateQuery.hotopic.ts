@@ -3,7 +3,7 @@ import { QUERY_CHILDREN_CATEGORY_ID, QUERY_IS_REMOTELY, QUERY_IS_SHORT_TIME_JOBS
 import { HotTopicQueriesDto } from "../dto/hot-topic-queries.dto";
 
 
-const generateQuery = (id: number) => {
+const generateQuery = (id: number, provinceId?: string) => {
     let query: HotTopicQueriesDto = {};
     switch (id) {
         case 1:
@@ -27,6 +27,11 @@ const generateQuery = (id: number) => {
         default:
           throw new BadRequestException('Hot topic id is not valid');
       }
+
+    // Add provinceId to query
+    if (provinceId) {
+      query.provinceId = provinceId;
+    }
     
     return query;
 }

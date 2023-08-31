@@ -68,9 +68,9 @@ export class PostsService {
    * 
    */
 
-  async findByHotTopicId(id: number, limit: number, page: number) {
+  async findByHotTopicId(id: number, limit: number, page: number, provinceId?: string): Promise<any[]> {
     // generate query and call function
-    let query: HotTopicQueriesDto = generateQuery(id);
+    let query: HotTopicQueriesDto = generateQuery(id, provinceId);
 
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }

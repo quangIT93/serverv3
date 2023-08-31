@@ -60,6 +60,12 @@ function __init__(respository: Repository<Post>, query: HotTopicQueriesDto) {
         );
     }
 
+    if (query.provinceId) {
+        queryBuilder.andWhere(`province.id = :provinceId`, {
+            provinceId: query.provinceId,
+        });
+    }
+
     return queryBuilder;
 }
 
@@ -77,7 +83,6 @@ export function findByHotTopicQuery(
     page: number,
     limit: number,
 ) {
-    console.log(query);
     const queryBuilder = __init__(respository, query);
     return queryBuilder
         .orderBy('posts.createdAt', 'DESC')

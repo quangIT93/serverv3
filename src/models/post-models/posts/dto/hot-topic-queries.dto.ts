@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 import {
     QUERY_CHILDREN_CATEGORY_ID,
     QUERY_IS_REMOTELY,
@@ -46,6 +46,13 @@ export class HotTopicQueriesDto {
     @IsNumber()
     @IsOptional()
     [QUERY_JOB_TYPE]?: number;
+
+    @ApiProperty({ type: 'string', format: 'string', required: false })
+    @IsString()
+    @IsNumberString()
+    @IsOptional()
+    provinceId?: string;
+
 
     [key: string]: any;
 

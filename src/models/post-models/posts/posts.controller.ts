@@ -65,16 +65,17 @@ export class PostsController {
     }
 
     @ApiBearerAuth('JWT-auth')
+    @ApiQuery({ name: 'provinceId', required: false })
     @Get('topic/:id')
     @UseGuards(AuthNotRequiredGuard)
     @UseInterceptors(PostNormallyInterceptor)
     async findByTopicId(
-        // @Query() hotTopicQueries: HotTopicQueriesDto,
         @Req() req: any,
         @Param('id', ParseIntPipe) id: number,
+        @Query("provinceId") provinceId?: string,
     ) {
         const { limit, page } = req;
-        return this.postsService.findByHotTopicId(id, limit, page); 
+        return this.postsService.findByHotTopicId(id, limit, page, provinceId); 
     }
 
     @UseGuards(AuthNotRequiredGuard)
