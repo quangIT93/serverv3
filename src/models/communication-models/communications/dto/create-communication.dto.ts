@@ -11,9 +11,9 @@ export class CreateCommunicationDto {
     @MaxLength(500, { message: 'title length must not exceed 500 characters' })
     title!: string;
 
-    @ApiProperty({ type: 'string', format: 'string', maxLength: 5000, required: true, default: 'Test' })
+    @ApiProperty({ type: 'string', format: 'string', maxLength: 10000, required: true, default: 'Test' })
     @IsNotEmpty()
-    @MaxLength(5000, { message: 'title length must not exceed 5000 characters' })
+    @MaxLength(10000, { message: 'content length must not exceed 10000 characters' })
     content!: string;
 
     // @ApiProperty({type: 'number',format: 'number', required: true, default: 1})

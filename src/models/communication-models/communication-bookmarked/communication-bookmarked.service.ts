@@ -54,13 +54,12 @@ export class CommunicationBookmarkedService {
     }
   }
 
-  async findOne(id: string, limit: number , page: number){
-
+  async findOne(id: string, limit: number, page: number) {
     const total = await this.communicationBookmarkedRepository.count({
       where: {
-        accountId: id
-      }
-    })
+        accountId: id,
+      },
+    });
 
     const queryBuilder = this.communicationBookmarkedRepository
       .createQueryBuilder('communicationBookmarked')
@@ -71,6 +70,7 @@ export class CommunicationBookmarkedService {
       .leftJoinAndSelect(
         'communication.communicationLikes',
         'communicationLikes',
+        `communicationLikes.accountId = :accountId`,
       )
       .leftJoinAndSelect(
         'communication.communicationViews',
@@ -101,6 +101,7 @@ export class CommunicationBookmarkedService {
         'communicationCommentsCount',
       )
       .where('communicationBookmarked.accountId = :id', { id })
+      .setParameter('accountId', id)
       .orderBy('communicationBookmarked.createdAt', 'DESC')
       .take(limit)
       .skip(page * limit);
@@ -110,7 +111,8 @@ export class CommunicationBookmarkedService {
     return {
       total,
       data: result,
-      is_over: (result.length === total) ? true : (result.length < limit) ? true : false
+      is_over:
+        result.length === total ? true : result.length < limit ? true : false,
     };
   }
 }

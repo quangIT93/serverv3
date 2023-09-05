@@ -371,7 +371,7 @@ export class CommunicationsService {
       total: check,
       data,
       is_over:
-        data.length === total ? true : data.length < limit ? true : false,
+        data.length === check ? true : data.length < limit ? true : false,
     };
   }
 
