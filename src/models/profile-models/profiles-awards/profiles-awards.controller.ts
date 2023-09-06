@@ -11,26 +11,23 @@ import {
   HttpStatus,
   Put,
 } from '@nestjs/common';
-import { ProfilesActivitiesService } from './profiles-activities.service';
-import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ProfilesAwardsService } from './profiles-awards.service';
+import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
+import { UpdateProfilesAwardDto } from './dto/update-profiles-award.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('profiles-activities')
-@ApiTags('Profiles Activities')
-export class ProfilesActivitiesController {
-  constructor(
-    private readonly profilesActivitiesService: ProfilesActivitiesService,
-  ) {}
+@Controller('profiles-awards')
+@ApiTags('Profiles Awards')
+export class ProfilesAwardsController {
+  constructor(private readonly profilesAwardsService: ProfilesAwardsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard)
   async create(
-    @Body() createProfilesActivityDto: CreateProfilesActivityDto,
+    @Body() createProfilesAwardDto: CreateProfilesAwardDto,
     @Req() req: CustomRequest,
   ) {
     try {
@@ -40,25 +37,23 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      createProfilesActivityDto.accountId = id;
+      createProfilesAwardDto.accountId = id;
 
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesActivitiesService.create(
-          createProfilesActivityDto,
-        ),
+        data: await this.profilesAwardsService.create(createProfilesAwardDto),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error creating profile activity');
+      throw new BadRequestException('Error creating profile award');
     }
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   async findAll(@Req() req: CustomRequest) {
     try {
       const id = req.user?.id;
@@ -69,19 +64,19 @@ export class ProfilesActivitiesController {
 
       return {
         statusCode: HttpStatus.OK,
-        data: await this.profilesActivitiesService.findAll(id),
+        data: await this.profilesAwardsService.findAll(id),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error getting profile activity');
+      throw new BadRequestException('Error getting profile awards');
     }
   }
 
   @Get(':id')
-  @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
@@ -92,48 +87,22 @@ export class ProfilesActivitiesController {
 
       return {
         statusCode: HttpStatus.OK,
-        data: await this.profilesActivitiesService.findOne(+id, accountId),
+        data: await this.profilesAwardsService.findOne(+id, accountId),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Profile activity not found');
-    }
-  }
-
-  @Delete('remove-all')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async removeAll(@Req() req: CustomRequest, @Body() data: any) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesActivitiesService.removeAll(data.ids, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile activity');
+      throw new BadRequestException('Error getting profile award');
     }
   }
 
   @Put(':id')
-  @ApiConsumes('multipart/form-data')
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
-    @Body() updateProfilesActivityDto: UpdateProfilesActivityDto,
+    @Body() updateProfilesAwardDto: UpdateProfilesAwardDto,
     @Req() req: CustomRequest,
   ) {
     try {
@@ -143,22 +112,44 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      updateProfilesActivityDto.accountId = accountId;
+      updateProfilesAwardDto.accountId = accountId;
 
-      await this.profilesActivitiesService.update(
-        +id,
-        updateProfilesActivityDto,
-      );
+      await this.profilesAwardsService.update(+id, updateProfilesAwardDto);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile activity updated successfully',
+        message: 'Profile award updated successfully',
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Profile activity not found');
+      throw new BadRequestException('Profile award not found');
+    }
+  }
+
+  @Delete('remove-all')
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
+  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('User not found');
+      }
+
+      await this.profilesAwardsService.removeMany(data.ids, accountId);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile award deleted successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error deleting profile award');
     }
   }
 
@@ -173,17 +164,17 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesActivitiesService.remove(+id, accountId);
+      await this.profilesAwardsService.removeOne(+id, accountId);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
+        message: 'Profile award deleted successfully',
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error deleting profile activity');
+      throw new BadRequestException('Error deleting profile award');
     }
   }
 }

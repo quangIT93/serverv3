@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ProfilesReferencesService } from './profiles-references.service';
 import { CreateProfilesReferenceDto } from './dto/create-profiles-reference.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileReferenceInterceptor } from './interceptor/profiles-reference.interceptor';
@@ -28,6 +28,7 @@ export class ProfilesReferencesController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesReferenceDto: CreateProfilesReferenceDto,
@@ -58,6 +59,7 @@ export class ProfilesReferencesController {
 
   @Get()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @UseInterceptors(ClassSerializerInterceptor, ProfileReferenceInterceptor)
   async findAll(@Req() req: CustomRequest) {
     try {
@@ -77,6 +79,7 @@ export class ProfilesReferencesController {
   }
 
   @Delete('remove-all')
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async removeAll(@Req() req: CustomRequest, @Body() data : any) {
     try {
@@ -102,6 +105,7 @@ export class ProfilesReferencesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT-auth')
   async remove(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;

@@ -7,30 +7,30 @@ import {
   Delete,
   UseGuards,
   Req,
-  BadRequestException,
   HttpStatus,
+  BadRequestException,
   Put,
 } from '@nestjs/common';
-import { ProfilesActivitiesService } from './profiles-activities.service';
-import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ProfilesIntershipsService } from './profiles-interships.service';
+import { CreateProfilesIntershipDto } from './dto/create-profiles-intership.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { UpdateProfilesIntershipDto } from './dto/update-profiles-intership.dto';
 
-@Controller('profiles-activities')
-@ApiTags('Profiles Activities')
-export class ProfilesActivitiesController {
+@Controller('profiles-interships')
+@ApiTags('Profiles Interships')
+export class ProfilesIntershipsController {
   constructor(
-    private readonly profilesActivitiesService: ProfilesActivitiesService,
+    private readonly profilesIntershipsService: ProfilesIntershipsService,
   ) {}
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth('JWT-auth')
+  @UseGuards(AuthGuard)
   async create(
-    @Body() createProfilesActivityDto: CreateProfilesActivityDto,
+    @Body() createProfilesIntershipDto: CreateProfilesIntershipDto,
     @Req() req: CustomRequest,
   ) {
     try {
@@ -40,19 +40,19 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      createProfilesActivityDto.accountId = id;
+      createProfilesIntershipDto.accountId = id;
 
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesActivitiesService.create(
-          createProfilesActivityDto,
+        data: await this.profilesIntershipsService.create(
+          createProfilesIntershipDto,
         ),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error creating profile activity');
+      throw new BadRequestException('Error creating profile intership');
     }
   }
 
@@ -64,18 +64,18 @@ export class ProfilesActivitiesController {
       const id = req.user?.id;
 
       if (!id) {
-        throw new BadRequestException('User not found');
+        throw new Error('User not found');
       }
 
       return {
         statusCode: HttpStatus.OK,
-        data: await this.profilesActivitiesService.findAll(id),
+        data: await this.profilesIntershipsService.findAll(id),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error getting profile activity');
+      throw new BadRequestException('Error getting profile interships');
     }
   }
 
@@ -92,48 +92,23 @@ export class ProfilesActivitiesController {
 
       return {
         statusCode: HttpStatus.OK,
-        data: await this.profilesActivitiesService.findOne(+id, accountId),
+        data: await this.profilesIntershipsService.findOne(+id, accountId),
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Profile activity not found');
-    }
-  }
-
-  @Delete('remove-all')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async removeAll(@Req() req: CustomRequest, @Body() data: any) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesActivitiesService.removeAll(data.ids, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile activity');
+      throw new BadRequestException('Profile intership not found');
     }
   }
 
   @Put(':id')
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiConsumes('multipart/form-data')
   async update(
     @Param('id') id: string,
-    @Body() updateProfilesActivityDto: UpdateProfilesActivityDto,
+    @Body() updateProfilesIntershipDto: UpdateProfilesIntershipDto,
     @Req() req: CustomRequest,
   ) {
     try {
@@ -143,29 +118,29 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      updateProfilesActivityDto.accountId = accountId;
+      updateProfilesIntershipDto.accountId = accountId;
 
-      await this.profilesActivitiesService.update(
+      await this.profilesIntershipsService.update(
         +id,
-        updateProfilesActivityDto,
+        updateProfilesIntershipDto,
       );
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile activity updated successfully',
+        message: 'Profile intership updated successfully'
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Profile activity not found');
+      throw new BadRequestException('Profile intership not found');
     }
   }
 
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
+  @Delete('remove-all')
   @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
+  @ApiBearerAuth('JWT-auth')
+  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
 
@@ -173,17 +148,41 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesActivitiesService.remove(+id, accountId);
+      await this.profilesIntershipsService.removeAll(data.ids, accountId);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
+        message: 'Delete profile intership successfully',
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error deleting profile activity');
+      throw new BadRequestException('Error deleting profile intership');
+    }
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new Error('User not found');
+      }
+      await this.profilesIntershipsService.remove(+id, accountId);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile intership deleted successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error deleting profile intership');
     }
   }
 }

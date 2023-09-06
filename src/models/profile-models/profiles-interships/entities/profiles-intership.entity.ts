@@ -1,35 +1,31 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('profiles_activities')
-export class ProfilesActivity {
+@Entity('profiles_interships')
+export class ProfilesIntership {
+
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'account_id', type: 'varchar', nullable: false, length: 50 })
+  @Column({ type: 'varchar', length: 50, name: 'account_id', nullable: false })
   accountId!: string;
 
-  @Column({ name: 'title', type: 'varchar', nullable: false, length: 255 })
-  title!: string;
+  @Column({ type: 'varchar', length: 255, name: 'job_title', nullable: false })
+  jobTitle!: string;
 
-  @Column({
-    name: 'employer',
-    type: 'varchar',
-    nullable: false,
-    length: 255,
-  })
+  @Column({ type: 'varchar', length: 255, name: 'employer', nullable: false })
   employer!: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
     length: 1000,
     name: 'description',
+    nullable: false,
   })
   description!: string;
 
   @Column({ type: 'varchar', length: 20, default: null, name: 'start_date' })
-  startDate!: Date;
+  startDate!: string | null;
 
   @Column({ type: 'varchar', length: 20, default: null, name: 'end_date' })
-  endDate!: Date;
+  endDate!: string | null;
 }

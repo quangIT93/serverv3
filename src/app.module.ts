@@ -61,6 +61,9 @@ import { LanguageTypesModule } from './models/profile-models/types/language-type
 import { ProfilesReferencesModule } from './models/profile-models/profiles-references/profiles-references.module';
 import { ProfilesCoursesModule } from './models/profile-models/profiles-courses/profiles-courses.module';
 import { ProfilesActivitiesModule } from './models/profile-models/profiles-activities/profiles-activities.module';
+import { ProfilesIntershipsModule } from './models/profile-models/profiles-interships/profiles-interships.module';
+import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/profiles-awards.module';
+import { ProfilesHobbiesModule } from './models/profile-models/profiles_hobbies/profiles_hobbies.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -130,6 +133,9 @@ import { ProfilesActivitiesModule } from './models/profile-models/profiles-activ
     ProfilesReferencesModule,
     ProfilesCoursesModule,
     ProfilesActivitiesModule,
+    ProfilesIntershipsModule,
+    ProfilesAwardsModule,
+    ProfilesHobbiesModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],

@@ -16,7 +16,7 @@ import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProfileLanguageInterceptor } from './interceptor/profiles-language.interceptor';
 
 @Controller('profile-languages')
@@ -28,6 +28,7 @@ export class ProfileLanguagesController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfileLanguageDto: CreateProfileLanguageDto,
@@ -57,6 +58,7 @@ export class ProfileLanguagesController {
   }
 
   @Get()
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, ProfileLanguageInterceptor)
   findAll(@Req() req: CustomRequest) {
@@ -69,8 +71,9 @@ export class ProfileLanguagesController {
   }
 
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Delete('remove-all')
-  async removeAll(@Body() data : any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id ? req.user?.id : '';
       if (!accountId) {
@@ -92,6 +95,7 @@ export class ProfileLanguagesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string, @Req() req: CustomRequest) {
     try {

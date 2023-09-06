@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ProfilesCoursesService } from './profiles-courses.service';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileCoursesInterceptor } from './interceptor/profiles-courses.interceptor';
@@ -28,6 +28,7 @@ export class ProfilesCoursesController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesCourseDto: CreateProfilesCourseDto,
@@ -55,6 +56,7 @@ export class ProfilesCoursesController {
   }
 
   @Get()
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, ProfileCoursesInterceptor)
   async findAll(@Req() req: CustomRequest) {
@@ -75,6 +77,7 @@ export class ProfilesCoursesController {
   }
 
   @Delete('remove-all')
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
@@ -99,6 +102,7 @@ export class ProfilesCoursesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
@@ -108,7 +112,7 @@ export class ProfilesCoursesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesCoursesService.remove(+id);
+      await this.profilesCoursesService.remove(+id, accountId);
 
       return {
         statusCode: HttpStatus.OK,

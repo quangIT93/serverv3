@@ -61,16 +61,48 @@
 -- )
 
 
-CREATE TABLE `profiles_activities` (
+-- CREATE TABLE `profiles_activities` (
+--     id INT(11) NOT NULL AUTO_INCREMENT,
+--     account_id VARCHAR(50) NOT NULL,
+--     title VARCHAR(255) NOT NULL,
+--     employer VARCHAR(255) NOT NULL,
+--     description VARCHAR(1000) NOT NULL,
+--     start_date VARCHAR(20) NOT NULL,
+--     end_date VARCHAR(20) NOT NULL,
+--     PRIMARY KEY (id),
+--     CONSTRAINT FK_Accounts_ProfilesActivities FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+-- )
+
+
+-- CREATE TABLE `profiles_interships` (
+--     id INT(11) NOT NULL AUTO_INCREMENT,
+--     account_id VARCHAR(50) NOT NULL,
+--     job_title VARCHAR(255) NOT NULL,
+--     employer VARCHAR(255) NOT NULL,
+--     description VARCHAR(1000) NOT NULL,
+--     start_date VARCHAR(20) NOT NULL,
+--     end_date VARCHAR(20) NOT NULL,
+--     PRIMARY KEY (id),
+--     CONSTRAINT FK_Accounts_ProfilesInterships FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+-- )
+
+
+-- CREATE TABLE `profiles_awards` (
+--     id INT(11) NOT NULL AUTO_INCREMENT,
+--     account_id VARCHAR(50) NOT NULL,
+--     award_title VARCHAR(255) NOT NULL,
+--     company_name VARCHAR(255) NOT NULL,
+--     description VARCHAR(1000) NOT NULL,
+--     PRIMARY KEY (id),
+--     CONSTRAINT FK_Accounts_ProfilesAwards FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+-- )
+
+CREATE TABLE `profiles_hobbies` (
     id INT(11) NOT NULL AUTO_INCREMENT,
     account_id VARCHAR(50) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    employer VARCHAR(255) NOT NULL,
     description VARCHAR(1000) NOT NULL,
-    start_date VARCHAR(20) NOT NULL,
-    end_date VARCHAR(20) NOT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT FK_Accounts_ProfilesActivities FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT FK_Accounts_Hobbiess FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
 )
 
 

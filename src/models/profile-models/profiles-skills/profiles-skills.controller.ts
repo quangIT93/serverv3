@@ -15,7 +15,7 @@ import {
 import { ProfilesSkillsService } from './profiles-skills.service';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileSkillInterceptor } from './interceptor/profiles-skills.interceptor';
 
@@ -26,6 +26,7 @@ export class ProfilesSkillsController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesSkillDto: CreateProfilesSkillDto,
@@ -54,6 +55,7 @@ export class ProfilesSkillsController {
 
   @Get()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @UseInterceptors(ClassSerializerInterceptor, ProfileSkillInterceptor)
   findAll(@Req() req: CustomRequest) {
     const id = req.user?.id ? req.user?.id : '';
@@ -67,6 +69,7 @@ export class ProfilesSkillsController {
 
   @UseGuards(AuthGuard)
   @Delete('remove-all')
+  @ApiBearerAuth('JWT-auth')
   async removeAll(@Body() data : any, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id ? req.user?.id : '';
@@ -90,6 +93,7 @@ export class ProfilesSkillsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   async remove(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id ? req.user?.id : '';

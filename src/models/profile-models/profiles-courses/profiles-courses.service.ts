@@ -60,10 +60,10 @@ export class ProfilesCoursesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, accountId: string) {
     try {
       const dataProfileCourse = await this.profilesCourseRepository.findOne({
-        where: { id },
+        where: { id , accountId},
       });
 
       if (!dataProfileCourse) {
