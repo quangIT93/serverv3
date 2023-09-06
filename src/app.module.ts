@@ -54,14 +54,19 @@ import { CommunicationBookmarkedModule } from './models/communication-models/com
 import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
 import { AdminModule } from './models/admin/admin.module';
 import { MailLoggerModule } from './models/log/mail-logger/mail-logger.module';
-
+import { ProfilesSkillsModule } from './models/profile-models/profiles-skills/profiles-skills.module';
+import { LevelTypeModule } from './models/profile-models/types/level-type/level-types.module';
+import { ProfileLanguagesModule } from './models/profile-models/profile-languages/profile-languages.module';
+import { LanguageTypesModule } from './models/profile-models/types/language-types/language-types.module';
+import { ProfilesReferencesModule } from './models/profile-models/profiles-references/profiles-references.module';
+import { ProfilesCoursesModule } from './models/profile-models/profiles-courses/profiles-courses.module';
+import { ProfilesActivitiesModule } from './models/profile-models/profiles-activities/profiles-activities.module';
 @Module({
   imports: [
-
     AppConfigModule,
     DatabaseConfigModule,
     UserModule,
-    MailModule, 
+    MailModule,
     QueueModule,
     AWSModule,
     AuthModule,
@@ -116,16 +121,21 @@ import { MailLoggerModule } from './models/log/mail-logger/mail-logger.module';
     AdminModule,
 
     MailLoggerModule,
+
+    // Profiles 
+    LevelTypeModule,
+    ProfilesSkillsModule,
+    ProfileLanguagesModule,
+    LanguageTypesModule,
+    ProfilesReferencesModule,
+    ProfilesCoursesModule,
+    ProfilesActivitiesModule,
   ],
   controllers: [AppController, BannersController],
-  providers: [
-    AppService,
-  ],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LanguageMiddleware)
-      .forRoutes('*');
+    consumer.apply(LanguageMiddleware).forRoutes('*');
   }
 }
