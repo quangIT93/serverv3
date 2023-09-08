@@ -36,7 +36,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         return next.handle().pipe(
             map((data: any) => {
-                console.log(data);
+                // console.log(data);
                 const length = data.data.length;
                 let isOver = true;
 
