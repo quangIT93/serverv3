@@ -23,6 +23,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
 
         const user_id = _context.switchToHttp().getRequest()['user']?.id;
 
+
         let bookmarks: number[] = [];
 
         if (user_id) {
@@ -35,13 +36,14 @@ export class PostNormallyInterceptor implements NestInterceptor {
         }
 
         return next.handle().pipe(
-            map((posts: Post[]) => {
-                const length = posts.length;
+            map((data: any) => {
+                console.log(data);
+                const length = data.data.length;
                 let isOver = true;
 
                 if (length === _context.switchToHttp().getRequest().limit) {
                     isOver = false;
-                    posts.pop();                
+                    data.data.pop();                
                 }
                 
                 if (length === 0) {
@@ -52,7 +54,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
                         is_over: true,
                     }
                 }
-                const data = posts.map((post: Post) => {                    
+                const posts = data.data.map((post: Post) => {                    
                     const postNormally = new PostNormally(post, lang);
 
                     if (bookmarks.includes(postNormally.id)) {
@@ -66,7 +68,8 @@ export class PostNormallyInterceptor implements NestInterceptor {
                     status: _context.switchToHttp().getResponse().statusCode,
                     message: _context.switchToHttp().getResponse().statusMessage,
                     is_over: isOver,
-                    data,
+                    data: posts,
+                    total: data.total,
                 }
             }),
         );

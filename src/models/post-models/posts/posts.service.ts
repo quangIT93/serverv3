@@ -68,14 +68,14 @@ export class PostsService {
    * 
    */
 
-  async findByHotTopicId(id: number, limit: number, page: number, provinceId?: string): Promise<any[]> {
+  async findByHotTopicId(id: number, limit: number, page: number, provinceId?: string): Promise<any> {
     // generate query and call function
     let query: HotTopicQueriesDto = generateQuery(id, provinceId);
 
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }
 
-  async findByQuery(query: HotTopicQueriesDto, limit: number, page: number): Promise<any[]> {
+  async findByQuery(query: HotTopicQueriesDto, limit: number, page: number): Promise<any> {
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }
 
