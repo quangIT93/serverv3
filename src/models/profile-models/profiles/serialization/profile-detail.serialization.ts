@@ -120,10 +120,10 @@ export class ProfileSerialization extends Profile {
         return new CompanySerialization(this.company, this.lang);
     }
 
-    @Expose()
-    get isCandidate() {
-        return this.company ? true : false;
-    }
+    // @Expose()
+    // get isCandidate() {
+    //     return this.company ? true : false;
+    // }
 
     @Expose()
     get typeRoleData() {

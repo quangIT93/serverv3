@@ -1,41 +1,52 @@
 import {
   BadRequestException,
-  ClassSerializerInterceptor,
+  Body,
   Controller,
-  Get,
   HttpStatus,
+  ParseIntPipe,
   Put,
   Req,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { User } from './entities/user.entity';
-import { Users } from 'src/common/decorators/users/users.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
-  @Get('me')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async get(@Users() user: User): Promise<User> {
-    return user;
-  }
+  // @Get('me')
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // async get(@Users() user: User): Promise<User> {
+  //   return user;
+  // }
 
-  @Get('test')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async test(): Promise<any> {
-    return this.userService.findByEmail('phanthang052@gmail.com');
-  }
-
+  // @Get('test')
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // async test(): Promise<any> {
+  //   return this.userService.findByEmail('phanthang052@gmail.com');
+  // }
+  @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        type: {
+          type: 'integer',
+          example: 1,
+        },
+      },
+    },
+  })
   @Put('type')
   @UseGuards(AuthGuard)
-  async update(@Req() req: CustomRequest, type?: number) {
+  async update(
+    @Req() req: CustomRequest,
+    @Body('type', ParseIntPipe) type: number,
+  ): Promise<any> {
     try {
       const id = req.user?.id;
 

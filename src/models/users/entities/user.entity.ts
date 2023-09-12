@@ -36,7 +36,7 @@ export class User extends BaseEntity implements IUser {
     @Column({ type: 'int', nullable: true })
     role?: number;
 
-    @Column({ type: 'int', nullable: true, default: 0 })
+    @Column({ type: 'tinyint', nullable: true, default: 0 })
     type!: number;
 
     @Column({ type: 'datetime', nullable: true, default: () => 'CURRENT_TIMESTAMP' })

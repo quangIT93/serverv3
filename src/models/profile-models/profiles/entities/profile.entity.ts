@@ -94,7 +94,7 @@ export class Profile {
     childCategories!: ChildCategory[];
 
     @OneToOne(_ => Company, company => company.profile)
-    @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
+    // @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
     company!: Company;
 
     @ManyToOne(() => Province, province => province.id)
