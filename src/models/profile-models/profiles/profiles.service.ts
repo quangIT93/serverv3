@@ -23,6 +23,7 @@ export class ProfilesService {
   findOne(id: string) {
     return this.profileRepository.findOne({ 
       relations: [
+        'user',
         'province',
         'profilesLocations', 
         'profilesLocations.province',
