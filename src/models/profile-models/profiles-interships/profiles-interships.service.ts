@@ -45,8 +45,14 @@ export class ProfilesIntershipsService {
         accountId,
       });
 
-      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
-        throw new BadRequestException('Some profiles intership were not deleted');
+      if (
+        result &&
+        typeof result.affected === 'number' &&
+        (result.affected === 0 || result.affected < idArray.length)
+      ) {
+        throw new BadRequestException(
+          'Some profiles intership were not deleted',
+        );
       }
     } catch (error) {
       throw error;

@@ -9,6 +9,9 @@ export class ProfileLanguage {
     @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
     accountId!: string;
 
+    @Column({ type: 'varchar', length: 255, nullable: false, name: 'language_name' })
+    languageName!: string;
+
     @Column({type: 'int', name: 'language_level_id'})
     languageRoleId!:number;
 

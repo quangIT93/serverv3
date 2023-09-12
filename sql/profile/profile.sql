@@ -1,12 +1,13 @@
--- CREATE TABLE
---     `profiles_skills` (
---         id int(11) NOT NULL AUTO_INCREMENT,
---         account_id varchar(50) NOT NULL,
---         skill_level_id tinyint(4) DEFAULT NULL,
---         PRIMARY KEY (id),
---         CONSTRAINT FK_Accounts_ProfilesSkills FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
---         CONSTRAINT FK_SkillRoles_ProfilesSkills FOREIGN KEY (skill_level_id) REFERENCES level_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION
---     )
+CREATE TABLE
+    `profiles_skills` (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        account_id varchar(50) NOT NULL,
+        skill_name VARCHAR(255) NOT NULL,
+        skill_level_id tinyint(4) DEFAULT NULL,
+        PRIMARY KEY (id),
+        CONSTRAINT FK_Accounts_ProfilesSkills FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK_SkillRoles_ProfilesSkills FOREIGN KEY (skill_level_id) REFERENCES level_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    )
 
 -- CREATE TABLE
 --     `level_types` (
@@ -26,15 +27,16 @@
 --         PRIMARY KEY (id)
 --     ) ENGINE = InnoDB AUTO_INCREMENT = 5 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci
 
--- CREATE TABLE
---     `profiles_languages` (
---         id int(11) NOT NULL AUTO_INCREMENT,
---         account_id varchar(50) NOT NULL,
---         language_level_id tinyint(4) DEFAULT NULL,
---         PRIMARY KEY (id),
---         CONSTRAINT FK_Accounts_ProfilesLanguages FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
---         CONSTRAINT FK_LanguagesRoles_ProfilesLanguages FOREIGN KEY (language_level_id) REFERENCES language_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION
---     )
+CREATE TABLE
+    `profiles_languages` (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        language_name VARCHAR(255) NOT NULL,
+        account_id varchar(50) NOT NULL,
+        language_level_id tinyint(4) DEFAULT NULL,
+        PRIMARY KEY (id),
+        CONSTRAINT FK_Accounts_ProfilesLanguages FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK_LanguagesRoles_ProfilesLanguages FOREIGN KEY (language_level_id) REFERENCES language_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    )
 
 
 -- CREATE TABLE `profiles_references`(
@@ -87,15 +89,15 @@
 -- )
 
 
--- CREATE TABLE `profiles_awards` (
---     id INT(11) NOT NULL AUTO_INCREMENT,
---     account_id VARCHAR(50) NOT NULL,
---     award_title VARCHAR(255) NOT NULL,
---     company_name VARCHAR(255) NOT NULL,
---     description VARCHAR(1000) NOT NULL,
---     PRIMARY KEY (id),
---     CONSTRAINT FK_Accounts_ProfilesAwards FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
--- )
+CREATE TABLE `profiles_awards` (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    account_id VARCHAR(50) NOT NULL,
+    award_title VARCHAR(255) NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT FK_Accounts_ProfilesAwards FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+)
 
 CREATE TABLE `profiles_hobbies` (
     id INT(11) NOT NULL AUTO_INCREMENT,

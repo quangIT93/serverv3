@@ -41,7 +41,11 @@ export class ProfilesCoursesService {
         accountId,
       });
 
-      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+      if (
+        result &&
+        typeof result.affected === 'number' &&
+        (result.affected === 0 || result.affected < idArray.length)
+      ) {
         throw new BadRequestException('Some profiles course were not deleted');
       }
     } catch (error) {

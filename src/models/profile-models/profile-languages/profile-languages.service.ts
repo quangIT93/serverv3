@@ -14,7 +14,7 @@ export class ProfileLanguagesService {
   ) {}
   async create(createProfileLanguageDto: CreateProfileLanguageDto) {
     try {
-      const dataType = this.languageTypesService.findOne(
+      const dataType = await this.languageTypesService.findOne(
         createProfileLanguageDto.languageRoleId,
       );
 
@@ -27,6 +27,7 @@ export class ProfileLanguagesService {
           where: {
             languageRoleId: createProfileLanguageDto.languageRoleId,
             accountId: createProfileLanguageDto.accountId,
+            languageName: createProfileLanguageDto.languageName,
           },
         },
       );

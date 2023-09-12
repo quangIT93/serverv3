@@ -10,6 +10,9 @@ export class ProfilesSkill {
     @Column({ type: 'varchar', length: 50, nullable: false, name: 'account_id' })
     accountId!: string;
 
+    @Column({ type: 'varchar', length: 255, nullable: false, name: 'skill_name' })
+    skillName!: string;
+
     @Column({type: 'int', name: 'skill_level_id'})
     skillRoleId!:number;
 

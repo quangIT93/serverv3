@@ -26,6 +26,7 @@ export class ProfilesSkillsService {
         where: {
           skillRoleId: createProfilesSkillDto.skillRoleId,
           accountId: createProfilesSkillDto.accountId,
+          skillName: createProfilesSkillDto.skillName,
         },
       });
 
