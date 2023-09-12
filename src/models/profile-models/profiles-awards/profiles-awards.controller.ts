@@ -16,7 +16,7 @@ import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
 import { UpdateProfilesAwardDto } from './dto/update-profiles-award.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 @Controller('profiles-awards')
 @ApiTags('Profiles Awards')
@@ -128,7 +128,21 @@ export class ProfilesAwardsController {
     }
   }
 
-  @Delete('remove-all')
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
+  @Delete('remove')
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
@@ -140,31 +154,6 @@ export class ProfilesAwardsController {
       }
 
       await this.profilesAwardsService.removeMany(data.ids, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile award deleted successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile award');
-    }
-  }
-
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesAwardsService.removeOne(+id, accountId);
 
       return {
         statusCode: HttpStatus.OK,

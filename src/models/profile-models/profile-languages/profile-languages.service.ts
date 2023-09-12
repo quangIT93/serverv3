@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfileLanguage } from './entities/profile-language.entity';
 import { LanguageTypesService } from '../types/language-types/language-types.service';
 
@@ -56,45 +56,22 @@ export class ProfileLanguagesService {
     }
   }
 
-  async remove(id: number, accountId: string) {
-    try {
-      const dataProfileSkill = await this.profilesLanguageRepository.findOne({
-        where: {
-          id,
-          accountId,
-        },
-      });
-
-      if (!dataProfileSkill) {
-        throw new BadRequestException('Profile language not found');
-      }
-
-      return await this.profilesLanguageRepository.remove(dataProfileSkill);
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async removeAll(ids: string | string[], accountId: string) {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesLanguageRepository
-        .createQueryBuilder('profiles_languages')
-        .where('profiles_languages.id IN (:...ids) AND profiles_languages.accountId = :accountId', {
-          ids: idArray,
-          accountId,
-        });
+      const result = await this.profilesLanguageRepository.delete({
+        id: In(idArray),
+        accountId,
+      });
 
-      const dataProfileSkills = await query.getMany();
-
-      if (dataProfileSkills.length === 0) {
-        throw new BadRequestException('Profile language not found');
+      if (
+        result &&
+        typeof result.affected === 'number' &&
+        (result.affected === 0 || result.affected < idArray.length)
+      ) {
+        throw new BadRequestException('Error delete profile language');
       }
-
-      await this.profilesLanguageRepository.remove(dataProfileSkills);
-
-      return 'Profile language records removed successfully';
     } catch (error) {
       throw error;
     }

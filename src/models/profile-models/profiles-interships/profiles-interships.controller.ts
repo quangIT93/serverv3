@@ -15,7 +15,7 @@ import { ProfilesIntershipsService } from './profiles-interships.service';
 import { CreateProfilesIntershipDto } from './dto/create-profiles-intership.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UpdateProfilesIntershipDto } from './dto/update-profiles-intership.dto';
 
 @Controller('profiles-interships')
@@ -127,7 +127,7 @@ export class ProfilesIntershipsController {
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile intership updated successfully'
+        message: 'Profile intership updated successfully',
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -137,7 +137,20 @@ export class ProfilesIntershipsController {
     }
   }
 
-  @Delete('remove-all')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
+  @Delete('remove')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
@@ -153,30 +166,6 @@ export class ProfilesIntershipsController {
       return {
         statusCode: HttpStatus.OK,
         message: 'Delete profile intership successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile intership');
-    }
-  }
-
-  @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new Error('User not found');
-      }
-      await this.profilesIntershipsService.remove(+id, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile intership deleted successfully',
       };
     } catch (error) {
       if (error instanceof Error) {

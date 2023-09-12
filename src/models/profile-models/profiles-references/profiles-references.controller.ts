@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   UseGuards,
   Req,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ProfilesReferencesService } from './profiles-references.service';
 import { CreateProfilesReferenceDto } from './dto/create-profiles-reference.dto';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileReferenceInterceptor } from './interceptor/profiles-reference.interceptor';
@@ -69,7 +68,7 @@ export class ProfilesReferencesController {
         throw new BadRequestException('User not found');
       }
 
-      return await this.profilesReferencesService.findAll(id)
+      return await this.profilesReferencesService.findAll(id);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -78,19 +77,32 @@ export class ProfilesReferencesController {
     }
   }
 
-  @Delete('remove-all')
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
+  @Delete('remove')
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
-  async removeAll(@Req() req: CustomRequest, @Body() data : any) {
+  async removeAll(@Req() req: CustomRequest, @Body() data: any) {
     try {
       const id = req.user?.id;
 
-      if(!id) {
+      if (!id) {
         throw new BadRequestException('User not found');
       }
 
       await this.profilesReferencesService.removeAll(data.ids, id);
-
 
       return {
         statusCode: HttpStatus.OK,
@@ -101,30 +113,6 @@ export class ProfilesReferencesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete references language');
-    }
-  }
-
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesReferencesService.remove(+id);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile reference deleted successfully',
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile references');
     }
   }
 }

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   UseGuards,
   BadRequestException,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ProfilesCoursesService } from './profiles-courses.service';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileCoursesInterceptor } from './interceptor/profiles-courses.interceptor';
@@ -76,7 +75,20 @@ export class ProfilesCoursesController {
     }
   }
 
-  @Delete('remove-all')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
+  @Delete('remove')
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
@@ -98,31 +110,6 @@ export class ProfilesCoursesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete profile course');
-    }
-  }
-
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesCoursesService.remove(+id, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Delete profile course successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile course');
     }
   }
 }

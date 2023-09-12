@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   BadRequestException,
   Req,
@@ -16,7 +15,7 @@ import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes,  ApiTags } from '@nestjs/swagger';
 import { ProfileLanguageInterceptor } from './interceptor/profiles-language.interceptor';
 
 @Controller('profile-languages')
@@ -35,7 +34,7 @@ export class ProfileLanguagesController {
     @Req() req: CustomRequest,
   ) {
     try {
-      const id = req.user?.id ? req.user?.id : '';
+      const id = req.user?.id;
       if (!id) {
         throw new BadRequestException('User not found');
       }
@@ -62,7 +61,7 @@ export class ProfileLanguagesController {
   @UseGuards(AuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, ProfileLanguageInterceptor)
   findAll(@Req() req: CustomRequest) {
-    const id = req.user?.id ? req.user?.id : '';
+    const id = req.user?.id;
     if (!id) {
       throw new BadRequestException('User not found');
     }
@@ -70,41 +69,30 @@ export class ProfileLanguagesController {
     return this.profileLanguagesService.findAll(id);
   }
 
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @Delete('remove-all')
+  @Delete('remove')
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
-      const accountId = req.user?.id ? req.user?.id : '';
+      const accountId = req.user?.id;
       if (!accountId) {
         throw new BadRequestException('User not found');
       }
 
       await this.profileLanguagesService.removeAll(data.ids, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Delete profile language successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error delete profile language');
-    }
-  }
-
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id ? req.user?.id : '';
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profileLanguagesService.remove(+id, accountId);
 
       return {
         statusCode: HttpStatus.OK,

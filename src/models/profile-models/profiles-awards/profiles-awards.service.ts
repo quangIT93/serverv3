@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
 import { UpdateProfilesAwardDto } from './dto/update-profiles-award.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfilesAward } from './entities/profiles-award.entity';
 
 @Injectable()
@@ -50,42 +50,13 @@ export class ProfilesAwardsService {
 
   async update(id: number, updateProfilesAwardDto: UpdateProfilesAwardDto) {
     try {
-      const profilesAward = await this.profilesAwardsRepository.findOne({
-        where: {
+      return await this.profilesAwardsRepository.update(
+        {
           id,
           accountId: updateProfilesAwardDto.accountId,
         },
-      });
-
-      if (!profilesAward) {
-        throw new Error('Profile award not found');
-      }
-
-      const updatedProfilesAward = Object.assign(
-        profilesAward,
         updateProfilesAwardDto,
-      );
-
-      return await this.profilesAwardsRepository.save(updatedProfilesAward);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async removeOne(id: number, accountId: string) {
-    try {
-      const profilesAward = await this.profilesAwardsRepository.findOne({
-        where: {
-          id,
-          accountId,
-        },
-      });
-
-      if (!profilesAward) {
-        throw new Error('Profile award not found');
-      }
-
-      return await this.profilesAwardsRepository.remove(profilesAward);
+      ); 
     } catch (error) {
       throw error;
     }
@@ -95,25 +66,14 @@ export class ProfilesAwardsService {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesAwardsRepository
-        .createQueryBuilder('profiles_awards')
-        .where(
-          'profiles_awards.id IN (:...ids) AND profiles_awards.accountId = :accountId',
-          {
-            ids: idArray,
-            accountId,
-          },
-        );
+      const result = await this.profilesAwardsRepository.delete({
+        id: In(idArray),
+        accountId,
+      });
 
-      const dataProfileAwards = await query.getMany();
-
-      if (dataProfileAwards.length === 0) {
-        throw new BadRequestException('Profile awards not found');
+      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+        throw new BadRequestException('Error deleting profile awards');
       }
-
-      await this.profilesAwardsRepository.remove(dataProfileAwards);
-
-      return 'Profile awards records removed successfully';
     } catch (error) {
       throw error;
     }

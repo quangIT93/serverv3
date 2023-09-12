@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfilesActivity } from './entities/profiles-activity.entity';
 import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
 
@@ -41,65 +41,28 @@ export class ProfilesActivitiesService {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesActivityRepository
-        .createQueryBuilder('profiles_activities')
-        .where(
-          'profiles_activities.id IN (:...ids) AND profiles_activities.accountId = :accountId',
-          {
-            ids: idArray,
-            accountId,
-          },
-        );
+      const result = await this.profilesActivityRepository.delete({
+        id: In(idArray),
+        accountId,
+      });
 
-      const dataProfileActivities = await query.getMany();
-
-      if (dataProfileActivities.length === 0) {
-        throw new BadRequestException('Profile activities not found');
+      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+        throw new BadRequestException('Some profiles activity were not deleted');
       }
-
-      await this.profilesActivityRepository.remove(dataProfileActivities);
-
-      return 'Profile activities records removed successfully';
     } catch (error) {
       throw error;
     }
   }
 
-  async update(id: number, dto : UpdateProfilesActivityDto) {
+  async update(id: number, dto: UpdateProfilesActivityDto) {
     try {
-      
-      const dataProfileActivity = await this.profilesActivityRepository.findOne({
-        where: { id, accountId: dto.accountId },
-      });
-
-      if (!dataProfileActivity) {
-        throw new BadRequestException('Profile activity not found');
-      }
-
-      return await this.profilesActivityRepository.save({
-        ...dataProfileActivity,
-        ...dto,
-      });
-
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async remove(id: number, accountId: string) {
-    try {
-      const profilesActivity = await this.profilesActivityRepository.findOne({
-        where: {
+      return await this.profilesActivityRepository.update(
+        {
           id,
-          accountId,
+          accountId: dto.accountId,
         },
-      });
-
-      if (!profilesActivity) {
-        throw new Error('Profile Activity not found');
-      }
-
-      return await this.profilesActivityRepository.remove(profilesActivity);
+        dto,
+      );
     } catch (error) {
       throw error;
     }

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfilesReferenceDto } from './dto/create-profiles-reference.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfilesReference } from './entities/profiles-reference.entity';
 
 @Injectable()
@@ -40,43 +40,14 @@ export class ProfilesReferencesService {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesReferenceRepository
-        .createQueryBuilder('profiles_references')
-        .where(
-          'profiles_references.id IN (:...ids) AND profiles_references.accountId = :accountId',
-          {
-            ids: idArray,
-            accountId,
-          },
-        );
-
-      const dataProfileReferencess = await query.getMany();
-
-      if (dataProfileReferencess.length === 0) {
-        throw new BadRequestException('Profile references not found');
-      }
-
-      await this.profilesReferenceRepository.remove(dataProfileReferencess);
-
-      return 'Profile references records removed successfully';
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      const profileReference = await this.profilesReferenceRepository.findOne({
-        where: {
-          id,
-        },
+      const result = await this.profilesReferenceRepository.delete({
+        id: In(idArray),
+        accountId,
       });
 
-      if (!profileReference) {
-        throw new Error('Profile reference not found');
+      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+        throw new BadRequestException('Some profiles reference were not deleted');
       }
-
-      return await this.profilesReferenceRepository.remove(profileReference);
     } catch (error) {
       throw error;
     }

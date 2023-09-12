@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ProfilesActivitiesService } from './profiles-activities.service';
 import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
@@ -102,7 +102,21 @@ export class ProfilesActivitiesController {
     }
   }
 
-  @Delete('remove-all')
+
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
+  @Delete('remove')
   @ApiBearerAuth('JWT-auth')
   @UseGuards(AuthGuard)
   async removeAll(@Req() req: CustomRequest, @Body() data: any) {
@@ -159,31 +173,6 @@ export class ProfilesActivitiesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Profile activity not found');
-    }
-  }
-
-  @Delete(':id')
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesActivitiesService.remove(+id, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error deleting profile activity');
     }
   }
 }

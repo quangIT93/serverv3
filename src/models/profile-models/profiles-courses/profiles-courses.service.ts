@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfilesCourse } from './entities/profiles-course.entity';
 
 @Injectable()
@@ -36,41 +36,14 @@ export class ProfilesCoursesService {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesCourseRepository
-        .createQueryBuilder('profiles_courses')
-        .where(
-          'profiles_courses.id IN (:...ids) AND profiles_courses.accountId = :accountId',
-          {
-            ids: idArray,
-            accountId,
-          },
-        );
-
-      const dataProfileCourses = await query.getMany();
-
-      if (dataProfileCourses.length === 0) {
-        throw new BadRequestException('Profile course not found');
-      }
-
-      await this.profilesCourseRepository.remove(dataProfileCourses);
-
-      return 'Profile course records removed successfully';
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async remove(id: number, accountId: string) {
-    try {
-      const dataProfileCourse = await this.profilesCourseRepository.findOne({
-        where: { id , accountId},
+      const result = await this.profilesCourseRepository.delete({
+        id: In(idArray),
+        accountId,
       });
 
-      if (!dataProfileCourse) {
-        throw new Error('Profile course not found');
+      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+        throw new BadRequestException('Some profiles course were not deleted');
       }
-
-      await this.profilesCourseRepository.remove(dataProfileCourse);
     } catch (error) {
       throw error;
     }

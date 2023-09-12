@@ -20,6 +20,9 @@ export class ProfilesHobbiesService {
 
       if (dataProfilesHobby) {
         dataProfilesHobby.description = createProfilesHobbyDto.description;
+
+        await this.profilesHobbyRepository.save(dataProfilesHobby);
+
         return {
           statusCode: HttpStatus.OK,
           message: 'Update success',
@@ -32,8 +35,8 @@ export class ProfilesHobbiesService {
 
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesHobbyRepository.save(newProfilesHobbyEntity)
-      }
+        data: await this.profilesHobbyRepository.save(newProfilesHobbyEntity),
+      };
     } catch (error) {
       throw error;
     }
@@ -53,18 +56,9 @@ export class ProfilesHobbiesService {
 
   async remove(id: string) {
     try {
-      const dataProfilesHobby = await this.profilesHobbyRepository.findOne({
-        where: {
-          accountId: id,
-        },
+      return await this.profilesHobbyRepository.delete({
+        accountId: id,
       });
-
-      if (!dataProfilesHobby) {
-        throw new Error('Data not found');
-      }
-
-      return this.profilesHobbyRepository.remove(dataProfilesHobby);
-
     } catch (error) {
       throw error;
     }

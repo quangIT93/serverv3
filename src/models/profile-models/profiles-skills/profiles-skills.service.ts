@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProfilesSkill } from './entities/profiles-skill.entity';
 import { LevelTypeService } from '../types/level-type/level-types.service';
 
@@ -10,89 +10,60 @@ export class ProfilesSkillsService {
   constructor(
     @InjectRepository(ProfilesSkill)
     private readonly profilesSkillRepository: Repository<ProfilesSkill>,
-    private readonly levelTypeService : LevelTypeService
+    private readonly levelTypeService: LevelTypeService,
   ) {}
   async create(createProfilesSkillDto: CreateProfilesSkillDto) {
     try {
-      const dataSkillRole = this.levelTypeService.findOne(createProfilesSkillDto.skillRoleId)
+      const dataSkillRole = await this.levelTypeService.findOne(
+        createProfilesSkillDto.skillRoleId,
+      );
 
       if (!dataSkillRole) {
-        throw new BadRequestException('Level type not found')
+        throw new BadRequestException('Level type not found');
       }
 
       const dataProfileSkill = await this.profilesSkillRepository.findOne({
         where: {
           skillRoleId: createProfilesSkillDto.skillRoleId,
-          accountId: createProfilesSkillDto.accountId
-        }
-      })
+          accountId: createProfilesSkillDto.accountId,
+        },
+      });
 
       if (dataProfileSkill) {
-        throw new BadRequestException('Skill Role already exists')
+        throw new BadRequestException('Skill Role already exists');
       }
 
-      const profilesSkillEntity = this.profilesSkillRepository.create(createProfilesSkillDto)
+      const profilesSkillEntity = this.profilesSkillRepository.create(
+        createProfilesSkillDto,
+      );
 
       return await this.profilesSkillRepository.save(profilesSkillEntity);
-
     } catch (error) {
-      throw error;      
+      throw error;
     }
   }
 
-  async findAll(id : string) {
+  async findAll(id: string) {
     try {
       return await this.profilesSkillRepository.find({
         where: { accountId: id },
-        relations: ['levelType']
+        relations: ['levelType'],
       });
-
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
-  async remove(id: number, accountId: string) {
-    try {
-      const dataProfileSkill = await this.profilesSkillRepository.findOne({
-        where: {
-          id,
-          accountId
-        }
-      })
-
-      if(!dataProfileSkill) {
-        throw new BadRequestException('Profile Skill not found')
-      }
-
-      return await this.profilesSkillRepository.remove(dataProfileSkill)
-
-    } catch (error) {
-      throw error
-    }
-  }
-
 
   async removeAll(ids: string | string[], accountId: string) {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];
 
-      const query = this.profilesSkillRepository
-        .createQueryBuilder('profiles_skills')
-        .where('profiles_skills.id IN (:...ids) AND profiles_skills.accountId = :accountId', {
-          ids: idArray,
-          accountId,
-        });
+      const result = await this.profilesSkillRepository.delete({ id: In(idArray), accountId });
 
-      const dataProfileSkills = await query.getMany();
-
-      if (dataProfileSkills.length === 0) {
-        throw new BadRequestException('Profile skill not found');
+      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
+        throw new BadRequestException('Some profiles skill were not deleted');
       }
 
-      await this.profilesSkillRepository.remove(dataProfileSkills);
-
-      return 'Profile skill records removed successfully';
     } catch (error) {
       throw error;
     }

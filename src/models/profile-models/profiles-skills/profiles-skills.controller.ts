@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Param,
   Delete,
   UseGuards,
   Req,
@@ -15,7 +14,7 @@ import {
 import { ProfilesSkillsService } from './profiles-skills.service';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ProfileSkillInterceptor } from './interceptor/profiles-skills.interceptor';
 
@@ -33,7 +32,7 @@ export class ProfilesSkillsController {
     @Req() req: CustomRequest,
   ) {
     try {
-      const id = req.user?.id ? req.user?.id : '';
+      const id = req.user?.id;
       if (!id) {
         throw new BadRequestException('User not found');
       }
@@ -58,7 +57,7 @@ export class ProfilesSkillsController {
   @ApiBearerAuth('JWT-auth')
   @UseInterceptors(ClassSerializerInterceptor, ProfileSkillInterceptor)
   findAll(@Req() req: CustomRequest) {
-    const id = req.user?.id ? req.user?.id : '';
+    const id = req.user?.id;
     if (!id) {
       throw new BadRequestException('User not found');
     }
@@ -66,13 +65,25 @@ export class ProfilesSkillsController {
     return this.profilesSkillsService.findAll(id);
   }
 
-
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        ids: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  })
   @UseGuards(AuthGuard)
-  @Delete('remove-all')
+  @Delete('remove')
   @ApiBearerAuth('JWT-auth')
-  async removeAll(@Body() data : any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
-      const accountId = req.user?.id ? req.user?.id : '';
+      const accountId = req.user?.id;
       if (!accountId) {
         throw new BadRequestException('User not found');
       }
@@ -88,30 +99,6 @@ export class ProfilesSkillsController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete skill language');
-    }
-  }
-
-  @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id ? req.user?.id : '';
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      await this.profilesSkillsService.remove(+id, accountId);
-
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Delete profile skill successfully',
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error delete profile skill');
     }
   }
 }
