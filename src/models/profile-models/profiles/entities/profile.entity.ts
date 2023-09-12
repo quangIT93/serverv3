@@ -10,6 +10,7 @@ import { CommunicationLike } from "src/models/communication-models/communication
 import { CommunicationView } from "src/models/communication-models/communication-views/entities/communication-view.entity";
 import { Communication } from "src/models/communication-models/communications/entities/communication.entity";
 import { CommunicationComment } from "src/models/communication-models/communication-comments/entities/communication-comment.entity";
+import { User } from "src/models/users/entities";
 
 @Entity('profiles') // table name
 export class Profile {
@@ -93,7 +94,7 @@ export class Profile {
     childCategories!: ChildCategory[];
 
     @OneToOne(_ => Company, company => company.profile)
-    @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
+    // @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
     company!: Company;
 
     @ManyToOne(() => Province, province => province.id)
@@ -115,4 +116,8 @@ export class Profile {
     
     @OneToMany(() => CommunicationComment, commmunicationComment => commmunicationComment.profile)
     communicationComments!: CommunicationComment[];
+
+    @OneToOne(() => User, user => user.profile)
+    @JoinColumn({name: 'id', referencedColumnName: 'id'})
+    user!: User
 }
