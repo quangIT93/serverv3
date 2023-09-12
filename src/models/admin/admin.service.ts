@@ -1,7 +1,7 @@
-import { BullMailService } from 'src/services/bull/bull-mail.service';
+// import { BullMailService } from 'src/services/bull/bull-mail.service';
 import { CreateMailLoggerDto } from '../log/mail-logger/dto/create-mail-logger.dto';
 import { MailLoggerService } from '../log/mail-logger/mail-logger.service';
-// import { MailService } from './../../services/mail/mail.service';
+import { MailService } from './../../services/mail/mail.service';
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { AdsMailOptionsDto } from './dto/ads-mail-options.dto';
 
@@ -9,16 +9,13 @@ import { AdsMailOptionsDto } from './dto/ads-mail-options.dto';
 export class AdminService {
 
     constructor(
-        private readonly bullMailService: BullMailService,
-        // private readonly mailService: MailService,
+        // private readonly bullMailService: BullMailService,
+        private readonly mailService: MailService,
         private readonly mailLoggerService: MailLoggerService
     ) { }
 
     async sendAdsMail(data: AdsMailOptionsDto[], accountId: string) {
         try {
-
-            
-
             // create set of mail
             const mailSet = new Set();
             data.forEach((item) => {
@@ -31,7 +28,7 @@ export class AdminService {
             }
 
             await Promise.all(data.map(async (item) => {
-                this.bullMailService.sendMail(item);
+                await this.mailService.sendMailWithTemplate('ads-mail.hbs', item);
             }));
             
             const mailLogger: CreateMailLoggerDto[] = data.map((item) => {
