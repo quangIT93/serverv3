@@ -6,6 +6,7 @@ import { Province } from 'src/models/locations/provinces/entities';
 import { District } from 'src/models/locations/districts/entities';
 import { Language } from 'src/common/enum';
 import { CompanySerialization } from 'src/models/company-models/companies/serialization/company.serialization';
+import { User } from 'src/models/users/entities';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -65,6 +66,9 @@ export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
     override company: any;
 
+    @Exclude({ toPlainOnly: true })
+    override user!: User;
+
     // expose addressText
     @Expose()
     get addressText() {
@@ -114,6 +118,16 @@ export class ProfileSerialization extends Profile {
     get companyInfomation() {
         if (!this.company) return null;
         return new CompanySerialization(this.company, this.lang);
+    }
+
+    // @Expose()
+    // get isCandidate() {
+    //     return this.company ? true : false;
+    // }
+
+    @Expose()
+    get typeRoleData() {
+        return this.user.type
     }
 
 }
