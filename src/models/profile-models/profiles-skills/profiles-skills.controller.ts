@@ -11,7 +11,7 @@ import {
 import { ProfilesSkillsService } from './profiles-skills.service';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { DeleteProfilesSkillDto } from './dto/delete-profile-skill.dto';
 
@@ -48,19 +48,6 @@ export class ProfilesSkillsController {
     }
   }
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @UseGuards(AuthGuard)
   @Delete('remove')
   @ApiBearerAuth()

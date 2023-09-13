@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfileLanguage } from './entities/profile-language.entity';
 import { LanguageTypesService } from '../types/language-types/language-types.service';
+import { DeleteProfilesLanguageDto } from './dto/delete-profile-language.dto';
 
 @Injectable()
 export class ProfileLanguagesService {
@@ -57,22 +58,16 @@ export class ProfileLanguagesService {
     }
   }
 
-  async removeAll(ids: string | string[], accountId: string) {
+  async removeAll(data: DeleteProfilesLanguageDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+      const idSet = new Set(data.ids);
 
       const result = await this.profilesLanguageRepository.delete({
-        id: In(idArray),
-        accountId,
+        id: In([...idSet]),
+        accountId: data.accountId,
       });
 
-      if (
-        result &&
-        typeof result.affected === 'number' &&
-        (result.affected === 0 || result.affected < idArray.length)
-      ) {
-        throw new BadRequestException('Error delete profile language');
-      }
+      return result
     } catch (error) {
       throw error;
     }

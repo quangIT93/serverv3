@@ -12,8 +12,8 @@ import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { DeleteProfilesLanguageDto } from './dto/delete-profile-language.dto';
 
 @Controller('profile-languages')
 @ApiTags('Profile Languages')
@@ -52,34 +52,25 @@ export class ProfileLanguagesController {
     }
   }
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Delete('remove')
-  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+  async removeAll(
+    @Body() data: DeleteProfilesLanguageDto,
+    @Req() req: CustomRequest,
+  ) {
     try {
       const accountId = req.user?.id;
       if (!accountId) {
         throw new BadRequestException('User not found');
       }
 
-      await this.profileLanguagesService.removeAll(data.ids, accountId);
+      const result = await this.profileLanguagesService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Delete profile language successfully',
+        message: `${result.affected} profile language deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {
