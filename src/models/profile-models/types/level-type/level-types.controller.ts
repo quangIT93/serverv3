@@ -4,10 +4,14 @@ import {
   Post,
   Body,
   HttpStatus,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { LevelTypeService } from './level-types.service';
 import { CreateLevelTypeDto } from './dto/create-level-type.dto';
-import { ApiConsumes } from '@nestjs/swagger';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { LevelTypesInterceptor } from './interceptor/level-types.interceptror';
 
 @Controller('level-types')
 export class LevelTypeController {
@@ -16,7 +20,7 @@ export class LevelTypeController {
   ) {}
 
   @Post()
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard)
   async create(@Body() createLevelTypeDto: CreateLevelTypeDto) {
     try {
       return {
@@ -34,12 +38,12 @@ export class LevelTypeController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor, LevelTypesInterceptor)
   async findAll() {
     try {
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.levelTypeService.findAll(),
-      }
+      return await this.levelTypeService.findAll()
+      
     } catch (error) {
       return {
         statusCode: HttpStatus.BAD_REQUEST,

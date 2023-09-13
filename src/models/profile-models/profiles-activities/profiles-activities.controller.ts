@@ -28,7 +28,6 @@ export class ProfilesActivitiesController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  // @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesActivityDto: CreateProfilesActivityDto,
     @Req() req: CustomRequest,
@@ -56,30 +55,7 @@ export class ProfilesActivitiesController {
     }
   }
 
-  // @Get(':id')
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth()
-  // async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
-  //   try {
-  //     const accountId = req.user?.id;
-
-  //     if (!accountId) {
-  //       throw new BadRequestException('User not found');
-  //     }
-
-  //     return {
-  //       statusCode: HttpStatus.OK,
-  //       data: await this.profilesActivitiesService.findOne(+id, accountId),
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       throw new BadRequestException(error.message);
-  //     }
-  //     throw new BadRequestException('Profile activity not found');
-  //   }
-  // }
-
-
+  
   @Delete('remove')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)

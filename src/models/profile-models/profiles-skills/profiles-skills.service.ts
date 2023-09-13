@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesSkill } from './entities/profiles-skill.entity';
 import { LevelTypeService } from '../types/level-type/level-types.service';
+import { DeleteProfilesSkillDto } from './dto/delete-profile-skill.dto';
 
 @Injectable()
 export class ProfilesSkillsService {
@@ -44,15 +45,13 @@ export class ProfilesSkillsService {
     }
   }
 
-  async removeAll(ids: string | string[], accountId: string) {
+  async removeAll(data: DeleteProfilesSkillDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+      const idSet = new Set(data.ids);
 
-      const result = await this.profilesSkillRepository.delete({ id: In(idArray), accountId });
+      const result = await this.profilesSkillRepository.delete({ id: In([...idSet]), accountId: data.accountId });
 
-      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
-        throw new BadRequestException('Some profiles skill were not deleted');
-      }
+      return result
 
     } catch (error) {
       throw error;

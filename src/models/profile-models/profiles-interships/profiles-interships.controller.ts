@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Param,
@@ -15,8 +14,9 @@ import { ProfilesIntershipsService } from './profiles-interships.service';
 import { CreateProfilesIntershipDto } from './dto/create-profiles-intership.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateProfilesIntershipDto } from './dto/update-profiles-intership.dto';
+import { DeleteProfilesIntershipDto } from './dto/delete-profile-intership.dto';
 
 @Controller('profiles-interships')
 @ApiTags('Profiles Interships')
@@ -55,29 +55,6 @@ export class ProfilesIntershipsController {
     }
   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.profilesIntershipsService.findOne(+id, accountId),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Profile intership not found');
-    }
-  }
-
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -112,23 +89,10 @@ export class ProfilesIntershipsController {
     }
   }
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @Delete('remove')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: DeleteProfilesIntershipDto, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
 
@@ -136,11 +100,14 @@ export class ProfilesIntershipsController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesIntershipsService.removeAll(data.ids, accountId);
+      data.accountId = accountId;
+
+      const result = await this.profilesIntershipsService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Delete profile intership successfully',
+        message: `${result.affected} profile intership deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {

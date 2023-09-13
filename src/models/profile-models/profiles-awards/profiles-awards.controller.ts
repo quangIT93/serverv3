@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Param,
@@ -16,7 +15,8 @@ import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
 import { UpdateProfilesAwardDto } from './dto/update-profiles-award.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { DeleteProfilesAwardDto } from './dto/delete-profile-award.dto';
 
 @Controller('profiles-awards')
 @ApiTags('Profiles Awards')
@@ -51,29 +51,6 @@ export class ProfilesAwardsController {
     }
   }
 
-  @Get(':id')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.profilesAwardsService.findOne(+id, accountId),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error getting profile award');
-    }
-  }
-
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -105,24 +82,10 @@ export class ProfilesAwardsController {
     }
   }
 
-
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @Delete('remove')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: DeleteProfilesAwardDto, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
 
@@ -130,11 +93,14 @@ export class ProfilesAwardsController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesAwardsService.removeMany(data.ids, accountId);
+      data.accountId = accountId;
+
+      const result = await this.profilesAwardsService.removeMany(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile award deleted successfully',
+        message: `${result.affected} profile awards deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {

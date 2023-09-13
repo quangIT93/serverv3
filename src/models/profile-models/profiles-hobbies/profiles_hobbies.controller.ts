@@ -12,7 +12,7 @@ import { ProfilesHobbiesService } from './profiles_hobbies.service';
 import { CreateProfilesHobbyDto } from './dto/create-profiles_hobby.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('profiles-hobbies')
 @ApiTags('Profiles Hobbies')
@@ -23,7 +23,6 @@ export class ProfilesHobbiesController {
 
   @Post()
   @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard)
   async create(
     @Body() createProfilesHobbyDto: CreateProfilesHobbyDto,

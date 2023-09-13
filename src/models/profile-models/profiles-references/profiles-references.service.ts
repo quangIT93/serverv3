@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProfilesReferenceDto } from './dto/create-profiles-reference.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesReference } from './entities/profiles-reference.entity';
+import { DeleteProfilesReferenceDto } from './dto/delete-profile-reference.dto';
 
 @Injectable()
 export class ProfilesReferencesService {
@@ -24,24 +25,16 @@ export class ProfilesReferencesService {
     }
   }
 
-  async removeAll(ids: string | string[], accountId: string) {
+  async removeAll(data: DeleteProfilesReferenceDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+      const idSet = new Set(data.ids);
 
       const result = await this.profilesReferenceRepository.delete({
-        id: In(idArray),
-        accountId,
+        id: In([...idSet]),
+        accountId: data.accountId,
       });
 
-      if (
-        result &&
-        typeof result.affected === 'number' &&
-        (result.affected === 0 || result.affected < idArray.length)
-      ) {
-        throw new BadRequestException(
-          'Some profiles reference were not deleted',
-        );
-      }
+      return result
     } catch (error) {
       throw error;
     }

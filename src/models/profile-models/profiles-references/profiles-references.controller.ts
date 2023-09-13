@@ -11,9 +11,10 @@ import {
 } from '@nestjs/common';
 import { ProfilesReferencesService } from './profiles-references.service';
 import { CreateProfilesReferenceDto } from './dto/create-profiles-reference.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { DeleteProfilesReferenceDto } from './dto/delete-profile-reference.dto';
 @Controller('profiles-references')
 @ApiTags('Profiles References')
 export class ProfilesReferencesController {
@@ -24,7 +25,6 @@ export class ProfilesReferencesController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesReferenceDto: CreateProfilesReferenceDto,
     @Req() req: CustomRequest,
@@ -52,23 +52,10 @@ export class ProfilesReferencesController {
     }
   }
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @Delete('remove')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async removeAll(@Req() req: CustomRequest, @Body() data: any) {
+  async removeAll(@Req() req: CustomRequest, @Body() data: DeleteProfilesReferenceDto) {
     try {
       const id = req.user?.id;
 
@@ -76,11 +63,14 @@ export class ProfilesReferencesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesReferencesService.removeAll(data.ids, id);
+      data.accountId = id;
+
+      const result = await this.profilesReferencesService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Delete profile references successfully',
+        message: `${result.affected} profile references deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {

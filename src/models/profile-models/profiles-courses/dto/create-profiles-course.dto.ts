@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
+import { IsTimestamp } from 'src/common/decorators/validation';
 
 export class CreateProfilesCourseDto {
 
@@ -13,11 +15,15 @@ export class CreateProfilesCourseDto {
   @IsNotEmpty()
   insitiutionName!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'number', required: false })
   @IsNotEmpty()
+  @IsTimestamp()
+  @Type(() => String)
   startDate!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'number', required: false })
   @IsNotEmpty()
+  @IsTimestamp()
+  @Type(() => String)
   endDate!: string;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -28,7 +28,6 @@ export class ProfilesActivitiesService {
 
   async removeAll(data: DeleteProfilesActivityDto) {
     try {
-      // const idArray = ids;
 
       //  create set of ids to delete
       const idSet = new Set(data.ids);
@@ -40,9 +39,6 @@ export class ProfilesActivitiesService {
       
       return result;
 
-      // if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idSet.size )) {
-      //   throw new BadRequestException('Some profiles activity were not deleted');
-      // }
     } catch (error) {
       throw error;
     }
@@ -57,25 +53,6 @@ export class ProfilesActivitiesService {
         },
         dto,
       );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async findOne(id: number, accountId: string) {
-    try {
-      const profilesActivity = await this.profilesActivityRepository.findOne({
-        where: {
-          id,
-          accountId,
-        },
-      });
-
-      if (!profilesActivity) {
-        throw new BadRequestException('Profile activity not found');
-      }
-
-      return profilesActivity;
     } catch (error) {
       throw error;
     }

@@ -1,14 +1,15 @@
-import { Controller, Get, Post, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus, UseInterceptors, ClassSerializerInterceptor, UseGuards } from '@nestjs/common';
 import { LanguageTypesService } from './language-types.service';
 import { CreateLanguageTypeDto } from './dto/create-language-type.dto';
-import { ApiConsumes } from '@nestjs/swagger';
+import { LanguageTypesInterceptor } from './interceptor/language-types.interceptor';
+import { AuthGuard } from 'src/authentication/auth.guard';
 
 @Controller('language-types')
 export class LanguageTypesController {
   constructor(private readonly languageTypesService: LanguageTypesService) {}
 
   @Post()
-  @ApiConsumes('multipart/form-data')
+  @UseGuards(AuthGuard)
   async create(@Body() createLanguageTypeDto: CreateLanguageTypeDto) {
     try {
       return {
@@ -24,12 +25,11 @@ export class LanguageTypesController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor, LanguageTypesInterceptor)
   async findAll() {
     try {
-      return{
-        statusCode: HttpStatus.OK,
-        data: await this.languageTypesService.findAll(),
-      }
+      return await this.languageTypesService.findAll()
     } catch (error) {
       return {
         statusCode: HttpStatus.BAD_REQUEST,

@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { ProfilesCoursesService } from './profiles-courses.service';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { DeleteProfilesCourseDto } from './dto/delete-profile-course.dto';
 
 @Controller('profiles-courses')
 @ApiTags('Profiles Courses')
@@ -24,7 +25,6 @@ export class ProfilesCoursesController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesCourseDto: CreateProfilesCourseDto,
     @Req() req: CustomRequest,
@@ -50,23 +50,10 @@ export class ProfilesCoursesController {
     }
   }
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @Delete('remove')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: DeleteProfilesCourseDto, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
 
@@ -74,11 +61,14 @@ export class ProfilesCoursesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesCoursesService.removeAll(data.ids, accountId);
+      data.accountId = accountId;
+
+      const result = await this.profilesCoursesService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Delete profile course successfully',
+        message: `${result.affected} profile courses deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {

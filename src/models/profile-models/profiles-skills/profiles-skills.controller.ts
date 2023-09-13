@@ -11,8 +11,9 @@ import {
 import { ProfilesSkillsService } from './profiles-skills.service';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { DeleteProfilesSkillDto } from './dto/delete-profile-skill.dto';
 
 @Controller('profiles-skills')
 @ApiTags('Profiles Skills')
@@ -22,7 +23,6 @@ export class ProfilesSkillsController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesSkillDto: CreateProfilesSkillDto,
     @Req() req: CustomRequest,
@@ -64,18 +64,21 @@ export class ProfilesSkillsController {
   @UseGuards(AuthGuard)
   @Delete('remove')
   @ApiBearerAuth()
-  async removeAll(@Body() data: any, @Req() req: CustomRequest) {
+  async removeAll(@Body() data: DeleteProfilesSkillDto, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
       if (!accountId) {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesSkillsService.removeAll(data.ids, accountId);
+      data.accountId = accountId;
+
+      const result = await this.profilesSkillsService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Delete profile skill successfully',
+        message: `${result.affected} profile skill deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {

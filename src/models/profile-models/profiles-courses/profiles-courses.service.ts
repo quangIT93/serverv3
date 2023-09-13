@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesCourse } from './entities/profiles-course.entity';
+import { DeleteProfilesCourseDto } from './dto/delete-profile-course.dto';
 
 @Injectable()
 export class ProfilesCoursesService {
@@ -22,22 +23,18 @@ export class ProfilesCoursesService {
     }
   }
 
-  async removeAll(ids: string | string[], accountId: string) {
+  async removeAll(data: DeleteProfilesCourseDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+
+      const idSet = new Set(data.ids);
 
       const result = await this.profilesCourseRepository.delete({
-        id: In(idArray),
-        accountId,
+        id: In([...idSet]),
+        accountId: data.accountId,
       });
 
-      if (
-        result &&
-        typeof result.affected === 'number' &&
-        (result.affected === 0 || result.affected < idArray.length)
-      ) {
-        throw new BadRequestException('Some profiles course were not deleted');
-      }
+      return result;
+
     } catch (error) {
       throw error;
     }

@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
 import { UpdateProfilesAwardDto } from './dto/update-profiles-award.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesAward } from './entities/profiles-award.entity';
+import { DeleteProfilesAwardDto } from './dto/delete-profile-award.dto';
 
 @Injectable()
 export class ProfilesAwardsService {
@@ -23,19 +24,6 @@ export class ProfilesAwardsService {
     }
   }
 
-  async findOne(id: number, accountId: string) {
-    try {
-      return await this.profilesAwardsRepository.findOne({
-        where: {
-          id,
-          accountId,
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async update(id: number, updateProfilesAwardDto: UpdateProfilesAwardDto) {
     try {
       return await this.profilesAwardsRepository.update(
@@ -50,18 +38,17 @@ export class ProfilesAwardsService {
     }
   }
 
-  async removeMany(ids: string | string[], accountId: string) {
+  async removeMany(data : DeleteProfilesAwardDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+
+      const idSet = new Set(data.ids);
 
       const result = await this.profilesAwardsRepository.delete({
-        id: In(idArray),
-        accountId,
+        id: In([...idSet]),
+        accountId: data.accountId,
       });
 
-      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
-        throw new BadRequestException('Error deleting profile awards');
-      }
+      return result;
     } catch (error) {
       throw error;
     }
