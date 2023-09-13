@@ -13,7 +13,7 @@ export class ProfileLanguage {
     languageName!: string;
 
     @Column({type: 'int', name: 'language_level_id'})
-    languageRoleId!:number;
+    languageLevelId!:number;
 
     @ManyToOne(() => LanguageType, languageType => languageType.profileLanguages)
     @JoinColumn({name: 'language_level_id'})

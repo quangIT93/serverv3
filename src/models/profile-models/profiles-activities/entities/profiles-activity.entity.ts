@@ -27,9 +27,9 @@ export class ProfilesActivity {
   employer!: string;
 
   @Column({
-    type: 'varchar',
+    type: 'text',
     nullable: false,
-    length: 1000,
+    // length: 1000,
     name: 'description',
   })
   description!: string;

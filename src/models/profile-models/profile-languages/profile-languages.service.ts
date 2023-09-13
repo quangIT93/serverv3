@@ -15,7 +15,7 @@ export class ProfileLanguagesService {
   async create(createProfileLanguageDto: CreateProfileLanguageDto) {
     try {
       const dataType = await this.languageTypesService.findOne(
-        createProfileLanguageDto.languageRoleId,
+        createProfileLanguageDto.languageLevelId,
       );
 
       if (!dataType) {
@@ -25,7 +25,7 @@ export class ProfileLanguagesService {
       const dataProfileLanguage = await this.profilesLanguageRepository.findOne(
         {
           where: {
-            languageRoleId: createProfileLanguageDto.languageRoleId,
+            languageLevelId: createProfileLanguageDto.languageLevelId,
             accountId: createProfileLanguageDto.accountId,
             languageName: createProfileLanguageDto.languageName,
           },

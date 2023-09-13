@@ -14,8 +14,8 @@ import { ProfilesActivity } from '../../profiles-activities/entities/profiles-ac
 import { ProfilesActitvitesSerialization } from '../../profiles-activities/serialization/profiles-activities.serialization';
 import { ProfilesIntership } from '../../profiles-interships/entities/profiles-intership.entity';
 import { ProfilesIntershipSerialization } from '../../profiles-interships/serialization/profiles-interships.serialization';
-import { ProfilesHobby } from '../../profiles_hobbies/entities/profiles_hobby.entity';
-import { ProfilesHobbiesSerializtion } from '../../profiles_hobbies/serialization/profiles-hobbies.serialization';
+import { ProfilesHobby } from '../../profiles-hobbies/entities/profiles_hobby.entity';
+import { ProfilesHobbiesSerializtion } from '../../profiles-hobbies/serialization/profiles-hobbies.serialization';
 import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
 import { ProfileReferenceSerialization } from '../../profiles-references/serializtion/profile-reference.serialization';
 

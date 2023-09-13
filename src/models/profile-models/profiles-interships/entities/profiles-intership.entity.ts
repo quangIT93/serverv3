@@ -17,8 +17,7 @@ export class ProfilesIntership {
   employer!: string;
 
   @Column({
-    type: 'varchar',
-    length: 1000,
+    type: 'text',
     name: 'description',
     nullable: true,
   })

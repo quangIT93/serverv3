@@ -7,7 +7,7 @@ export class CreateProfileLanguageDto {
 
     @ApiProperty({type: 'int', name: 'language_role_id', nullable: false})
     @IsNotEmpty()
-    languageRoleId!:number;
+    languageLevelId!:number;
 
     @ApiProperty({type: 'varchar', name: 'language_name', nullable: false})
     @IsNotEmpty()

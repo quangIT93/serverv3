@@ -24,7 +24,7 @@ import { ProfilesAward } from '../../profiles-awards/entities/profiles-award.ent
 import { ProfilesCourse } from '../../profiles-courses/entities/profiles-course.entity';
 import { ProfilesActivity } from '../../profiles-activities/entities/profiles-activity.entity';
 import { ProfilesIntership } from '../../profiles-interships/entities/profiles-intership.entity';
-import { ProfilesHobby } from '../../profiles_hobbies/entities/profiles_hobby.entity';
+import { ProfilesHobby } from '../../profiles-hobbies/entities/profiles_hobby.entity';
 import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
 
 @Entity('profiles') // table name

@@ -63,7 +63,7 @@ import { ProfilesCoursesModule } from './models/profile-models/profiles-courses/
 import { ProfilesActivitiesModule } from './models/profile-models/profiles-activities/profiles-activities.module';
 import { ProfilesIntershipsModule } from './models/profile-models/profiles-interships/profiles-interships.module';
 import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/profiles-awards.module';
-import { ProfilesHobbiesModule } from './models/profile-models/profiles_hobbies/profiles_hobbies.module';
+import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/profiles_hobbies.module';
 @Module({
   imports: [
     AppConfigModule,

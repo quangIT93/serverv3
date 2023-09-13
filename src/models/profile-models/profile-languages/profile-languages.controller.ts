@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Delete,
@@ -8,15 +7,13 @@ import {
   Req,
   HttpStatus,
   UseGuards,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { ProfileLanguageInterceptor } from './interceptor/profiles-language.interceptor';
+
 
 @Controller('profile-languages')
 @ApiTags('Profile Languages')
@@ -54,19 +51,6 @@ export class ProfileLanguagesController {
       }
       throw new BadRequestException('Error creating profile languages');
     }
-  }
-
-  @Get()
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  @UseInterceptors(ClassSerializerInterceptor, ProfileLanguageInterceptor)
-  findAll(@Req() req: CustomRequest) {
-    const id = req.user?.id;
-    if (!id) {
-      throw new BadRequestException('User not found');
-    }
-
-    return this.profileLanguagesService.findAll(id);
   }
 
   @ApiBody({

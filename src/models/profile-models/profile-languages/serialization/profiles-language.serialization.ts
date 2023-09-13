@@ -19,7 +19,7 @@ export class ProfileLanguageSerialization extends ProfileLanguage {
     override levelTypeLanguage!: LanguageType;
 
     @Exclude({ toPlainOnly: true })
-    override languageRoleId!: number;
+    override languageLevelId!: number;
 
     @Expose() 
     get dataProfileLanguageRoles(){
