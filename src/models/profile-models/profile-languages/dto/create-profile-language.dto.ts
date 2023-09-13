@@ -5,7 +5,7 @@ export class CreateProfileLanguageDto {
     
     accountId!: string;
 
-    @ApiProperty({ type: 'string', format: 'string', required: false })
+    @ApiProperty({ type: 'number', format: 'number', nullable: false })
     @IsNotEmpty()
     languageLevelId!:number;
 
