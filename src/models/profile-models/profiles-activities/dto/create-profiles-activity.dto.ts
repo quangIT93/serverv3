@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
+import { IsTimestamp } from 'src/common/decorators/validation';
 
 export class CreateProfilesActivityDto {
   accountId!: string;
@@ -20,21 +22,25 @@ export class CreateProfilesActivityDto {
     maxLength: 255,
   })
   @IsNotEmpty()
-  oganization!: string;
+  organization!: string;
 
   @ApiProperty({
-    type: 'text',
+    type: 'string',
     format: 'string',
     required: false,
   })
   @IsNotEmpty()
   description!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'number', required: false })
   @IsNotEmpty()
+  @IsTimestamp()
+  @Type(() => String)
   startDate!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'number', required: false })
   @IsNotEmpty()
+  @IsTimestamp()
+  @Type(() => String)
   endDate!: string;
 }

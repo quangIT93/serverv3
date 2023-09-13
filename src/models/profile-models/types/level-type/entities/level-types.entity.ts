@@ -1,7 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, OneToMany } from "typeorm";
 import { ProfilesSkill } from "../../../profiles-skills/entities/profiles-skill.entity";
 
-@Entity('level_types')
+@Entity('skill_level_types')
 export class LevelType {
     
     @PrimaryGeneratedColumn('increment')

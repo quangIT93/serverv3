@@ -24,7 +24,7 @@ export class ProfilesAwardsController {
   constructor(private readonly profilesAwardsService: ProfilesAwardsService) {}
 
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(
     @Body() createProfilesAwardDto: CreateProfilesAwardDto,
@@ -52,7 +52,7 @@ export class ProfilesAwardsController {
   }
 
   @Get(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
@@ -75,7 +75,7 @@ export class ProfilesAwardsController {
   }
 
   @Put(':id')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,
@@ -120,7 +120,7 @@ export class ProfilesAwardsController {
     },
   })
   @Delete('remove')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {

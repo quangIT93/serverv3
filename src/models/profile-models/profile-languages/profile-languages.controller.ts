@@ -24,7 +24,7 @@ export class ProfileLanguagesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfileLanguageDto: CreateProfileLanguageDto,
@@ -67,7 +67,7 @@ export class ProfileLanguagesController {
     },
   })
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @Delete('remove')
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {

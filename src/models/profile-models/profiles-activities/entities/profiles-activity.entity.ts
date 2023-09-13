@@ -24,7 +24,7 @@ export class ProfilesActivity {
     nullable: false,
     length: 255,
   })
-  oganization!: string;
+  organization!: string;
 
   @Column({
     type: 'text',

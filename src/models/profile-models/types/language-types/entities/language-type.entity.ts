@@ -1,7 +1,7 @@
 import { ProfileLanguage } from "src/models/profile-models/profile-languages/entities/profile-language.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: 'language_types' })
+@Entity({ name: 'language_level_types' })
 export class LanguageType {
 
     @PrimaryGeneratedColumn()

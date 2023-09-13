@@ -15,7 +15,7 @@ import { ProfilesIntershipsService } from './profiles-interships.service';
 import { CreateProfilesIntershipDto } from './dto/create-profiles-intership.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { UpdateProfilesIntershipDto } from './dto/update-profiles-intership.dto';
 
 @Controller('profiles-interships')
@@ -26,8 +26,7 @@ export class ProfilesIntershipsController {
   ) {}
 
   @Post()
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(
     @Body() createProfilesIntershipDto: CreateProfilesIntershipDto,
@@ -58,7 +57,7 @@ export class ProfilesIntershipsController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
@@ -81,8 +80,7 @@ export class ProfilesIntershipsController {
 
   @Put(':id')
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
   async update(
     @Param('id') id: string,
     @Body() updateProfilesIntershipDto: UpdateProfilesIntershipDto,
@@ -129,7 +127,7 @@ export class ProfilesIntershipsController {
   })
   @Delete('remove')
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;

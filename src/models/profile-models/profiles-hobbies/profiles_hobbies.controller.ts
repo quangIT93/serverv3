@@ -22,7 +22,7 @@ export class ProfilesHobbiesController {
   ) {}
 
   @Post()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @UseGuards(AuthGuard)
   async create(
@@ -50,7 +50,7 @@ export class ProfilesHobbiesController {
   }
 
   @Delete()
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async remove(@Req() req: CustomRequest) {
     try {

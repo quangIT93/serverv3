@@ -23,7 +23,7 @@ export class ProfilesReferencesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesReferenceDto: CreateProfilesReferenceDto,
@@ -66,7 +66,7 @@ export class ProfilesReferencesController {
     },
   })
   @Delete('remove')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async removeAll(@Req() req: CustomRequest, @Body() data: any) {
     try {

@@ -21,7 +21,7 @@ export class ProfilesSkillsController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesSkillDto: CreateProfilesSkillDto,
@@ -63,7 +63,7 @@ export class ProfilesSkillsController {
   })
   @UseGuards(AuthGuard)
   @Delete('remove')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;

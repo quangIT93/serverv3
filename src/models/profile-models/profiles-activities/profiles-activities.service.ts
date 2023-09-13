@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesActivity } from './entities/profiles-activity.entity';
 import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
+import { DeleteProfilesActivityDto } from './dto/delete-profile-activity.dto';
 
 @Injectable()
 export class ProfilesActivitiesService {
@@ -25,18 +26,23 @@ export class ProfilesActivitiesService {
     }
   }
 
-  async removeAll(ids: string | string[], accountId: string) {
+  async removeAll(data: DeleteProfilesActivityDto) {
     try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+      // const idArray = ids;
+
+      //  create set of ids to delete
+      const idSet = new Set(data.ids);
 
       const result = await this.profilesActivityRepository.delete({
-        id: In(idArray),
-        accountId,
+        id: In([...idSet]),
+        accountId: data.accountId,
       });
+      
+      return result;
 
-      if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idArray.length )) {
-        throw new BadRequestException('Some profiles activity were not deleted');
-      }
+      // if (result && typeof result.affected === 'number' && ( result.affected === 0 || result.affected < idSet.size )) {
+      //   throw new BadRequestException('Some profiles activity were not deleted');
+      // }
     } catch (error) {
       throw error;
     }

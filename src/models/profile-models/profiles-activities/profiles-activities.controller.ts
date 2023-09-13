@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Param,
@@ -13,10 +12,11 @@ import {
 } from '@nestjs/common';
 import { ProfilesActivitiesService } from './profiles-activities.service';
 import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { UpdateProfilesActivityDto } from './dto/update-profiles-activity.dto';
+import { DeleteProfilesActivityDto } from './dto/delete-profile-activity.dto';
 
 @Controller('profiles-activities')
 @ApiTags('Profiles Activities')
@@ -27,8 +27,8 @@ export class ProfilesActivitiesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  // @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesActivityDto: CreateProfilesActivityDto,
     @Req() req: CustomRequest,
@@ -56,47 +56,34 @@ export class ProfilesActivitiesController {
     }
   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
+  // @Get(':id')
+  // @UseGuards(AuthGuard)
+  // @ApiBearerAuth()
+  // async findOne(@Param('id') id: string, @Req() req: CustomRequest) {
+  //   try {
+  //     const accountId = req.user?.id;
 
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
+  //     if (!accountId) {
+  //       throw new BadRequestException('User not found');
+  //     }
 
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.profilesActivitiesService.findOne(+id, accountId),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Profile activity not found');
-    }
-  }
+  //     return {
+  //       statusCode: HttpStatus.OK,
+  //       data: await this.profilesActivitiesService.findOne(+id, accountId),
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new BadRequestException(error.message);
+  //     }
+  //     throw new BadRequestException('Profile activity not found');
+  //   }
+  // }
 
 
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  })
   @Delete('remove')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async removeAll(@Req() req: CustomRequest, @Body() data: any) {
+  async removeAll(@Req() req: CustomRequest, @Body() data: DeleteProfilesActivityDto) {
     try {
       const accountId = req.user?.id;
 
@@ -104,11 +91,14 @@ export class ProfilesActivitiesController {
         throw new BadRequestException('User not found');
       }
 
-      await this.profilesActivitiesService.removeAll(data.ids, accountId);
+      data.accountId = accountId;
+
+      const result = await this.profilesActivitiesService.removeAll(data);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile activity deleted successfully',
+        message: `${result.affected} profile activities deleted successfully`,
+        data: result.affected,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -119,8 +109,7 @@ export class ProfilesActivitiesController {
   }
 
   @Put(':id')
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async update(
     @Param('id') id: string,

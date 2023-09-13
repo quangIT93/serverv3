@@ -23,7 +23,7 @@ export class ProfilesCoursesController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   async create(
     @Body() createProfilesCourseDto: CreateProfilesCourseDto,
@@ -64,7 +64,7 @@ export class ProfilesCoursesController {
     },
   })
   @Delete('remove')
-  @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async removeAll(@Body() data: any, @Req() req: CustomRequest) {
     try {

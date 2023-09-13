@@ -14,7 +14,7 @@ import {
 import { ProfilesService } from './profiles.service';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 // import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 // import { plainToInstance } from 'class-transformer';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
@@ -35,6 +35,7 @@ export class ProfilesController {
   //   return this.profilesService.findAll();
   // }
 
+  @ApiBearerAuth()
   @UseInterceptors(
     ClassSerializerInterceptor,
     ProfileDetailInterceptor,
