@@ -19,26 +19,13 @@ export class UserService {
 
   async updateTypeUser(id: string, typeUser: number) {
     try {
-      // const user = await this.usersRepository.findOne({
-      //    relations: ['profile', 'profile.company'],
-      //   where: {
-      //     id,
-      //   },
-      // });
-
-      // if (!user) {
-      //   throw new BadRequestException('User not found');
-      // }
       if (typeUser !== 0 && typeUser !== 1) {
         throw new BadRequestException('Type user invalid');
       }
 
-      if (typeUser) {
-        await this.usersRepository.update(id, {
-          type: typeUser,
-        });
-      }
-
+      await this.usersRepository.update(id, {
+        type: typeUser,
+      });
     } catch (error) {
       throw error;
     }
