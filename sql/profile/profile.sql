@@ -94,7 +94,6 @@ CREATE TABLE IF NOT EXISTS `profiles_awards` (
     id INT(11) NOT NULL AUTO_INCREMENT,
     account_id VARCHAR(50) NOT NULL,
     award_title VARCHAR(255) NOT NULL,
-    company_name VARCHAR(255) NOT NULL,
     description VARCHAR(1000) NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_Accounts_ProfilesAwards FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE NO ACTION
