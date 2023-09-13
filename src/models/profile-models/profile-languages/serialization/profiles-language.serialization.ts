@@ -16,6 +16,9 @@ export class ProfileLanguageSerialization extends ProfileLanguage {
     }
 
     @Exclude({ toPlainOnly: true })
+    override accountId!: string;
+
+    @Exclude({ toPlainOnly: true })
     override levelTypeLanguage!: LanguageType;
 
     @Exclude({ toPlainOnly: true })

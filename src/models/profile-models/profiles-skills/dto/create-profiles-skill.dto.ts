@@ -5,9 +5,9 @@ export class CreateProfilesSkillDto {
 
     accountId!: string;
 
-    @ApiProperty({ type: 'int', description: 'skill_role_id', nullable: false })
+    @ApiProperty({ type: 'int', description: 'skill_level_id', nullable: false })
     @IsNotEmpty()
-    skillRoleId!:number;
+    skillLevelId!:number;
 
     @ApiProperty({ type: 'varchar', description: 'skill_name', nullable: false })
     @IsNotEmpty()

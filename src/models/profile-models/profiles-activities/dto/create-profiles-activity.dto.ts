@@ -20,13 +20,12 @@ export class CreateProfilesActivityDto {
     maxLength: 255,
   })
   @IsNotEmpty()
-  employer!: string;
+  oganization!: string;
 
   @ApiProperty({
-    type: 'string',
+    type: 'text',
     format: 'string',
     required: false,
-    maxLength: 1000,
   })
   @IsNotEmpty()
   description!: string;

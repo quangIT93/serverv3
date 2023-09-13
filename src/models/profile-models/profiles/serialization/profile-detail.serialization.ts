@@ -18,6 +18,10 @@ import { ProfilesHobby } from '../../profiles-hobbies/entities/profiles_hobby.en
 import { ProfilesHobbiesSerializtion } from '../../profiles-hobbies/serialization/profiles-hobbies.serialization';
 import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
 import { ProfileReferenceSerialization } from '../../profiles-references/serializtion/profile-reference.serialization';
+import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.entity';
+import { ProfileSkillSerialization } from '../../profiles-skills/serialization/profiles-skill.serialization';
+import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
+import { ProfileLanguageSerialization } from '../../profile-languages/serialization/profiles-language.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -94,6 +98,12 @@ export class ProfileSerialization extends Profile {
 
     @Exclude({ toPlainOnly: true })
     override profilesReference!: ProfilesReference[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesSkill!: ProfilesSkill[];
+
+    @Exclude({ toPlainOnly: true })
+    override profileLanguage!: ProfileLanguage[];
 
     // expose addressText
     @Expose()
@@ -189,6 +199,22 @@ export class ProfileSerialization extends Profile {
         if (!this.profilesReference) return null;
         return this.profilesReference.map((profileReference: ProfilesReference) => {
             return new ProfileReferenceSerialization(profileReference, this.lang);
+        })
+    }
+
+    @Expose()
+    get profilesSkills() {
+        if (!this.profilesSkill) return null;
+        return this.profilesSkill.map((profileSkills: ProfilesSkill) => {
+            return new ProfileSkillSerialization(profileSkills, this.lang);
+        })
+    }
+
+    @Expose()
+    get profilesLanguages() {
+        if (!this.profileLanguage) return null
+        return this.profileLanguage.map((profileLanguages : ProfileLanguage) => {
+            return new ProfileLanguageSerialization(profileLanguages, this.lang);
         })
     }
 

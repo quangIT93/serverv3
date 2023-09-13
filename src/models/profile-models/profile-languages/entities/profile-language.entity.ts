@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LanguageType } from "../../types/language-types/entities/language-type.entity";
+import { Profile } from "../../profiles/entities";
 
 @Entity('profiles_languages')
 export class ProfileLanguage {
@@ -18,4 +19,8 @@ export class ProfileLanguage {
     @ManyToOne(() => LanguageType, languageType => languageType.profileLanguages)
     @JoinColumn({name: 'language_level_id'})
     levelTypeLanguage!:LanguageType;
+
+    @ManyToOne(() => Profile, profile => profile.profileLanguage)
+    @JoinColumn({name: 'account_id'})
+    profile!: Profile;
 }

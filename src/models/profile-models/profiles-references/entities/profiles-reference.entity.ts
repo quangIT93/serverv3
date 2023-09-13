@@ -13,9 +13,6 @@ export class ProfilesReference {
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'full_name' })
     fullName!:string;
 
-    @Column({ type: 'varchar', length: 255, nullable: false, name: 'company_name' })
-    companyName!:string;
-
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'phone' })
     phone!:string;
 

@@ -19,17 +19,16 @@ export class ProfilesActivity {
   title!: string;
 
   @Column({
-    name: 'employer',
+    name: 'organization',
     type: 'varchar',
     nullable: false,
     length: 255,
   })
-  employer!: string;
+  oganization!: string;
 
   @Column({
     type: 'text',
     nullable: false,
-    // length: 1000,
     name: 'description',
   })
   description!: string;

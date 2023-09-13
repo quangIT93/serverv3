@@ -6,10 +6,9 @@ import { Profile } from './entities/profile.entity';
 
 @Injectable()
 export class ProfilesService {
-
   constructor(
     @InjectRepository(Profile)
-    private readonly profileRepository: Repository<Profile>
+    private readonly profileRepository: Repository<Profile>,
   ) {}
 
   create(_createProfileDto: CreateProfileDto) {
@@ -21,14 +20,14 @@ export class ProfilesService {
   }
 
   findOne(id: string) {
-    return this.profileRepository.findOne({ 
+    return this.profileRepository.findOne({
       relations: [
         'province',
-        'profilesLocations', 
+        'profilesLocations',
         'profilesLocations.province',
         'childCategories',
         'childCategories.parentCategory',
-        'profilesExperiences', 
+        'profilesExperiences',
         'profilesEducations',
         'profilesAward',
         'profilesCourse',
@@ -36,6 +35,10 @@ export class ProfilesService {
         'profilesActivity',
         'profilesIntership',
         'profilesReference',
+        'profilesSkill',
+        'profilesSkill.levelType',
+        'profileLanguage',
+        'profileLanguage.levelTypeLanguage',
         'company',
         'company.companyRole',
         'company.companySize',
@@ -45,15 +48,15 @@ export class ProfilesService {
         'company.category',
         'company.companyImages',
       ],
-      where: { accountId: id }
+      where: { accountId: id },
     });
   }
 
   getProfileEmail(id: string) {
     return this.profileRepository.findOne({
       select: ['email'],
-      where: { accountId: id }
-    })
+      where: { accountId: id },
+    });
   }
 
   remove(id: number) {

@@ -15,7 +15,7 @@ export class ProfilesSkillsService {
   async create(createProfilesSkillDto: CreateProfilesSkillDto) {
     try {
       const dataSkillRole = await this.levelTypeService.findOne(
-        createProfilesSkillDto.skillRoleId,
+        createProfilesSkillDto.skillLevelId,
       );
 
       if (!dataSkillRole) {
@@ -24,11 +24,11 @@ export class ProfilesSkillsService {
 
       const dataProfileSkill = await this.profilesSkillRepository.findOne({
         where: {
-          skillRoleId: createProfilesSkillDto.skillRoleId,
+          skillLevelId: createProfilesSkillDto.skillLevelId,
           accountId: createProfilesSkillDto.accountId,
           skillName: createProfilesSkillDto.skillName,
         },
-      });
+    });
 
       if (dataProfileSkill) {
         throw new BadRequestException('Skill Role already exists');

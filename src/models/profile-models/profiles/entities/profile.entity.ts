@@ -26,6 +26,8 @@ import { ProfilesActivity } from '../../profiles-activities/entities/profiles-ac
 import { ProfilesIntership } from '../../profiles-interships/entities/profiles-intership.entity';
 import { ProfilesHobby } from '../../profiles-hobbies/entities/profiles_hobby.entity';
 import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
+import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.entity';
+import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 
 @Entity('profiles') // table name
 export class Profile {
@@ -169,4 +171,10 @@ export class Profile {
 
   @OneToMany(() => ProfilesReference, (profilesReference) => profilesReference.profile)
   profilesReference!: ProfilesReference[];
+
+  @OneToMany(() => ProfilesSkill, (profilesSkill) => profilesSkill.profile)
+  profilesSkill!: ProfilesSkill[];
+
+  @OneToMany(() => ProfileLanguage, (profileLanguage) => profileLanguage.profile)
+  profileLanguage!: ProfileLanguage[];
 }

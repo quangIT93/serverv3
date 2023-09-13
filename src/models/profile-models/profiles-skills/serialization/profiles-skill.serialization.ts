@@ -15,17 +15,14 @@ export class ProfileSkillSerialization extends ProfilesSkill {
       Object.assign(this, profileSkill);
     }
 
-    // @Exclude({ toPlainOnly: true })
-    // override createdAt!: Date;
-
-    // @Exclude({ toPlainOnly: true })
-    // override updatedAt!: Date;
+    @Exclude({ toPlainOnly: true })
+    override accountId!: string;
 
     @Exclude({ toPlainOnly: true })
     override levelType!: LevelType;
 
     @Exclude({ toPlainOnly: true })
-    override skillRoleId!: number;
+    override skillLevelId!: number;
 
     @Expose() 
     get dataProfileSkillRoles(){
