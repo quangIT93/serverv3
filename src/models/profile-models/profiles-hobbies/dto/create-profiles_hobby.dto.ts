@@ -5,7 +5,7 @@ export class CreateProfilesHobbyDto {
 
     accountId!: string;
 
-    @ApiProperty({type: 'varchar', maxLength: 1000, nullable : false})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     description!: string;
 }

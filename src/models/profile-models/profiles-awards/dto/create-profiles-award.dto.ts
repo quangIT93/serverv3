@@ -5,11 +5,11 @@ export class CreateProfilesAwardDto {
 
     accountId!: string;
 
-    @ApiProperty({type: 'varchar', maxLength: 255, name: 'title', nullable: false})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     title!: string;
 
-    @ApiProperty({type: 'varchar', maxLength: 1000, name: 'description', nullable: false})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     description!: string;
 }

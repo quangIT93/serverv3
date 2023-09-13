@@ -5,15 +5,15 @@ export class CreateProfilesReferenceDto {
 
     accountId!:string;
 
-    @ApiProperty({ type: 'varchar', description: 'Full name of the profile reference', required: true, maxLength: 255})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     fullName!:string;
 
-    @ApiProperty({ type: 'varchar', description: 'Phone number of the profile reference', required: true, maxLength: 255})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     phone!:string;
 
-    @ApiProperty({ type: 'varchar', description: 'Email of the profile reference', required: true, maxLength: 255})
+    @ApiProperty({ type: 'string', format: 'string', required: false })
     @IsNotEmpty()
     email!:string;
 }

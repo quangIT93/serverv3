@@ -6,30 +6,15 @@ import { IsTimestamp } from 'src/common/decorators/validation';
 export class CreateProfilesIntershipDto {
   accountId!: string;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'string',
-    required: true,
-    maxLength: 255,
-  })
+  @ApiProperty({ type: 'string', format: 'string', required: false })
   @IsNotEmpty()
   jobTitle!: string;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'string',
-    required: true,
-    maxLength: 255,
-  })
+  @ApiProperty({ type: 'string', format: 'string', required: false })
   @IsNotEmpty()
   employer!: string;
 
-  @ApiProperty({
-    type: 'string',
-    format: 'string',
-    required: true,
-    maxLength: 1000,
-  })
+  @ApiProperty({ type: 'string', format: 'string', required: false })
   @IsNotEmpty()
   description!: string;
 
