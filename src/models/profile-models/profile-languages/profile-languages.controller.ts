@@ -15,7 +15,7 @@ import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes,  ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProfileLanguageInterceptor } from './interceptor/profiles-language.interceptor';
 
 @Controller('profile-languages')

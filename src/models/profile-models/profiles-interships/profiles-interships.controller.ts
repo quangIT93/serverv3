@@ -56,29 +56,6 @@ export class ProfilesIntershipsController {
     }
   }
 
-  @Get()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  async findAll(@Req() req: CustomRequest) {
-    try {
-      const id = req.user?.id;
-
-      if (!id) {
-        throw new Error('User not found');
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.profilesIntershipsService.findAll(id),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error getting profile interships');
-    }
-  }
-
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('JWT-auth')

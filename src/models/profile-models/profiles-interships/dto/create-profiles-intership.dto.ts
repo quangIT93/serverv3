@@ -7,7 +7,7 @@ export class CreateProfilesIntershipDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    required: false,
+    required: true,
     maxLength: 255,
   })
   @IsNotEmpty()
@@ -16,7 +16,7 @@ export class CreateProfilesIntershipDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    required: false,
+    required: true,
     maxLength: 255,
   })
   @IsNotEmpty()
@@ -25,17 +25,17 @@ export class CreateProfilesIntershipDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    required: false,
+    required: true,
     maxLength: 1000,
   })
   @IsNotEmpty()
   description!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'string', required: true })
   @IsNotEmpty()
   startDate!: string;
 
-  @ApiProperty({ type: 'string', required: false })
+  @ApiProperty({ type: 'string', required: true })
   @IsNotEmpty()
   endDate!: string;
 }

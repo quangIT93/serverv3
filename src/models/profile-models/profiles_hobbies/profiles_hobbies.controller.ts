@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Delete,
@@ -47,29 +46,6 @@ export class ProfilesHobbiesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error creating profile hobby');
-    }
-  }
-
-  @Get()
-  @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
-  async findOne(@Req() req: CustomRequest) {
-    try {
-      const accountId = req.user?.id;
-
-      if (!accountId) {
-        throw new BadRequestException('User not found');
-      }
-
-      return {
-        statusCode: HttpStatus.OK,
-        data: await this.profilesHobbiesService.findOne(accountId),
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message);
-      }
-      throw new BadRequestException('Error getting profile hobby');
     }
   }
 

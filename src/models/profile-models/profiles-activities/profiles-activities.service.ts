@@ -25,18 +25,6 @@ export class ProfilesActivitiesService {
     }
   }
 
-  async findAll(id: string) {
-    try {
-      return await this.profilesActivityRepository.find({
-        where: {
-          accountId: id,
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async removeAll(ids: string | string[], accountId: string) {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];

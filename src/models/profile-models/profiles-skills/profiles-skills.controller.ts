@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Delete,
@@ -8,15 +7,12 @@ import {
   Req,
   HttpStatus,
   BadRequestException,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ProfilesSkillsService } from './profiles-skills.service';
 import { CreateProfilesSkillDto } from './dto/create-profiles-skill.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { ProfileSkillInterceptor } from './interceptor/profiles-skills.interceptor';
 
 @Controller('profiles-skills')
 @ApiTags('Profiles Skills')
@@ -50,19 +46,6 @@ export class ProfilesSkillsController {
       }
       throw new BadRequestException('Error creating profile skill');
     }
-  }
-
-  @Get()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @UseInterceptors(ClassSerializerInterceptor, ProfileSkillInterceptor)
-  findAll(@Req() req: CustomRequest) {
-    const id = req.user?.id;
-    if (!id) {
-      throw new BadRequestException('User not found');
-    }
-
-    return this.profilesSkillsService.findAll(id);
   }
 
   @ApiBody({

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Profile } from '../../profiles/entities/profile.entity';
 
 @Entity('profiles_courses')
 export class ProfilesCourse {
@@ -19,4 +20,8 @@ export class ProfilesCourse {
 
   @Column({ type: 'varchar', length: 20, default: null, name: 'end_date' })
   endDate!: string | null;
+
+  @ManyToOne(() => Profile, profile => profile.profilesCourse)
+  @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+  profile!: Profile;
 }

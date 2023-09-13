@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Profile } from "../../profiles/entities";
 
 @Entity('profiles_hobbies')
 export class ProfilesHobby {
@@ -11,4 +12,8 @@ export class ProfilesHobby {
 
     @Column({type: 'varchar', length: 1000, name: 'description'})
     description!: string;
+
+    @OneToOne(() => Profile, profile => profile.profilesHobby)
+    @JoinColumn({name: 'account_id', referencedColumnName: 'accountId'})
+    profile!: Profile;
 }

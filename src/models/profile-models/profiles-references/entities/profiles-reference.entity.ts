@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Profile } from "../../profiles/entities/profile.entity";
 
 @Entity('profiles_references')
 export class ProfilesReference {
@@ -20,5 +21,9 @@ export class ProfilesReference {
 
     @Column({ type: 'varchar', length: 255, nullable: false, name: 'email' })
     email!:string;
+
+    @ManyToOne(() => Profile, (profile) => profile.profilesReference)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    profile!: Profile;
 
 }

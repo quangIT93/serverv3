@@ -15,8 +15,5 @@ export class ProfileReferenceSerialization extends ProfilesReference {
     }
 
     @Exclude({ toPlainOnly: true })
-    override phone!: string;
-
-    @Exclude({ toPlainOnly: true })
-    override email!: string;
+    override accountId!: string;
 }

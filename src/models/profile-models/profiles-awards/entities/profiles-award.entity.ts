@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Profile } from "../../profiles/entities";
 
 @Entity('profiles_awards')
 export class ProfilesAward {
@@ -17,4 +18,8 @@ export class ProfilesAward {
 
     @Column({type:'varchar',length:1000,name:'description',nullable:false})
     description!:string;
+
+    @ManyToOne(() => Profile, profile => profile.profilesAward)
+    @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
+    profile!: Profile;
 }

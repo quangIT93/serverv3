@@ -44,17 +44,6 @@ export class ProfilesSkillsService {
     }
   }
 
-  async findAll(id: string) {
-    try {
-      return await this.profilesSkillRepository.find({
-        where: { accountId: id },
-        relations: ['levelType'],
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async removeAll(ids: string | string[], accountId: string) {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];

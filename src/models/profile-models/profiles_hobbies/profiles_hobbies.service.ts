@@ -42,18 +42,6 @@ export class ProfilesHobbiesService {
     }
   }
 
-  findOne(id: string) {
-    try {
-      return this.profilesHobbyRepository.findOne({
-        where: {
-          accountId: id,
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async remove(id: string) {
     try {
       return await this.profilesHobbyRepository.delete({

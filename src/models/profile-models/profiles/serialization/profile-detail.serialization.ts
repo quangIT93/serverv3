@@ -6,6 +6,18 @@ import { Province } from 'src/models/locations/provinces/entities';
 import { District } from 'src/models/locations/districts/entities';
 import { Language } from 'src/common/enum';
 import { CompanySerialization } from 'src/models/company-models/companies/serialization/company.serialization';
+import { ProfilesAwardSerialization } from '../../profiles-awards/serialization/profiles-award.serialization';
+import { ProfilesAward } from '../../profiles-awards/entities/profiles-award.entity';
+import { ProfilesCourse } from '../../profiles-courses/entities/profiles-course.entity';
+import { ProfileCourseSerialization } from '../../profiles-courses/serialization/profiles-courses.serialization';
+import { ProfilesActivity } from '../../profiles-activities/entities/profiles-activity.entity';
+import { ProfilesActitvitesSerialization } from '../../profiles-activities/serialization/profiles-activities.serialization';
+import { ProfilesIntership } from '../../profiles-interships/entities/profiles-intership.entity';
+import { ProfilesIntershipSerialization } from '../../profiles-interships/serialization/profiles-interships.serialization';
+import { ProfilesHobby } from '../../profiles_hobbies/entities/profiles_hobby.entity';
+import { ProfilesHobbiesSerializtion } from '../../profiles_hobbies/serialization/profiles-hobbies.serialization';
+import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
+import { ProfileReferenceSerialization } from '../../profiles-references/serializtion/profile-reference.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -65,6 +77,24 @@ export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
     override company: any;
 
+    @Exclude({ toPlainOnly: true })
+    override profilesAward!: ProfilesAward[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesCourse!: ProfilesCourse[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesActivity!: ProfilesActivity[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesIntership!: ProfilesIntership[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesHobby!: ProfilesHobby;
+
+    @Exclude({ toPlainOnly: true })
+    override profilesReference!: ProfilesReference[];
+
     // expose addressText
     @Expose()
     get addressText() {
@@ -114,6 +144,52 @@ export class ProfileSerialization extends Profile {
     get companyInfomation() {
         if (!this.company) return null;
         return new CompanySerialization(this.company, this.lang);
+    }
+
+    @Expose()
+    get profileAwards() {
+        if (!this.profilesAward) return null;
+        return this.profilesAward.map((profileAward: ProfilesAward) => {
+            return new ProfilesAwardSerialization(profileAward, this.lang);
+        })
+    }
+
+    @Expose()
+    get profileCourses() {
+        if (!this.profilesCourse) return null;
+        return this.profilesCourse.map((profileCourse: ProfilesCourse) => {
+            return new ProfileCourseSerialization(profileCourse, this.lang);
+        })
+    }
+
+    @Expose()
+    get profileActivities() {
+        if (!this.profilesActivity) return null;
+        return this.profilesActivity.map((profileActivity: ProfilesActivity) => {
+            return new ProfilesActitvitesSerialization(profileActivity, this.lang);
+        })
+    }
+
+    @Expose()
+    get profileInterships() {
+        if (!this.profilesIntership) return null;
+        return this.profilesIntership.map((profileIntership: ProfilesIntership) => {
+            return new ProfilesIntershipSerialization(profileIntership, this.lang);
+        })
+    }
+
+    @Expose()
+    get profileHobbies() {
+        if (!this.profilesHobby) return null;
+        return new ProfilesHobbiesSerializtion(this.profilesHobby, this.lang);
+    }
+
+    @Expose()
+    get profilesReferences() {
+        if (!this.profilesReference) return null;
+        return this.profilesReference.map((profileReference: ProfilesReference) => {
+            return new ProfileReferenceSerialization(profileReference, this.lang);
+        })
     }
 
 }

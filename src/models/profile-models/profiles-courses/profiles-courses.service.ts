@@ -22,16 +22,6 @@ export class ProfilesCoursesService {
     }
   }
 
-  async findAll(id: string) {
-    try {
-      return await this.profilesCourseRepository.find({
-        where: { accountId: id },
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async removeAll(ids: string | string[], accountId: string) {
     try {
       const idArray = Array.isArray(ids) ? ids : [ids];

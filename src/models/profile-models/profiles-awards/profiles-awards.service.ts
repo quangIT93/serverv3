@@ -23,18 +23,6 @@ export class ProfilesAwardsService {
     }
   }
 
-  async findAll(id: string) {
-    try {
-      return await this.profilesAwardsRepository.find({
-        where: {
-          accountId: id,
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async findOne(id: number, accountId: string) {
     try {
       return await this.profilesAwardsRepository.findOne({

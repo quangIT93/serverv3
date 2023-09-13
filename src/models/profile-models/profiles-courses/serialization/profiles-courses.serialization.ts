@@ -1,6 +1,6 @@
 import { Language } from "src/common/enum";
 import { ProfilesCourse } from "../entities/profiles-course.entity";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Transform } from "class-transformer";
 
 export class ProfileCourseSerialization extends ProfilesCourse {
 
@@ -14,7 +14,16 @@ export class ProfileCourseSerialization extends ProfilesCourse {
     }
 
     @Exclude({ toPlainOnly: true })
+    override accountId!: string;
+
+    @Exclude({ toPlainOnly: true })
     override courseName!: string;
+
+    @Transform(({ value }) => value ? +value : null)
+    override startDate!: string;
+
+    @Transform(({ value }) => value ? +value : null)
+    override endDate!: string;
 
     @Exclude({ toPlainOnly: true })
     override insitiutionName!: string;
