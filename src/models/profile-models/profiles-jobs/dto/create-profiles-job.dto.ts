@@ -5,7 +5,7 @@ export class CreateProfilesJobDto {
 
     accountId!: string;
 
-    @ApiProperty({ type: [Number] })
+    @ApiProperty({ type: 'number' })
     @IsNotEmpty()
-    jobTypeId!: number[];
+    jobTypeId!: number;
 }
