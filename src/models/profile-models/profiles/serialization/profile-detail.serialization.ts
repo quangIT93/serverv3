@@ -22,6 +22,8 @@ import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.ent
 import { ProfileSkillSerialization } from '../../profiles-skills/serialization/profiles-skill.serialization';
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 import { ProfileLanguageSerialization } from '../../profile-languages/serialization/profiles-language.serialization';
+import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
+import { ProfilesJobsSerialization } from '../../profiles-jobs/serialization/profiles-jobs.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -104,6 +106,9 @@ export class ProfileSerialization extends Profile {
 
     @Exclude({ toPlainOnly: true })
     override profileLanguage!: ProfileLanguage[];
+
+    @Exclude({ toPlainOnly: true })
+    override profilesJob!: ProfilesJob[];
 
     // expose addressText
     @Expose()
@@ -216,6 +221,15 @@ export class ProfileSerialization extends Profile {
         return this.profileLanguage.map((profileLanguages : ProfileLanguage) => {
             return new ProfileLanguageSerialization(profileLanguages, this.lang);
         })
+    }
+
+    @Expose()
+    get profilesJobs() {    
+        if (!this.profilesJob) return null 
+        return this.profilesJob.map((profilesJob : ProfilesJob) => {
+            return new ProfilesJobsSerialization(profilesJob, this.lang);
+        }
+        )       
     }
 
 }

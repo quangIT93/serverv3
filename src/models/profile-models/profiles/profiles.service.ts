@@ -39,6 +39,8 @@ export class ProfilesService {
         'profilesSkill.levelType',
         'profileLanguage',
         'profileLanguage.levelTypeLanguage',
+        'profilesJob',
+        'profilesJob.jobType',
         'company',
         'company.companyRole',
         'company.companySize',

@@ -108,3 +108,13 @@ CREATE TABLE IF NOT EXISTS `profiles_hobbies` (
 );
 
 
+CREATE TABLE IF NOT EXISTS `profiles_jobs` (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    account_id VARCHAR(50) NOT NULL,
+    job_type_id TINYINT(4) NOT NULL,
+    UNIQUE KEY (account_id, job_type_id),
+    PRIMARY KEY (id),
+    CONSTRAINT FK_Accounts_Jobs FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    CONSTRAINT FK_JobTypes_Jobs FOREIGN KEY (job_type_id) REFERENCES job_types(id) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+
