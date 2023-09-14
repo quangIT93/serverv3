@@ -25,7 +25,7 @@ export class ProfileLanguageSerialization extends ProfileLanguage {
     override languageLevelId!: number;
 
     @Expose() 
-    get dataProfileLanguageRoles(){
+    get dataLevel(){
         return new LanguageTypeSerialization(this.levelTypeLanguage, this.lang)
     }
 

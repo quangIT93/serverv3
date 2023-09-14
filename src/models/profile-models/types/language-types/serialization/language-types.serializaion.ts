@@ -23,7 +23,7 @@ export class LanguageTypeSerialization extends LanguageType {
     override valueKo!: string;
 
     @Expose()
-    get dataValue() {
+    get data() {
         switch(this.lang) {
             case Language.EN:
                 return this.valueEn;

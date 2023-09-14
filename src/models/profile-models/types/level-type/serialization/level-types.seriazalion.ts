@@ -23,7 +23,7 @@ export class LevelTypeSerialization extends LevelType {
     override valueKo!: string;
 
     @Expose()
-    get dataValue() {
+    get data() {
         switch(this.lang) {
             case Language.EN:
                 return this.valueEn;

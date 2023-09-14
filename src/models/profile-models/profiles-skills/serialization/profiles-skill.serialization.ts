@@ -25,7 +25,7 @@ export class ProfileSkillSerialization extends ProfilesSkill {
     override skillLevelId!: number;
 
     @Expose() 
-    get dataProfileSkillRoles(){
+    get dataLevel(){
         return new LevelTypeSerialization(this.levelType, this.lang)
     }
 
