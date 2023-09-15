@@ -9,9 +9,9 @@ export class CreateCommunicationCommentDto {
 
   accountId!: string;
 
-  @ApiProperty({type: 'string',format: 'string',maxLength: 1000 , required: true, default: 'Content'})
+  @ApiProperty({type: 'string',format: 'string',maxLength: 3000 , required: true, default: 'Content'})
   @IsNotEmpty()
-  @MaxLength(1000, { message: 'content length must not exceed 1000 characters' })
+  @MaxLength(3000, { message: 'content length must not exceed 3000 characters' })
   content!: string;
 
   @ApiProperty({

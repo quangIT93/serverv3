@@ -23,6 +23,7 @@ export class ProfilesService {
     let newResult;
     let result = await this.profileRepository.findOne({
       relations: [
+        'user',
         'province',
         'profilesLocations',
         'profilesLocations.province',

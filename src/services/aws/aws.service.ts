@@ -146,7 +146,7 @@ export class AWSService implements AWSServiceInterface {
         Body: file.buffer,
       });
 
-      console.log(key)
+      // console.log(key)
     });
 
     const result = await Promise.all(

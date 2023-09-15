@@ -2,6 +2,8 @@ ALTER TABLE profiles ADD COLUMN `job_type_id` tinyint DEFAULT NULL;
 
 ALTER TABLE profiles ADD COLUMN `job_name` varchar(255) DEFAULT NULL;
 
+ALTER TABLE profiles ADD CONSTRAINT FK_JobTypes_Profiles FOREIGN KEY (job_type_id) REFERENCES job_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
 
 CREATE TABLE IF NOT EXISTS
     `skill_level_types` (

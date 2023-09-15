@@ -77,16 +77,25 @@ export function countByHotTopicQuery(
     return queryBuilder.getCount();
 }
 
-export function findByHotTopicQuery(
+export async function findByHotTopicQuery(
     respository: Repository<Post>,
     query: HotTopicQueriesDto,
     page: number,
     limit: number,
 ) {
     const queryBuilder = __init__(respository, query);
-    return queryBuilder
+    const data = await queryBuilder
         .orderBy('posts.createdAt', 'DESC')
         .skip(page * limit)
         .take(limit)
         .getMany();
+
+    const total = await queryBuilder.getCount();
+
+    return {
+        data,
+        total,
+    };
+
+
 }

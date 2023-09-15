@@ -20,7 +20,7 @@ import { Response } from 'express';
 import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
 // import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
-import { PostNormallyInterceptor } from './interceptors/posts-normally.interceptor';
+import { PostNormallyInterceptor } from './interceptors/posts-topic.interceptor';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 import { RoleGuard } from 'src/authentication/role.guard';
@@ -34,6 +34,7 @@ import { CreatePostByAdminController } from './controller';
 import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
 import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
 import { NewestPostQueriesDto } from './dto/newest-queries.dto';
+import { PostNewInterceptor } from './interceptors/posts-new.interceptor';
 // import { CreatePostByUserDto } from './dto/user-create-post.dto';
 // import { CreatePostController } from './controller/create-post.controller';
 
@@ -54,7 +55,7 @@ export class PostsController {
     @ApiQuery({ name: 'threshold', required: false })
     @Get('newest')
     @UseGuards(AuthNotRequiredGuard)
-    @UseInterceptors(PostNormallyInterceptor)
+    @UseInterceptors(PostNewInterceptor)
     async getNewestPosts(
         @Query() queries: NewestPostQueriesDto,
         @Req() req: any,

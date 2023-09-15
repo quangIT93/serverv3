@@ -9,7 +9,7 @@ import { Observable, map } from 'rxjs';
 import { Post } from '../entities';
 import { BookmarksService } from 'src/models/bookmarks/bookmarks.service';
 @Injectable()
-export class PostNormallyInterceptor implements NestInterceptor {
+export class PostNewInterceptor implements NestInterceptor {
     // 84264,84215,84198,84089,83971,84433,84432,84431,84430,84429,84428
     constructor(
         private bookmarksService: BookmarksService

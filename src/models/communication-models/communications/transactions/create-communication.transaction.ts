@@ -42,7 +42,7 @@ export class CreateCommunicationTransaction extends BaseTransaction<
           },
         );
 
-        console.log(imagesUploaded);
+        // console.log(imagesUploaded);
 
         const createCommunicationImagesDto: CreateCommunicationImageDto[] =
           imagesUploaded.map((image) => {

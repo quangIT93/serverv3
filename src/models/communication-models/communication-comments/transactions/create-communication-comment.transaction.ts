@@ -56,11 +56,11 @@ export class CreateCommunicationCommentTransaction extends BaseTransaction<
           ? createCommunicationCommentDto.images.map((image: any) => image)
           : [];
 
-        console.log(await this.awsService.uploadCommentMutilpleFiles(imageBuffer, {
+        await this.awsService.uploadCommentMutilpleFiles(imageBuffer, {
           BUCKET: BUCKET_IMAGE_COMMUNICATION_COMMENT_UPLOAD,
           id: String(newComment.communicationId),
           commentId: String(newComment.id),
-        }))
+        })
 
         // CALL TRANSACTION
         await this.communicationCommentImagesService.createMany(
