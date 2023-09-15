@@ -65,7 +65,7 @@ export class ProfilesService {
     });
   }
 
-  // remove(id: number) {
+  // remove(id: number) {`
   //   return `This action removes a #${id} profile`;
-  // }
+  // }`
 }
