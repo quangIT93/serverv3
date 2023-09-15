@@ -7,6 +7,8 @@ import {
   Req,
   HttpStatus,
   UseGuards,
+  Put,
+  Param,
 } from '@nestjs/common';
 import { ProfileLanguagesService } from './profile-languages.service';
 import { CreateProfileLanguageDto } from './dto/create-profile-language.dto';
@@ -14,6 +16,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DeleteProfilesLanguageDto } from './dto/delete-profile-language.dto';
+import { UpdateProfileLanguageDto } from './dto/update-profile-language.dto';
 
 @Controller('profile-languages')
 @ApiTags('Profile Languages')
@@ -79,6 +82,36 @@ export class ProfileLanguagesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete profile language');
+    }
+  }
+
+  @Put(":id")
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async update(@Param('id') id: string, @Req() req: CustomRequest, @Body() dto : UpdateProfileLanguageDto) {
+    try {
+      
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('User not found')
+      }
+
+      dto.id = +id
+      dto.accountId = accountId
+
+      await this.profileLanguagesService.update(dto)
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Update profile language successfully'
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+          throw new BadRequestException(error.message); 
+      }
+      throw new BadRequestException('Error updating profile language')
     }
   }
 }

@@ -5,6 +5,7 @@ import { In, Repository } from 'typeorm';
 import { ProfileLanguage } from './entities/profile-language.entity';
 import { LanguageTypesService } from '../types/language-types/language-types.service';
 import { DeleteProfilesLanguageDto } from './dto/delete-profile-language.dto';
+import { UpdateProfileLanguageDto } from './dto/update-profile-language.dto';
 
 @Injectable()
 export class ProfileLanguagesService {
@@ -67,7 +68,18 @@ export class ProfileLanguagesService {
         accountId: data.accountId,
       });
 
-      return result
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(dto: UpdateProfileLanguageDto) {
+    try {
+      await this.profilesLanguageRepository.update(
+        { id: dto.id, accountId: dto.accountId },
+        dto,
+      );
     } catch (error) {
       throw error;
     }

@@ -5,6 +5,7 @@ import { In, Repository } from 'typeorm';
 import { ProfilesSkill } from './entities/profiles-skill.entity';
 import { LevelTypeService } from '../types/level-type/level-types.service';
 import { DeleteProfilesSkillDto } from './dto/delete-profile-skill.dto';
+import { UpdateProfilesSkillDto } from './dto/update-profiles-skill.dto';
 
 @Injectable()
 export class ProfilesSkillsService {
@@ -53,6 +54,17 @@ export class ProfilesSkillsService {
 
       return result
 
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(dto: UpdateProfilesSkillDto) {
+    try {
+      await this.profilesSkillRepository.update(
+        { id: dto.id, accountId: dto.accountId },
+        dto,
+      );
     } catch (error) {
       throw error;
     }
