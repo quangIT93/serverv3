@@ -107,13 +107,13 @@ export class ProfilesCoursesController {
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Profile reference updated successfully',
+        message: 'Profile course updated successfully',
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Profile reference not found');
+      throw new BadRequestException('Profile course not found');
     }
   }
 }
