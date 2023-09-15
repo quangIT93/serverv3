@@ -3,12 +3,15 @@ import { LanguageTypesService } from './language-types.service';
 import { CreateLanguageTypeDto } from './dto/create-language-type.dto';
 import { LanguageTypesInterceptor } from './interceptor/language-types.interceptor';
 import { AuthGuard } from 'src/authentication/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('language-types')
+@ApiTags('Language types')
 export class LanguageTypesController {
   constructor(private readonly languageTypesService: LanguageTypesService) {}
 
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(@Body() createLanguageTypeDto: CreateLanguageTypeDto) {
     try {
@@ -26,6 +29,7 @@ export class LanguageTypesController {
 
   @Get()
   @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, LanguageTypesInterceptor)
   async findAll() {
     try {

@@ -12,14 +12,17 @@ import { LevelTypeService } from './level-types.service';
 import { CreateLevelTypeDto } from './dto/create-level-type.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { LevelTypesInterceptor } from './interceptor/level-types.interceptror';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('level-types')
+@ApiTags('Level Types')
 export class LevelTypeController {
   constructor(
     private readonly levelTypeService: LevelTypeService,
   ) {}
 
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(@Body() createLevelTypeDto: CreateLevelTypeDto) {
     try {
@@ -38,6 +41,7 @@ export class LevelTypeController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, LevelTypesInterceptor)
   async findAll() {

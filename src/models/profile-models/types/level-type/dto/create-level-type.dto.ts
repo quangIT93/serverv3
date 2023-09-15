@@ -3,15 +3,15 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateLevelTypeDto {
 
-    @ApiProperty({ type: 'varchar', description: 'value'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     value!: string;
 
-    @ApiProperty({ type: 'varchar', description: 'value_en'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     valueEn!: string;
 
-    @ApiProperty({ type: 'varchar', description: 'value_ko'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     valueKo!: string;
 }

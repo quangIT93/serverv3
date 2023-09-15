@@ -3,15 +3,15 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateLanguageTypeDto {
     
-    @ApiProperty({ type: 'varchar', description: 'value'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     value!: string;
 
-    @ApiProperty({ type: 'varchar', description: 'value'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     valueEn!: string;
 
-    @ApiProperty({ type: 'varchar', description: 'value'})
+    @ApiProperty({ type: 'string', format: 'string', required: false})
     @IsNotEmpty()
     valueKo!: string;
 }
