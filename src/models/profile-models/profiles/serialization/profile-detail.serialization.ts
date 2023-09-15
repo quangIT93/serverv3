@@ -22,8 +22,9 @@ import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.ent
 import { ProfileSkillSerialization } from '../../profiles-skills/serialization/profiles-skill.serialization';
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 import { ProfileLanguageSerialization } from '../../profile-languages/serialization/profiles-language.serialization';
-import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
-import { ProfilesJobsSerialization } from '../../profiles-jobs/serialization/profiles-jobs.serialization';
+// import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
+// import { ProfilesJobsSerialization } from '../../profiles-jobs/serialization/profiles-jobs.serialization';
+import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -107,8 +108,6 @@ export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
     override profileLanguage!: ProfileLanguage[];
 
-    @Exclude({ toPlainOnly: true })
-    override profilesJob!: ProfilesJob[];
 
     // expose addressText
     @Expose()
@@ -208,7 +207,7 @@ export class ProfileSerialization extends Profile {
     }
 
     @Expose()
-    get profilesSkills() {
+    get profileSkills() {
         if (!this.profilesSkill) return null;
         return this.profilesSkill.map((profileSkills: ProfilesSkill) => {
             return new ProfileSkillSerialization(profileSkills, this.lang);
@@ -216,7 +215,7 @@ export class ProfileSerialization extends Profile {
     }
 
     @Expose()
-    get profilesLanguages() {
+    get profileLanguages() {
         if (!this.profileLanguage) return null
         return this.profileLanguage.map((profileLanguages : ProfileLanguage) => {
             return new ProfileLanguageSerialization(profileLanguages, this.lang);
@@ -224,12 +223,9 @@ export class ProfileSerialization extends Profile {
     }
 
     @Expose()
-    get profilesJobs() {    
-        if (!this.profilesJob) return null 
-        return this.profilesJob.map((profilesJob : ProfilesJob) => {
-            return new ProfilesJobsSerialization(profilesJob, this.lang);
-        }
-        )       
+    get profileJobType() {    
+        if (!this.jobType) return null 
+        return new JobTypesSerialization(this.jobType, this.lang);
     }
 
 }

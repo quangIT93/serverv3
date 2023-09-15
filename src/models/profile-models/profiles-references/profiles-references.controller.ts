@@ -38,11 +38,13 @@ export class ProfilesReferencesController {
 
       createProfilesReferenceDto.accountId = id;
 
+      const data = await this.profilesReferencesService.create(
+        createProfilesReferenceDto,
+      )
+
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesReferencesService.create(
-          createProfilesReferenceDto,
-        ),
+        data: data,
       };
     } catch (error) {
       if (error instanceof Error) {

@@ -9,6 +9,7 @@ import {
   HttpStatus,
   BadRequestException,
   Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProfilesIntershipsService } from './profiles-interships.service';
 import { CreateProfilesIntershipDto } from './dto/create-profiles-intership.dto';
@@ -41,11 +42,13 @@ export class ProfilesIntershipsController {
 
       createProfilesIntershipDto.accountId = id;
 
+      const data = await this.profilesIntershipsService.create(
+        createProfilesIntershipDto,
+      )
+
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesIntershipsService.create(
-          createProfilesIntershipDto,
-        ),
+        data: data,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -59,7 +62,7 @@ export class ProfilesIntershipsController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProfilesIntershipDto: UpdateProfilesIntershipDto,
     @Req() req: CustomRequest,
   ) {
@@ -73,7 +76,7 @@ export class ProfilesIntershipsController {
       updateProfilesIntershipDto.accountId = accountId;
 
       await this.profilesIntershipsService.update(
-        +id,
+        id,
         updateProfilesIntershipDto,
       );
 

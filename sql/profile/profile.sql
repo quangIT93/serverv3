@@ -1,3 +1,7 @@
+ALTER TABLE profiles ADD COLUMN `job_type_id` tinyint DEFAULT NULL;
+
+ALTER TABLE profiles ADD COLUMN `job_name` varchar(255) DEFAULT NULL;
+
 
 CREATE TABLE IF NOT EXISTS
     `skill_level_types` (

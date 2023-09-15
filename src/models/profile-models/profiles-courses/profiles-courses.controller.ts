@@ -35,12 +35,13 @@ export class ProfilesCoursesController {
       if (!id) {
         throw new BadRequestException('User not found');
       }
-
+      
       createProfilesCourseDto.accountId = id;
-
+      const data = await this.profilesCoursesService.create(createProfilesCourseDto)
+      
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesCoursesService.create(createProfilesCourseDto),
+        data: data,
       };
     } catch (error) {
       if (error instanceof Error) {

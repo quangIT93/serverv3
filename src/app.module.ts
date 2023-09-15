@@ -64,7 +64,6 @@ import { ProfilesActivitiesModule } from './models/profile-models/profiles-activ
 import { ProfilesIntershipsModule } from './models/profile-models/profiles-interships/profiles-interships.module';
 import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/profiles-awards.module';
 import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/profiles_hobbies.module';
-import { ProfilesJobsModule } from './models/profile-models/profiles-jobs/profiles-jobs.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -137,7 +136,6 @@ import { ProfilesJobsModule } from './models/profile-models/profiles-jobs/profil
     ProfilesIntershipsModule,
     ProfilesAwardsModule,
     ProfilesHobbiesModule,
-    ProfilesJobsModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],

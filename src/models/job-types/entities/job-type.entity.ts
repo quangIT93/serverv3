@@ -1,5 +1,5 @@
 import { Post } from "src/models/post-models/posts/entities";
-import { ProfilesJob } from "src/models/profile-models/profiles-jobs/entities/profiles-job.entity";
+import { Profile } from "src/models/profile-models/profiles/entities";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('job_types')
@@ -19,6 +19,6 @@ export class JobType {
     @OneToMany(() => Post, post => post.jobType)
     posts: Post[] | undefined;
 
-    @OneToMany(() => ProfilesJob, profilesJob => profilesJob.jobType)
-    profilesJob: ProfilesJob[] | undefined;
+    @OneToMany(() => Profile, profilesJob => profilesJob.jobType)
+    profilesJob: Profile[] | undefined;
 }

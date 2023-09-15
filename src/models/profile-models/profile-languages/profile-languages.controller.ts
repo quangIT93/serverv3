@@ -38,7 +38,7 @@ export class ProfileLanguagesController {
       createProfileLanguageDto.accountId = id;
 
       return {
-        statusCode: HttpStatus.CREATED,
+        statusCode: HttpStatus.CREATED,    
         message: 'Add profile language successfully',
         data: await this.profileLanguagesService.create(
           createProfileLanguageDto,

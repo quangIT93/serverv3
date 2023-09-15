@@ -9,6 +9,7 @@ import {
   BadRequestException,
   HttpStatus,
   Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProfilesActivitiesService } from './profiles-activities.service';
 import { CreateProfilesActivityDto } from './dto/create-profiles-activity.dto';
@@ -88,7 +89,7 @@ export class ProfilesActivitiesController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProfilesActivityDto: UpdateProfilesActivityDto,
     @Req() req: CustomRequest,
   ) {
@@ -102,7 +103,7 @@ export class ProfilesActivitiesController {
       updateProfilesActivityDto.accountId = accountId;
 
       await this.profilesActivitiesService.update(
-        +id,
+        id,
         updateProfilesActivityDto,
       );
 

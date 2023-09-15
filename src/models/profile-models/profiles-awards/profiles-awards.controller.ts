@@ -9,6 +9,7 @@ import {
   BadRequestException,
   HttpStatus,
   Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProfilesAwardsService } from './profiles-awards.service';
 import { CreateProfilesAwardDto } from './dto/create-profiles-award.dto';
@@ -39,9 +40,12 @@ export class ProfilesAwardsController {
 
       createProfilesAwardDto.accountId = id;
 
+      const data = await this.profilesAwardsService.create(createProfilesAwardDto)
+         
+
       return {
         statusCode: HttpStatus.CREATED,
-        data: await this.profilesAwardsService.create(createProfilesAwardDto),
+        data: data,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -55,7 +59,7 @@ export class ProfilesAwardsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProfilesAwardDto: UpdateProfilesAwardDto,
     @Req() req: CustomRequest,
   ) {
@@ -68,7 +72,7 @@ export class ProfilesAwardsController {
 
       updateProfilesAwardDto.accountId = accountId;
 
-      await this.profilesAwardsService.update(+id, updateProfilesAwardDto);
+      await this.profilesAwardsService.update(id, updateProfilesAwardDto);
 
       return {
         statusCode: HttpStatus.OK,
