@@ -19,8 +19,9 @@ export class ProfilesService {
     return `This action returns all profiles`;
   }
 
-  findOne(id: string) {
-    return this.profileRepository.findOne({
+  async findOne(id: string, isSK: boolean, isSL: boolean) {
+    let newResult;
+    let result = await this.profileRepository.findOne({
       relations: [
         'province',
         'profilesLocations',
@@ -52,6 +53,11 @@ export class ProfilesService {
       ],
       where: { accountId: id },
     });
+
+    newResult = { ...result, isSK: isSK ? true : false, isSL: isSL ? true : false };
+
+    return newResult;
+    
   }
 
   getProfileEmail(id: string) {

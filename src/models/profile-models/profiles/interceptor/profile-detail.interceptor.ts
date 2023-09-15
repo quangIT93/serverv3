@@ -8,7 +8,7 @@ export class ProfileDetailInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((profile: Profile) => {
         const lang = _context.switchToHttp().getRequest().lang;
-        const profileSerialization = new ProfileSerialization(profile, lang);
+        const profileSerialization = new ProfileSerialization(profile, lang, profile.isSK ? true : false, profile.isSL ? true : false);
         Object.assign(profileSerialization, profile);
         return {
           status: _context.switchToHttp().getResponse().statusCode,
