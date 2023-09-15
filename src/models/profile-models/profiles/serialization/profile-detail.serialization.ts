@@ -1,7 +1,11 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { Profile } from "../entities";
+import { Profile } from '../entities';
 import { BUCKET_CV, BUCKET_IMAGE_AVATAR } from 'src/common/constants';
-import { categoryTranslator, genderTranslator, locationTranslator } from 'src/common/helper/translators';
+import {
+  categoryTranslator,
+  genderTranslator,
+  locationTranslator,
+} from 'src/common/helper/translators';
 import { Province } from 'src/models/locations/provinces/entities';
 import { District } from 'src/models/locations/districts/entities';
 import { Language } from 'src/common/enum';
@@ -26,210 +30,229 @@ import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
 import { ProfilesJobsSerialization } from '../../profiles-jobs/serialization/profiles-jobs.serialization';
 
 export class ProfileSerialization extends Profile {
-    @Exclude({ toPlainOnly: true })
-    lang: Language;
+  @Exclude({ toPlainOnly: true })
+  lang: Language;
 
-    constructor(profile: Profile, lang: Language) {
-        super();
-        this.lang = lang;
-        Object.assign(this, profile);
-    }
-    
-    // toPlainOnly: true => Exclude when transform to plain object
+  constructor(profile: Profile, lang: Language, isSK: boolean, isSL: boolean) {
+    super();
+    this.lang = lang;
+    this.isSK = isSK;
+    this.isSL = isSL;
+    Object.assign(this, profile);
+  }
 
-    // exclude address
-    // return addressText
-    @Exclude({ toPlainOnly: true }) 
-    override address!: string;
+  // toPlainOnly: true => Exclude when transform to plain object
 
-    @Transform(({ value }) => value ? value : "Your name")
-    override name!: string;
+  // exclude address
+  // return addressText
+  @Exclude({ toPlainOnly: true })
+  override address!: string;
 
-    // exclude gender
-    // return genderText
-    // @Exclude({ toPlainOnly: true })
-    // override gender!: number;
+  @Transform(({ value }) => (value ? value : 'Your name'))
+  override name!: string;
 
-    // exclude cvUrl
-    // return cvUrlPath
-    @Exclude({ toPlainOnly: true })
-    override cvUrl!: string;
+  // exclude gender
+  // return genderText
+  // @Exclude({ toPlainOnly: true })
+  // override gender!: number;
 
-    // exclude avatar
-    // return avatarPath
-    @Exclude({ toPlainOnly: true })
-    override avatar!: string;
-    
-    // exclude province
-    // return addressText
-    @Exclude({ toPlainOnly: true })
-    override province!: Province;
+  // exclude cvUrl
+  // return cvUrlPath
+  @Exclude({ toPlainOnly: true })
+  override cvUrl!: string;
 
-    //exclude profilesLocations
-    @Exclude({ toPlainOnly: true })
-    override profilesLocations!: District[];
+  // exclude avatar
+  // return avatarPath
+  @Exclude({ toPlainOnly: true })
+  override avatar!: string;
 
-    @Exclude({ toPlainOnly: true })
-    override childCategories!: any[];
+  // exclude province
+  // return addressText
+  @Exclude({ toPlainOnly: true })
+  override province!: Province;
 
-    // Transform createdAt to timestamp
-    @Transform(({ value }) => new Date(value).getTime())
-    override createdAt!: Date;
+  //exclude profilesLocations
+  @Exclude({ toPlainOnly: true })
+  override profilesLocations!: District[];
 
-    // Transform updatedAt to timestamp
-    @Transform(({ value }) => new Date(value).getTime())
-    override updatedAt!: Date;
-    
-    @Exclude({ toPlainOnly: true })
-    override company: any;
+  @Exclude({ toPlainOnly: true })
+  override childCategories!: any[];
 
-    @Exclude({ toPlainOnly: true })
-    override profilesAward!: ProfilesAward[];
+  // Transform createdAt to timestamp
+  @Transform(({ value }) => new Date(value).getTime())
+  override createdAt!: Date;
 
-    @Exclude({ toPlainOnly: true })
-    override profilesCourse!: ProfilesCourse[];
+  // Transform updatedAt to timestamp
+  @Transform(({ value }) => new Date(value).getTime())
+  override updatedAt!: Date;
 
-    @Exclude({ toPlainOnly: true })
-    override profilesActivity!: ProfilesActivity[];
+  @Exclude({ toPlainOnly: true })
+  override company: any;
 
-    @Exclude({ toPlainOnly: true })
-    override profilesIntership!: ProfilesIntership[];
+  @Exclude({ toPlainOnly: true })
+  override profilesAward!: ProfilesAward[];
 
-    @Exclude({ toPlainOnly: true })
-    override profilesHobby!: ProfilesHobby;
+  @Exclude({ toPlainOnly: true })
+  override profilesCourse!: ProfilesCourse[];
 
-    @Exclude({ toPlainOnly: true })
-    override profilesReference!: ProfilesReference[];
+  @Exclude({ toPlainOnly: true })
+  override profilesActivity!: ProfilesActivity[];
 
-    @Exclude({ toPlainOnly: true })
-    override profilesSkill!: ProfilesSkill[];
+  @Exclude({ toPlainOnly: true })
+  override profilesIntership!: ProfilesIntership[];
 
-    @Exclude({ toPlainOnly: true })
-    override profileLanguage!: ProfileLanguage[];
+  @Exclude({ toPlainOnly: true })
+  override profilesHobby!: ProfilesHobby;
 
-    @Exclude({ toPlainOnly: true })
-    override profilesJob!: ProfilesJob[];
+  @Exclude({ toPlainOnly: true })
+  override profilesReference!: ProfilesReference[];
 
-    // expose addressText
-    @Expose()
-    get addressText() {
-        if (!this.address) return null;
-        return locationTranslator(this.province, this.lang);
-    }
-    
-    @Expose()
-    get cvUrlPath() {
-        if (!this.cvUrl) return null;
-        return `${BUCKET_CV}/${this.accountId}/${this.cvUrl}`;
-    }
-    
-    @Transform(({ value }) => +value)
-    override birthday!: string;
+  @Exclude({ toPlainOnly: true })
+  override profilesSkill!: ProfilesSkill[];
 
-    @Expose()
-    get genderText() {
-        if (!this.gender) return null;
-        return genderTranslator(this.gender, this.lang);
-    }
+  @Exclude({ toPlainOnly: true })
+  override profileLanguage!: ProfileLanguage[];
 
-    @Expose()
-    get avatarPath() {
-        if (!this.avatar) return null;
-        return `${BUCKET_IMAGE_AVATAR}/${this.avatar}`;
-    }
+  @Exclude({ toPlainOnly: true })
+  override profilesJob!: ProfilesJob[];
 
+  @Exclude({ toPlainOnly: true })
+  override isSK?: boolean | undefined;
 
-    @Expose()
-    get profileLocations() {
-        if (!this.profilesLocations) return null;
-        return this.profilesLocations.map(profileLocation => {
-            return locationTranslator(profileLocation, this.lang);
-        })
-    }
+  @Exclude({ toPlainOnly: true })
+  override isSL?: boolean | undefined;
 
-    @Expose()
-    get profileCategories() {
-        if (!this.childCategories) return null;
-        return this.childCategories.map(category => {
-            return categoryTranslator(category, this.lang);
-        })
-    }
+  // expose addressText
+  @Expose()
+  get addressText() {
+    if (!this.address) return null;
+    return locationTranslator(this.province, this.lang);
+  }
 
-    @Expose()
-    get companyInfomation() {
-        if (!this.company) return null;
-        return new CompanySerialization(this.company, this.lang);
-    }
+  @Expose()
+  get cvUrlPath() {
+    if (!this.cvUrl) return null;
+    return `${BUCKET_CV}/${this.accountId}/${this.cvUrl}`;
+  }
 
-    @Expose()
-    get profileAwards() {
-        if (!this.profilesAward) return null;
-        return this.profilesAward.map((profileAward: ProfilesAward) => {
-            return new ProfilesAwardSerialization(profileAward, this.lang);
-        })
-    }
+  @Transform(({ value }) => +value)
+  override birthday!: string;
 
-    @Expose()
-    get profileCourses() {
-        if (!this.profilesCourse) return null;
-        return this.profilesCourse.map((profileCourse: ProfilesCourse) => {
-            return new ProfileCourseSerialization(profileCourse, this.lang);
-        })
-    }
+  @Expose()
+  get genderText() {
+    if (!this.gender) return null;
+    return genderTranslator(this.gender, this.lang);
+  }
 
-    @Expose()
-    get profileActivities() {
-        if (!this.profilesActivity) return null;
-        return this.profilesActivity.map((profileActivity: ProfilesActivity) => {
-            return new ProfilesActitvitesSerialization(profileActivity, this.lang);
-        })
-    }
+  @Expose()
+  get avatarPath() {
+    if (!this.avatar) return null;
+    return `${BUCKET_IMAGE_AVATAR}/${this.avatar}`;
+  }
 
-    @Expose()
-    get profileInterships() {
-        if (!this.profilesIntership) return null;
-        return this.profilesIntership.map((profileIntership: ProfilesIntership) => {
-            return new ProfilesIntershipSerialization(profileIntership, this.lang);
-        })
-    }
+  @Expose()
+  get profileLocations() {
+    if (!this.profilesLocations) return null;
+    return this.profilesLocations.map((profileLocation) => {
+      return locationTranslator(profileLocation, this.lang);
+    });
+  }
 
-    @Expose()
-    get profileHobbies() {
-        if (!this.profilesHobby) return null;
-        return new ProfilesHobbiesSerializtion(this.profilesHobby, this.lang);
-    }
+  @Expose()
+  get profileCategories() {
+    if (!this.childCategories) return null;
+    return this.childCategories.map((category) => {
+      return categoryTranslator(category, this.lang);
+    });
+  }
 
-    @Expose()
-    get profilesReferences() {
-        if (!this.profilesReference) return null;
-        return this.profilesReference.map((profileReference: ProfilesReference) => {
-            return new ProfileReferenceSerialization(profileReference, this.lang);
-        })
-    }
+  @Expose()
+  get companyInfomation() {
+    if (!this.company) return null;
+    return new CompanySerialization(this.company, this.lang);
+  }
 
-    @Expose()
-    get profilesSkills() {
-        if (!this.profilesSkill) return null;
-        return this.profilesSkill.map((profileSkills: ProfilesSkill) => {
-            return new ProfileSkillSerialization(profileSkills, this.lang);
-        })
-    }
+  @Expose()
+  get profileAwards() {
+    if (!this.profilesAward) return null;
+    return this.profilesAward.map((profileAward: ProfilesAward) => {
+      return new ProfilesAwardSerialization(profileAward, this.lang);
+    });
+  }
 
-    @Expose()
-    get profilesLanguages() {
-        if (!this.profileLanguage) return null
-        return this.profileLanguage.map((profileLanguages : ProfileLanguage) => {
-            return new ProfileLanguageSerialization(profileLanguages, this.lang);
-        })
-    }
+  @Expose()
+  get profileCourses() {
+    if (!this.profilesCourse) return null;
+    return this.profilesCourse.map((profileCourse: ProfilesCourse) => {
+      return new ProfileCourseSerialization(profileCourse, this.lang);
+    });
+  }
 
-    @Expose()
-    get profilesJobs() {    
-        if (!this.profilesJob) return null 
-        return this.profilesJob.map((profilesJob : ProfilesJob) => {
-            return new ProfilesJobsSerialization(profilesJob, this.lang);
-        }
-        )       
-    }
+  @Expose()
+  get profileActivities() {
+    if (!this.profilesActivity) return null;
+    return this.profilesActivity.map((profileActivity: ProfilesActivity) => {
+      return new ProfilesActitvitesSerialization(profileActivity, this.lang);
+    });
+  }
 
+  @Expose()
+  get profileInterships() {
+    if (!this.profilesIntership) return null;
+    return this.profilesIntership.map((profileIntership: ProfilesIntership) => {
+      return new ProfilesIntershipSerialization(profileIntership, this.lang);
+    });
+  }
+
+  @Expose()
+  get profileHobbies() {
+    if (!this.profilesHobby) return null;
+    return new ProfilesHobbiesSerializtion(this.profilesHobby, this.lang);
+  }
+
+  @Expose()
+  get profilesReferences() {
+    if (!this.profilesReference) return null;
+    return this.profilesReference.map((profileReference: ProfilesReference) => {
+      return new ProfileReferenceSerialization(profileReference, this.lang);
+    });
+  }
+
+  @Expose()
+  get profilesSkills() {
+    if (!this.profilesSkill)
+      return {
+        isShow: this.isSK,
+        data: null,
+      };
+    return {
+      isShow: this.isSK,
+      data: this.profilesSkill.map((profileSkills: ProfilesSkill) => {
+        return new ProfileSkillSerialization(profileSkills, this.lang);
+      }),
+    };
+  }
+
+  @Expose()
+  get profilesLanguages() {
+    if (!this.profileLanguage)
+      return {
+        isShow: this.isSL,
+        data: null,
+      };
+    return {
+      isShow: this.isSL,
+      data: this.profileLanguage.map((profileLanguages: ProfileLanguage) => {
+        return new ProfileLanguageSerialization(profileLanguages, this.lang);
+      }),
+    };
+  }
+
+  @Expose()
+  get profilesJobs() {
+    if (!this.profilesJob) return null;
+    return this.profilesJob.map((profilesJob: ProfilesJob) => {
+      return new ProfilesJobsSerialization(profilesJob, this.lang);
+    });
+  }
 }

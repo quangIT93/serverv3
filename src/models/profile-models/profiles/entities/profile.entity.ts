@@ -181,4 +181,8 @@ export class Profile {
 
   @OneToMany(() => ProfilesJob, (profilesJob) => profilesJob.profile)
   profilesJob!: ProfilesJob[];
+
+  isSK?: boolean;
+
+  isSL?: boolean;
 }
