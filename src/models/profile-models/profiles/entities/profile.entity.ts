@@ -30,6 +30,7 @@ import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.ent
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 // import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
+import { User } from 'src/models/users/entities/user.entity';
 
 @Entity('profiles') // table name
 export class Profile {
@@ -190,6 +191,10 @@ export class Profile {
 
   @OneToMany(() => ProfileLanguage, (profileLanguage) => profileLanguage.profile)
   profileLanguage!: ProfileLanguage[];
+
+  @OneToOne(() => User, (user) => user.profile)
+  @JoinColumn({ name: 'id', referencedColumnName: 'id' })
+  user!: User;
 
   // @OneToMany(() => ProfilesJob, (profilesJob) => profilesJob.profile)
   // profilesJob!: ProfilesJob[];

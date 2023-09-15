@@ -45,11 +45,11 @@ export class ProfilesController {
   async findOne(@Req() req: CustomRequest) {
     const id = req.user?.id;
 
-    const {isSK, isSL} = req.query
+    // const {isSK, isSL} = req.query
     if (!id) {
       return null;
     }
-    const profile = await this.profilesService.findOne(id, (isSK === 'true') ? true : false, (isSL === 'true') ? true : false);
+    const profile = await this.profilesService.findOne(id);
 
     // const serializedProfile = Object.assign(
 

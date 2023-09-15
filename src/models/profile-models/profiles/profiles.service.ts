@@ -19,8 +19,7 @@ export class ProfilesService {
     return `This action returns all profiles`;
   }
 
-  async findOne(id: string, isSK: boolean, isSL: boolean) {
-    let newResult;
+  async findOne(id: string) {
     let result = await this.profileRepository.findOne({
       relations: [
         'user',
@@ -55,9 +54,7 @@ export class ProfilesService {
       where: { accountId: id },
     });
 
-    newResult = { ...result, isSK: isSK ? true : false, isSL: isSL ? true : false };
-
-    return newResult;
+    return result;
     
   }
 
@@ -68,7 +65,7 @@ export class ProfilesService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} profile`;
+  // }
 }
