@@ -65,6 +65,8 @@ export class ProfileLanguagesController {
         throw new BadRequestException('User not found');
       }
 
+      data.accountId = accountId;
+
       const result = await this.profileLanguagesService.removeAll(data);
 
       return {
