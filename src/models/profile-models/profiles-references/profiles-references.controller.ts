@@ -7,6 +7,9 @@ import {
   Req,
   BadRequestException,
   HttpStatus,
+  Put,
+  Param,
+  ParseIntPipe,
 
 } from '@nestjs/common';
 import { ProfilesReferencesService } from './profiles-references.service';
@@ -15,6 +18,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { DeleteProfilesReferenceDto } from './dto/delete-profile-reference.dto';
+import { UpdateProfilesReferenceDto } from './dto/update-profiles-reference.dto';
 @Controller('profiles-references')
 @ApiTags('Profiles References')
 export class ProfilesReferencesController {
@@ -79,6 +83,40 @@ export class ProfilesReferencesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete references language');
+    }
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProfilesReferenceDto,
+    @Req() req: CustomRequest,
+  ) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('User not found');
+      }
+
+      dto.accountId = accountId;
+
+      await this.profilesReferencesService.update(
+        id,
+        dto,
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile reference updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Profile reference not found');
     }
   }
 }

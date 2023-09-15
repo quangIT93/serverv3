@@ -7,6 +7,9 @@ import {
   BadRequestException,
   Req,
   HttpStatus,
+  Param,
+  ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ProfilesCoursesService } from './profiles-courses.service';
 import { CreateProfilesCourseDto } from './dto/create-profiles-course.dto';
@@ -14,6 +17,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { DeleteProfilesCourseDto } from './dto/delete-profile-course.dto';
+import { UpdateProfilesCourseDto } from './dto/update-profiles-course.dto';
 
 @Controller('profiles-courses')
 @ApiTags('Profiles Courses')
@@ -76,6 +80,40 @@ export class ProfilesCoursesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error delete profile course');
+    }
+  }
+  
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProfilesCourseDto,
+    @Req() req: CustomRequest,
+  ) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('User not found');
+      }
+
+      dto.accountId = accountId;
+
+      await this.profilesCoursesService.update(
+        id,
+        dto,
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile reference updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Profile reference not found');
     }
   }
 }

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { ProfilesReference } from './entities/profiles-reference.entity';
 import { DeleteProfilesReferenceDto } from './dto/delete-profile-reference.dto';
+import { UpdateProfilesReferenceDto } from './dto/update-profiles-reference.dto';
 
 @Injectable()
 export class ProfilesReferencesService {
@@ -35,6 +36,18 @@ export class ProfilesReferencesService {
       });
 
       return result
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(id: number, data: UpdateProfilesReferenceDto) {
+    try {
+      const profileReferenceEntity = this.profilesReferenceRepository.create(
+        data,
+      );
+
+      return await this.profilesReferenceRepository.update(id, profileReferenceEntity);
     } catch (error) {
       throw error;
     }
