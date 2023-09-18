@@ -3,6 +3,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
@@ -63,6 +64,25 @@ export class ProfilesService {
       select: ['email'],
       where: { accountId: id },
     });
+  }
+
+  async update(updateProfileDto: UpdateProfileDto) {
+    try {
+      const profile = await this.profileRepository.findOne({
+        where: { accountId: updateProfileDto.accountId },
+      });
+
+      if (!profile) {
+        throw new Error('Profile not found');
+      }
+
+      const updatedProfile = Object.assign(profile, updateProfileDto);
+
+      await this.profileRepository.save(updatedProfile);
+
+    } catch (error) {
+      throw error;
+    }
   }
 
   // remove(id: number) {`
