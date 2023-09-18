@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `profiles_references`(
     full_name VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    description VARCHAR(1000) NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_Accounts_ProfilesReferences FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
