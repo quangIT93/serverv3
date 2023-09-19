@@ -18,7 +18,7 @@ export class CreateProfilesActivityDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    required: false,
+    required: true,
     maxLength: 255,
   })
   @IsNotEmpty()
@@ -27,18 +27,19 @@ export class CreateProfilesActivityDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    required: false,
+    required: true,
+    maxLength: 1000
   })
   @IsNotEmpty()
   description!: string;
 
-  @ApiProperty({ type: 'number', required: false })
+  @ApiProperty({ type: 'number', required: true })
   @IsNotEmpty()
   @IsTimestamp()
   @Type(() => String)
   startDate!: string;
 
-  @ApiProperty({ type: 'number', required: false })
+  @ApiProperty({ type: 'number', required: true })
   @IsNotEmpty()
   @IsTimestamp()
   @Type(() => String)

@@ -3,15 +3,15 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateLanguageTypeDto {
     
-    @ApiProperty({ type: 'string', format: 'string', required: false})
+    @ApiProperty({ type: 'string', format: 'string', required: true, maxLength:255})
     @IsNotEmpty()
     value!: string;
 
-    @ApiProperty({ type: 'string', format: 'string', required: false})
+    @ApiProperty({ type: 'string', format: 'string', required: true, maxLength:255})
     @IsNotEmpty()
     valueEn!: string;
 
-    @ApiProperty({ type: 'string', format: 'string', required: false})
+    @ApiProperty({ type: 'string', format: 'string', required: true, maxLength:255})
     @IsNotEmpty()
     valueKo!: string;
 }

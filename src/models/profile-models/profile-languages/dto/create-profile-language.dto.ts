@@ -9,7 +9,7 @@ export class CreateProfileLanguageDto {
     @IsNotEmpty()
     languageLevelId!:number;
 
-    @ApiProperty({ type: 'string', format: 'string', required: false })
+    @ApiProperty({ type: 'string', format: 'string', required: false, maxLength: 255 })
     @IsNotEmpty()
     languageName!:string;
 
