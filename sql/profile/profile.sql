@@ -5,6 +5,9 @@ ALTER TABLE profiles ADD COLUMN `job_name` varchar(255) DEFAULT NULL;
 ALTER TABLE profiles ADD CONSTRAINT FK_JobTypes_Profiles FOREIGN KEY (job_type_id) REFERENCES job_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 
+ALTER TABLE `profiles_references` ADD COLUMN `description` varchar(1000) DEFAULT NULL;
+
+
 CREATE TABLE IF NOT EXISTS
     `skill_level_types` (
         id TINYINT(4) NOT NULL AUTO_INCREMENT,
@@ -51,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `profiles_references`(
     full_name VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    description VARCHAR(1000) NOT NULL,
+    -- description VARCHAR(1000) NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_Accounts_ProfilesReferences FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
