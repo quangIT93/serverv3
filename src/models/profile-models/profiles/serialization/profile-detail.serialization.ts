@@ -23,6 +23,8 @@ import { ProfileSkillSerialization } from '../../profiles-skills/serialization/p
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 import { ProfileLanguageSerialization } from '../../profile-languages/serialization/profiles-language.serialization';
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
+import { ProfilesCv } from '../../profiles_cvs/entities/profiles_cv.entity';
+import { ProfilesCvsSerialization } from '../../profiles_cvs/serialization/profiles_cvs.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -111,6 +113,9 @@ export class ProfileSerialization extends Profile {
 
     @Exclude({ toPlainOnly: true })
     override user!: any;
+
+    @Exclude({ toPlainOnly: true })
+    override profilesCv!: ProfilesCv[]
 
 
     // expose addressText
@@ -235,6 +240,14 @@ export class ProfileSerialization extends Profile {
     @Expose()
     get typeRoleData() {
         return this.user.type;
+    }
+
+    @Expose()
+    get profilesCvs() {
+        if (!this.profilesCv) return null
+        return this.profilesCv.map((profilesCv : ProfilesCv) => {
+            return new ProfilesCvsSerialization(profilesCv, this.lang);
+        })
     }
 
 }

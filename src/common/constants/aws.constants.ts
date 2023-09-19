@@ -14,6 +14,7 @@ export const BUCKET_IMAGE_COMANIES_LOGO = `${BUCKET_IMAGE}/companies-logo`
 export const BUCKET_IMAGE_COMANIES_LOGO_UPLOAD = `images/companies-logo`
 export const BUCKET_IMAGE_DEFAULT = `${BUCKET_IMAGE}/default`
 export const BUCKET_CV = `${BUCKET_PREFIX}/cv-bucket`
+export const BUCKET_CV_UPLOAD = `cv-bucket`
 export const BUCKET_IMAGE_PARENT = `images/category`
 export const BUCKET_IMAGE_PARENT_DEFAULT = `images/default-post-image`    
 export const BUCKET_IMAGE_COMMUNICATION = `${BUCKET_IMAGE}/communications`

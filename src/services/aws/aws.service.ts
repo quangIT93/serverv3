@@ -235,4 +235,42 @@ export class AWSService implements AWSServiceInterface {
       });
     });
   }
+
+
+  async uploadFileCV(
+    file: FileUpload,
+    options: UploadOpions,
+  ): Promise<UploadFileResult> {
+    const s3 = this.getS3();
+
+    if (!file) {
+      throw new Error('File is not exist');
+    }
+
+    if (!options.BUCKET) {
+      throw new Error('Bucket is not exist');
+    }
+
+    // add bucket name to file name
+    // add id to file name if id is exist
+    const key =
+      options.BUCKET +
+      '/' +
+      `${options.accountId ? options.accountId + '/' : ''}` +
+      `${options.id ? options.id + '/' : ''}` +
+      `${file.originalname}`;
+
+    const params: PutObjectRequest = {
+      Bucket: this.awsConfig.bucket || '',
+      Key: key,
+      Body: file.buffer,
+    };
+
+    const result = await s3.upload(params).promise();
+
+    return {
+      ...result,
+      originalname: file.originalname,
+    };
+  }
 }
