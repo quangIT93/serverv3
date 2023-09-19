@@ -59,7 +59,7 @@ export class ProfilesController {
     return profile;
   }
 
-  @Put()
+  @Put('job')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   async update(@Body() updateProfileDto: UpdateProfileDto, @Req() req: CustomRequest) {
