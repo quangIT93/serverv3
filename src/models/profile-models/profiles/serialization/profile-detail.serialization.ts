@@ -23,8 +23,8 @@ import { ProfileSkillSerialization } from '../../profiles-skills/serialization/p
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
 import { ProfileLanguageSerialization } from '../../profile-languages/serialization/profiles-language.serialization';
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
-import { ProfilesCv } from '../../profiles_cvs/entities/profiles_cv.entity';
-import { ProfilesCvsSerialization } from '../../profiles_cvs/serialization/profiles_cvs.serialization';
+import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
+import { ProfilesCvsSerialization } from '../../profiles-cvs/serialization/profiles_cvs.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })

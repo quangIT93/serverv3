@@ -31,7 +31,7 @@ import { ProfileLanguage } from '../../profile-languages/entities/profile-langua
 // import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
 import { User } from 'src/models/users/entities/user.entity';
-import { ProfilesCv } from '../../profiles_cvs/entities/profiles_cv.entity';
+import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
 
 @Entity('profiles') // table name
 export class Profile {

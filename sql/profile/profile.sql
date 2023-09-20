@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `profiles_hobbies` (
 CREATE TABLE IF NOT EXISTS `profiles_cvs` (
     id INT(11) NOT NULL AUTO_INCREMENT,
     account_id VARCHAR(50) NOT NULL,
-    name VARCHAR(255) NOT NULL DEFAULT 'HiJob CV',
+    name VARCHAR(255) NOT NULL DEFAULT 'Resume',
     image VARCHAR(200) NOT NULL,
     status TINYINT(4) NOT NULL DEFAULT 1,
     PRIMARY KEY (id),

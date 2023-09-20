@@ -5,6 +5,7 @@ import { ProfilesCv } from '../entities/profiles_cv.entity';
 import { DataSource, EntityManager } from 'typeorm';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_CV_UPLOAD } from 'src/common/constants';
+import { FileUpload } from 'src/services/aws/awsService.interface';
 
 @Injectable()
 export class CreateProfileCvsTransaction extends BaseTransaction<
@@ -32,6 +33,19 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
         id: newProfileCv.id,
         accountId: createProfilesCvDto.accountId,
       });
+
+      const imageFileUpload: FileUpload = {
+        buffer: Buffer.from(createProfilesCvDto.imageBuffer),
+        originalname: createProfilesCvDto.image,
+      };
+
+      await this.awsService.uploadFileCV(imageFileUpload, {
+        BUCKET: BUCKET_CV_UPLOAD,
+        id: newProfileCv.id,
+        accountId: createProfilesCvDto.accountId,
+      });
+
+
 
       return newProfileCv;
     } catch (error) {

@@ -59,6 +59,8 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pdf2image": "^1.2.3",
+    "pdf2pic": "^3.0.3",
     "pino": "^8.14.1",
     "pino-http": "^8.3.3",
     "reflect-metadata": "^0.1.13",

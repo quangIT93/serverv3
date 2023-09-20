@@ -17,4 +17,6 @@ export class CreateProfilesCvDto {
 
     @ApiProperty({type: 'file', nullable: false})
     file!: any
+
+    imageBuffer!: Buffer
 }

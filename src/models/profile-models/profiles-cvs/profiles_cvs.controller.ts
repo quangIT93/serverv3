@@ -10,7 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
   ParseFilePipe,
-  FileTypeValidator,
+  // FileTypeValidator,
   MaxFileSizeValidator,
   HttpStatus,
 } from '@nestjs/common';
@@ -21,6 +21,10 @@ import { AuthGuard } from 'src/authentication/auth.guard';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PdfValidator } from 'src/common/decorators/validation/pdf-validator/pdf.validator';
+import { fromBuffer } from "pdf2pic"
+import { v4 as uuidv4 } from "uuid";
+
 
 @ApiTags('Profiles Cvs')
 @Controller('profiles-cvs')
@@ -38,8 +42,8 @@ export class ProfilesCvsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 400000 }),
-          new FileTypeValidator({ fileType: 'pdf' }),
+          new MaxFileSizeValidator({ maxSize: 4 * 1024 * 1024 }),
+          new PdfValidator(),
         ],
       }),
     )
@@ -54,7 +58,27 @@ export class ProfilesCvsController {
 
       createProfilesCvDto.file = file;
       createProfilesCvDto.accountId = accountId;
-      createProfilesCvDto.image = file.originalname;
+
+      console.log(file.buffer)
+
+      const image = fromBuffer(file.buffer, {
+        density: 100,
+        format: "jpg",
+        quality: 70,
+        width: 210*2,
+        height: 297*2,
+      })
+
+      const imageBuffer = await image.bulk(1, { responseType: "buffer" }).then((result) => {
+        return result.map((page) => {
+          return page.buffer ?? Buffer.alloc(0)
+        })
+      })
+
+      const path = `${Date.now()}-${uuidv4()}`
+
+      createProfilesCvDto.image = path + '.jpg';
+      createProfilesCvDto.imageBuffer = imageBuffer[0];
 
       return {
         statusCode: HttpStatus.CREATED,
@@ -100,3 +124,4 @@ export class ProfilesCvsController {
     }
   }
 }
+
