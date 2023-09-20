@@ -27,11 +27,26 @@ export class ProfilesCv {
   @Column({ type: 'varchar', length: 200, nullable: false, name: 'image' })
   image!: string;
 
-  @Column({ type: 'int', nullable: false, default: 1, name: 'status' })
+  @Column({ type: 'int', nullable: false, default: 0, name: 'status' })
   status!: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false, name: 'path' })
   path!: string;
+
+  @Column({
+    type: 'datetime',
+    name: 'created_at',
+    default: 'CURRENT_TIMESTAMP',
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: 'datetime',
+    name: 'updated_at',
+    default: 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt!: Date;
 
   @ManyToOne(() => Profile, (profile) => profile.profilesCv)
   @JoinColumn({ name: 'account_id' })

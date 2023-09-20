@@ -13,6 +13,7 @@ import {
   // FileTypeValidator,
   MaxFileSizeValidator,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 import { ProfilesCvsService } from './profiles_cvs.service';
 import { CreateProfilesCvDto } from './dto/create-profiles_cv.dto';
@@ -24,6 +25,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { PdfValidator } from 'src/common/decorators/validation/pdf-validator/pdf.validator';
 import { fromBuffer } from "pdf2pic"
 import { v4 as uuidv4 } from "uuid";
+import { DeleteProfilesCvDto } from './dto/delete-profiles_cv.dto';
 
 
 @ApiTags('Profiles Cvs')
@@ -108,6 +110,7 @@ export class ProfilesCvsController {
 
       updateProfilesCvDto.accountId = accoundId;
       updateProfilesCvDto.id = +id;
+      updateProfilesCvDto.status = (updateProfilesCvDto.status === 0) ? updateProfilesCvDto.status : 1;
 
       await this.profilesCvsService.update(updateProfilesCvDto);
 
@@ -120,6 +123,34 @@ export class ProfilesCvsController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error update profile cv');
+    }
+  }
+
+  @Delete()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async delete(@Req() req: CustomRequest, @Body() dto: DeleteProfilesCvDto) {
+    try {
+      const accoundId = req.user?.id;
+
+      if (!accoundId) {
+        throw new BadRequestException('User not found');
+      }
+
+      dto.accountId = accoundId;
+
+      const result = await this.profilesCvsService.delete(dto);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: `${result} profile cv deleted`
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error delete profile cv');
     }
   }
 }

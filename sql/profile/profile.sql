@@ -1,14 +1,20 @@
-ALTER TABLE profiles ADD COLUMN `job_type_id` tinyint DEFAULT NULL;
+-- ALTER TABLE profiles ADD COLUMN `job_type_id` tinyint DEFAULT NULL;
 
-ALTER TABLE profiles ADD COLUMN `job_name` varchar(255) DEFAULT NULL;
+-- ALTER TABLE profiles ADD COLUMN `job_name` varchar(255) DEFAULT NULL;
 
-ALTER TABLE profiles ADD CONSTRAINT FK_JobTypes_Profiles FOREIGN KEY (job_type_id) REFERENCES job_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-
-ALTER TABLE `profiles_references` ADD COLUMN `description` varchar(1000) DEFAULT NULL;
+-- ALTER TABLE profiles ADD CONSTRAINT FK_JobTypes_Profiles FOREIGN KEY (job_type_id) REFERENCES job_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 
-ALTER TABLE `profiles_cvs` ADD COLUMN `path` varchar(255) DEFAULT NULL AFTER `image`;
+-- ALTER TABLE `profiles_references` ADD COLUMN `description` varchar(1000) DEFAULT NULL;
+
+
+-- ALTER TABLE `profiles_cvs` ADD COLUMN `path` varchar(255) DEFAULT NULL AFTER `image`;
+
+ALTER TABLE `profiles_cvs` ADD COLUMN `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `status`;
+
+ALTER TABLE `profiles_cvs` ADD COLUMN `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
+ALTER TABLE `profiles_cvs` ALTER COLUMN `status` SET DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS
     `skill_level_types` (
@@ -129,6 +135,9 @@ CREATE TABLE IF NOT EXISTS `profiles_cvs` (
     PRIMARY KEY (id),
     CONSTRAINT FK_Accounts_Cvs FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+
+
 
 
 

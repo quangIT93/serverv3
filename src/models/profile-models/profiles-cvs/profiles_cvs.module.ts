@@ -7,6 +7,7 @@ import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.modu
 import { CreateProfileCvsTransaction } from './transaction/profiles_cv.transaction';
 import { AWSService } from 'src/services/aws/aws.service';
 import { AWSConfigModule } from 'src/config/storage/aws/config.module';
+import { DeleteProfileCvsTransaction } from './transaction/delete_profiles_cv.transaction';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AWSConfigModule } from 'src/config/storage/aws/config.module';
     AWSConfigModule
   ],
   controllers: [ProfilesCvsController],
-  providers: [ProfilesCvsService, CreateProfileCvsTransaction, AWSService],
+  providers: [ProfilesCvsService, CreateProfileCvsTransaction, AWSService, DeleteProfileCvsTransaction],
   exports: [ProfilesCvsService]
 })
 export class ProfilesCvsModule {}
