@@ -28,7 +28,12 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
 
       const newProfileCv = await manager.save(newProfileCvEntity);
 
-      await this.awsService.uploadFileCV(createProfilesCvDto.file, {
+      const pdfUpload: FileUpload = {
+        buffer: createProfilesCvDto.file.buffer,
+        originalname: createProfilesCvDto.path,
+      };
+
+      await this.awsService.uploadFileCV(pdfUpload, {
         BUCKET: BUCKET_CV_UPLOAD,
         id: newProfileCv.id,
         accountId: createProfilesCvDto.accountId,
@@ -43,9 +48,7 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
         BUCKET: BUCKET_CV_UPLOAD,
         id: newProfileCv.id,
         accountId: createProfilesCvDto.accountId,
-      });
-
-
+      })
 
       return newProfileCv;
     } catch (error) {

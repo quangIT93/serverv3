@@ -59,8 +59,6 @@ export class ProfilesCvsController {
       createProfilesCvDto.file = file;
       createProfilesCvDto.accountId = accountId;
 
-      console.log(file.buffer)
-
       const image = fromBuffer(file.buffer, {
         density: 100,
         format: "jpg",
@@ -79,6 +77,7 @@ export class ProfilesCvsController {
 
       createProfilesCvDto.image = path + '.jpg';
       createProfilesCvDto.imageBuffer = imageBuffer[0];
+      createProfilesCvDto.path = path + '.pdf';
 
       return {
         statusCode: HttpStatus.CREATED,

@@ -7,6 +7,10 @@ export class CreateProfilesCvDto {
 
     image!:string;
 
+    imageBuffer!: Buffer
+
+    path!:string;
+
     @ApiProperty({type: 'varchar', maxLength: 255, nullable: false, default: 'HiJob CV'})
     @IsNotEmpty()
     name!:string;
@@ -18,5 +22,5 @@ export class CreateProfilesCvDto {
     @ApiProperty({type: 'file', nullable: false})
     file!: any
 
-    imageBuffer!: Buffer
+
 }

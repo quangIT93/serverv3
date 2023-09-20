@@ -22,8 +22,17 @@ export class ProfilesCvsSerialization extends ProfilesCv {
     @Exclude({toPlainOnly: true})
     override image!: string;
 
+    @Exclude({toPlainOnly: true})
+    override path!:string;
+
     @Expose()
-    get data() {
+    get imageURL() {
         return BUCKET_CV + "/" + this.accountId + "/" + this.id  + "/" + this.image;
     }
+
+    @Expose()
+    get pdfURL() {
+        return BUCKET_CV + "/" + this.accountId + "/" + this.id  + "/" + this.path;
+    }
+
 }

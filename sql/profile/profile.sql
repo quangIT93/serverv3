@@ -8,6 +8,8 @@ ALTER TABLE profiles ADD CONSTRAINT FK_JobTypes_Profiles FOREIGN KEY (job_type_i
 ALTER TABLE `profiles_references` ADD COLUMN `description` varchar(1000) DEFAULT NULL;
 
 
+ALTER TABLE `profiles_cvs` ADD COLUMN `path` varchar(255) DEFAULT NULL AFTER `image`;
+
 CREATE TABLE IF NOT EXISTS
     `skill_level_types` (
         id TINYINT(4) NOT NULL AUTO_INCREMENT,
@@ -121,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `profiles_hobbies` (
 CREATE TABLE IF NOT EXISTS `profiles_cvs` (
     id INT(11) NOT NULL AUTO_INCREMENT,
     account_id VARCHAR(50) NOT NULL,
-    name VARCHAR(255) NOT NULL DEFAULT 'Resume',
+    name VARCHAR(255) NOT NULL DEFAULT 'HiJob CV',
     image VARCHAR(200) NOT NULL,
     status TINYINT(4) NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
