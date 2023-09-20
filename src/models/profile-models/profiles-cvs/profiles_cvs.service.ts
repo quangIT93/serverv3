@@ -14,8 +14,8 @@ export class ProfilesCvsService {
     @InjectRepository(ProfilesCv)
     private readonly profilesCvRepository: Repository<ProfilesCv>,
     private readonly createProfileCvsTransaction: CreateProfileCvsTransaction,
-    private readonly deleteProfileCvsTransaction : DeleteProfileCvsTransaction
-  ) {}
+    private readonly deleteProfileCvsTransaction: DeleteProfileCvsTransaction,
+  ) { }
   async create(createProfilesCvDto: CreateProfilesCvDto) {
     try {
       return await this.createProfileCvsTransaction.run(createProfilesCvDto);
@@ -26,38 +26,26 @@ export class ProfilesCvsService {
 
   async update(updateProfilesCvDto: UpdateProfilesCvDto) {
     try {
-      // const profileCV = await this.profilesCvRepository
-      //   .createQueryBuilder('profiles_cv')
-      //   .where('profiles_cv.id != :id', { id: updateProfilesCvDto.id })
-      //   .getMany();
+      await this.profilesCvRepository.update(
+        {
+          accountId: updateProfilesCvDto.accountId,
+        },
+        {
+          status: 0
+        }
+      );
+      await this.profilesCvRepository.update(
+        {
+          id: updateProfilesCvDto.id,
+          accountId: updateProfilesCvDto.accountId,
+        },
+        {
+          status: 1
+        }
+      );
 
-      // // const profileCV = await query.getMany();
+      return;
 
-      // // Update data to status = 0
-      // for (const record of profileCV) {
-      //   record.status = 0;
-      // }
-
-      // await this.profilesCvRepository.save(profileCV);
-
-      // await this.profilesCvRepository.update(
-      //   updateProfilesCvDto.id,
-      //   updateProfilesCvDto,
-      // );
-      if (updateProfilesCvDto.status) {
-        return await this.profilesCvRepository
-        .query(
-          `UPDATE profiles_cvs SET status
-          CASE WHEN id = ${updateProfilesCvDto.id} AND account_id = ${updateProfilesCvDto.accountId} THEN 1
-          WHEN id != ${updateProfilesCvDto.id} AND account_id = ${updateProfilesCvDto.accountId} THEN 0
-          `
-        ).then((res) => {
-          return res;
-        }).catch((err) => {
-          throw err;
-        })
-      }
-      
     } catch (error) {
       throw error;
     }
@@ -65,10 +53,9 @@ export class ProfilesCvsService {
 
   async delete(dto: DeleteProfilesCvDto) {
     try {
-      
       const data = await this.deleteProfileCvsTransaction.run(dto);
 
-      return data
+      return data;
     } catch (error) {
       throw error;
     }

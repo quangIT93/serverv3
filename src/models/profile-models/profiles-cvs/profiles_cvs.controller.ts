@@ -110,7 +110,7 @@ export class ProfilesCvsController {
 
       updateProfilesCvDto.accountId = accoundId;
       updateProfilesCvDto.id = +id;
-      updateProfilesCvDto.status = (updateProfilesCvDto.status === 0) ? updateProfilesCvDto.status : 1;
+      // updateProfilesCvDto.status = (updateProfilesCvDto.status === 0) ? updateProfilesCvDto.status : 1;
 
       await this.profilesCvsService.update(updateProfilesCvDto);
 
