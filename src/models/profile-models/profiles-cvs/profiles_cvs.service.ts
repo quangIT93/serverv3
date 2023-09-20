@@ -26,23 +26,38 @@ export class ProfilesCvsService {
 
   async update(updateProfilesCvDto: UpdateProfilesCvDto) {
     try {
-      const query = this.profilesCvRepository
-        .createQueryBuilder('profiles_cv')
-        .where('profiles_cv.id != :id', { id: updateProfilesCvDto.id });
+      // const profileCV = await this.profilesCvRepository
+      //   .createQueryBuilder('profiles_cv')
+      //   .where('profiles_cv.id != :id', { id: updateProfilesCvDto.id })
+      //   .getMany();
 
-      const profileCV = await query.getMany();
+      // // const profileCV = await query.getMany();
 
-      // Update data to status = 0
-      for (const record of profileCV) {
-        record.status = 0;
+      // // Update data to status = 0
+      // for (const record of profileCV) {
+      //   record.status = 0;
+      // }
+
+      // await this.profilesCvRepository.save(profileCV);
+
+      // await this.profilesCvRepository.update(
+      //   updateProfilesCvDto.id,
+      //   updateProfilesCvDto,
+      // );
+      if (updateProfilesCvDto.status) {
+        return await this.profilesCvRepository
+        .query(
+          `UPDATE profiles_cvs SET status
+          CASE WHEN id = ${updateProfilesCvDto.id} AND account_id = ${updateProfilesCvDto.accountId} THEN 1
+          WHEN id != ${updateProfilesCvDto.id} AND account_id = ${updateProfilesCvDto.accountId} THEN 0
+          `
+        ).then((res) => {
+          return res;
+        }).catch((err) => {
+          throw err;
+        })
       }
-
-      await this.profilesCvRepository.save(profileCV);
-
-      await this.profilesCvRepository.update(
-        updateProfilesCvDto.id,
-        updateProfilesCvDto,
-      );
+      
     } catch (error) {
       throw error;
     }

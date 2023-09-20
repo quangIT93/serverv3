@@ -19,4 +19,18 @@ export class SiteService {
     // console.log(result[0].total);
     return +result[0].total;
   }
+
+  // async getCvTemplates(parent_category_id?: number) {
+  //   const query = `
+  //     SELECT * FROM cv_template
+  //     WHERE status = 1
+  //     ${parent_category_id ? `AND parent_category_id = ${parent_category_id}` : ''}
+  //   `
+
+  //   const result = await this.dataSource.query(query);
+
+  //   console.log(result);
+
+  //   return result;
+  // }
 }

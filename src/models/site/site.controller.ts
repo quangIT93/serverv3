@@ -53,4 +53,11 @@ export class SiteController {
             throw new BadRequestException('Error reading language file');
         }
     }
+
+    // @Get('cv-templates')
+    // async getCvTemplates() {
+    //     return {
+    //         data: await this.siteService.getCvTemplates()
+    //     };
+    // }
 }

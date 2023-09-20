@@ -21,3 +21,4 @@ export const BUCKET_IMAGE_COMMUNICATION = `${BUCKET_IMAGE}/communications`
 export const BUCKET_IMAGE_COMMUNICATION_UPLOAD = `images/communications`
 export const BUCKET_IMAGE_COMMUNICATION_COMMENT = `${BUCKET_IMAGE}/communications-comment`
 export const BUCKET_IMAGE_COMMUNICATION_COMMENT_UPLOAD = `images/communications-comment`
+export const BUCKET_IMAGE_CV_TEMPLATE = `${BUCKET_IMAGE}/cv-templates`

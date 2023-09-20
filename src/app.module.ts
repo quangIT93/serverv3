@@ -65,6 +65,7 @@ import { ProfilesIntershipsModule } from './models/profile-models/profiles-inter
 import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/profiles-awards.module';
 import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/profiles_hobbies.module';
 import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles_cvs.module';
+import { CvTemplateModule } from './models/cv-template/cv-template.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -138,6 +139,7 @@ import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles
     ProfilesAwardsModule,
     ProfilesHobbiesModule,
     ProfilesCvsModule,
+    CvTemplateModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],
