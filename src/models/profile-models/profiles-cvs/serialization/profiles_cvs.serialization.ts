@@ -1,6 +1,6 @@
 import { Language } from "src/common/enum";
 import { ProfilesCv } from "../entities/profiles_cv.entity";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Transform } from "class-transformer";
 import { BUCKET_CV } from "src/common/constants";
 
 
@@ -25,10 +25,10 @@ export class ProfilesCvsSerialization extends ProfilesCv {
     @Exclude({toPlainOnly: true})
     override path!:string;
 
-    @Exclude({toPlainOnly: true})
+    @Transform(({ value }) => new Date(value).getTime())
     override createdAt!: Date;
 
-    @Exclude({toPlainOnly: true})
+    @Transform(({ value }) => new Date(value).getTime())
     override updatedAt!: Date;
 
     @Expose()
