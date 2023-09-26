@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, BadRequestException, HttpStatus, Pu
 import { AcademicTypesService } from './academic_types.service';
 import { CreateAcademicTypeDto } from './dto/create-academic_type.dto';
 import { UpdateAcademicTypeDto } from './dto/update-academic_type.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AcademicTypesInterceptor } from './interceptor/academic_type.interceptor';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
@@ -18,6 +18,7 @@ export class AcademicTypesController {
   @Post()
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(Role.ADMIN)
+  @ApiBearerAuth()
   async create(@Body() createAcademicTypeDto: CreateAcademicTypeDto, @Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id
@@ -58,6 +59,7 @@ export class AcademicTypesController {
   @Put(':id')
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(Role.ADMIN)
+  @ApiBearerAuth()
   async update(@Param('id') id: string, @Body() updateAcademicTypeDto: UpdateAcademicTypeDto, @Req() req: CustomRequest) {
     try {
 
