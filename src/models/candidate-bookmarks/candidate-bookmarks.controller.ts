@@ -65,7 +65,7 @@ export class CandidateBookmarksController {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error getting');
+      throw new BadRequestException('Error creating candidate bookmark');
     }
   }
 }

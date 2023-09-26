@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 import { Profile } from 'src/models/profile-models/profiles/entities';
-import { CVFilterSerializtion } from '../serialization/cv-filter.serialization';
+import { CVFilterSerialization } from '../serialization/cv-filter.serialization';
 
 export class CVFilterInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -9,7 +9,7 @@ export class CVFilterInterceptor implements NestInterceptor {
       map((cvFilter: any[]) => {
         const lang = _context.switchToHttp().getRequest().lang;
         const data = cvFilter?.map((data: Profile) => {
-          const academicSerialization = new CVFilterSerializtion(data, lang);
+          const academicSerialization = new CVFilterSerialization(data, lang);
           return academicSerialization;
         });
 

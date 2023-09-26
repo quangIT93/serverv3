@@ -8,7 +8,7 @@ import { DistrictSerializer } from 'src/models/locations/districts/districts.ser
 import { ProfilesEducation } from 'src/models/profile-models/profiles-educations/entities/profiles-education.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 
-export class CVFilterSerializtion extends Profile {
+export class CVFilterSerialization extends Profile {
   @Exclude()
   lang: Language;
 
