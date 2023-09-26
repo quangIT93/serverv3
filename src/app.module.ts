@@ -67,6 +67,7 @@ import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/
 import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles_cvs.module';
 import { CvTemplateModule } from './models/cv-template/cv-template.module';
 import { AcademicTypesModule } from './models/academic_types/academic_types.module';
+import { CvFilterModule } from './models/cv-filter/cv-filter.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -128,7 +129,7 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
 
     MailLoggerModule,
 
-    // Profiles 
+    // Profiles
     LevelTypeModule,
     ProfilesSkillsModule,
     ProfileLanguagesModule,
@@ -142,6 +143,7 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
     ProfilesCvsModule,
     CvTemplateModule,
     AcademicTypesModule,
+    CvFilterModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],
