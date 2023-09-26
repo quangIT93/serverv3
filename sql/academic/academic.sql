@@ -15,9 +15,9 @@ ALTER TABLE `profiles_educations` ADD CONSTRAINT FK_AcademicTypes_ProfilesEducat
 
 CREATE TABLE
     `candidate_bookmarked` (
-        cadidate_id varchar(50) NOT NULL,
+        candidate_id varchar(50) NOT NULL,
         recruit_id varchar(50) NOT NULL,
         created_at datetime DEFAULT current_timestamp(),
-        PRIMARY KEY (cadidate_id, recruit_id),
-        Constraint FK_Cadidate_Candidate_Bookmarkes FOREIGN KEY (cadidate_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+        PRIMARY KEY (candidate_id, recruit_id),
+        Constraint FK_Candidate_Candidate_Bookmarked FOREIGN KEY (candidate_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION,
         Constraint FK_Recruit_Candidate_Bookmarked FOREIGN KEY (recruit_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION )
