@@ -78,22 +78,11 @@ export class CvFilterService {
         });
       }
 
-<<<<<<< HEAD
-      const data = await candidates
-        // .where({ isSearch: 1 })
-        .take(limit)
-        .skip(page * limit)
-        .getMany();
-
-      // console.log(data);
-      return data;
-=======
       return await candidates
         .andWhere({ isSearch: 0 })
-        .take(limit)
-        .skip(page * limit)
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
         .getMany();
->>>>>>> 4c7d87d3f34e8ae02fb6665025c13f9d294a2da5
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new InternalServerErrorException();
