@@ -13,11 +13,15 @@ ALTER TABLE `profiles_educations` ADD COLUMN `academic_type_id` TINYINT(4) DEFAU
 ALTER TABLE `profiles_educations` ADD CONSTRAINT FK_AcademicTypes_ProfilesEducations FOREIGN KEY (academic_type_id) REFERENCES academic_types(id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     `candidate_bookmarked` (
         candidate_id varchar(50) NOT NULL,
         recruit_id varchar(50) NOT NULL,
         created_at datetime DEFAULT current_timestamp(),
         PRIMARY KEY (candidate_id, recruit_id),
+<<<<<<< HEAD
         Constraint FK_Candidate_Candidate_Bookmarked FOREIGN KEY (candidate_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+=======
+        Constraint FK_Cadidate_Candidate_Bookmarked FOREIGN KEY (candidate_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+>>>>>>> 6e2f9ef7a85b36282c3f2c1b1f7dce979f6826a7
         Constraint FK_Recruit_Candidate_Bookmarked FOREIGN KEY (recruit_id) REFERENCES accounts (id) ON DELETE CASCADE ON UPDATE NO ACTION )

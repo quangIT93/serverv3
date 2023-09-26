@@ -68,7 +68,7 @@ import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles
 import { CvTemplateModule } from './models/cv-template/cv-template.module';
 import { CvFilterModule } from './models/cv-filter/cv-filter.module';
 import { AcademicTypesModule } from './models/academic_types/academic_types.module';
-
+import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -145,6 +145,7 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
     CvTemplateModule,
     CvFilterModule,
     AcademicTypesModule,
+    CandidateBookmarksModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],
