@@ -1,34 +1,71 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  BadRequestException,
+  UseGuards,
+  HttpStatus,
+} from '@nestjs/common';
 import { CandidateBookmarksService } from './candidate-bookmarks.service';
 import { CreateCandidateBookmarkDto } from './dto/create-candidate-bookmark.dto';
-import { UpdateCandidateBookmarkDto } from './dto/update-candidate-bookmark.dto';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { ProfilesService } from '../profile-models/profiles/profiles.service';
 
 @Controller('candidate-bookmarks')
+@ApiTags('candidate-bookmarked')
 export class CandidateBookmarksController {
-  constructor(private readonly candidateBookmarksService: CandidateBookmarksService) {}
+  constructor(
+    private readonly candidateBookmarksService: CandidateBookmarksService,
+    private readonly profileService: ProfilesService,
+  ) {}
 
   @Post()
-  create(@Body() createCandidateBookmarkDto: CreateCandidateBookmarkDto) {
-    return this.candidateBookmarksService.create(createCandidateBookmarkDto);
-  }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async create(
+    @Body() createCandidateBookmarkDto: CreateCandidateBookmarkDto,
+    @Req() req: CustomRequest,
+  ) {
+    try {
+      const accountId = req.user?.id;
 
-  @Get()
-  findAll() {
-    return this.candidateBookmarksService.findAll();
-  }
+      if (!accountId) {
+        throw new BadRequestException('User not found');
+      }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.candidateBookmarksService.findOne(+id);
-  }
+      const candidate = await this.profileService.findOne(
+        createCandidateBookmarkDto.candidate,
+      );
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCandidateBookmarkDto: UpdateCandidateBookmarkDto) {
-    return this.candidateBookmarksService.update(+id, updateCandidateBookmarkDto);
-  }
+      if (!candidate) {
+        throw new BadRequestException('Candidate not found');
+      }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.candidateBookmarksService.remove(+id);
+      createCandidateBookmarkDto.recruit = accountId;
+
+      const data =
+        await this.candidateBookmarksService.createCandidateBookmarked(
+          createCandidateBookmarkDto,
+        );
+
+      if (data) {
+        return {
+          status: HttpStatus.CREATED,
+          data,
+        };
+      }
+
+      return {
+        status: HttpStatus.OK,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
   }
 }

@@ -1,26 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCandidateBookmarkDto } from './dto/create-candidate-bookmark.dto';
-import { UpdateCandidateBookmarkDto } from './dto/update-candidate-bookmark.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CandidateBookmark } from './entities/candidate-bookmark.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CandidateBookmarksService {
-  create(_createCandidateBookmarkDto: CreateCandidateBookmarkDto) {
-    return 'This action adds a new candidateBookmark';
-  }
+  constructor(
+    @InjectRepository(CandidateBookmark)
+    private readonly candidateBooKmarkedRepository: Repository<CandidateBookmark>,
+  ) {}
+  async createCandidateBookmarked(
+    createCandidateBookmarkDto: CreateCandidateBookmarkDto,
+  ) {
+    try {
+      const bookmarked = await this.candidateBooKmarkedRepository.findOne({
+        where: {
+          candidateId: createCandidateBookmarkDto.candidate,
+          recruitId: createCandidateBookmarkDto.recruit,
+        },
+      });
 
-  findAll() {
-    return `This action returns all candidateBookmarks`;
-  }
+      if (bookmarked) {
+        await this.candidateBooKmarkedRepository.delete({
+          candidateId: createCandidateBookmarkDto.candidate,
+          recruitId: createCandidateBookmarkDto.recruit,
+        });
+        return;
+      }
 
-  findOne(id: number) {
-    return `This action returns a #${id} candidateBookmark`;
-  }
+      const newCandidateBookmarked = this.candidateBooKmarkedRepository.create({
+        candidateId: createCandidateBookmarkDto.candidate,
+        recruitId: createCandidateBookmarkDto.recruit,
+      });
 
-  update(id: number, _updateCandidateBookmarkDto: UpdateCandidateBookmarkDto) {
-    return `This action updates a #${id} candidateBookmark`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} candidateBookmark`;
+      return await this.candidateBooKmarkedRepository.save(
+        newCandidateBookmarked,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 }

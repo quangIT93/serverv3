@@ -32,6 +32,7 @@ import { ProfileLanguage } from '../../profile-languages/entities/profile-langua
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
 import { User } from 'src/models/users/entities/user.entity';
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
+import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 @Entity('profiles') // table name
 export class Profile {
@@ -210,4 +211,10 @@ export class Profile {
 
   @OneToMany(() => ProfilesCv, (profilesCv) => profilesCv.profile)
   profilesCv!: ProfilesCv[];
+
+  @OneToMany(
+    () => CandidateBookmark,
+    (candidateBookmark) => candidateBookmark.profile,
+  )
+  candidateBookmarked!: CandidateBookmark[];
 }
