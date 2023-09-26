@@ -20,6 +20,8 @@ export class CvFilterService {
         categories,
         // educations,
         gender,
+        limit,
+        page
       } = query;
 
       const candidates = this.profileRepository
@@ -61,7 +63,8 @@ export class CvFilterService {
         });
       }
 
-      return await candidates.getMany();
+      return await candidates.take(limit).skip(page * limit).getMany();
+
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new InternalServerErrorException();
