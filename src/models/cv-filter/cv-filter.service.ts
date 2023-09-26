@@ -1,6 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Profile } from '../profile-models/profiles/entities';
 import { FilterCandidatesDto } from './dto/filter-candidates.dto';
 
@@ -79,14 +79,11 @@ export class CvFilterService {
       }
 
       return await candidates
-        .andWhere({ isSearch: 0 })
+        .andWhere({ isSearch: 1 })
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
         .getMany();
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        throw new InternalServerErrorException();
-      }
       throw error;
     }
   }
