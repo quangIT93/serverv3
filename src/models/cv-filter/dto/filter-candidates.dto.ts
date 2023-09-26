@@ -3,15 +3,30 @@ import { IsOptional } from 'class-validator';
 // import { IsNumber } from 'class-validator';
 
 export class FilterCandidatesDto {
-  @ApiProperty({ type: 'array', items: { type: 'number' }, required: false })
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'number' },
+    required: false,
+    default: [79, 1],
+  })
   @IsOptional()
   addresses!: number[];
 
-  @ApiProperty({ type: 'array', items: { type: 'number' }, required: false })
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'number' },
+    required: false,
+    default: [254, 353],
+  })
   @IsOptional()
   categories!: number[];
 
-  @ApiProperty({ type: 'array', items: { type: 'number' }, required: false })
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'number' },
+    required: false,
+    default: [8],
+  })
   @IsOptional()
   educations!: number[];
 

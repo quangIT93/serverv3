@@ -80,8 +80,8 @@ export class CvFilterService {
 
       return await candidates
         .andWhere({ isSearch: 0 })
-        .take(limit)
-        .skip(page * limit)
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
         .getMany();
     } catch (error) {
       if (error instanceof QueryFailedError) {
