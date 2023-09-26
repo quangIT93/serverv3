@@ -18,16 +18,16 @@ export class CvFilterService {
         ageMax,
         ageMin,
         categories,
-        // educations,
+        educations,
         gender,
         limit,
-        page
+        page,
       } = query;
 
       const candidates = this.profileRepository
         .createQueryBuilder('profile')
         .leftJoinAndSelect('profile.childCategories', 'childCategory')
-        .leftJoinAndSelect('profile.profilesEducations', 'education');
+        .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations');
 
       if (addresses && addresses.length > 0) {
         candidates.andWhere('profile.address IN (:...addresses)', {
@@ -39,6 +39,15 @@ export class CvFilterService {
         candidates.andWhere('childCategory.id IN (:...categories)', {
           categories,
         });
+      }
+
+      if (educations && educations.length > 0) {
+        candidates.andWhere(
+          'profilesEducations.academicTypeId IN (:...educations)',
+          {
+            educations: educations.map((i) => +i),
+          },
+        );
       }
 
       if (ageMin) {
@@ -63,8 +72,14 @@ export class CvFilterService {
         });
       }
 
-      return await candidates.take(limit).skip(page * limit).getMany();
+      const data = await candidates
+        .where({ isSearch: 1 })
+        .take(limit)
+        .skip(page * limit)
+        .getMany();
 
+      console.log(data);
+      return data;
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new InternalServerErrorException();

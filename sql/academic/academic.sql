@@ -12,4 +12,4 @@ ALTER TABLE `profiles_educations` ADD COLUMN `academic_type_id` TINYINT(4) DEFAU
 
 ALTER TABLE `profiles_educations` ADD CONSTRAINT FK_AcademicTypes_ProfilesEducations FOREIGN KEY (academic_type_id) REFERENCES academic_types(id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
-ALTER TABLE `profiles_educations` DROP CONSTRAINT `FK_AcademicTypes_ProfilesEducations`
+ALTER TABLE `profiles` ADD COLUMN `is_search` TINYINT(4) DEFAULT 0 AFTER `avatar`
