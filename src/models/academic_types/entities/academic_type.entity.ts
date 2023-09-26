@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ProfilesEducation } from "src/models/profile-models/profiles-educations/entities/profiles-education.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'academic_types'})
 export class AcademicType {
@@ -17,4 +18,7 @@ export class AcademicType {
 
     @Column({type: 'tinyint', nullable: false, default: 1, name: 'status'})
     status!:number;
+
+    @OneToMany(() => ProfilesEducation, profilesEducation => profilesEducation.academicType)
+    profilesEducations!: ProfilesEducation[];
 }
