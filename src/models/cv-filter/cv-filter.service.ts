@@ -27,7 +27,10 @@ export class CvFilterService {
       const candidates = this.profileRepository
         .createQueryBuilder('profiles')
         .leftJoinAndSelect('profiles.childCategories', 'childCategory')
-        .leftJoinAndSelect('profiles.profilesEducations', 'profilesEducations');
+        .leftJoinAndSelect('profiles.profilesEducations', 'profilesEducations')
+        .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
+        .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
+        .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
 
       if (addresses) {
         candidates.andWhere('profiles.address IN (:...addresses)', {
@@ -79,7 +82,7 @@ export class CvFilterService {
       }
 
       return await candidates
-        .andWhere({ isSearch: 1 })
+        .andWhere({ isSearch: 0 })
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
         .getMany();
