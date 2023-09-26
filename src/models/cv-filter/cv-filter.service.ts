@@ -73,12 +73,12 @@ export class CvFilterService {
       }
 
       const data = await candidates
-        .where({ isSearch: 1 })
+        // .where({ isSearch: 1 })
         .take(limit)
         .skip(page * limit)
         .getMany();
 
-      console.log(data);
+      // console.log(data);
       return data;
     } catch (error) {
       if (error instanceof QueryFailedError) {

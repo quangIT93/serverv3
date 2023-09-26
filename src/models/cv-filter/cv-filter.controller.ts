@@ -1,4 +1,11 @@
-import { BadRequestException, Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CvFilterService } from './cv-filter.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FilterCandidatesDto } from './dto/filter-candidates.dto';
@@ -13,21 +20,22 @@ export class CvFilterController {
   @Get('search')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  async filterCandidatesWithCondition(@Query() query: FilterCandidatesDto, @Req() req: CustomRequest) {
+  async filterCandidatesWithCondition(
+    @Query() query: FilterCandidatesDto,
+    @Req() req: CustomRequest,
+  ) {
     try {
-
-      const accountId = req.user?.id
+      const accountId = req.user?.id;
 
       if (!accountId) {
-        throw new BadRequestException('User not found')
+        throw new BadRequestException('User not found');
       }
-      return await this.cvFilterService.filterCandidatesWithCondition(query)
-
+      return await this.cvFilterService.filterCandidatesWithCondition(query);
     } catch (error) {
-     if (error instanceof Error) {
-      throw new BadRequestException(error.message)
-     }
-     throw new BadRequestException('Error getting')
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
     }
   }
 }
