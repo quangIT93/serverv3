@@ -66,6 +66,7 @@ import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/pr
 import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/profiles_hobbies.module';
 import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles_cvs.module';
 import { CvTemplateModule } from './models/cv-template/cv-template.module';
+import { AcademicTypesModule } from './models/academic_types/academic_types.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -140,6 +141,7 @@ import { CvTemplateModule } from './models/cv-template/cv-template.module';
     ProfilesHobbiesModule,
     ProfilesCvsModule,
     CvTemplateModule,
+    AcademicTypesModule,
   ],
   controllers: [AppController, BannersController],
   providers: [AppService],
