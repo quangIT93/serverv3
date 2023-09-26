@@ -30,4 +30,5 @@ export class CvFilterController {
      throw new BadRequestException('Error getting')
     }
   }
+
 }
