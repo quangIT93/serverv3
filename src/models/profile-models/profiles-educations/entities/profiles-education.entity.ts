@@ -28,6 +28,9 @@ export class ProfilesEducation {
     @Column({ type: 'varchar', length: 50, name: 'extra_information' })
     extraInformation!: string;
 
+    @Column({ type: 'tinyint', default: null, name: 'academic_type_id' })
+    academicTypeId!: number;
+
     @Transform(({ value }) => new Date(value).getTime())
     @Column({ type: 'datetime', nullable: false, default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
     createdAt!: Date;
