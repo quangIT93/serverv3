@@ -1,4 +1,5 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
+import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 import { categoryTranslator } from 'src/common/helper/translators';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
@@ -53,6 +54,24 @@ export class CVFilterSerializtion extends Profile {
   @Exclude({ toPlainOnly: true })
   override profilesEducations!: ProfilesEducation[];
 
+  @Exclude({ toPlainOnly: true })
+  override birthday!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override address!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override phone!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override email!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override avatar!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override cvUrl!: string;
+
   @Expose()
   get childCategoriesData() {
     if (!this.childCategories) return null;
@@ -81,12 +100,47 @@ export class CVFilterSerializtion extends Profile {
     const uniqueArray = [];
     const seenIds = new Set();
     for (const item of result) {
-        if (!seenIds.has(item.id)) {
-            seenIds.add(item.id);
-            uniqueArray.push(item);
-        }
+      if (!seenIds.has(item.id)) {
+        seenIds.add(item.id);
+        uniqueArray.push(item);
+      }
     }
 
     return uniqueArray;
+  }
+
+  @Expose()
+  get genderData() {
+    if (!this.gender) return null;
+    switch (this.lang) {
+      case Language.VI:
+        switch (this.gender) {
+          case 1:
+            return 'Nam';
+          case 2:
+            return 'Nữ';
+          default:
+            return 'Khác';
+        }
+      case Language.EN:
+        switch (this.gender) {
+          case 1:
+            return 'Male';
+          case 2:
+            return 'Female';
+          default:
+            return 'Other';
+        }
+      default:
+        return 'Khác';
+    }
+  }
+
+  @Expose()
+  get imageData() {
+    if (!this.avatar) return null;
+    return {
+      avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
+    };
   }
 }
