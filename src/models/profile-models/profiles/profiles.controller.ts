@@ -4,7 +4,7 @@ import {
   // Post,
   Body,
   // Patch,
-  // Param,
+  Param,
   // Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -39,10 +39,7 @@ export class ProfilesController {
   // }
 
   @ApiBearerAuth()
-  @UseInterceptors(
-    ClassSerializerInterceptor,
-    ProfileDetailInterceptor,
-  )
+  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)
   @UseGuards(AuthGuard)
   @Get('me')
   async findOne(@Req() req: CustomRequest) {
@@ -59,10 +56,18 @@ export class ProfilesController {
     return profile;
   }
 
+  @Get('/:id')
+  async getProfileById(@Param('id') id: string) {
+    return await this.profilesService.getProfileById(id);
+  }
+
   @Put('job')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  async update(@Body() updateProfileDto: UpdateProfileDto, @Req() req: CustomRequest) {
+  async update(
+    @Body() updateProfileDto: UpdateProfileDto,
+    @Req() req: CustomRequest,
+  ) {
     try {
       const accountId = req.user?.id;
 
@@ -77,7 +82,7 @@ export class ProfilesController {
       return {
         statusCode: HttpStatus.OK,
         message: 'Update profile successfully',
-      }
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

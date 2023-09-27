@@ -1,7 +1,10 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
-import { categoryTranslator, genderTranslator } from 'src/common/helper/translators';
+import {
+  categoryTranslator,
+  genderTranslator,
+} from 'src/common/helper/translators';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
 import { DistrictSerializer } from 'src/models/locations/districts/districts.serialization';
@@ -115,7 +118,7 @@ export class CVFilterSerialization extends Profile {
   @Expose()
   get genderData() {
     if (!this.gender) return null;
-    return genderTranslator(this.gender, this.lang)
+    return genderTranslator(this.gender, this.lang);
   }
 
   @Expose()
@@ -132,8 +135,18 @@ export class CVFilterSerialization extends Profile {
     return true;
   }
 
-  // @Expose()
-  // get birthdayText() {
-  //   if (!this.birthday) return null;
-  // }
+  @Expose()
+  get birthdayText() {
+    if (!this.birthday) return null;
+
+    const date = new Date(+this.birthday).getDate();
+    const month = new Date(+this.birthday).getMonth();
+    const year = new Date(+this.birthday).getFullYear();
+
+    if (year >= 2000) {
+      return +new Date(2000, month, date);
+    } else {
+      return +new Date(1970, month, date);
+    }
+  }
 }
