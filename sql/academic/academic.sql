@@ -2,11 +2,12 @@
 CREATE TABLE IF NOT EXISTS `academic_types` (
     `id` TINYINT(4) NOT NULL AUTO_INCREMENT,
     `value` VARCHAR(50) NOT NULL,
-    `value_en` VARCHAR(15) NOT NULL,
-    `value_ko` VARCHAR(10) NOT NULL,
+    `value_en` VARCHAR(100) NOT NULL,
+    `value_ko` VARCHAR(50) NOT NULL,
     `status` TINYINT(4) NOT NULL DEFAULT 1,
     PRIMARY KEY (`id`)
 )
+
 
 ALTER TABLE `profiles_educations` ADD COLUMN `academic_type_id` TINYINT(4) DEFAULT 8 AFTER `extra_information`;
 
@@ -20,6 +21,4 @@ INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Cao đẳ
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Đại học','University','대학교',1);
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Sau đại học (Thạc sĩ, Tiến sĩ)',"After university (Master's degree, Doctoral degree)",'대학 졸업 후 (석사, 박사)',1);
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Khác','Other','다른',1);
-
-
 
