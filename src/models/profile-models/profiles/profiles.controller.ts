@@ -55,6 +55,8 @@ export class ProfilesController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, ProfileDetailCandidateInterceptor)
   async getProfileById(@Param('id') id: string) {
     try {
