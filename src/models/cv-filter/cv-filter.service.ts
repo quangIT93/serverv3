@@ -63,16 +63,18 @@ export class CvFilterService {
       }
 
       if (ageMin) {
-        const yearMIn = new Date().getFullYear() - ageMin;
-        const birthdayMin = +new Date(yearMIn + 1, 1, 1);
+        const birthdayMin = +new Date(
+          new Date().getFullYear() - ageMin + 1,
+          1,
+          1,
+        );
         candidates.andWhere('profiles.birthday <= :birthdayMin', {
           birthdayMin,
         });
       }
 
       if (ageMax) {
-        const yearMax = +new Date().getFullYear() - ageMax;
-        const birthdayMax = +new Date(yearMax, 1, 1);
+        const birthdayMax = +new Date(+new Date().getFullYear() - ageMax, 1, 1);
         candidates.andWhere('profiles.birthday >= :birthdayMax', {
           birthdayMax,
         });
@@ -84,10 +86,10 @@ export class CvFilterService {
         });
       }
 
-      const total = await candidates.andWhere({ isSearch: 0 }).getCount();
+      const total = await candidates.andWhere({ isSearch: 1 }).getCount();
 
       const data = await candidates
-        .andWhere({ isSearch: 0 })
+        .andWhere({ isSearch: 1 })
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
         .getMany();
