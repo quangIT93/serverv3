@@ -1,19 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCandidateBookmarkDto } from './dto/create-candidate-bookmark.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CandidateBookmark } from './entities/candidate-bookmark.entity';
 import { Repository } from 'typeorm';
+import { ProfilesService } from '../profile-models/profiles/profiles.service';
 
 @Injectable()
 export class CandidateBookmarksService {
   constructor(
     @InjectRepository(CandidateBookmark)
     private readonly candidateBooKmarkedRepository: Repository<CandidateBookmark>,
+    private readonly profileService: ProfilesService,
   ) {}
   async createCandidateBookmarked(
     createCandidateBookmarkDto: CreateCandidateBookmarkDto,
   ) {
     try {
+
+      const candidate = await this.profileService.findOne(
+        createCandidateBookmarkDto.candidateId,
+      );
+
+      if (!candidate) {
+        throw new BadRequestException('Candidate not found');
+      }
+
       const bookmarked = await this.candidateBooKmarkedRepository.findOne({
         where: {
           candidateId: createCandidateBookmarkDto.candidateId,

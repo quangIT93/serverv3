@@ -12,14 +12,12 @@ import { CreateCandidateBookmarkDto } from './dto/create-candidate-bookmark.dto'
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
-import { ProfilesService } from '../profile-models/profiles/profiles.service';
 
 @Controller('candidate-bookmarks')
 @ApiTags('Candidate Bookmarked')
 export class CandidateBookmarksController {
   constructor(
     private readonly candidateBookmarksService: CandidateBookmarksService,
-    private readonly profileService: ProfilesService,
   ) {}
 
   @Post()
@@ -34,14 +32,6 @@ export class CandidateBookmarksController {
 
       if (!accountId) {
         throw new BadRequestException('User not found');
-      }
-
-      const candidate = await this.profileService.findOne(
-        createCandidateBookmarkDto.candidateId,
-      );
-
-      if (!candidate) {
-        throw new BadRequestException('Candidate not found');
       }
 
       createCandidateBookmarkDto.recruitId = accountId;
