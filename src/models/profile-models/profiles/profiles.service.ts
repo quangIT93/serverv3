@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -41,7 +41,6 @@ export class ProfilesService {
         'profilesSkill.levelType',
         'profileLanguage',
         'profileLanguage.levelTypeLanguage',
-        // 'profilesJob',
         'profilesCv',
         'jobType',
         'company',
@@ -66,20 +65,37 @@ export class ProfilesService {
     });
   }
 
-  async getProfileById(id: string): Promise<Profile | any> {
+  async getProfileById(id: string){
     try {
-      console.log(id);
       const profile = await this.profileRepository.findOne({
+        relations: [
+          'user',
+          'province',
+          'profilesLocations',
+          'profilesLocations.province',
+          'childCategories',
+          'childCategories.parentCategory',
+          'profilesExperiences',
+          'profilesEducations',
+          'profilesAward',
+          'profilesCourse',
+          'profilesHobby',
+          'profilesActivity',
+          'profilesIntership',
+          'profilesReference',
+          'profilesSkill',
+          'profilesSkill.levelType',
+          'profileLanguage',
+          'profileLanguage.levelTypeLanguage',
+          'profilesCv',
+          'jobType'
+        ],
         where: { accountId: id },
       });
 
-      if (!profile) {
-        new BadRequestException('User not found');
-      }
-
       return profile;
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 

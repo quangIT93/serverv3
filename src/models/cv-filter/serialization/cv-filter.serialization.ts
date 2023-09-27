@@ -5,6 +5,7 @@ import {
   categoryTranslator,
   genderTranslator,
 } from 'src/common/helper/translators';
+import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
 import { DistrictSerializer } from 'src/models/locations/districts/districts.serialization';
@@ -136,17 +137,8 @@ export class CVFilterSerialization extends Profile {
   }
 
   @Expose()
-  get birthdayText() {
+  get birthdayData() {
     if (!this.birthday) return null;
-
-    const date = new Date(+this.birthday).getDate();
-    const month = new Date(+this.birthday).getMonth();
-    const year = new Date(+this.birthday).getFullYear();
-
-    if (year >= 2000) {
-      return +new Date(2000, month, date);
-    } else {
-      return +new Date(1970, month, date);
-    }
+    return birthdayTraslator(+this.birthday);
   }
 }

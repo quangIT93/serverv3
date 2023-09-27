@@ -9,7 +9,6 @@ import {
 import { Province } from 'src/models/locations/provinces/entities';
 import { District } from 'src/models/locations/districts/entities';
 import { Language } from 'src/common/enum';
-import { CompanySerialization } from 'src/models/company-models/companies/serialization/company.serialization';
 import { ProfilesAwardSerialization } from '../../profiles-awards/serialization/profiles-award.serialization';
 import { ProfilesAward } from '../../profiles-awards/entities/profiles-award.entity';
 import { ProfilesCourse } from '../../profiles-courses/entities/profiles-course.entity';
@@ -29,18 +28,19 @@ import { ProfileLanguageSerialization } from '../../profile-languages/serializat
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
 import { ProfilesCvsSerialization } from '../../profiles-cvs/serialization/profiles_cvs.serialization';
+import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 
 export class ProfileDetailCandidateSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   lang!: Language;
 
   @Exclude({ toPlainOnly: true })
-  unclock!: boolean;
+  unlock!: boolean;
 
-  constructor(profile: Profile, lang: Language, unclock: boolean = false) {
+  constructor(profile: Profile, lang: Language, unlock: boolean = false) {
     super();
     this.lang = lang;
-    this.unclock = unclock;
+    this.unlock = unlock;
     Object.assign(this, profile);
   }
 
@@ -53,11 +53,6 @@ export class ProfileDetailCandidateSerialization extends Profile {
 
   @Transform(({ value }) => (value ? value : 'Your name'))
   override name!: string;
-
-  // exclude gender
-  // return genderText
-  // @Exclude({ toPlainOnly: true })
-  // override gender!: number;
 
   // exclude cvUrl
   // return cvUrlPath
@@ -88,9 +83,6 @@ export class ProfileDetailCandidateSerialization extends Profile {
   // Transform updatedAt to timestamp
   @Transform(({ value }) => new Date(value).getTime())
   override updatedAt!: Date;
-
-  @Exclude({ toPlainOnly: true })
-  override company: any;
 
   @Exclude({ toPlainOnly: true })
   override profilesAward!: ProfilesAward[];
@@ -182,12 +174,6 @@ export class ProfileDetailCandidateSerialization extends Profile {
   }
 
   @Expose()
-  get companyInfomation() {
-    if (!this.company) return null;
-    return new CompanySerialization(this.company, this.lang);
-  }
-
-  @Expose()
   get profileAwards() {
     if (!this.profilesAward) return null;
     return this.profilesAward.map((profileAward: ProfilesAward) => {
@@ -272,46 +258,34 @@ export class ProfileDetailCandidateSerialization extends Profile {
   get phoneData() {
     if (!this.phone) return null;
 
-    return this.unclock ? this.phone : 'Unlock Candidates';
+    return this.unlock ? this.phone : 'Unlock Candidates';
   }
 
   @Expose()
   get emailData() {
     if (!this.email) return null;
 
-    return this.unclock ? this.email : 'Unlock Candidates';
+    return this.unlock ? this.email : 'Unlock Candidates';
   }
 
   @Expose()
   get linkedinData() {
     if (!this.linkedin) return null;
 
-    return this.unclock ? this.linkedin : 'Unlock Candidates';
+    return this.unlock ? this.linkedin : 'Unlock Candidates';
   }
 
   @Expose()
   get facebookData() {
     if (!this.facebook) return null;
 
-    return this.unclock ? this.facebook : 'Unlock Candidates';
+    return this.unlock ? this.facebook : 'Unlock Candidates';
   }
 
   @Expose()
   get birthdayData() {
     if (!this.birthday) return null;
 
-    if (this.unclock) {
-      return this.birthday;
-    }
-
-    const date = new Date(+this.birthday).getDate();
-    const month = new Date(+this.birthday).getMonth() + 1;
-    const year = new Date(+this.birthday).getFullYear();
-
-    if (year >= 2000) {
-      return +new Date(2000, month, date);
-    } else {
-      return +new Date(1970, month, date);
-    }
+    return this.unlock ? this.birthday : birthdayTraslator(+this.birthday);
   }
 }

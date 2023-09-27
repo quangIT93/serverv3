@@ -22,6 +22,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
+import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-candidate.interceptor';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -45,20 +46,25 @@ export class ProfilesController {
   async findOne(@Req() req: CustomRequest) {
     const id = req.user?.id;
 
-    // const {isSK, isSL} = req.query
     if (!id) {
       return null;
     }
     const profile = await this.profilesService.findOne(id);
 
-    // const serializedProfile = Object.assign(
-
     return profile;
   }
 
-  @Get('/:id')
+  @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailCandidateInterceptor)
   async getProfileById(@Param('id') id: string) {
-    return await this.profilesService.getProfileById(id);
+    try {
+      return await this.profilesService.getProfileById(id)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting profile')
+    }
   }
 
   @Put('job')
@@ -90,9 +96,4 @@ export class ProfilesController {
       throw new BadRequestException('Something went wrong');
     }
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.profilesService.remove(+id);
-  // }
 }
