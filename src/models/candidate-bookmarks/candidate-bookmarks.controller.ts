@@ -15,7 +15,7 @@ import { AuthGuard } from 'src/authentication/auth.guard';
 import { ProfilesService } from '../profile-models/profiles/profiles.service';
 
 @Controller('candidate-bookmarks')
-@ApiTags('candidate-bookmarked')
+@ApiTags('Candidate Bookmarked')
 export class CandidateBookmarksController {
   constructor(
     private readonly candidateBookmarksService: CandidateBookmarksService,
@@ -37,14 +37,14 @@ export class CandidateBookmarksController {
       }
 
       const candidate = await this.profileService.findOne(
-        createCandidateBookmarkDto.candidate,
+        createCandidateBookmarkDto.candidateId,
       );
 
       if (!candidate) {
         throw new BadRequestException('Candidate not found');
       }
 
-      createCandidateBookmarkDto.recruit = accountId;
+      createCandidateBookmarkDto.recruitId = accountId;
 
       const data =
         await this.candidateBookmarksService.createCandidateBookmarked(

@@ -16,22 +16,22 @@ export class CandidateBookmarksService {
     try {
       const bookmarked = await this.candidateBooKmarkedRepository.findOne({
         where: {
-          candidateId: createCandidateBookmarkDto.candidate,
-          recruitId: createCandidateBookmarkDto.recruit,
+          candidateId: createCandidateBookmarkDto.candidateId,
+          recruitId: createCandidateBookmarkDto.recruitId,
         },
       });
 
       if (bookmarked) {
         await this.candidateBooKmarkedRepository.delete({
-          candidateId: createCandidateBookmarkDto.candidate,
-          recruitId: createCandidateBookmarkDto.recruit,
+          candidateId: createCandidateBookmarkDto.candidateId,
+          recruitId: createCandidateBookmarkDto.recruitId,
         });
         return;
       }
 
       const newCandidateBookmarked = this.candidateBooKmarkedRepository.create({
-        candidateId: createCandidateBookmarkDto.candidate,
-        recruitId: createCandidateBookmarkDto.recruit,
+        candidateId: createCandidateBookmarkDto.candidateId,
+        recruitId: createCandidateBookmarkDto.recruitId,
       });
 
       return await this.candidateBooKmarkedRepository.save(

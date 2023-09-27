@@ -1,7 +1,7 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
-import { categoryTranslator } from 'src/common/helper/translators';
+import { categoryTranslator, genderTranslator } from 'src/common/helper/translators';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
 import { DistrictSerializer } from 'src/models/locations/districts/districts.serialization';
@@ -72,6 +72,9 @@ export class CVFilterSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override cvUrl!: string;
 
+  @Exclude({ toPlainOnly: true })
+  override candidateBookmarked!: any[];
+
   @Expose()
   get childCategoriesData() {
     if (!this.childCategories) return null;
@@ -112,28 +115,7 @@ export class CVFilterSerialization extends Profile {
   @Expose()
   get genderData() {
     if (!this.gender) return null;
-    switch (this.lang) {
-      case Language.VI:
-        switch (this.gender) {
-          case 1:
-            return 'Nam';
-          case 2:
-            return 'Nữ';
-          default:
-            return 'Khác';
-        }
-      case Language.EN:
-        switch (this.gender) {
-          case 1:
-            return 'Male';
-          case 2:
-            return 'Female';
-          default:
-            return 'Other';
-        }
-      default:
-        return 'Khác';
-    }
+    return genderTranslator(this.gender, this.lang)
   }
 
   @Expose()
@@ -142,5 +124,11 @@ export class CVFilterSerialization extends Profile {
     return {
       avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
     };
+  }
+
+  @Expose()
+  get isBookmarked() {
+    if (this.candidateBookmarked.length === 0) return false;
+    return true;
   }
 }

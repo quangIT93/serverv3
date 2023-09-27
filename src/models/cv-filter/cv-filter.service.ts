@@ -31,7 +31,7 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
-
+        .leftJoinAndSelect('profiles.candidateBookmarked', 'candidateBookmarked')
       if (addresses) {
         candidates.andWhere('profiles.address IN (:...addresses)', {
           addresses: Array.isArray(addresses)
