@@ -286,18 +286,32 @@ export class ProfileDetailCandidateSerialization extends Profile {
   get linkedinData() {
     if (!this.linkedin) return null;
 
-    return this.unclock? this.linkedin : 'Unlock Candidates';
+    return this.unclock ? this.linkedin : 'Unlock Candidates';
   }
 
   @Expose()
   get facebookData() {
     if (!this.facebook) return null;
 
-    return this.unclock? this.facebook : 'Unlock Candidates';
+    return this.unclock ? this.facebook : 'Unlock Candidates';
   }
 
-  // @Expose()
-  // get birthdayData() {
+  @Expose()
+  get birthdayData() {
+    if (!this.birthday) return null;
 
-  // }
+    if (this.unclock) {
+      return this.birthday;
+    }
+
+    const date = new Date(+this.birthday).getDate();
+    const month = new Date(+this.birthday).getMonth() + 1;
+    const year = new Date(+this.birthday).getFullYear();
+
+    if (year >= 2000) {
+      return +new Date(2000, month, date);
+    } else {
+      return +new Date(1970, month, date);
+    }
+  }
 }

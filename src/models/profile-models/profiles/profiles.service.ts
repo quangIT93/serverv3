@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -57,7 +57,6 @@ export class ProfilesService {
     });
 
     return result;
-    
   }
 
   getProfileEmail(id: string) {
@@ -65,6 +64,23 @@ export class ProfilesService {
       select: ['email'],
       where: { accountId: id },
     });
+  }
+
+  async getProfileById(id: string): Promise<Profile | any> {
+    try {
+      console.log(id);
+      const profile = await this.profileRepository.findOne({
+        where: { accountId: id },
+      });
+
+      if (!profile) {
+        new BadRequestException('User not found');
+      }
+
+      return profile;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async update(updateProfileDto: UpdateProfileDto) {
@@ -80,7 +96,6 @@ export class ProfilesService {
       const updatedProfile = Object.assign(profile, updateProfileDto);
 
       await this.profileRepository.save(updatedProfile);
-
     } catch (error) {
       throw error;
     }
