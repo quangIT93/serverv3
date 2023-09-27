@@ -31,7 +31,10 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
-        .leftJoinAndSelect('profiles.candidateBookmarked', 'candidateBookmarked')
+        .leftJoinAndSelect(
+          'profiles.candidateBookmarked',
+          'candidateBookmarked',
+        );
       if (addresses) {
         candidates.andWhere('profiles.address IN (:...addresses)', {
           addresses: Array.isArray(addresses)
@@ -81,11 +84,20 @@ export class CvFilterService {
         });
       }
 
-      return await candidates
+      const total = await candidates.andWhere({ isSearch: 0 }).getCount();
+
+      const data = await candidates
         .andWhere({ isSearch: 0 })
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
         .getMany();
+
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
+      };
     } catch (error) {
       throw error;
     }

@@ -295,4 +295,9 @@ export class ProfileDetailCandidateSerialization extends Profile {
 
     return this.unclock? this.facebook : 'Unlock Candidates';
   }
+
+  // @Expose()
+  // get birthdayData() {
+
+  // }
 }
