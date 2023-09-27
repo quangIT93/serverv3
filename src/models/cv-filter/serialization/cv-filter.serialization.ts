@@ -131,4 +131,9 @@ export class CVFilterSerialization extends Profile {
     if (this.candidateBookmarked.length === 0) return false;
     return true;
   }
+
+  // @Expose()
+  // get birthdayText() {
+  //   if (!this.birthday) return null;
+  // }
 }
