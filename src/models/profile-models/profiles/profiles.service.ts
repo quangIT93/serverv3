@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserService } from 'src/models/users/users.service';
 
 @Injectable()
 export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    private readonly userService: UserService,
   ) {}
 
   create(_createProfileDto: CreateProfileDto) {
@@ -21,6 +23,7 @@ export class ProfilesService {
   }
 
   async findOne(id: string) {
+
     let result = await this.profileRepository.findOne({
       relations: [
         'user',
@@ -65,8 +68,15 @@ export class ProfilesService {
     });
   }
 
-  async getProfileById(id: string){
+  async getProfileById(id: string, accountId: string) {
     try {
+
+      const checkRecruit = await this.userService.findByIdAndType(accountId);
+
+      if (!checkRecruit) {
+        throw new BadRequestException('Is not a recruiter');
+      }
+
       const profile = await this.profileRepository.findOne({
         relations: [
           'user',

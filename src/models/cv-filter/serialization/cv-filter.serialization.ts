@@ -76,9 +76,6 @@ export class CVFilterSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override cvUrl!: string;
 
-  @Exclude({ toPlainOnly: true })
-  override candidateBookmarked!: any[];
-
   @Expose()
   get childCategoriesData() {
     if (!this.childCategories) return null;
@@ -128,12 +125,6 @@ export class CVFilterSerialization extends Profile {
     return {
       avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
     };
-  }
-
-  @Expose()
-  get isBookmarked() {
-    if (this.candidateBookmarked.length === 0) return false;
-    return true;
   }
 
   @Expose()

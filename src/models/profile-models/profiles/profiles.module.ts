@@ -7,6 +7,7 @@ import { AuthModule } from 'src/authentication/auth.module';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middleware';
+import { UserModule } from 'src/models/users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middlewa
     AuthModule,
     JwtAccessTokenServiceModule,
     AWSModule,
+    UserModule
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

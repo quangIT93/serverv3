@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from '../profile-models/profiles/entities';
@@ -24,6 +24,10 @@ export class CvFilterService {
         page,
       } = query;
 
+      if (ageMin > ageMax) {
+        throw new BadRequestException('Age min must be less than age max');
+      }
+
       const candidates = this.profileRepository
         .createQueryBuilder('profiles')
         .leftJoinAndSelect('profiles.childCategories', 'childCategory')
@@ -31,10 +35,8 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
-        .leftJoinAndSelect(
-          'profiles.candidateBookmarked',
-          'candidateBookmarked',
-        );
+        .where('profiles.isSearch = :isSearch', { isSearch: 1 });
+
       if (addresses) {
         candidates.andWhere('profiles.address IN (:...addresses)', {
           addresses: Array.isArray(addresses)
@@ -86,10 +88,9 @@ export class CvFilterService {
         });
       }
 
-      const total = await candidates.andWhere({ isSearch: 1 }).getCount();
+      const total = await candidates.getCount();
 
       const data = await candidates
-        .andWhere({ isSearch: 1 })
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
         .getMany();

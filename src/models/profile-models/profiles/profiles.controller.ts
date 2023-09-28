@@ -24,6 +24,7 @@ import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-candidate.interceptor';
 
+
 @ApiTags('profiles')
 @Controller('profiles')
 export class ProfilesController {
@@ -58,9 +59,16 @@ export class ProfilesController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, ProfileDetailCandidateInterceptor)
-  async getProfileById(@Param('id') id: string) {
+  async getProfileById(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
-      return await this.profilesService.getProfileById(id)
+
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('Account not found');
+      }
+      
+      return await this.profilesService.getProfileById(id, accountId)
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

@@ -7,7 +7,7 @@ export class FilterCandidatesDto {
     type: 'array',
     items: { type: 'number' },
     required: false,
-    default: [79, 1],
+    description: 'Province id'
   })
   @IsOptional()
   addresses!: number[];
@@ -16,7 +16,7 @@ export class FilterCandidatesDto {
     type: 'array',
     items: { type: 'number' },
     required: false,
-    default: [254, 353],
+    description: 'Child categories id'
   })
   @IsOptional()
   categories!: number[];
@@ -25,7 +25,7 @@ export class FilterCandidatesDto {
     type: 'array',
     items: { type: 'number' },
     required: false,
-    default: [8],
+    description: 'Academic id'
   })
   @IsOptional()
   educations!: number[];
@@ -49,4 +49,6 @@ export class FilterCandidatesDto {
   @ApiProperty({ type: 'int', required: false, default: 0 })
   @IsOptional()
   page!: number;
+
+  accountId!: string;
 }
