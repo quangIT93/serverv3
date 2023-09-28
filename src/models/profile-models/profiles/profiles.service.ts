@@ -23,7 +23,6 @@ export class ProfilesService {
   }
 
   async findOne(id: string) {
-
     let result = await this.profileRepository.findOne({
       relations: [
         'user',
@@ -70,38 +69,51 @@ export class ProfilesService {
 
   async getProfileById(id: string, accountId: string) {
     try {
-
       const checkRecruit = await this.userService.findByIdAndType(accountId);
 
       if (!checkRecruit) {
         throw new BadRequestException('Is not a recruiter');
       }
 
-      const profile = await this.profileRepository.findOne({
-        relations: [
-          'user',
-          'province',
-          'profilesLocations',
+      const profile = await this.profileRepository
+        .createQueryBuilder('profile')
+        .leftJoinAndSelect('profile.user', 'user')
+        .leftJoinAndSelect('profile.province', 'province')
+        .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
+        .leftJoinAndSelect(
           'profilesLocations.province',
-          'childCategories',
+          'profilesLocations_province',
+        )
+        .leftJoinAndSelect('profile.childCategories', 'childCategories')
+        .leftJoinAndSelect(
           'childCategories.parentCategory',
-          'profilesExperiences',
-          'profilesEducations',
-          'profilesAward',
-          'profilesCourse',
-          'profilesHobby',
-          'profilesActivity',
-          'profilesIntership',
-          'profilesReference',
-          'profilesSkill',
-          'profilesSkill.levelType',
-          'profileLanguage',
+          'childCategories_parentCategory',
+        )
+        .leftJoinAndSelect('profile.profilesExperiences', 'profilesExperiences')
+        .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+        .leftJoinAndSelect('profile.profilesAward', 'profilesAward')
+        .leftJoinAndSelect('profile.profilesCourse', 'profilesCourse')
+        .leftJoinAndSelect('profile.profilesHobby', 'profilesHobby')
+        .leftJoinAndSelect('profile.profilesActivity', 'profilesActivity')
+        .leftJoinAndSelect('profile.profilesIntership', 'profilesIntership')
+        .leftJoinAndSelect('profile.profilesReference', 'profilesReference')
+        .leftJoinAndSelect('profile.profilesSkill', 'profilesSkill')
+        .leftJoinAndSelect('profilesSkill.levelType', 'profilesSkill_levelType')
+        .leftJoinAndSelect('profile.profileLanguage', 'profileLanguage')
+        .leftJoinAndSelect(
           'profileLanguage.levelTypeLanguage',
-          'profilesCv',
-          'jobType'
-        ],
-        where: { accountId: id },
-      });
+          'profileLanguage_levelTypeLanguage',
+        )
+        .leftJoinAndSelect('profile.profilesCv', 'profilesCv')
+        .leftJoinAndSelect('profile.jobType', 'jobType')
+        .leftJoinAndSelect(
+          'profile.candidateBookmarked',
+          'candidateBookmarked',
+          'candidateBookmarked.recruitId = :recruitId',
+          { recruitId: accountId },
+        )
+        .where('profile.accountId = :id', { id })
+        .getOne();
 
       return profile;
     } catch (error) {

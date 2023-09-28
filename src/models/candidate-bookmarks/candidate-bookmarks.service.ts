@@ -16,7 +16,6 @@ export class CandidateBookmarksService {
     createCandidateBookmarkDto: CreateCandidateBookmarkDto,
   ) {
     try {
-
       const candidate = await this.profileService.findOne(
         createCandidateBookmarkDto.candidateId,
       );
@@ -48,6 +47,33 @@ export class CandidateBookmarksService {
       return await this.candidateBooKmarkedRepository.save(
         newCandidateBookmarked,
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async find(accountId: string, limit: number, page: number) {
+    try {
+      const query = this.candidateBooKmarkedRepository.createQueryBuilder('candidate_bookmarked')
+      .leftJoinAndSelect('candidate_bookmarked.profile', 'profile')
+      .leftJoinAndSelect('profile.childCategories', 'childCategory')
+      .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+      .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
+      .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
+      .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
+      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId : accountId})
+      .take(limit)
+      .skip(page * limit);
+
+      const check = await query.getCount()
+
+      const data = await query.getMany()
+
+      return {
+        total : check,
+        data,
+        is_over: data.length === check ? true : data.length < limit ? true : false,
+      }
     } catch (error) {
       throw error;
     }

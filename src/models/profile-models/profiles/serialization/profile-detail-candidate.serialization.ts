@@ -29,6 +29,7 @@ import { JobTypesSerialization } from 'src/models/job-types/serialization/job_ty
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
 import { ProfilesCvsSerialization } from '../../profiles-cvs/serialization/profiles_cvs.serialization';
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
+import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 export class ProfileDetailCandidateSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
@@ -131,6 +132,9 @@ export class ProfileDetailCandidateSerialization extends Profile {
 
   @Exclude({ toPlainOnly: true })
   override birthday!: string;
+
+  @Exclude({ toPlainOnly: true})
+  override candidateBookmarked!: CandidateBookmark[]
 
   // expose addressText
   @Expose()
@@ -287,5 +291,10 @@ export class ProfileDetailCandidateSerialization extends Profile {
     if (!this.birthday) return null;
 
     return this.unlock ? this.birthday : birthdayTraslator(+this.birthday);
+  }
+
+  @Expose()
+  get isBookmarked() {
+    return (this.candidateBookmarked.length > 0)
   }
 }
