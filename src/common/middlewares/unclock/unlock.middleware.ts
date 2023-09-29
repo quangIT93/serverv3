@@ -8,7 +8,7 @@ export class UnlockMiddleware implements NestMiddleware {
     res: Response,
     next: NextFunction,
   ): Response<any, Record<string, any>> | void {
-    const unlock: string = req.query['unlock']?.toString() || 'true';
+    const unlock: string = req.query['unlock']?.toString() || 'false';
 
     if (unlock !== 'true' && unlock !== 'false') {
       return res.status(400).json({

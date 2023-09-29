@@ -40,8 +40,8 @@ export class CvFilterService {
       if (addresses) {
         candidates.andWhere('profiles.address IN (:...addresses)', {
           addresses: Array.isArray(addresses)
-            ? addresses.map((item) => +item)
-            : [+addresses],
+            ? addresses
+            : [addresses],
         });
       }
 
@@ -82,7 +82,7 @@ export class CvFilterService {
         });
       }
 
-      if (gender) {
+      if (gender === 0 || gender === 1) {
         candidates.andWhere('profiles.gender = :gender', {
           gender,
         });

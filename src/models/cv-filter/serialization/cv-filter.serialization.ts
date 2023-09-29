@@ -8,9 +8,10 @@ import {
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
-import { DistrictSerializer } from 'src/models/locations/districts/districts.serialization';
 import { ProfilesEducation } from 'src/models/profile-models/profiles-educations/entities/profiles-education.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
+import { filter } from '../transform/cv-filter.transform';
+import { CVFilterDistrictSerializer } from './cv-filter-district.serialization';
 
 export class CVFilterSerialization extends Profile {
   @Exclude()
@@ -77,21 +78,22 @@ export class CVFilterSerialization extends Profile {
   override cvUrl!: string;
 
   @Expose()
-  get childCategoriesData() {
+  get categoriesData() {
     if (!this.childCategories) return null;
-    return this.childCategories.map((category) => {
+    const result = this.childCategories.map((category) => {
       return {
         id: categoryTranslator(category.parentCategory, this.lang)?.id,
         name: categoryTranslator(category.parentCategory, this.lang)?.fullName,
       };
     });
+    return filter(result);
   }
 
   @Expose()
   get profilesLocationsData() {
     if (!this.profilesLocations) return null;
     return this.profilesLocations.map((location) => {
-      return new DistrictSerializer(location, this.lang);
+      return new CVFilterDistrictSerializer(location, this.lang);
     });
   }
 
@@ -101,21 +103,12 @@ export class CVFilterSerialization extends Profile {
     const result = this.profilesEducations.map((education) => {
       return new AcedemicTypesSerialization(education.academicType, this.lang);
     });
-    const uniqueArray = [];
-    const seenIds = new Set();
-    for (const item of result) {
-      if (!seenIds.has(item.id)) {
-        seenIds.add(item.id);
-        uniqueArray.push(item);
-      }
-    }
-
-    return uniqueArray;
+    return filter(result)
   }
 
   @Expose()
   get genderData() {
-    if (!this.gender) return null;
+    if (this.gender !== 0 && this.gender !== 1) return null;
     return genderTranslator(this.gender, this.lang);
   }
 
@@ -124,7 +117,7 @@ export class CVFilterSerialization extends Profile {
     if (!this.avatar) return null;
     return {
       avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
-    };
+    }
   }
 
   @Expose()
