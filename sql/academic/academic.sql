@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS `academic_types` (
 
 ALTER TABLE `profiles_educations` ADD COLUMN `academic_type_id` TINYINT(4) DEFAULT 8 AFTER `extra_information`;
 
-ALTER TABLE `profiles_educations` ADD CONSTRAINT FK_AcademicTypes_ProfilesEducations FOREIGN KEY (academic_type_id) REFERENCES academic_types(id) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Cấp 1','Primary school','초등학교',1);
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Cấp 2','Secondary school','중학교',1);
@@ -22,6 +21,7 @@ INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Đại h�
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Sau đại học (Thạc sĩ, Tiến sĩ)',"After university (Master's degree, Doctoral degree)",'대학 졸업 후 (석사, 박사)',1);
 INSERT INTO `academic_types` (value,value_en,value_ko,status) VALUES ('Khác','Other','다른',1);
 
+ALTER TABLE `profiles_educations` ADD CONSTRAINT FK_AcademicTypes_ProfilesEducations FOREIGN KEY (academic_type_id) REFERENCES academic_types(id) ON DELETE CASCADE ON UPDATE NO ACTION;
 CREATE TABLE IF NOT EXISTS
     `candidate_bookmarked` (
         candidate_id varchar(50) NOT NULL,
