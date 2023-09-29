@@ -13,4 +13,8 @@ export class UpdateProfileDto extends PartialType(CreateProfileDto) {
     @ApiProperty({type: 'varchar', description: 'Job name of profile', maxLength: 255, default: 'string'})
     @IsOptional()
     jobTypeName!:string;
+
+    @ApiProperty({type: 'int', default: 1})
+    @IsOptional()
+    isSearch!:number;
 }
