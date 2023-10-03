@@ -80,10 +80,7 @@ export class ProfileBookmarksSerilization extends Profile {
   get childCategoriesData() {
     if (!this.childCategories) return null;
     return this.childCategories.map((category) => {
-      return {
-        id: categoryTranslator(category.parentCategory, this.lang)?.id,
-        name: categoryTranslator(category.parentCategory, this.lang)?.fullName,
-      };
+      return categoryTranslator(category, this.lang);
     });
   }
 

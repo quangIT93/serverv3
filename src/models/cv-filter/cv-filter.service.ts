@@ -35,10 +35,11 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
+        
         .where('profiles.isSearch = :isSearch', { isSearch: 1 });
 
       if (addresses) {
-        candidates.andWhere('profiles.address IN (:...addresses)', {
+        candidates.andWhere('profilesLocations.id IN (:...addresses)', {
           addresses: Array.isArray(addresses)
             ? addresses
             : [addresses],

@@ -3,7 +3,7 @@ import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 import {
   categoryTranslator,
-  genderTranslator,
+  genderTranslator, locationTranslator,
 } from 'src/common/helper/translators';
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
@@ -11,7 +11,7 @@ import { ChildCategory } from 'src/models/categories/children/entities/child.ent
 import { ProfilesEducation } from 'src/models/profile-models/profiles-educations/entities/profiles-education.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { filter } from '../transform/cv-filter.transform';
-import { CVFilterDistrictSerializer } from './cv-filter-district.serialization';
+import { Province } from 'src/models/locations/provinces/entities';
 
 export class CVFilterSerialization extends Profile {
   @Exclude()
@@ -77,23 +77,23 @@ export class CVFilterSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override cvUrl!: string;
 
+  @Exclude({ toPlainOnly: true })
+  override province!:Province;
+
   @Expose()
   get categoriesData() {
     if (!this.childCategories) return null;
-    const result = this.childCategories.map((category) => {
-      return {
-        id: categoryTranslator(category.parentCategory, this.lang)?.id,
-        name: categoryTranslator(category.parentCategory, this.lang)?.fullName,
-      };
+    return this.childCategories.map((category) => {
+      return categoryTranslator(category, this.lang);
     });
-    return filter(result);
+
   }
 
   @Expose()
   get profilesLocationsData() {
     if (!this.profilesLocations) return null;
     return this.profilesLocations.map((location) => {
-      return new CVFilterDistrictSerializer(location, this.lang);
+      return locationTranslator(location, this.lang);
     });
   }
 

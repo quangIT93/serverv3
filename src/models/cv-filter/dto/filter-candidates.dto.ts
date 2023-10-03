@@ -7,7 +7,7 @@ export class FilterCandidatesDto {
     type: 'array',
     items: { type: 'number' },
     required: false,
-    description: 'Province id'
+    description: 'District id'
   })
   @IsOptional()
   addresses!: number[];
