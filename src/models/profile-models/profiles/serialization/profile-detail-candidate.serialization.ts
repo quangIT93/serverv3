@@ -290,7 +290,7 @@ export class ProfileDetailCandidateSerialization extends Profile {
   get birthdayData() {
     if (!this.birthday) return null;
 
-    return this.unlock ? this.birthday : birthdayTraslator(+this.birthday);
+    return this.unlock ? +this.birthday : birthdayTraslator(+this.birthday);
   }
 
   @Expose()
