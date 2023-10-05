@@ -260,29 +260,21 @@ export class ProfileDetailCandidateSerialization extends Profile {
 
   @Expose()
   get phoneData() {
-    if (!this.phone) return null;
-
     return this.unlock ? this.phone : 'Unlock Candidates';
   }
 
   @Expose()
   get emailData() {
-    if (!this.email) return null;
-
     return this.unlock ? this.email : 'Unlock Candidates';
   }
 
   @Expose()
   get linkedinData() {
-    if (!this.linkedin) return null;
-
     return this.unlock ? this.linkedin : 'Unlock Candidates';
   }
 
   @Expose()
   get facebookData() {
-    if (!this.facebook) return null;
-
     return this.unlock ? this.facebook : 'Unlock Candidates';
   }
 
