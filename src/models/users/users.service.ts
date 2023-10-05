@@ -50,7 +50,7 @@ export class UserService {
         where: {
           id: accountId,
         },
-        select: ['role', 'email', 'id'],
+        select: ['role', 'email', 'id', 'type'],
       });
     } catch (error) {
       throw error;
