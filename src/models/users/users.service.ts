@@ -43,4 +43,17 @@ export class UserService {
       throw error;
     }
   }
+
+  async findRoleById(accountId: string) {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          id: accountId,
+        },
+        select: ['role', 'email', 'id'],
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
