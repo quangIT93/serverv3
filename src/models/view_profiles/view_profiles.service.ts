@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateViewProfileDto } from './dto/create-view_profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,6 +19,10 @@ export class ViewProfilesService {
       createViewProfileDto.recruitId,
     );
 
+    if (user?.type !== 1) {
+      throw new BadRequestException('Is not cruitment');
+    }
+
     if (user?.role !== 1 && user?.role !== 3) {
       const result = await this.viewProfileRepository
         .createQueryBuilder('view_profiles')
@@ -26,7 +30,7 @@ export class ViewProfilesService {
           recruitId: createViewProfileDto.recruitId,
         })
         .andWhere('DATE(view_profiles.created_at) = :today', {
-          today: (new Date()).toISOString().split('T')[0], 
+          today: new Date().toISOString().split('T')[0],
         })
         .getCount();
 
