@@ -32,6 +32,7 @@ import { ProfileLanguage } from '../../profile-languages/entities/profile-langua
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
 import { User } from 'src/models/users/entities/user.entity';
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
+import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 @Entity('profiles') // table name
 export class Profile {
@@ -136,7 +137,6 @@ export class Profile {
   @ManyToOne(() => JobType, (jobType) => jobType.id)
   @JoinColumn({ name: 'job_type_id', referencedColumnName: 'id' })
   jobType!: JobType;
-  
 
   @ManyToOne(() => Province, (province) => province.id)
   @JoinColumn({ name: 'address', referencedColumnName: 'id' })
@@ -187,13 +187,19 @@ export class Profile {
   @OneToOne(() => ProfilesHobby, (profilesHobby) => profilesHobby.profile)
   profilesHobby!: ProfilesHobby;
 
-  @OneToMany(() => ProfilesReference, (profilesReference) => profilesReference.profile)
+  @OneToMany(
+    () => ProfilesReference,
+    (profilesReference) => profilesReference.profile,
+  )
   profilesReference!: ProfilesReference[];
 
   @OneToMany(() => ProfilesSkill, (profilesSkill) => profilesSkill.profile)
   profilesSkill!: ProfilesSkill[];
 
-  @OneToMany(() => ProfileLanguage, (profileLanguage) => profileLanguage.profile)
+  @OneToMany(
+    () => ProfileLanguage,
+    (profileLanguage) => profileLanguage.profile,
+  )
   profileLanguage!: ProfileLanguage[];
 
   @OneToOne(() => User, (user) => user.profile)
@@ -205,4 +211,10 @@ export class Profile {
 
   @OneToMany(() => ProfilesCv, (profilesCv) => profilesCv.profile)
   profilesCv!: ProfilesCv[];
+
+  @OneToMany(
+    () => CandidateBookmark,
+    (candidateBookmark) => candidateBookmark.profile,
+  )
+  candidateBookmarked!: CandidateBookmark[];
 }

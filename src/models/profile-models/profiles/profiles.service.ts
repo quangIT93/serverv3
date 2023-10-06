@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UserService } from 'src/models/users/users.service';
 
 @Injectable()
 export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
+    private readonly userService: UserService,
   ) {}
 
   create(_createProfileDto: CreateProfileDto) {
@@ -41,7 +43,6 @@ export class ProfilesService {
         'profilesSkill.levelType',
         'profileLanguage',
         'profileLanguage.levelTypeLanguage',
-        // 'profilesJob',
         'profilesCv',
         'jobType',
         'company',
@@ -57,7 +58,6 @@ export class ProfilesService {
     });
 
     return result;
-    
   }
 
   getProfileEmail(id: string) {
@@ -65,6 +65,60 @@ export class ProfilesService {
       select: ['email'],
       where: { accountId: id },
     });
+  }
+
+  async getProfileById(id: string, accountId: string) {
+    try {
+      const checkRecruit = await this.userService.findByIdAndType(accountId);
+
+      if (!checkRecruit) {
+        throw new BadRequestException('Is not a recruiter');
+      }
+
+      const profile = await this.profileRepository
+        .createQueryBuilder('profile')
+        .leftJoinAndSelect('profile.user', 'user')
+        .leftJoinAndSelect('profile.province', 'province')
+        .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
+        .leftJoinAndSelect(
+          'profilesLocations.province',
+          'profilesLocations_province',
+        )
+        .leftJoinAndSelect('profile.childCategories', 'childCategories')
+        .leftJoinAndSelect(
+          'childCategories.parentCategory',
+          'childCategories_parentCategory',
+        )
+        .leftJoinAndSelect('profile.profilesExperiences', 'profilesExperiences')
+        .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+        .leftJoinAndSelect('profile.profilesAward', 'profilesAward')
+        .leftJoinAndSelect('profile.profilesCourse', 'profilesCourse')
+        .leftJoinAndSelect('profile.profilesHobby', 'profilesHobby')
+        .leftJoinAndSelect('profile.profilesActivity', 'profilesActivity')
+        .leftJoinAndSelect('profile.profilesIntership', 'profilesIntership')
+        .leftJoinAndSelect('profile.profilesReference', 'profilesReference')
+        .leftJoinAndSelect('profile.profilesSkill', 'profilesSkill')
+        .leftJoinAndSelect('profilesSkill.levelType', 'profilesSkill_levelType')
+        .leftJoinAndSelect('profile.profileLanguage', 'profileLanguage')
+        .leftJoinAndSelect(
+          'profileLanguage.levelTypeLanguage',
+          'profileLanguage_levelTypeLanguage',
+        )
+        .leftJoinAndSelect('profile.profilesCv', 'profilesCv')
+        .leftJoinAndSelect('profile.jobType', 'jobType')
+        .leftJoinAndSelect(
+          'profile.candidateBookmarked',
+          'candidateBookmarked',
+          'candidateBookmarked.recruitId = :recruitId',
+          { recruitId: accountId },
+        )
+        .where('profile.accountId = :id', { id })
+        .getOne();
+
+      return profile;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async update(updateProfileDto: UpdateProfileDto) {
@@ -80,7 +134,6 @@ export class ProfilesService {
       const updatedProfile = Object.assign(profile, updateProfileDto);
 
       await this.profileRepository.save(updatedProfile);
-
     } catch (error) {
       throw error;
     }

@@ -6,13 +6,18 @@ import { DataSource, EntityManager } from 'typeorm';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_CV_UPLOAD } from 'src/common/constants';
 import { FileUpload } from 'src/services/aws/awsService.interface';
+import { UserService } from 'src/models/users/users.service';
 
 @Injectable()
 export class CreateProfileCvsTransaction extends BaseTransaction<
   CreateProfilesCvDto,
   ProfilesCv
 > {
-  constructor(dataSource: DataSource, private readonly awsService: AWSService) {
+  constructor(
+    dataSource: DataSource,
+    private readonly awsService: AWSService,
+    private readonly userService: UserService,
+  ) {
     super(dataSource);
   }
 
@@ -21,6 +26,12 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
     manager: EntityManager,
   ): Promise<any> {
     try {
+      const user = await this.userService.findRoleById(createProfilesCvDto.accountId);
+
+      if (user?.type === 1) {
+        throw new BadRequestException('Is not candidate');
+      }
+
       const newProfileCvEntity = manager.create(
         ProfilesCv,
         createProfilesCvDto,
@@ -48,7 +59,7 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
         BUCKET: BUCKET_CV_UPLOAD,
         id: newProfileCv.id,
         accountId: createProfilesCvDto.accountId,
-      })
+      });
 
       return newProfileCv;
     } catch (error) {

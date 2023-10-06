@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Profile } from "../../profiles/entities";
 import { Transform } from "class-transformer";
+import { AcademicType } from "src/models/academic_types/entities/academic_type.entity";
 
 @Entity('profiles_educations')
 export class ProfilesEducation {
@@ -42,5 +43,9 @@ export class ProfilesEducation {
     @ManyToOne(() => Profile, profile => profile.accountId)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
+
+    @ManyToOne(() => AcademicType, academicType => academicType.id)
+    @JoinColumn({ name: 'academic_type_id' })
+    academicType!: AcademicType;
 
 }

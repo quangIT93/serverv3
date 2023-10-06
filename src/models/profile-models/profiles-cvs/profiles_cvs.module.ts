@@ -8,12 +8,14 @@ import { CreateProfileCvsTransaction } from './transaction/profiles_cv.transacti
 import { AWSService } from 'src/services/aws/aws.service';
 import { AWSConfigModule } from 'src/config/storage/aws/config.module';
 import { DeleteProfileCvsTransaction } from './transaction/delete_profiles_cv.transaction';
+import { UserModule } from 'src/models/users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProfilesCv]),
     JwtAccessTokenServiceModule,
-    AWSConfigModule
+    AWSConfigModule,
+    UserModule
   ],
   controllers: [ProfilesCvsController],
   providers: [ProfilesCvsService, CreateProfileCvsTransaction, AWSService, DeleteProfileCvsTransaction],

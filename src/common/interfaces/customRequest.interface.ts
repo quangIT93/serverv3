@@ -9,6 +9,8 @@ export interface CustomRequest extends Request {
 
     type: number;
 
+    unlock?:string;
+
     // default language is Vietnamese
     lang: Language;
 

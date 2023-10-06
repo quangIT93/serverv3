@@ -4,7 +4,7 @@ import {
   // Post,
   Body,
   // Patch,
-  // Param,
+  Param,
   // Delete,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -22,6 +22,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
+import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-candidate.interceptor';
+
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -39,30 +41,49 @@ export class ProfilesController {
   // }
 
   @ApiBearerAuth()
-  @UseInterceptors(
-    ClassSerializerInterceptor,
-    ProfileDetailInterceptor,
-  )
+  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)
   @UseGuards(AuthGuard)
   @Get('me')
   async findOne(@Req() req: CustomRequest) {
     const id = req.user?.id;
 
-    // const {isSK, isSL} = req.query
     if (!id) {
       return null;
     }
     const profile = await this.profilesService.findOne(id);
 
-    // const serializedProfile = Object.assign(
-
     return profile;
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailCandidateInterceptor)
+  async getProfileById(@Param('id') id: string, @Req() req: CustomRequest) {
+    try {
+
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('Account not found');
+      }
+      
+      return await this.profilesService.getProfileById(id, accountId)
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting profile')
+    }
   }
 
   @Put('job')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  async update(@Body() updateProfileDto: UpdateProfileDto, @Req() req: CustomRequest) {
+  async update(
+    @Body() updateProfileDto: UpdateProfileDto,
+    @Req() req: CustomRequest,
+  ) {
     try {
       const accountId = req.user?.id;
 
@@ -77,7 +98,7 @@ export class ProfilesController {
       return {
         statusCode: HttpStatus.OK,
         message: 'Update profile successfully',
-      }
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -85,9 +106,4 @@ export class ProfilesController {
       throw new BadRequestException('Something went wrong');
     }
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.profilesService.remove(+id);
-  // }
 }
