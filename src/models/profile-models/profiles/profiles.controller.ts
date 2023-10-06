@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   // Post,
-  // Body,
+  Body,
   // Patch,
   // Param,
   // Delete,
@@ -10,11 +10,14 @@ import {
   ClassSerializerInterceptor,
   Req,
   UseGuards,
+  Put,
+  BadRequestException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 // import { CreateProfileDto } from './dto/create-profile.dto';
-// import { UpdateProfileDto } from './dto/update-profile.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 // import { plainToInstance } from 'class-transformer';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
@@ -35,6 +38,7 @@ export class ProfilesController {
   //   return this.profilesService.findAll();
   // }
 
+  @ApiBearerAuth()
   @UseInterceptors(
     ClassSerializerInterceptor,
     ProfileDetailInterceptor,
@@ -43,6 +47,8 @@ export class ProfilesController {
   @Get('me')
   async findOne(@Req() req: CustomRequest) {
     const id = req.user?.id;
+
+    // const {isSK, isSL} = req.query
     if (!id) {
       return null;
     }
@@ -53,10 +59,32 @@ export class ProfilesController {
     return profile;
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-  //   return this.profilesService.update(+id, updateProfileDto);
-  // }
+  @Put('job')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async update(@Body() updateProfileDto: UpdateProfileDto, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new BadRequestException('Something went wrong');
+      }
+
+      updateProfileDto.accountId = accountId;
+
+      await this.profilesService.update(updateProfileDto);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Update profile successfully',
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Something went wrong');
+    }
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
