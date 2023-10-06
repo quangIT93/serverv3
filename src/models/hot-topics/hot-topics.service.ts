@@ -1,3 +1,4 @@
+import { GetHotTopicDto } from './dto/get-hot-topic.dto';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HotTopic } from './entities/hot-posts.entity';
@@ -12,7 +13,10 @@ export class HotTopicsService {
         private hotTopicRepository: Repository<HotTopic>
     ) { }
 
-    async getHotTopics(): Promise<HotTopicSerializer[]> {
+    async getHotTopics(dto: GetHotTopicDto): Promise<HotTopicSerializer[]> {
+
+        const version = dto.version === 'app' ? 1 : 0;
+
         return this.hotTopicRepository
             .createQueryBuilder('hot_topics')
             .where('hot_topics.status = 1')
@@ -21,7 +25,7 @@ export class HotTopicsService {
                 'hot_topics.type',
                 'hot_topics.detailId',
                 'hot_topics.title',
-                'hot_topics.image',
+                `${version === 1 ? 'hot_topics.image' : 'hot_topics.webImage'}`,
                 'hot_topics.themeId',
                 'hot_topics.order',
                 'hot_topics.status',

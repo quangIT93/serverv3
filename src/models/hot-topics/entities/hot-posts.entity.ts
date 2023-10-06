@@ -18,6 +18,9 @@ export class HotTopic {
     @Column({ type: 'varchar', length: 255, name: 'image' })
     image!: string;
 
+    @Column({ type: 'varchar', length: 255, name: 'web_image' })
+    webImage!: string;
+
     @Column({ type: 'tinyint', name: 'theme_id' })
     themeId!: number;
 
