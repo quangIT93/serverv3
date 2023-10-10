@@ -112,6 +112,12 @@ export class ProfilesService {
           'candidateBookmarked.recruitId = :recruitId',
           { recruitId: accountId },
         )
+        .leftJoinAndSelect(
+          'profile.viewProfiles',
+          'viewProfiles',
+          'viewProfiles.recruitId = :recruitId',
+          { recruitId: accountId },
+        )
         .where('profile.accountId = :id', { id })
         .getOne();
 

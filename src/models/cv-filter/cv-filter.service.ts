@@ -94,6 +94,7 @@ export class CvFilterService {
       const data = await candidates
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
+        .orderBy('profiles.updatedAt', 'DESC')
         .getMany();
 
       return {

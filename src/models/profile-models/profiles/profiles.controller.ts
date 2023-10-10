@@ -15,10 +15,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-// import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-// import { plainToInstance } from 'class-transformer';
 import { ProfileDetailInterceptor } from './interceptor/profile-detail.interceptor';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
@@ -29,16 +27,6 @@ import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-
 @Controller('profiles')
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
-
-  // @Post()
-  // create(@Body() createProfileDto: CreateProfileDto) {
-  //   return this.profilesService.create(createProfileDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.profilesService.findAll();
-  // }
 
   @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)

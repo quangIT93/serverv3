@@ -28,11 +28,11 @@ import { ProfilesHobby } from '../../profiles-hobbies/entities/profiles_hobby.en
 import { ProfilesReference } from '../../profiles-references/entities/profiles-reference.entity';
 import { ProfilesSkill } from '../../profiles-skills/entities/profiles-skill.entity';
 import { ProfileLanguage } from '../../profile-languages/entities/profile-language.entity';
-// import { ProfilesJob } from '../../profiles-jobs/entities/profiles-job.entity';
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
 import { User } from 'src/models/users/entities/user.entity';
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
 import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
+import { ViewProfile } from 'src/models/view_profiles/entities/view_profile.entity';
 
 @Entity('profiles') // table name
 export class Profile {
@@ -217,4 +217,7 @@ export class Profile {
     (candidateBookmark) => candidateBookmark.profile,
   )
   candidateBookmarked!: CandidateBookmark[];
+
+  @OneToMany(() => ViewProfile, (viewProfile) => viewProfile.profile)
+  viewProfiles!: ViewProfile[];
 }
