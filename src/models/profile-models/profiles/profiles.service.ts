@@ -32,7 +32,7 @@ export class ProfilesService {
         'childCategories',
         'childCategories.parentCategory',
         'profilesExperiences',
-        'profilesEducations',
+        'profilesEducation',
         'profilesAward',
         'profilesCourse',
         'profilesHobby',
@@ -43,6 +43,7 @@ export class ProfilesService {
         'profilesSkill.levelType',
         'profileLanguage',
         'profileLanguage.levelTypeLanguage',
+        'profilesEducation.academicType',
         'profilesCv',
         'jobType',
         'company',
@@ -90,7 +91,7 @@ export class ProfilesService {
           'childCategories_parentCategory',
         )
         .leftJoinAndSelect('profile.profilesExperiences', 'profilesExperiences')
-        .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+        .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
         .leftJoinAndSelect('profile.profilesAward', 'profilesAward')
         .leftJoinAndSelect('profile.profilesCourse', 'profilesCourse')
         .leftJoinAndSelect('profile.profilesHobby', 'profilesHobby')

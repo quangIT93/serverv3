@@ -93,7 +93,7 @@ export class Profile {
     (profilesEducation) => profilesEducation.profile,
   )
   @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
-  profilesEducations!: ProfilesEducation[];
+  profilesEducation!: ProfilesEducation[];
 
   @OneToMany(
     () => ProfilesExperiences,

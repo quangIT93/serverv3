@@ -20,5 +20,5 @@ export class AcademicType {
     status!:number;
 
     @OneToMany(() => ProfilesEducation, profilesEducation => profilesEducation.academicType)
-    profilesEducations!: ProfilesEducation[];
+    profilesEducation!: ProfilesEducation[];
 }
