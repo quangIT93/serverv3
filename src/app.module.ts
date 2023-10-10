@@ -70,6 +70,8 @@ import { CvFilterModule } from './models/cv-filter/cv-filter.module';
 import { AcademicTypesModule } from './models/academic_types/academic_types.module';
 import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     AppConfigModule,
@@ -148,9 +150,33 @@ import { ViewProfilesModule } from './models/view_profiles/view_profiles.module'
     AcademicTypesModule,
     CandidateBookmarksModule,
     ViewProfilesModule,
+
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100
+      }
+    ]),
   ],
   controllers: [AppController, BannersController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useValue: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
