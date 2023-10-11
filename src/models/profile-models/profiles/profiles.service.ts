@@ -33,7 +33,7 @@ export class ProfilesService {
         'childCategories',
         'childCategories.parentCategory',
         'profilesExperiences',
-        'profilesEducations',
+        'profilesEducation',
         'profilesAward',
         'profilesCourse',
         'profilesHobby',
@@ -44,6 +44,7 @@ export class ProfilesService {
         'profilesSkill.levelType',
         'profileLanguage',
         'profileLanguage.levelTypeLanguage',
+        'profilesEducation.academicType',
         'profilesCv',
         'jobType',
         'company',
@@ -131,7 +132,8 @@ export class ProfilesService {
           'childCategories_parentCategory',
         )
         .leftJoinAndSelect('profile.profilesExperiences', 'profilesExperiences')
-        .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+        .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
+        .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
         .leftJoinAndSelect('profile.profilesAward', 'profilesAward')
         .leftJoinAndSelect('profile.profilesCourse', 'profilesCourse')
         .leftJoinAndSelect('profile.profilesHobby', 'profilesHobby')
@@ -151,6 +153,12 @@ export class ProfilesService {
           'profile.candidateBookmarked',
           'candidateBookmarked',
           'candidateBookmarked.recruitId = :recruitId',
+          { recruitId: accountId },
+        )
+        .leftJoinAndSelect(
+          'profile.viewProfiles',
+          'viewProfiles',
+          'viewProfiles.recruitId = :recruitId',
           { recruitId: accountId },
         )
         .where('profile.accountId = :id', { id })

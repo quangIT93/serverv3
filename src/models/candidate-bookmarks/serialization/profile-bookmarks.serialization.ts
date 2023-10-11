@@ -56,7 +56,7 @@ export class ProfileBookmarksSerilization extends Profile {
   override profilesLocations!: any[];
 
   @Exclude({ toPlainOnly: true })
-  override profilesEducations!: ProfilesEducation[];
+  override profilesEducation!: ProfilesEducation[];
 
   @Exclude({ toPlainOnly: true })
   override birthday!: string;
@@ -94,8 +94,8 @@ export class ProfileBookmarksSerilization extends Profile {
 
   @Expose()
   get profilesEducationsData() {
-    if (!this.profilesEducations) return null;
-    const result = this.profilesEducations.map((education) => {
+    if (!this.profilesEducation) return null;
+    const result = this.profilesEducation.map((education) => {
       return new AcedemicTypesSerialization(education.academicType, this.lang);
     });
     const uniqueArray = [];
@@ -112,7 +112,7 @@ export class ProfileBookmarksSerilization extends Profile {
 
   @Expose()
   get genderData() {
-    if (!this.gender) return null;
+    if (this.gender !== 0 && this.gender !== 1) return null;
     return genderTranslator(this.gender, this.lang);
   }
 
