@@ -40,7 +40,7 @@ export class ProfilesEducation {
     @Column({ type: 'datetime', nullable: false, default: () => 'CURRENT_TIMESTAMP', name: 'updated_at' })
     updatedAt!: Date;
 
-    @ManyToOne(() => Profile, profile => profile.profilesEducations)
+    @ManyToOne(() => Profile, profile => profile.profilesEducation)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
 

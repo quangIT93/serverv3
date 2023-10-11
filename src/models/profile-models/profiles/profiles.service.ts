@@ -59,9 +59,6 @@ export class ProfilesService {
       where: { accountId: id },
       relationLoadStrategy: 'query',
     });
-
-    console.log(result);
-
     
     return result;
   }
