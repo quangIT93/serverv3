@@ -17,7 +17,7 @@ export class ViewProfilesService {
       createViewProfileDto.recruitId,
     );
 
-    const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 10 : 3;
+    const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 30 : 3;
 
     if (user?.type !== 1) {
       throw new BadRequestException('Is not cruitment');
