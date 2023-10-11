@@ -92,6 +92,7 @@ export class ProfilesService {
         )
         .leftJoinAndSelect('profile.profilesExperiences', 'profilesExperiences')
         .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
+        .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
         .leftJoinAndSelect('profile.profilesAward', 'profilesAward')
         .leftJoinAndSelect('profile.profilesCourse', 'profilesCourse')
         .leftJoinAndSelect('profile.profilesHobby', 'profilesHobby')
