@@ -21,10 +21,12 @@ import { ProfileDetailInterceptor } from './interceptor/profile-detail.intercept
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-candidate.interceptor';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 
 @ApiTags('profiles')
 @Controller('profiles')
+@UseGuards(ThrottlerGuard)
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
