@@ -260,33 +260,38 @@ export class ProfileDetailCandidateSerialization extends Profile {
 
   @Expose()
   get phoneData() {
-    return this.unlock ? this.phone : 'Unlock Candidates';
+    return (this.viewProfiles.length > 0 || this.unlock ) ? this.phone : 'Unlock Candidates';
   }
 
   @Expose()
   get emailData() {
-    return this.unlock ? this.email : 'Unlock Candidates';
+    return (this.viewProfiles.length > 0 || this.unlock ) ? this.email : 'Unlock Candidates';
   }
 
   @Expose()
   get linkedinData() {
-    return this.unlock ? this.linkedin : 'Unlock Candidates';
+    return (this.viewProfiles.length > 0 || this.unlock ) ? this.linkedin : 'Unlock Candidates';
   }
 
   @Expose()
   get facebookData() {
-    return this.unlock ? this.facebook : 'Unlock Candidates';
+    return (this.viewProfiles.length > 0 || this.unlock ) ? this.facebook : 'Unlock Candidates';
   }
 
   @Expose()
   get birthdayData() {
     if (!this.birthday) return null;
 
-    return this.unlock ? +this.birthday : birthdayTraslator(+this.birthday);
+    return (this.viewProfiles.length > 0 || this.unlock ) ? +this.birthday : birthdayTraslator(+this.birthday);
   }
 
   @Expose()
   get isBookmarked() {
     return (this.candidateBookmarked.length > 0)
+  }
+
+  @Expose()
+  get isUnlocked() {
+    return this.viewProfiles.length > 0;
   }
 }

@@ -25,6 +25,8 @@ import { ProfileLanguageSerialization } from '../../profile-languages/serializat
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
 import { ProfilesCv } from '../../profiles-cvs/entities/profiles_cv.entity';
 import { ProfilesCvsSerialization } from '../../profiles-cvs/serialization/profiles_cvs.serialization';
+import { ProfilesEducation } from '../../profiles-educations/entities/profiles-education.entity';
+import { ProfilesEducationSerialization } from '../../profiles-educations/serialization/profiles-education.serialization';
 
 export class ProfileSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
@@ -116,6 +118,9 @@ export class ProfileSerialization extends Profile {
 
     @Exclude({ toPlainOnly: true })
     override profilesCv!: ProfilesCv[]
+    
+    @Exclude({ toPlainOnly: true })
+    override profilesEducation!: ProfilesEducation[];
 
 
     // expose addressText
@@ -250,4 +255,11 @@ export class ProfileSerialization extends Profile {
         })
     }
 
+    @Expose()
+    get profilesEducations() {
+        if (!this.profilesEducation) return null
+        return this.profilesEducation.map((academic) => {
+            return new ProfilesEducationSerialization(academic, this.lang);
+        })
+    }
 }

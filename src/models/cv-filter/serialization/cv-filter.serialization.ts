@@ -57,7 +57,7 @@ export class CVFilterSerialization extends Profile {
   override profilesLocations!: any[];
 
   @Exclude({ toPlainOnly: true })
-  override profilesEducations!: ProfilesEducation[];
+  override profilesEducation!: ProfilesEducation[];
 
   @Exclude({ toPlainOnly: true })
   override birthday!: string;
@@ -99,8 +99,8 @@ export class CVFilterSerialization extends Profile {
 
   @Expose()
   get profilesEducationsData() {
-    if (!this.profilesEducations) return null;
-    const result = this.profilesEducations.map((education) => {
+    if (!this.profilesEducation) return null;
+    const result = this.profilesEducation.map((education) => {
       return new AcedemicTypesSerialization(education.academicType, this.lang);
     });
     return filter(result)

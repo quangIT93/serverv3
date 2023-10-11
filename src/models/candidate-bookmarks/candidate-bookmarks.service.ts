@@ -16,7 +16,7 @@ export class CandidateBookmarksService {
     createCandidateBookmarkDto: CreateCandidateBookmarkDto,
   ) {
     try {
-      const candidate = await this.profileService.findOne(
+      const candidate = await this.profileService.getProfileEmail(
         createCandidateBookmarkDto.candidateId,
       );
 
@@ -57,10 +57,10 @@ export class CandidateBookmarksService {
       const query = this.candidateBooKmarkedRepository.createQueryBuilder('candidate_bookmarked')
       .leftJoinAndSelect('candidate_bookmarked.profile', 'profile')
       .leftJoinAndSelect('profile.childCategories', 'childCategory')
-      .leftJoinAndSelect('profile.profilesEducations', 'profilesEducations')
+      .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
       .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
       .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
-      .leftJoinAndSelect('profilesEducations.academicType', 'academicType')
+      .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
       .where('candidate_bookmarked.recruitId = :recruitId', { recruitId : accountId})
       .take(limit)
       .skip(page * limit);
