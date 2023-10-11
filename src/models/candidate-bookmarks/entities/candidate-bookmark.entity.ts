@@ -12,7 +12,7 @@ export class CandidateBookmark {
   @Column({ name: 'created_at', default: () => 'CURRENT_TIMESTAMP' })
   createdAt!: Date;
 
-  @ManyToOne(() => Profile, (profile) => profile.accountId)
+  @ManyToOne(() => Profile, (profile) => profile.candidateBookmarked)
   @JoinColumn({ name: 'candidate_id', referencedColumnName: 'accountId' })
   profile!: Profile;
 }

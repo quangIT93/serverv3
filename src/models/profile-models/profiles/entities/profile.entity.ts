@@ -85,8 +85,8 @@ export class Profile {
   @Column({ type: 'varchar', length: 255, nullable: true, name: 'job_name' })
   jobTypeName!: string;
 
-  @Column({type: 'tinyint', nullable: false, name: 'is_search', default: 0})
-  isSearch!:number;
+  @Column({ type: 'tinyint', nullable: false, name: 'is_search', default: 0 })
+  isSearch!: number;
 
   @OneToMany(
     () => ProfilesEducation,

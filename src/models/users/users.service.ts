@@ -56,4 +56,16 @@ export class UserService {
       throw error;
     }
   }
+
+  async findById(id: string) {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
