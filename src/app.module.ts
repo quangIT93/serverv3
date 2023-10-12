@@ -54,14 +54,30 @@ import { CommunicationBookmarkedModule } from './models/communication-models/com
 import { CommunicationViewsModule } from './models/communication-models/communication-views/communication-views.module';
 import { AdminModule } from './models/admin/admin.module';
 import { MailLoggerModule } from './models/log/mail-logger/mail-logger.module';
-
+import { ProfilesSkillsModule } from './models/profile-models/profiles-skills/profiles-skills.module';
+import { LevelTypeModule } from './models/profile-models/types/level-type/level-types.module';
+import { ProfileLanguagesModule } from './models/profile-models/profile-languages/profile-languages.module';
+import { LanguageTypesModule } from './models/profile-models/types/language-types/language-types.module';
+import { ProfilesReferencesModule } from './models/profile-models/profiles-references/profiles-references.module';
+import { ProfilesCoursesModule } from './models/profile-models/profiles-courses/profiles-courses.module';
+import { ProfilesActivitiesModule } from './models/profile-models/profiles-activities/profiles-activities.module';
+import { ProfilesIntershipsModule } from './models/profile-models/profiles-interships/profiles-interships.module';
+import { ProfilesAwardsModule } from './models/profile-models/profiles-awards/profiles-awards.module';
+import { ProfilesHobbiesModule } from './models/profile-models/profiles-hobbies/profiles_hobbies.module';
+import { ProfilesCvsModule } from './models/profile-models/profiles-cvs/profiles_cvs.module';
+import { CvTemplateModule } from './models/cv-template/cv-template.module';
+import { CvFilterModule } from './models/cv-filter/cv-filter.module';
+import { AcademicTypesModule } from './models/academic_types/academic_types.module';
+import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
+import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
-
     AppConfigModule,
     DatabaseConfigModule,
     UserModule,
-    MailModule, 
+    MailModule,
     QueueModule,
     AWSModule,
     AuthModule,
@@ -116,16 +132,54 @@ import { MailLoggerModule } from './models/log/mail-logger/mail-logger.module';
     AdminModule,
 
     MailLoggerModule,
+
+    // Profiles
+    LevelTypeModule,
+    ProfilesSkillsModule,
+    ProfileLanguagesModule,
+    LanguageTypesModule,
+    ProfilesReferencesModule,
+    ProfilesCoursesModule,
+    ProfilesActivitiesModule,
+    ProfilesIntershipsModule,
+    ProfilesAwardsModule,
+    ProfilesHobbiesModule,
+    ProfilesCvsModule,
+    CvTemplateModule,
+    CvFilterModule,
+    AcademicTypesModule,
+    CandidateBookmarksModule,
+    ViewProfilesModule,
+
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,
+        limit: 3,
+      },
+      {
+        name: 'medium',
+        ttl: 10000,
+        limit: 20
+      },
+      {
+        name: 'long',
+        ttl: 60000,
+        limit: 100
+      }
+    ]),
   ],
   controllers: [AppController, BannersController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useValue: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LanguageMiddleware)
-      .forRoutes('*');
+    consumer.apply(LanguageMiddleware).forRoutes('*');
   }
 }

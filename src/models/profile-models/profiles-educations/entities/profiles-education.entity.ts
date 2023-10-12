@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Profile } from "../../profiles/entities";
 import { Transform } from "class-transformer";
+import { AcademicType } from "src/models/academic_types/entities/academic_type.entity";
 
 @Entity('profiles_educations')
 export class ProfilesEducation {
@@ -28,6 +29,9 @@ export class ProfilesEducation {
     @Column({ type: 'varchar', length: 50, name: 'extra_information' })
     extraInformation!: string;
 
+    @Column({ type: 'tinyint', default: null, name: 'academic_type_id' })
+    academicTypeId!: number;
+
     @Transform(({ value }) => new Date(value).getTime())
     @Column({ type: 'datetime', nullable: false, default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
     createdAt!: Date;
@@ -36,8 +40,12 @@ export class ProfilesEducation {
     @Column({ type: 'datetime', nullable: false, default: () => 'CURRENT_TIMESTAMP', name: 'updated_at' })
     updatedAt!: Date;
 
-    @ManyToOne(() => Profile, profile => profile.accountId)
+    @ManyToOne(() => Profile, profile => profile.profilesEducation)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
+
+    @ManyToOne(() => AcademicType, academicType => academicType.id)
+    @JoinColumn({ name: 'academic_type_id' })
+    academicType!: AcademicType;
 
 }

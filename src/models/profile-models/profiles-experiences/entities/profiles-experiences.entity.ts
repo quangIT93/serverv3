@@ -36,7 +36,7 @@ export class ProfilesExperiences {
     @Column({ type: 'datetime', nullable: false, default: () => 'CURRENT_TIMESTAMP', name: 'updated_at' })
     updatedAt!: Date;
 
-    @ManyToOne(() => Profile, profile => profile.accountId)
+    @ManyToOne(() => Profile, profile => profile.profilesExperiences)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
 

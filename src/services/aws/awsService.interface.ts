@@ -41,6 +41,8 @@ export interface UploadOpions {
     id?: string | number;
 
     commentId?: string | number;
+
+    accountId?: string | number;
 }
 
 export class UploadFileResult implements S3.ManagedUpload.SendData {

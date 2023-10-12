@@ -106,7 +106,7 @@ export class Company {
 
     // @OneToOne()
 
-    @OneToOne(() => Profile, (profile) => profile.accountId)
+    @OneToOne(() => Profile, (profile) => profile.company)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
 

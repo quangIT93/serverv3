@@ -5,14 +5,14 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { SignInEmailDto } from "./dto/auth.dto";
 // import { MailService } from "src/services/mail/mail.service";
-import { BullMailService } from "src/services/bull/bull-mail.service";
+// import { BullMailService } from "src/services/bull/bull-mail.service";
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
     constructor(
         // private authService: AuthService,
-        private bullMailService: BullMailService,
+        // private bullMailService: BullMailService,
         private usersService: UserService,
         private readonly jwtAccessTokenService: JwtAccessTokenService,
     ) { }
@@ -20,7 +20,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('email')
     async signIn(@Body() signInEmail: SignInEmailDto): Promise<any> {
-        this.bullMailService.sendMail(signInEmail.email || '');
+        // this.bullMailService.sendMail(signInEmail.email || '');
 
         const user = await this.usersService.findByEmail(signInEmail.email);
 

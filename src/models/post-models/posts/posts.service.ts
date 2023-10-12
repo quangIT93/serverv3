@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities';
 import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
-import { PostsQueryBuilder, countByHotTopicQuery, findByHotTopicQuery } from './repository';
+import {
+  PostsQueryBuilder,
+  countByHotTopicQuery,
+  findByHotTopicQuery,
+} from './repository';
 import { CreatePostByAdminDto } from './dto/admin-create-post.dto';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
@@ -50,14 +54,14 @@ export class PostsService {
   }
 
   /**
-   * 
-   * @param id 
-   * @param limit 
-   * @param page 
-   * @returns 
-   * 
+   *
+   * @param id
+   * @param limit
+   * @param page
+   * @returns
+   *
    * @description: find posts by hot topic id
-   * 
+   *
    * @example:
    * 1: Influencer
    * 2: Remote job
@@ -65,17 +69,26 @@ export class PostsService {
    * 4: Today job
    * 5: Freelance job
    * 6: Delivery, Driver
-   * 
+   *
    */
 
-  async findByHotTopicId(id: number, limit: number, page: number, provinceId?: string): Promise<any> {
+  async findByHotTopicId(
+    id: number,
+    limit: number,
+    page: number,
+    provinceId?: string,
+  ): Promise<any> {
     // generate query and call function
     let query: HotTopicQueriesDto = generateQuery(id, provinceId);
 
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }
 
-  async findByQuery(query: HotTopicQueriesDto, limit: number, page: number): Promise<any> {
+  async findByQuery(
+    query: HotTopicQueriesDto,
+    limit: number,
+    page: number,
+  ): Promise<any> {
     return findByHotTopicQuery(this.postsRepository, query, page, limit);
   }
 
@@ -197,8 +210,17 @@ export class PostsService {
     return this.postsRepository.delete(id);
   }
 
-  async getNewestPosts(limit: number, page: number, queries?: NewestPostQueriesDto, threshold?: number): Promise<any[]> {
-    return new PostsQueryBuilder(this.postsRepository)
-    .getNewestPosts(page, limit, queries, threshold);
-  }    
+  async getNewestPosts(
+    limit: number,
+    page: number,
+    queries?: NewestPostQueriesDto,
+    threshold?: number,
+  ): Promise<any[]> {
+    return new PostsQueryBuilder(this.postsRepository).getNewestPosts(
+      page,
+      limit,
+      queries,
+      threshold,
+    );
+  }
 }

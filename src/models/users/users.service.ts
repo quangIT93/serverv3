@@ -30,4 +30,42 @@ export class UserService {
       throw error;
     }
   }
+
+  async findByIdAndType(accountId: string) {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          id: accountId,
+          type: 1,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findRoleById(accountId: string) {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          id: accountId,
+        },
+        select: ['role', 'email', 'id', 'type'],
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findById(id: string) {
+    try {
+      return await this.usersRepository.findOne({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

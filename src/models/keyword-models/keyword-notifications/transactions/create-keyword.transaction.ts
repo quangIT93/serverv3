@@ -1,6 +1,6 @@
 import { TypeNotificationPlatformService } from './../../type-notification-platform/type-notification-platform.service';
 import { DataSource, EntityManager } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { BaseTransaction } from 'src/providers/database/mariadb/transaction';
 import { CreateKeywordNotificationDto } from '../dto/create-keyword-notification.dto';
 import { KeywordNotification } from '../entities/keyword-notification.entity';
@@ -77,7 +77,7 @@ export class CreateKeywordTransaction extends BaseTransaction<
             //     throw new Error(error.message);
             // }
 
-            throw new Error('Create keyword notification failed');
+            throw new BadRequestException('Create keyword notification failed');
         }
     }
 }

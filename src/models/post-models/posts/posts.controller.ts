@@ -65,7 +65,7 @@ export class PostsController {
         return this.postsService.getNewestPosts(limit, page, queries, threshold);
     }
 
-    @ApiBearerAuth('JWT-auth')
+    @ApiBearerAuth()
     @ApiQuery({ name: 'provinceId', required: false })
     @Get('topic/:id')
     @UseGuards(AuthNotRequiredGuard)
