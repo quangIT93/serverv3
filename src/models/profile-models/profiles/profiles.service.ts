@@ -24,6 +24,7 @@ export class ProfilesService {
   }
 
   async findOne(id: string) {
+    console.log("Service: find one profile");
     let result = await this.profileRepository.findOne({
       relations: [
         'user',
