@@ -63,42 +63,6 @@ export class ProfilesService {
     return result;
   }
 
-  // async findOneByAccountId(id: string): Promise<Profile | null> {
-  //   try {
-  //     const profile = await this.profileRepository.findOne({
-  //       where: { accountId: id },
-  //     });
-
-  //     profile!.user = await this.getUser(id) || new User();
-  //     profile!.province = await this.getProvince(id) || new Province();
-
-  //     return profile;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-
-  // }
-
-  // async getProvince(id: string): Promise<Province | null> {
-  //   try {
-  //     const profile = await this.profileRepository.findOne({
-  //       where: { accountId: id },
-  //     });
-
-  //     if (!profile) {
-  //       return null;
-  //     }
-
-  //     return profile.province;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
-
-  // async getUser(id: string) {
-  //   return this.userService.findById(id);
-  // }
-
   getProfileEmail(id: string) {
     return this.profileRepository.findOne({
       select: ['email'],
