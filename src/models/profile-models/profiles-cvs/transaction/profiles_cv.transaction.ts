@@ -26,10 +26,27 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
     manager: EntityManager,
   ): Promise<any> {
     try {
-      const user = await this.userService.findRoleById(createProfilesCvDto.accountId);
+      const TOTAL_CV = 10;
+
+      const user = await this.userService.findRoleById(
+        createProfilesCvDto.accountId,
+      );
 
       if (user?.type === 1) {
         throw new BadRequestException('Is not candidate');
+      }
+
+      const result = await manager
+        .createQueryBuilder(ProfilesCv, 'profiles_cvs')
+        .where('profiles_cvs.accountId = :accountId', {
+          accountId: createProfilesCvDto.accountId,
+        })
+        .getCount();
+
+      if (result >= TOTAL_CV) {
+        throw new BadRequestException(
+          'Not enough pointsYou can only save a maximum of 10 CVs. Please delete unused CVs or edit old CVs at the CV Management page',
+        );
       }
 
       const newProfileCvEntity = manager.create(
@@ -63,7 +80,7 @@ export class CreateProfileCvsTransaction extends BaseTransaction<
 
       return newProfileCv;
     } catch (error) {
-      throw new BadRequestException('Error creating profile cv');
+      throw error;
     }
   }
 }
