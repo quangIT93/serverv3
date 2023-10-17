@@ -141,7 +141,7 @@ export class ProfileSerialization extends Profile {
 
     @Expose()
     get genderText() {
-        if (!this.gender) return null;
+        if (this.gender !== 0 && this.gender !== 1) return null;
         return genderTranslator(this.gender, this.lang);
     }
 
