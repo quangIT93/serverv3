@@ -17,7 +17,7 @@ export class ViewProfilesService {
       createViewProfileDto.recruitId,
     );
 
-    const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 30 : 3;
+    const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 20 : 3;
 
     if (user?.type !== 1) {
       throw new BadRequestException('Is not cruitment');
@@ -34,7 +34,7 @@ export class ViewProfilesService {
       .getCount();
 
     if (result >= TOTAL_IN_DAY) {
-      return 0;
+      throw new BadRequestException('Not enough points')
     }
 
     const newEntity = this.viewProfileRepository.create(createViewProfileDto);
