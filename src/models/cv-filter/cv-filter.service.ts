@@ -35,14 +35,12 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
-        
+
         .where('profiles.isSearch = :isSearch', { isSearch: 1 });
 
       if (addresses) {
         candidates.andWhere('profilesLocations.id IN (:...addresses)', {
-          addresses: Array.isArray(addresses)
-            ? addresses
-            : [addresses],
+          addresses: Array.isArray(addresses) ? addresses : [addresses],
         });
       }
 
@@ -94,7 +92,7 @@ export class CvFilterService {
       const data = await candidates
         .take(limit ? limit : 20)
         .skip(page ? page * limit : 0)
-        .orderBy('profiles.updatedAt', 'DESC')
+        .orderBy('profiles.createdAt', 'DESC')
         .getMany();
 
       return {
