@@ -23,7 +23,7 @@ export class ChildCategory {
     @Column({ type: 'int', name: 'parent_category_id' })
     parentCategoryId!: number;
 
-    @ManyToOne(() => ParentCategory, parentCategory => parentCategory.id)
+    @ManyToOne(() => ParentCategory, parentCategory => parentCategory.childCategories)
     @JoinColumn({ name: 'parent_category_id' })
     parentCategory!: ParentCategory;
 
