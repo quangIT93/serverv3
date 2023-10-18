@@ -13,6 +13,8 @@ export class HotTopicSerializer {
 
     image!: string;
 
+    webImage!: string;
+
     themeId!: number;
 
     // @Exclude({ toPlainOnly: true })
