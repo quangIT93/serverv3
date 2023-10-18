@@ -16,7 +16,7 @@ export class HotTopicSerializer {
     themeId!: number;
 
     // @Exclude({ toPlainOnly: true })
-    query!: string;
+    query!: any;
 
     count!: number;
 
@@ -42,7 +42,11 @@ export class HotTopicSerializer {
             image: entity.image || entity.webImage,
             themeId: entity.themeId,
             detailId: entity.detailId,
-            query: entity.query,
+            query: [
+                {
+                  "listChildrenCategoryId": "394,370"
+                }
+              ],
             api: `/api/v3/posts/topic/${entity.id}`,
         });
     }
