@@ -36,6 +36,11 @@ export class HotTopicsInterceptor implements NestInterceptor {
                 return await Promise.all(hotTopic.map(async (item) => {
                     const count = await this.postsService.countByQuery(item.query);
                     item.count = count;
+                    item.query = [
+                        {
+                          "a": "394,370"
+                        }
+                      ]
                     return item;
                 }));
 
