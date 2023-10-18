@@ -13,6 +13,7 @@ import { Ward } from 'src/models/locations/wards/entities';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 import { CompanyImage } from '../../company-images/entities/company-image.entity';
+import { Post } from 'src/models/post-models/posts/entities';
 
 @Entity('companies')
 export class Company {
@@ -115,4 +116,9 @@ export class Company {
     })
     @JoinColumn({ name: 'company_id' })
     companyImages!: CompanyImage[];
+
+
+    @OneToMany(() => Post, (post) => post.companyInformation)
+    @JoinColumn({ name: 'id' })
+    posts!: Post[];
 }

@@ -125,7 +125,7 @@ export class Post extends BaseEntity {
     account!: User;
 
     // Category relation
-    @ManyToMany(() => ChildCategory, childCategory => childCategory.id)
+    @ManyToMany(() => ChildCategory, childCategory => childCategory.posts)
     @JoinTable({
         name: 'posts_categories',
         joinColumn: {
@@ -149,11 +149,11 @@ export class Post extends BaseEntity {
     @JoinColumn({ name: 'id' })
     postImages: PostImages[] | undefined;
 
-    @ManyToOne(() => JobType, jobType => jobType.id)
+    @ManyToOne(() => JobType, jobType => jobType.posts)
     @JoinColumn({ name: 'job_type' })
     jobTypeData!: JobType;
 
-    @ManyToOne(() => SalaryType, salaryType => salaryType.id)
+    @ManyToOne(() => SalaryType, salaryType => salaryType.posts)
     @JoinColumn({ name: 'salary_type' })
     salaryTypeData!: SalaryType;
 
@@ -166,7 +166,7 @@ export class Post extends BaseEntity {
     bookmarks: Bookmark[] | undefined;
     // companyResourceData: any;
     
-    @OneToOne(() => Company, company => company.id)
+    @ManyToOne(() => Company, company => company.posts)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     companyInformation!: Company;
 
