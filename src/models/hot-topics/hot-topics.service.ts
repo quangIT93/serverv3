@@ -20,6 +20,7 @@ export class HotTopicsService {
         return this.hotTopicRepository
             .createQueryBuilder('hot_topics')
             .where('hot_topics.status = 1')
+            .andWhere(`${version === 1 ? 'hot_topics.image IS NOT NULL' : 'hot_topics.webImage IS NOT NULL'}`)
             .select([
                 'hot_topics.id',
                 'hot_topics.type',
