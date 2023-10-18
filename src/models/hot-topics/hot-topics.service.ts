@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HotTopic } from './entities/hot-posts.entity';
 import { Repository } from 'typeorm';
 import { CreateHotTopicDto } from './dto/create-hot-topic.dto';
-import { HotTopicSerializer } from './serializations/hot-topics.serialization';
+
 
 @Injectable()
 export class HotTopicsService {
@@ -13,14 +13,14 @@ export class HotTopicsService {
         private hotTopicRepository: Repository<HotTopic>
     ) { }
 
-    async getHotTopics(dto: GetHotTopicDto): Promise<HotTopicSerializer[]> {
+    async getHotTopics(dto: GetHotTopicDto): Promise<HotTopic[]> {
 
         const version = dto.version === 'app' ? 1 : 0;
 
         return this.hotTopicRepository
             .createQueryBuilder('hot_topics')
             .where('hot_topics.status = 1')
-            .andWhere(`${version === 1 ? 'hot_topics.image IS NOT NULL' : 'hot_topics.webImage IS NOT NULL'}`)
+            .andWhere(`${dto.version === 'app' ? 'hot_topics.image IS NOT NULL' : '1=1'}`)
             .select([
                 'hot_topics.id',
                 'hot_topics.type',
@@ -30,16 +30,11 @@ export class HotTopicsService {
                 'hot_topics.themeId',
                 'hot_topics.order',
                 'hot_topics.status',
-                'hot_topics.createdAt'
+                'hot_topics.createdAt',
+                'hot_topics.query',
             ])
             .orderBy('hot_topics.order', 'ASC')
             .getMany()
-            .then((hotTopics: HotTopic[]) => {
-                return hotTopics.map((hotTopic: HotTopic) => {
-                    return HotTopicSerializer.fromEntity(hotTopic);
-                });
-                // return hotTopics;
-            });
     }
 
     async getHotTopicById(id: number): Promise<HotTopic | null> {
@@ -52,6 +47,15 @@ export class HotTopicsService {
 
     async createHotTopic(dto: CreateHotTopicDto): Promise<HotTopic> {
         return this.hotTopicRepository.save(dto);
+    }
+
+    async getQueryById(id: number): Promise<string> {
+        const query = await this.hotTopicRepository.createQueryBuilder('hot_topics')
+            .where('hot_topics.id = :id', { id })
+            .select(['hot_topics.query'])
+            .getRawOne();
+
+        return query.query;
     }
 
 
