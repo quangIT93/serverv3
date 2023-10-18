@@ -27,7 +27,7 @@ export class HotTopicsInterceptor implements NestInterceptor {
 
         return next.handle().pipe(
             map(async (data: HotTopic[]) => {
-                console.log(data);
+                // console.log(data);
                 const hotTopic = data.map((item) => {
                     return new HotTopicSerializer(item)
                 });

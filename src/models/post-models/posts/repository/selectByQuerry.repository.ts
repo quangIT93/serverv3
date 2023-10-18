@@ -23,7 +23,7 @@ function __init__(
         });
     }
 
-    console.log(queryBuilder.getQuery());
+    // console.log(queryBuilder.getQuery());
 
     return queryBuilder;
 

@@ -28,7 +28,7 @@ export class HotTopicSerializer {
     detailId!: number;
 
     constructor(partial: Partial<HotTopicSerializer>) {
-        console.log(partial);
+        // console.log(partial);
         Object.assign(this, partial);
     }
 
