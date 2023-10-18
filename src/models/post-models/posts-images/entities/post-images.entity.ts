@@ -19,7 +19,7 @@ export class PostImages {
     @Column({ type: 'tinyint', name: 'status' })
     status!: number;
 
-    @ManyToOne(() => Post, post => post.id)
+    @ManyToOne(() => Post, post => post.postImages)
     @JoinColumn({ name: 'post_id' })
     post: Post | undefined;
 }

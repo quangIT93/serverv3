@@ -131,6 +131,7 @@ export class PostsService {
 
         // }
       },
+      relationLoadStrategy: 'query',
     });
   }
 
