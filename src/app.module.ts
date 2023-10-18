@@ -70,6 +70,7 @@ import { CvFilterModule } from './models/cv-filter/cv-filter.module';
 import { AcademicTypesModule } from './models/academic_types/academic_types.module';
 import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
+import { AppLoggerMiddleware } from './common/middlewares/logger/app.log';
 // import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
 // import { APP_GUARD } from '@nestjs/core';
 @Module({
@@ -181,5 +182,6 @@ import { ViewProfilesModule } from './models/view_profiles/view_profiles.module'
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LanguageMiddleware).forRoutes('*');
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
   }
 }
