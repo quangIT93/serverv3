@@ -41,7 +41,8 @@ export class HotTopicsInterceptor implements NestInterceptor {
                         {
                           "a": "394,370"
                         }
-                      ]
+                      ];
+                    item.api = `/api/v3/posts/topic/${item.id}`;
                     return item;
                 }));
 

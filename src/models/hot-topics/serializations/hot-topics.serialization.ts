@@ -1,5 +1,4 @@
 // import { Exclude } from 'class-transformer';
-import { Expose } from 'class-transformer';
 import { HotTopic } from '../entities/hot-posts.entity';
 // import generateQuery from 'src/models/post-models/posts/helper/generateQuery.hotopic';
 // import { HotTopicQueriesDto } from 'src/models/post-models/posts/dto/hot-topic-queries.dto';
@@ -23,10 +22,7 @@ export class HotTopicSerializer {
 
     count!: number;
 
-    @Expose()
-    get api() {
-        return `/api/v3/posts/topic/${this.id}`;
-    }
+    api!: string;
 
     detailId!: number;
 
