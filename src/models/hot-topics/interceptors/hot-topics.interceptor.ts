@@ -33,7 +33,7 @@ export class HotTopicsInterceptor implements NestInterceptor {
                 });
 
                 // count post
-                return await Promise.all(hotTopic.map(async (item) => {
+                const result = await Promise.all(hotTopic.map(async (item) => {
                     const count = await this.postsService.countByQuery(item.query);
                     item.count = count;
                     item.image = item.image || item.webImage;
@@ -45,6 +45,12 @@ export class HotTopicsInterceptor implements NestInterceptor {
                     item.api = `/api/v3/posts/topic/${item.id}`;
                     return item;
                 }));
+
+                return {
+                    status: 200,
+                    message: 'success',
+                    data: result
+                }
 
                 // console.log(hotTopic);
 
