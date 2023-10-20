@@ -24,44 +24,47 @@ export class ProfilesService {
   }
 
   async findOne(id: string) {
-    console.log("Service: find one profile");
-    let result = await this.profileRepository.findOne({
-      relations: [
-        'user',
-        'province',
-        'profilesLocations',
-        'profilesLocations.province',
-        'childCategories',
-        'childCategories.parentCategory',
-        'profilesExperiences',
-        'profilesEducation',
-        'profilesAward',
-        'profilesCourse',
-        'profilesHobby',
-        'profilesActivity',
-        'profilesIntership',
-        'profilesReference',
-        'profilesSkill',
-        'profilesSkill.levelType',
-        'profileLanguage',
-        'profileLanguage.levelTypeLanguage',
-        'profilesEducation.academicType',
-        'profilesCv',
-        'jobType',
-        'company',
-        'company.companyRole',
-        'company.companySize',
-        'company.ward',
-        'company.ward.district',
-        'company.ward.district.province',
-        'company.category',
-        'company.companyImages',
-      ],
-      where: { accountId: id },
-      relationLoadStrategy: 'query',
-    });
-    
-    return result;
+    try {
+      let result = await this.profileRepository.findOne({
+        relations: [
+          'user',
+          'province',
+          'profilesLocations',
+          'profilesLocations.province',
+          'childCategories',
+          'childCategories.parentCategory',
+          'profilesExperiences',
+          'profilesEducation',
+          'profilesAward',
+          'profilesCourse',
+          'profilesHobby',
+          'profilesActivity',
+          'profilesIntership',
+          'profilesReference',
+          'profilesSkill',
+          'profilesSkill.levelType',
+          'profileLanguage',
+          'profileLanguage.levelTypeLanguage',
+          'profilesEducation.academicType',
+          'profilesCv',
+          'jobType',
+          'company',
+          'company.companyRole',
+          'company.companySize',
+          'company.ward',
+          'company.ward.district',
+          'company.ward.district.province',
+          'company.category',
+          'company.companyImages',
+        ],
+        where: { accountId: id },
+        relationLoadStrategy: 'join',
+      });
+      
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
   // async findOneByAccountId(id: string): Promise<Profile | null> {

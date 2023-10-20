@@ -33,5 +33,8 @@ export class HotTopic {
     @Column({ type: 'datetime', name: 'created_at', select: false })
     createdAt!: Date;
 
+    @Column({ type: 'varchar', name: 'query', select: false })
+    query!: string;
+
 
 }

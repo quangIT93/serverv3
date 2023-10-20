@@ -8,10 +8,13 @@ import {
 // import { Observable, map } from 'rxjs';
 // import { HotTopicSerializer } from '../serializations/hot-topics.serialization';
 import { PostsService } from 'src/models/post-models/posts/posts.service';
-import { HotTopicQueriesDto } from 'src/models/post-models/posts/dto/hot-topic-queries.dto';
+import { Observable, map } from 'rxjs';
+import { HotTopic } from '../entities/hot-posts.entity';
+import { HotTopicSerializer } from '../serializations/hot-topics.serialization';
+// import { ALL_QUERIES } from 'src/common/constants';
 
 @Injectable()
-export class HotTopicsInterxceptor implements NestInterceptor {
+export class HotTopicsInterceptor implements NestInterceptor {
     constructor(
         private postsService: PostsService
     ) { }
@@ -19,19 +22,41 @@ export class HotTopicsInterxceptor implements NestInterceptor {
     async intercept(
         _context: ExecutionContext,
         next: CallHandler<any>,
-    ): Promise<any> {
+    ): Promise<Observable<any>> {
         // const lang = _context.switchToHttp().getRequest()['lang'];
-        const data = next.handle().toPromise()
-        return data.then((res) => {
-            return Promise.all(res.map(async (hotTopic: { query: string[]; }) => {
-                let count = await this.postsService.countByQuery(HotTopicQueriesDto.from(hotTopic.query[0]));
+
+        return next.handle().pipe(
+            map(async (data: HotTopic[]) => {
+                // console.log(data);
+                const hotTopic = data.map((item) => {
+                    return new HotTopicSerializer(item)
+                });
+
+                // count post
+                const result = await Promise.all(hotTopic.map(async (item) => {
+                    const count = await this.postsService.countByQuery(item.query);
+                    item.count = count;
+                    item.image = item.image || item.webImage;
+                    item.query = [
+                        {
+                          "a": "394,370"
+                        }
+                      ];
+                    item.api = `/api/v3/posts/topic/${item.id}`;
+                    return item;
+                }));
+
                 return {
-                    ...hotTopic,
-                    count
-                };
-            }));
-        }).then((res) => {
-            return res;
-        })        
+                    status: 200,
+                    message: 'success',
+                    data: result
+                }
+
+                // console.log(hotTopic);
+
+                // return hotTopic;
+                
+            }),
+        );
     }
 }

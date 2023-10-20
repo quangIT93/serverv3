@@ -4,7 +4,6 @@ import {
     ClassSerializerInterceptor,
     Controller,
     Get,
-    Logger,
     Param,
     ParseFilePipeBuilder,
     ParseIntPipe,
@@ -83,7 +82,7 @@ export class PostsController {
     @UseInterceptors(ClassSerializerInterceptor, PostDetailInterceptor)
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
-        Logger.log('findOne');
+
         return this.postsService.findOne(id);
     }
 
