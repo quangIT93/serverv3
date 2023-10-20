@@ -70,6 +70,7 @@ export class PostNormallyInterceptor implements NestInterceptor {
                     is_over: isOver,
                     data: posts,
                     total: data.total,
+                    title: data.title || "",
                 }
             }),
         );

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities';
@@ -79,10 +79,18 @@ export class PostsService {
   ): Promise<any> {
     // generate query and call function
     let query = await this.postsRepository.query(
-      `SELECT query FROM hot_topics WHERE id = ${id}`,
+      `SELECT query, title FROM hot_topics WHERE id = ${id} AND status = 1`,
     );
 
-    return findByHotTopicQuery(this.postsRepository, query[0].query, page, limit, _provinceId);
+    if (!query || query.length === 0) {
+      throw new NotFoundException();
+    }
+
+    const data = await findByHotTopicQuery(this.postsRepository, query[0].query, page, limit, _provinceId);
+
+    data.title = query[0].title;
+
+    return data;
   }
 
   async countByQuery(query: string): Promise<number> {
