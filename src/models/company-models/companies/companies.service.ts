@@ -23,7 +23,7 @@ export class CompaniesService {
 
   async createCompanyImage(createCompanyImagesDto: CreateCompanyImageDto[]): Promise<CompanyImage[]> {
     const companyImages = await this.companyImagesService.create(createCompanyImagesDto);
-    return companyImages;
+    return this.companyImagesService.findByCompanyId(companyImages[0].companyId);
   }
 
   async removeCompanyImages(id: number[], companyId: number): Promise<any> {
@@ -57,13 +57,20 @@ export class CompaniesService {
     })
   }
 
-  update(id: number, _updateCompanyDto: UpdateCompanyDto) {
-    return this.companyRepository.update({ id }, _updateCompanyDto).then(() => {
-      return this.companyRepository.findOne({ where: { id } });
-    });
+  async update(id: number, _updateCompanyDto: UpdateCompanyDto) {
+    await this.companyRepository.update({ id }, _updateCompanyDto);
+    return await this.companyRepository.findOne({ where: { id } });
   }
 
   remove(id: number, _accountId: string) {
     return this.companyRepository.delete({ id, accountId: _accountId });
+  }
+
+  async getCompanyImages(id: number, _accountId: string) {
+    try {
+      return this.companyImagesService.findByCompanyId(id);
+    } catch (error) {
+      throw error;
+    }
   }
 }

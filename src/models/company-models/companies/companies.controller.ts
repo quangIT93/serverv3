@@ -281,13 +281,14 @@ export class CompaniesController {
           companyId: id,
           image: image.originalname,
         }));
-        await this.companiesService.createCompanyImage(companyImagesDto);
-      }
 
+        await this.companiesService.createCompanyImage(companyImagesDto)
+      }
+    
       return {
         statusCode: HttpStatus.OK,
         message: 'Company images updated successfully',
-        data: null
+        data: await this.companiesService.getCompanyImages(id, req.user.id),
       };
     }
     catch (error) {

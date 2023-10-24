@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyImageDto } from './dto/create-company-image.dto';
-import { UpdateCompanyImageDto } from './dto/update-company-image.dto';
 import { CompanyImage } from './entities/company-image.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,16 +17,8 @@ export class CompanyImagesService {
     return this.companyImageRepository.save(companyImage);
   }
 
-  findAll() {
-    return `This action returns all companyImages`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} companyImage`;
-  }
-
-  update(id: number, _updateCompanyImageDto: UpdateCompanyImageDto) {
-    return `This action updates a #${id} companyImage`;
+  findByCompanyId(companyId: number) {
+    return this.companyImageRepository.find({ where: { companyId } });
   }
 
   remove(id: number, companyId: number) {
