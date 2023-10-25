@@ -80,7 +80,7 @@ export class PostsQueryBuilder {
         const listIds = await this.repository.query(`
             SELECT
                 posts.id
-            FROM posts USE INDEX(rev_id_idx)
+            FROM posts USE INDEX(descending_post_id_idx)
             ${_queries?.districtIds ? `INNER JOIN wards ON wards.id = posts.ward_id 
                 AND wards.district_id IN (${_queries.districtIds})`
                 : ''
@@ -102,7 +102,7 @@ export class PostsQueryBuilder {
                 AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
                 ${_threshold ? `AND posts.id < ${_threshold}` : ''}
             GROUP BY posts.id
-            ORDER BY created_at DESC
+            ORDER BY posts.id DESC
             LIMIT ${limit}
         `);
         // , field(company_resource_id,2) desc, posts.id desc
