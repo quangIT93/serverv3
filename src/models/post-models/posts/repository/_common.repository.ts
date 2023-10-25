@@ -81,16 +81,16 @@ export class PostsQueryBuilder {
             SELECT
                 posts.id
             FROM posts USE INDEX(descending_post_id_idx)
-            ${_queries?.districtIds ? `INNER JOIN wards ON wards.id = posts.ward_id 
-                AND wards.district_id IN (${_queries.districtIds})`
+            INNER JOIN wards ON wards.id = posts.ward_id ${_queries?.districtIds
+                ? `AND wards.district_id IN (${_queries.districtIds})`
                 : ''
             }
             ${_queries?.provinceId ? `INNER JOIN districts ON districts.id = wards.district_id 
                 AND districts.province_id = ${_queries.provinceId}`
                 : ''
             }
-            ${_queries?.childrenCategoryId ? `INNER JOIN posts_categories ON posts_categories.post_id = posts.id
-                AND posts_categories.category_id IN (${_queries.childrenCategoryId})`
+            INNER JOIN posts_categories ON posts_categories.post_id = posts.id ${_queries?.childrenCategoryId
+                ? `AND posts_categories.category_id IN (${_queries.childrenCategoryId})`
                 : ''
             }
             ${_queries?.parentCategoryId ? `INNER JOIN child_categories ON child_categories.id = posts_categories.category_id 
