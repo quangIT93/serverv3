@@ -59,6 +59,7 @@ export class ProfilesService {
         ],
         where: { accountId: id },
         relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'join'
       });
       
       return result;
