@@ -27,6 +27,10 @@ import { DataSource } from "typeorm";
                 // migrations: mariadbConfigService.migrations,
                 // subscribers: mariadbConfigService.subscribers,
                 // migrationsRun: mariadbConfigService.migrationsRun,
+                extra: {
+                    conconnectionLimit: 100
+                },
+                extraProviders: [],
             } as TypeOrmModuleAsyncOptions),
 
             dataSourceFactory: async (options) => {
