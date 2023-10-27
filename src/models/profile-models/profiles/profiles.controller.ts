@@ -30,7 +30,12 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  @Throttle({})
+  @Throttle({
+    default: {
+      limit: 10,
+      ttl: 60000,
+    },
+  })
   @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)
   @UseGuards(AuthGuard)
