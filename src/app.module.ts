@@ -71,8 +71,9 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
 import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
 import { AppLoggerMiddleware } from './common/middlewares/logger/app.log';
-import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler"
+import { ThrottlerModule } from "@nestjs/throttler"
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
 @Module({
   imports: [
     AppConfigModule,
@@ -154,6 +155,7 @@ import { APP_GUARD } from '@nestjs/core';
 
     ThrottlerModule.forRoot([
       {
+        
         name: 'short',
         ttl: 1000,
         limit: 3,
@@ -167,7 +169,7 @@ import { APP_GUARD } from '@nestjs/core';
         name: 'long',
         ttl: 60000,
         limit: 100
-      }
+      },
     ]),
   ],
   controllers: [AppController, BannersController],
@@ -175,7 +177,7 @@ import { APP_GUARD } from '@nestjs/core';
     AppService,
     {
       provide: APP_GUARD,
-      useValue: ThrottlerGuard,
+      useValue: ThrottlerBehindProxyGuard,
     },
   ],
 })

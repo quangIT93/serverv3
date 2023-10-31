@@ -9,7 +9,7 @@
  * @class
  */
 
-import { CanActivate, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtAccessTokenService } from "src/services/jwt/atk.service";
 
 
@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
             if (!request.headers.authorization) {
                 throw new UnauthorizedException();
             }
-            Logger.log('AuthGuard: canActivate');
+            // Logger.log('AuthGuard: canActivate');
             request.user = await this.validateToken(request.headers.authorization);
 
             // Logger.log(request.user);
