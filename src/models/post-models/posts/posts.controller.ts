@@ -11,6 +11,7 @@ import {
     Query,
     Req,
     Res,
+    UnauthorizedException,
     UploadedFiles,
     UseGuards,
     UseInterceptors,
@@ -18,7 +19,6 @@ import {
 import { Response } from 'express';
 import { ApiBasicAuth, ApiBearerAuth, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostsService } from './posts.service';
-// import { HotTopicQueriesDto } from './dto/hot-topic-queries.dto';
 import { PostNormallyInterceptor } from './interceptors/posts-topic.interceptor';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
@@ -34,11 +34,13 @@ import { PostDetailInterceptor } from './interceptors/posts-detail.interceptor';
 import { PostNotificationsService } from 'src/models/notifications-model/post-notifications/post-notifications.service';
 import { NewestPostQueriesDto } from './dto/newest-queries.dto';
 import { PostNewInterceptor } from './interceptors/posts-new.interceptor';
-// import { CreatePostByUserDto } from './dto/user-create-post.dto';
-// import { CreatePostController } from './controller/create-post.controller';
+import { NearByQueriesDto } from './dto/nearby-queries.dto';
+import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Posts')
 @Controller('posts')
+@UseGuards(ThrottlerBehindProxyGuard)
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
@@ -51,17 +53,38 @@ export class PostsController {
         return this.postsService.findByAccountId(accountId);
     }
 
+    @SkipThrottle()
     @ApiQuery({ name: 'threshold', required: false })
     @Get('newest')
     @UseGuards(AuthNotRequiredGuard)
     @UseInterceptors(PostNewInterceptor)
     async getNewestPosts(
         @Query() queries: NewestPostQueriesDto,
-        @Req() req: any,
+        @Req() req: CustomRequest,
     ) {
-        const { limit, page } = req;
+        const { limit = 20, page = 0 } = req;
         const { threshold } = queries;
         return this.postsService.getNewestPosts(limit, page, queries, threshold);
+    }
+
+    @SkipThrottle()
+    @ApiBearerAuth()
+    @Get('nearby')
+    @UseGuards(AuthGuard)
+    @UseInterceptors(PostNewInterceptor)
+    async getNearbyPosts(
+        @Query() queries: NearByQueriesDto,
+        @Req() req: CustomRequest,
+    ) {
+        const { limit = 20, page = 0 } = req;
+        // const { threshold } = queries;
+        const accountId = req.user?.id;
+
+        if (!accountId) {
+            throw new UnauthorizedException();
+        }
+
+        return this.postsService.getNearByPosts(limit, page, queries, accountId);
     }
 
     @ApiBearerAuth()
@@ -83,7 +106,7 @@ export class PostsController {
     @Get(':id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
 
-        return this.postsService.findOne(id);
+        return await this.postsService.findOne(id);
     }
 
 

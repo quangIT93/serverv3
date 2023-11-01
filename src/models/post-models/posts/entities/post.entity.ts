@@ -11,6 +11,7 @@ import { Bookmark } from "src/models/bookmarks/entities/bookmark.entity";
 import { Company } from "src/models/company-models/companies/entities/company.entity";
 import { Profile } from "src/models/profile-models/profiles/entities";
 import { CompanyResource } from "src/models/company-resources/entities/company-resources.entity";
+import { PostCategories } from "../../posts-categories/entities/posts-categories.entity";
 // import { Application } from "src/models/application-model/applications/entities/application.entity";
 
 
@@ -173,4 +174,8 @@ export class Post extends BaseEntity {
     @ManyToOne(() => Profile, profile => profile.accountId)
     @JoinColumn({ name: 'account_id', referencedColumnName: 'accountId' })
     profile!: Profile;
+
+    @OneToMany(() => PostCategories, postCategories => postCategories.post)
+    @JoinColumn({ name: 'id' })
+    postsCategories: PostCategories[] | undefined;
 }

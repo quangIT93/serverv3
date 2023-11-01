@@ -21,21 +21,23 @@ import { ProfileDetailInterceptor } from './interceptor/profile-detail.intercept
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-candidate.interceptor';
+import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
 // import { ThrottlerGuard } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 
 
 @ApiTags('profiles')
 @Controller('profiles')
-// @UseGuards(ThrottlerGuard)
+@UseGuards(ThrottlerBehindProxyGuard)
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
-  // @Throttle({
-  //   default: {
-  //     limit: 10,
-  //     ttl: 60000,
-  //   },
-  // })
+  @Throttle({
+    default: {
+      limit: 3,
+      ttl: 1000,
+    },
+  })
   @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)
   @UseGuards(AuthGuard)

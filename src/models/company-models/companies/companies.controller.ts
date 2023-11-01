@@ -130,18 +130,18 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  @Get('account')
-  findByAccountId(@Req() req: CustomRequest) {
-    if (!req.user) {
-      return {
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
-      };
-    }
-    return this.companiesService.findByAccountId(req.user?.id);
-  }
+  // @UseGuards(AuthGuard)
+  // @ApiBearerAuth()
+  // @Get('account')
+  // findByAccountId(@Req() req: CustomRequest) {
+  //   if (!req.user) {
+  //     return {
+  //       statusCode: HttpStatus.UNAUTHORIZED,
+  //       message: 'Unauthorized',
+  //     };
+  //   }
+  //   return this.companiesService.findByAccountId(req.user?.id);
+  // }
 
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth()
