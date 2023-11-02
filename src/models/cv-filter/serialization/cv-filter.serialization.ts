@@ -3,7 +3,8 @@ import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 import {
   categoryTranslator,
-  genderTranslator, locationTranslator,
+  genderTranslator,
+  locationTranslator,
 } from 'src/common/helper/translators';
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
@@ -78,7 +79,7 @@ export class CVFilterSerialization extends Profile {
   override cvUrl!: string;
 
   @Exclude({ toPlainOnly: true })
-  override province!:Province;
+  override province!: Province;
 
   @Expose()
   get categoriesData() {
@@ -86,7 +87,6 @@ export class CVFilterSerialization extends Profile {
     return this.childCategories.map((category) => {
       return categoryTranslator(category, this.lang);
     });
-
   }
 
   @Expose()
@@ -103,7 +103,7 @@ export class CVFilterSerialization extends Profile {
     const result = this.profilesEducation.map((education) => {
       return new AcedemicTypesSerialization(education.academicType, this.lang);
     });
-    return filter(result)
+    return filter(result);
   }
 
   @Expose()
@@ -117,7 +117,7 @@ export class CVFilterSerialization extends Profile {
     if (!this.avatar) return null;
     return {
       avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
-    }
+    };
   }
 
   @Expose()

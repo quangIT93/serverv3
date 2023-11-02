@@ -7,7 +7,6 @@ import { CompanySize } from './entities/company-size.entity';
 
 @Injectable()
 export class CompanySizesService {
-
   constructor(
     @InjectRepository(CompanySize)
     private readonly companySizeRepository: Repository<CompanySize>,
@@ -20,13 +19,13 @@ export class CompanySizesService {
   findAll() {
     return this.companySizeRepository.find({
       where: {
-        status: 1
-      }
+        status: 1,
+      },
     });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} companySize`;
+    return this.companySizeRepository.findOne({ where: { id } });
   }
 
   update(id: number, _updateCompanySizeDto: UpdateCompanySizeDto) {

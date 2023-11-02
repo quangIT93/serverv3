@@ -1,10 +1,18 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { IUser } from "../interfaces/users.interface";
-import { Post } from "src/models/post-models/posts/entities/post.entity";
-import { Bookmark } from "src/models/bookmarks/entities/bookmark.entity";
-import { CommunicationBookmarked } from "src/models/communication-models/communication-bookmarked/entities/communication-bookmarked.entity";
-import { Profile } from "src/models/profile-models/profiles/entities";
-
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { IUser } from '../interfaces/users.interface';
+import { Post } from 'src/models/post-models/posts/entities/post.entity';
+import { Bookmark } from 'src/models/bookmarks/entities/bookmark.entity';
+import { CommunicationBookmarked } from 'src/models/communication-models/communication-bookmarked/entities/communication-bookmarked.entity';
+import { Profile } from 'src/models/profile-models/profiles/entities';
+import { CompanyRating } from 'src/models/company-models/company-ratings/entities/company-rating.entity';
 
 // The @Entity() decorator tells TypeORM that this class is an entity.
 // The @PrimaryGeneratedColumn() decorator tells TypeORM that the id property will be generated automatically.
@@ -15,48 +23,63 @@ import { Profile } from "src/models/profile-models/profiles/entities";
 
 @Entity('accounts')
 export class User extends BaseEntity implements IUser {
-    @PrimaryGeneratedColumn('uuid')
-    id!: string;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    email?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    phone?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  phone?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    gg_id?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  gg_id?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    fb_id?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  fb_id?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    apple_id?: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  apple_id?: string;
 
-    @Column({ type: 'int', nullable: true })
-    role?: number;
+  @Column({ type: 'int', nullable: true })
+  role?: number;
 
-    @Column({ type: 'tinyint', nullable: true, default: 0 })
-    type!: number;
+  @Column({ type: 'tinyint', nullable: true, default: 0 })
+  type!: number;
 
-    @Column({ type: 'datetime', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
-    created_at!: Date;
+  @Column({
+    type: 'datetime',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  created_at!: Date;
 
-    @Column({ type: 'datetime', nullable: true, default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updated_at!: Date;
+  @Column({
+    type: 'datetime',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updated_at!: Date;
 
-    @OneToMany(() => Post, post => post.account)
-    posts!: Post[];
+  @OneToMany(() => Post, (post) => post.account)
+  posts!: Post[];
 
-    @OneToMany(() => Bookmark, bookmark => bookmark.user)
-    @JoinColumn({ name: 'account_id' })
-    bookmarks!: Bookmark[];
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @JoinColumn({ name: 'account_id' })
+  bookmarks!: Bookmark[];
 
-    @OneToMany(() => CommunicationBookmarked, communicationBookmarked => communicationBookmarked.user)
-    @JoinColumn({ name: 'account_id' })
-    communicationBookmarkeds!: CommunicationBookmarked[];
+  @OneToMany(
+    () => CommunicationBookmarked,
+    (communicationBookmarked) => communicationBookmarked.user,
+  )
+  @JoinColumn({ name: 'account_id' })
+  communicationBookmarkeds!: CommunicationBookmarked[];
 
-    @OneToOne(() => Profile, profile => profile.user)
-    @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
-    profile!: Profile
+  @OneToOne(() => Profile, (profile) => profile.user)
+  @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
+  profile!: Profile;
+
+  @OneToMany(() => CompanyRating, (companyRating) => companyRating.account)
+  companyRatings!: CompanyRating[];
 }

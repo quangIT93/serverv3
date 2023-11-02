@@ -10,14 +10,12 @@ import { CompanyImagesModule } from '../company-images/company-images.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Company
-    ]),
+    TypeOrmModule.forFeature([Company]),
     JwtAccessTokenServiceModule,
     AWSModule,
-    CompanyImagesModule
+    CompanyImagesModule,
   ],
   controllers: [CompaniesController],
-  providers: [CompaniesService]
+  providers: [CompaniesService],
 })
 export class CompaniesModule {}

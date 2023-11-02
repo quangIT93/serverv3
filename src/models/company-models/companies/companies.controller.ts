@@ -14,6 +14,8 @@ import {
   HttpStatus,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -27,11 +29,14 @@ import {
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { Role } from 'src/common/enum';
-import { Roles } from 'src/authentication/roles.decorator';
+// import { Role } from 'src/common/enum';
+// import { Roles } from 'src/authentication/roles.decorator';
 import { CompanyImagesPipe } from './interceptors/image.interceptor';
 import { CreateCompanyImageDto } from '../company-images/dto/create-company-image.dto';
 import { UpdateCompanyImageDto } from '../company-images/dto/delete-comapny-image.dto';
+import { FilterCompaniesDto } from './dto/filter-company.dto';
+import { CompaniesInterceptor } from './interceptors/companies.interceptor';
+import { CompanyDetailInterceptor } from './interceptors/companyDetail.interceptor';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -60,9 +65,7 @@ export class CompaniesController {
     ),
   )
   async create(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     listImages: any | undefined,
     @Req() req: CustomRequest,
     @Res() res: any,
@@ -79,22 +82,29 @@ export class CompaniesController {
       }
       createCompanyDto.accountId = req.user.id;
       createCompanyDto.logo = logo.originalname;
-      createCompanyDto.images = images ? images.map((image: any) => image.originalname) : [];
+      createCompanyDto.images = images
+        ? images.map((image: any) => image.originalname)
+        : [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
         BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
       if (images) {
-        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
-          id: String(company.id),
-        });
-  
-        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
-          companyId: company.id,
-          image: image.originalname,
-        }));
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(
+          images,
+          {
+            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            id: String(company.id),
+          },
+        );
+
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map(
+          (image) => ({
+            companyId: company.id,
+            image: image.originalname,
+          }),
+        );
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
@@ -122,12 +132,32 @@ export class CompaniesController {
     }
   }
 
-  @ApiBearerAuth()
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard)
+  // @Roles(Role.ADMIN)
+  // @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.companiesService.findAll();
+  @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
+  findAll(@Query() query: FilterCompaniesDto) {
+    try {
+      return this.companiesService.findAll(query);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
+
+  @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor, CompanyDetailInterceptor)
+  findById(@Param('id') id: number) {
+    try {
+      return this.companiesService.findById(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
   }
 
   @UseGuards(AuthGuard)
@@ -161,9 +191,7 @@ export class CompaniesController {
     ),
   )
   async update(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     imagesList: any | undefined,
     @Req() req: CustomRequest,
     @Body() updateCompanyDto: UpdateCompanyDto,
@@ -196,7 +224,7 @@ export class CompaniesController {
       return {
         statusCode: HttpStatus.OK,
         message: 'Company updated successfully',
-        data: null
+        data: null,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -227,9 +255,7 @@ export class CompaniesController {
     }),
   )
   async updateImages(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     imagesList: any | undefined,
     @Req() req: CustomRequest,
     @Body() updateCompanyImage: UpdateCompanyImageDto,
@@ -254,43 +280,55 @@ export class CompaniesController {
 
       let deletedImages: any[] = [];
       if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
-        deletedImages = await this.companiesService.removeCompanyImages(updateCompanyImage.imagesId, id);
+        deletedImages = await this.companiesService.removeCompanyImages(
+          updateCompanyImage.imagesId,
+          id,
+        );
       }
 
       if (images && images.length > 0) {
         if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
-          if (images.length + company.companyImages.length - deletedImages.length > 5 ) {
+          if (
+            images.length +
+              company.companyImages.length -
+              deletedImages.length >
+            5
+          ) {
             return {
               statusCode: HttpStatus.BAD_REQUEST,
               message: 'Maximum 5 images',
             };
           }
-        } else if (images.length + company.companyImages.length > 5 ) {
+        } else if (images.length + company.companyImages.length > 5) {
           return {
             statusCode: HttpStatus.BAD_REQUEST,
             message: 'Maximum 5 images',
           };
         }
 
-        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
-          id: id
-        });
-  
-        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
-          companyId: id,
-          image: image.originalname,
-        }));
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(
+          images,
+          {
+            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            id: id,
+          },
+        );
+
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map(
+          (image) => ({
+            companyId: id,
+            image: image.originalname,
+          }),
+        );
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
       return {
         statusCode: HttpStatus.OK,
         message: 'Company images updated successfully',
-        data: null
+        data: null,
       };
-    }
-    catch (error) {
+    } catch (error) {
       if (error instanceof Error) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -303,8 +341,6 @@ export class CompaniesController {
       };
     }
   }
-
-
 
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth()
