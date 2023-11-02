@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+// import { AppService } from './app.service';
 import { AppConfigModule } from './config/app/config.module';
 import { DatabaseConfigModule } from './providers/database/mariadb/provider.module';
 import { AuthModule } from './authentication/auth.module';
@@ -71,9 +71,9 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
 import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
 import { AppLoggerMiddleware } from './common/middlewares/logger/app.log';
-import { ThrottlerModule } from "@nestjs/throttler"
-import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
+// import { ThrottlerModule } from "@nestjs/throttler"
+// import { APP_GUARD } from '@nestjs/core';
+// import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
 @Module({
   imports: [
     AppConfigModule,
@@ -153,33 +153,33 @@ import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
     CandidateBookmarksModule,
     ViewProfilesModule,
 
-    ThrottlerModule.forRoot([
-      {
+    // ThrottlerModule.forRoot([
+    //   {
         
-        name: 'short',
-        ttl: 1000,
-        limit: 300,
-      },
-      // {
-      //   name: 'medium',
-      //   ttl: 10000,
-      //   limit: 20
-      // },
-      // {
-      //   name: 'long',
-      //   ttl: 60000,
-      //   limit: 100
-      // },
-    ]),
+    //     name: 'short',
+    //     ttl: 1000,
+    //     limit: 3000,
+    //   },
+    //   // {
+    //   //   name: 'medium',
+    //   //   ttl: 10000,
+    //   //   limit: 20
+    //   // },
+    //   // {
+    //   //   name: 'long',
+    //   //   ttl: 60000,
+    //   //   limit: 100
+    //   // },
+    // ]),
   ],
   controllers: [AppController, BannersController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useValue: ThrottlerBehindProxyGuard,
-    },
-  ],
+  // providers: [
+  //   AppService,
+  //   {
+  //     provide: APP_GUARD,
+  //     useValue: ThrottlerBehindProxyGuard,
+  //   },
+  // ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
