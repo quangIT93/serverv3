@@ -35,12 +35,12 @@ import { PostNotificationsService } from 'src/models/notifications-model/post-no
 import { NewestPostQueriesDto } from './dto/newest-queries.dto';
 import { PostNewInterceptor } from './interceptors/posts-new.interceptor';
 import { NearByQueriesDto } from './dto/nearby-queries.dto';
-// import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
+import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('Posts')
 @Controller('posts')
-// @UseGuards(ThrottlerBehindProxyGuard)
+@UseGuards(ThrottlerBehindProxyGuard)
 export class PostsController {
     constructor(
         private readonly postsService: PostsService,
@@ -67,7 +67,7 @@ export class PostsController {
         return this.postsService.getNewestPosts(limit, page, queries, threshold);
     }
 
-    // @SkipThrottle()
+    @SkipThrottle()
     @ApiBearerAuth()
     @Get('nearby')
     @UseGuards(AuthGuard)
