@@ -13,6 +13,7 @@ import { Bookmark } from 'src/models/bookmarks/entities/bookmark.entity';
 import { CommunicationBookmarked } from 'src/models/communication-models/communication-bookmarked/entities/communication-bookmarked.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { CompanyRating } from 'src/models/company-models/company-ratings/entities/company-rating.entity';
+import { CompanyBookmarked } from 'src/models/company-models/company-bookmarked/entities/company-bookmarked.entity';
 
 // The @Entity() decorator tells TypeORM that this class is an entity.
 // The @PrimaryGeneratedColumn() decorator tells TypeORM that the id property will be generated automatically.
@@ -81,5 +82,13 @@ export class User extends BaseEntity implements IUser {
   profile!: Profile;
 
   @OneToMany(() => CompanyRating, (companyRating) => companyRating.account)
+  @JoinColumn({ name: 'account_id' })
   companyRatings!: CompanyRating[];
+
+  @OneToMany(
+    () => CompanyBookmarked,
+    (companyBookmarked) => companyBookmarked.accountId,
+  )
+  @JoinColumn({ name: 'account_id' })
+  bookmarkedCompany!: CompanyBookmarked[];
 }

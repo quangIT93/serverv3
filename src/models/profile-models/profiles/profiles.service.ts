@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateProfileDto } from './dto/create-profile.dto';
+// import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
@@ -15,13 +15,13 @@ export class ProfilesService {
     private readonly userService: UserService,
   ) {}
 
-  create(_createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
-  }
+  // create(_createProfileDto: CreateProfileDto) {
+  //   return 'This action adds a new profile';
+  // }
 
-  findAll() {
-    return `This action returns all profiles`;
-  }
+  // findAll() {
+  //   return `This action returns all profiles`;
+  // }
 
   async findOne(id: string) {
     try {
@@ -58,7 +58,8 @@ export class ProfilesService {
           'company.companyImages',
         ],
         where: { accountId: id },
-        relationLoadStrategy: 'join',
+        relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'join'
       });
       
       return result;

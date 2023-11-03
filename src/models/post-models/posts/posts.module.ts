@@ -17,6 +17,7 @@ import { PostResourceModule } from '../post-resource/post-resource.module';
 import { PostsCategoriesModule } from '../posts-categories/posts-categories.module';
 import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
 import { PostNotificationsModule } from 'src/models/notifications-model/post-notifications/post-notifications.module';
+import { ParentModule } from 'src/models/categories/parents/parents.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PostNotificationsModule } from 'src/models/notifications-model/post-not
     PostsCategoriesModule,
     ApplicationsModule,
     PostNotificationsModule,
+    ParentModule
   ],
   controllers: [PostsController],
   providers: [PostsService],
@@ -47,6 +49,7 @@ export class PostsModule implements NestModule {
                 { path: 'posts/newest', method: RequestMethod.GET },
                 { path: 'posts/topic/:id', method: RequestMethod.GET },
                 { path: 'posts/account/:accountId', method: RequestMethod.GET },
+                { path: 'posts/nearby', method: RequestMethod.GET },
             )
     }
 }

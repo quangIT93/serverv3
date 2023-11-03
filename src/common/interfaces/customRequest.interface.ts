@@ -23,4 +23,6 @@ export interface CustomRequest extends Request {
     checkOverLimit?: number;
 
     bookmarks?: Bookmark[] | undefined;
+
+    // "client-ip": string
 }

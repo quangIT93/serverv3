@@ -74,7 +74,7 @@ export class CommunicationSerialization extends Communication {
   get profileData() {
     return {
       id : this.profile.accountId,
-      name: this.profile ? this.profile.name : null,
+      name: this.profile ? this.profile.name ? this.profile.name : 'Anonymous' : null,
       avatarPath: (this.profile && this.profile?.avatar)
         ? `${BUCKET_IMAGE_AVATAR}/${this.profile.avatar}`
         : null,

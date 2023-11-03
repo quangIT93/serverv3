@@ -1,4 +1,17 @@
-import { Controller, Get, Param, Delete, NotFoundException, Body, Post , Put, UseInterceptors, UploadedFiles, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  // Delete,
+  NotFoundException,
+  Body,
+  Post,
+  Put,
+  UseInterceptors,
+  UploadedFiles,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ParentService } from './parents.service';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
@@ -19,10 +32,10 @@ export class ParentController {
     try {
       return {
         status: HttpStatus.OK,
-        data: await this.parentService.findAll()
-      }
+        data: await this.parentService.findAll(),
+      };
     } catch (error) {
-      throw new Error('Error from server')
+      throw new Error('Error from server');
     }
   }
 
@@ -30,14 +43,24 @@ export class ParentController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'image', maxCount: 1 },
-      { name: 'defaultPostImage', maxCount: 1 },
-    ], {
-      storage: memoryStorage(),  
-    }),
+    FileFieldsInterceptor(
+      [
+        { name: 'image', maxCount: 1 },
+        { name: 'defaultPostImage', maxCount: 1 },
+      ],
+      {
+        storage: memoryStorage(),
+      },
+    ),
   )
-  async create(@UploadedFiles() files: { image: Express.Multer.File[], defaultPostImage: Express.Multer.File[] }, @Body() dto: CreateParentDto) {
+  async create(
+    @UploadedFiles()
+    files: {
+      image: Express.Multer.File[];
+      defaultPostImage: Express.Multer.File[];
+    },
+    @Body() dto: CreateParentDto,
+  ) {
     const createParent = await this.parentService.createParent(dto, files);
     if (!createParent) {
       throw new NotFoundException('Parent not found');
@@ -45,10 +68,9 @@ export class ParentController {
 
     return {
       status: HttpStatus.OK,
-      message: 'Success'
-    }
+      message: 'Success',
+    };
   }
-
 
   @Get(':id')
   @Roles(Role.ADMIN)
@@ -57,28 +79,30 @@ export class ParentController {
     try {
       return {
         status: HttpStatus.OK,
-        data: await this.parentService.findOne(+id)
-      }
+        data: await this.parentService.findOne(+id),
+      };
     } catch (error) {
-      throw new Error('Error from server')
+      throw new Error('Error from server');
     }
   }
 
   @Put(':id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async update(@Param('id') id: string, @Body() updateParentDto: UpdateParentDto): Promise<any> {
+  async update(
+    @Param('id') id: string,
+    @Body() updateParentDto: UpdateParentDto,
+  ): Promise<any> {
     await this.parentService.update(+id, updateParentDto);
 
     return {
       status: HttpStatus.OK,
-      message: 'Update category successfully'
-    }
-    
+      message: 'Update category successfully',
+    };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parentService.remove(+id);
-  }
+  //   @Delete(':id')
+  //   remove(@Param('id') id: string) {
+  //     return this.parentService.remove(+id);
+  //   }
 }

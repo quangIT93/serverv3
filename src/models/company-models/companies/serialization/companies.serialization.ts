@@ -6,6 +6,7 @@ import { locationTranslator } from 'src/common/helper/translators';
 import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
+import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
 
 export class CompaniesSerialization extends Company {
   @Exclude()
@@ -62,6 +63,9 @@ export class CompaniesSerialization extends Company {
   @Exclude({ toPlainOnly: true })
   override companySize!: CompanySize;
 
+  @Exclude({ toPlainOnly: true })
+  override bookmarkedCompany!: CompanyBookmarked[];
+
   @Transform(({ value }) => value?.getTime())
   override updatedAt!: Date;
 
@@ -81,5 +85,10 @@ export class CompaniesSerialization extends Company {
   get amountPost() {
     if (!this.posts) return null;
     return this.posts.length;
+  }
+
+  @Expose()
+  get isBookmarked() {
+    return this.bookmarkedCompany.length > 0 ? true : false;
   }
 }

@@ -28,7 +28,9 @@ export class CompaniesService {
     const companyImages = await this.companyImagesService.create(
       createCompanyImagesDto,
     );
-    return companyImages;
+    return this.companyImagesService.findByCompanyId(
+      companyImages[0].companyId,
+    );
   }
 
   async removeCompanyImages(id: number[], companyId: number): Promise<any> {
@@ -48,7 +50,8 @@ export class CompaniesService {
 
   async findAll(query: FilterCompaniesDto) {
     try {
-      const { addresses, categories, companySizeId, limit, page } = query;
+      const { addresses, categories, companySizeId, limit, page, accountId } =
+        query;
       const companies = this.companyRepository
         .createQueryBuilder('companies')
         .leftJoinAndSelect('companies.ward', 'ward')
@@ -56,7 +59,13 @@ export class CompaniesService {
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('companies.category', 'category')
         .leftJoinAndSelect('companies.companySize', 'companySize')
-        .leftJoinAndSelect('companies.posts', 'posts');
+        .leftJoinAndSelect('companies.posts', 'posts')
+        .leftJoinAndSelect(
+          'companies.bookmarkedCompany',
+          'bookmarkedCompany',
+          'bookmarkedCompany.accountId = :accountId',
+        )
+        .setParameter('accountId', accountId);
 
       if (addresses) {
         companies.andWhere('district.id IN (:...addresses)', {
@@ -143,13 +152,20 @@ export class CompaniesService {
     });
   }
 
-  update(id: number, _updateCompanyDto: UpdateCompanyDto) {
-    return this.companyRepository.update({ id }, _updateCompanyDto).then(() => {
-      return this.companyRepository.findOne({ where: { id } });
-    });
+  async update(id: number, _updateCompanyDto: UpdateCompanyDto) {
+    await this.companyRepository.update({ id }, _updateCompanyDto);
+    return await this.companyRepository.findOne({ where: { id } });
   }
 
   remove(id: number, _accountId: string) {
     return this.companyRepository.delete({ id, accountId: _accountId });
+  }
+
+  async getCompanyImages(id: number, _accountId: string) {
+    try {
+      return this.companyImagesService.findByCompanyId(id);
+    } catch (error) {
+      throw error;
+    }
   }
 }

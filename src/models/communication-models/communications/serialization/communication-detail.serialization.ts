@@ -80,7 +80,7 @@ export class CommunicationDetailSerialization extends Communication {
         createdAtText: timeToTextTransform(data.createdAt.getTime(), this.lang),
         profile: {
           id: data.profile ? data.profile.accountId : null,
-          name: data.profile ? data.profile.name : null,
+          name: data.profile ? data.profile.name ? data.profile.name : "Anonymous" : null,
           avatar: (data.profile && data.profile?.avatar)
             ? `${BUCKET_IMAGE_AVATAR}/${data.profile.avatar}`
             : null,

@@ -15,6 +15,7 @@ import { ParentCategory } from 'src/models/categories/parents/entities/parent.en
 import { CompanyImage } from '../../company-images/entities/company-image.entity';
 import { Post } from 'src/models/post-models/posts/entities';
 import { CompanyRating } from '../../company-ratings/entities/company-rating.entity';
+import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
 
 @Entity('companies')
 export class Company {
@@ -131,4 +132,11 @@ export class Company {
   @OneToMany(() => CompanyRating, (companyRating) => companyRating.company)
   @JoinColumn({ name: 'company_id' })
   companyRatings!: CompanyRating[];
+
+  @OneToMany(
+    () => CompanyBookmarked,
+    (companyBookmarked) => companyBookmarked.company,
+  )
+  @JoinColumn({ name: 'company_id' })
+  bookmarkedCompany!: CompanyBookmarked[];
 }

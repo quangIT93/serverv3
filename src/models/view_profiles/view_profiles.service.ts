@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ViewProfile } from './entities/view_profile.entity';
 import { UserService } from '../users/users.service';
+import { NOT_ENOUGH_POINTS, NO_PERMISSION } from 'src/common/constants';
 
 @Injectable()
 export class ViewProfilesService {
@@ -20,7 +21,7 @@ export class ViewProfilesService {
     const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 20 : 3;
 
     if (user?.type !== 1) {
-      throw new BadRequestException('Is not cruitment');
+      throw new BadRequestException("Can't view profile", NO_PERMISSION);
     }
 
     const result = await this.viewProfileRepository
@@ -34,7 +35,7 @@ export class ViewProfilesService {
       .getCount();
 
     if (result >= TOTAL_IN_DAY) {
-      throw new BadRequestException('Not enough points')
+      throw new BadRequestException('Not enough points', NOT_ENOUGH_POINTS)
     }
 
     const newEntity = this.viewProfileRepository.create(createViewProfileDto);

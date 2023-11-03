@@ -9,7 +9,7 @@
  * @class
  */
 
-import { CanActivate, Injectable, Logger } from "@nestjs/common";
+import { CanActivate, Injectable } from "@nestjs/common";
 import { JwtPayload } from "src/common/interfaces/jwtPayload.interface";
 import { JwtAccessTokenService } from "src/services/jwt/atk.service";
 
@@ -38,7 +38,7 @@ export class AuthNotRequiredGuard implements CanActivate {
     }
 
     async validateToken(auth: string): Promise<JwtPayload> {
-        Logger.log('AuthNotRequiredGuard: validateToken');
+        // Logger.log('AuthNotRequiredGuard: validateToken');
         try {
             return await this.jwtAccessTokenService.validateToken(auth);
         } catch (error) {

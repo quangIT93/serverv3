@@ -31,4 +31,6 @@ export class FilterCompaniesDto {
   @ApiProperty({ type: 'int', required: false, default: 0 })
   @IsOptional()
   page!: number;
+
+  accountId!: string;
 }

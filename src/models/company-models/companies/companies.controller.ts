@@ -37,6 +37,7 @@ import { UpdateCompanyImageDto } from '../company-images/dto/delete-comapny-imag
 import { FilterCompaniesDto } from './dto/filter-company.dto';
 import { CompaniesInterceptor } from './interceptors/companies.interceptor';
 import { CompanyDetailInterceptor } from './interceptors/companyDetail.interceptor';
+import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -135,9 +136,17 @@ export class CompaniesController {
   // @Roles(Role.ADMIN)
   // @UseGuards(AuthGuard)
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
   @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
-  findAll(@Query() query: FilterCompaniesDto) {
+  findAll(@Query() query: FilterCompaniesDto, @Req() req: CustomRequest) {
     try {
+      const accountId = req.user?.id;
+
+      if (accountId) {
+        query.accountId = accountId;
+      }
+
       return this.companiesService.findAll(query);
     } catch (error) {
       if (error instanceof Error) {
@@ -160,18 +169,18 @@ export class CompaniesController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  @Get('account')
-  findByAccountId(@Req() req: CustomRequest) {
-    if (!req.user) {
-      return {
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
-      };
-    }
-    return this.companiesService.findByAccountId(req.user?.id);
-  }
+  // @UseGuards(AuthGuard)
+  // @ApiBearerAuth()
+  // @Get('account')
+  // findByAccountId(@Req() req: CustomRequest) {
+  //   if (!req.user) {
+  //     return {
+  //       statusCode: HttpStatus.UNAUTHORIZED,
+  //       message: 'Unauthorized',
+  //     };
+  //   }
+  //   return this.companiesService.findByAccountId(req.user?.id);
+  // }
 
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth()
@@ -320,13 +329,14 @@ export class CompaniesController {
             image: image.originalname,
           }),
         );
+
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
       return {
         statusCode: HttpStatus.OK,
         message: 'Company images updated successfully',
-        data: null,
+        data: await this.companiesService.getCompanyImages(id, req.user.id),
       };
     } catch (error) {
       if (error instanceof Error) {

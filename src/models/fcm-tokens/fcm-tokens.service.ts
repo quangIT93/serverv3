@@ -10,10 +10,10 @@ export class FcmTokensService {
     constructor(
         @InjectRepository(FcmTokensEntity)
         private readonly fcmTokensRepository: Repository<FcmTokensEntity>
-    ) {}
+    ) { }
 
     async readByAccountId(accountId: string): Promise<FcmTokensEntity[]> {
-        return await this.fcmTokensRepository.find({ 
+        return await this.fcmTokensRepository.find({
             // relations: ['user'],
             where: { accountId }
         });
@@ -24,6 +24,8 @@ export class FcmTokensService {
     }
 
     async getTokensWhenNewPost(post: CreatePostDto): Promise<FcmTokensEntity[]> {
+        const categoriesId = isArray(post.categoriesId) ? post.categoriesId : [post.categoriesId];
+        const categoriesIdPlaceholders = categoriesId.map(_ => '?').join(',');
         return await this.fcmTokensRepository
             .query(`
                 SELECT fcm_tokens.token, fcm_tokens.account_id as accountId
@@ -33,16 +35,22 @@ export class FcmTokensService {
                 INNER JOIN type_notification_platform
                 ON fcm_tokens.account_id = type_notification_platform.account_id
                 INNER JOIN wards
-                ON wards.id = '${post.wardId}'
+                ON wards.id = ?
                 INNER JOIN child_categories
-                ON child_categories.id IN (${isArray(post.categoriesId) ? post.categoriesId.join(',') : post.categoriesId})
+                ON child_categories.id IN (${categoriesIdPlaceholders})
                 WHERE type_notification_platform.push_status = 1
                 AND keywords_notification.status = 1
-                AND "%${post.title}%" LIKE CONCAT('%', keywords_notification.keyword, '%')
-                AND fcm_tokens.account_id != '${post.accountId}'
+                AND "%?%" LIKE CONCAT('%', keywords_notification.keyword, '%')
+                AND fcm_tokens.account_id != ?
                 AND (keywords_notification.district_status = 0 OR keywords_notification.district_id = wards.district_id)
                 AND (keywords_notification.category_status = 0 OR keywords_notification.category_id = child_categories.parent_category_id)
                 GROUP BY fcm_tokens.token
-            `);
+            `, 
+            [
+                post.wardId, 
+                ...categoriesId,
+                post.title,
+                post.accountId
+            ]);
     }
 }

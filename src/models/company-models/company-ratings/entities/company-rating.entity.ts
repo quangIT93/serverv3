@@ -2,15 +2,15 @@
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 import { User } from 'src/models/users/entities';
 import {
+  BaseEntity,
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('company_ratings')
-export class CompanyRating {
+export class CompanyRating extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id!: number;
 
@@ -46,10 +46,8 @@ export class CompanyRating {
   updatedAt!: Date;
 
   @ManyToOne(() => Company, (company) => company.companyRatings)
-  @JoinColumn({ name: 'company_id' })
   company!: Company;
 
   @ManyToOne(() => User, (user) => user.companyRatings)
-  @JoinColumn({ name: 'account_id' })
   account!: User;
 }

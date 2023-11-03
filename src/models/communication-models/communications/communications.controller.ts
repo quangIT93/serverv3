@@ -16,6 +16,7 @@ import {
   ParseIntPipe,
   UnauthorizedException,
   Delete,
+  Logger,
 } from '@nestjs/common';
 import { CommunicationsService } from './communications.service';
 import { CreateCommunicationDto } from './dto/create-communication.dto';
@@ -39,12 +40,12 @@ import { CommunicationCreateInterceptor } from './interceptors/communication-cre
 import { RoleGuard } from 'src/authentication/role.guard';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 import { CommunicationNewsInterceptor } from './interceptors/communication-news.interceptor';
-import ip from 'ip'
+import ip from 'ip';
 
 @ApiTags('Communications')
 @Controller('communications')
 export class CommunicationsController {
-  constructor(private readonly communicationsService: CommunicationsService) { }
+  constructor(private readonly communicationsService: CommunicationsService) {}
 
   // create communication by user
 
@@ -206,7 +207,7 @@ export class CommunicationsController {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error update communication')
+      throw new BadRequestException('Error update communication');
     }
   }
 
@@ -225,11 +226,16 @@ export class CommunicationsController {
     @Req() req: CustomRequest,
   ) {
     try {
-      const accountId = req.user?.id || ip.address();
+      const accountId =
+        req.user?.id ||
+        req.headers['client-ip'] ||
+        ip.address();
+
+      Logger.log("View communication by accountId: " + accountId, "CommunicationsController");
 
       return this.communicationsService.getCommunicationByCommunicationId(
         id,
-        accountId,
+        accountId as string,
       );
     } catch (error) {
       if (error instanceof Error) {
@@ -300,7 +306,6 @@ export class CommunicationsController {
     listImages: ResizeImageResult[] | undefined,
   ) {
     try {
-
       updateCommunicationDto.id = id;
       updateCommunicationDto.images = listImages;
 
@@ -320,20 +325,21 @@ export class CommunicationsController {
   @Delete('delete/:id')
   @UseGuards(AuthGuard)
   async deleteCommunication(
-    @Param('id') id: string, @Req() req: CustomRequest
+    @Param('id') id: string,
+    @Req() req: CustomRequest,
   ) {
     try {
       const accountId = req.user?.id ? req.user.id : '';
 
       if (!accountId) {
-        throw new BadRequestException('Authentication')
+        throw new BadRequestException('Authentication');
       }
       await this.communicationsService.deleteCommunication(+id, accountId);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Communication deleted successfully'
-      }
+        message: 'Communication deleted successfully',
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -342,20 +348,17 @@ export class CommunicationsController {
     }
   }
 
-
   @Delete('by-admin/:id')
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
-  async deleteCommunicationByAdmin (
-    @Param('id') id: string,
-  ){
+  async deleteCommunicationByAdmin(@Param('id') id: string) {
     try {
       await this.communicationsService.deleteCommunicationByAdmin(+id);
 
       return {
         statusCode: HttpStatus.OK,
-        message: 'Communication deleted successfully'
-      }
+        message: 'Communication deleted successfully',
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);

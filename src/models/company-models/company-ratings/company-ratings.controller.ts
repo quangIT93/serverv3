@@ -18,8 +18,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CompanyRatingsInterceptor } from './interceptors/company-ratings.interceptor';
 
-@Controller('company-ratings')
 @ApiTags('Company-ratings')
+@Controller('company-ratings')
 export class CompanyRatingsController {
   constructor(private readonly companyRatingsService: CompanyRatingsService) {}
 
