@@ -158,7 +158,7 @@ import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
         
         name: 'short',
         ttl: 1000,
-        limit: 300,
+        limit: 3000,
       },
       // {
       //   name: 'medium',
