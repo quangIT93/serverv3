@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserService } from 'src/models/users/users.service';
-
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
 @Injectable()
 export class ProfilesService {
@@ -13,6 +13,9 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
     private readonly userService: UserService,
+
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
   ) {}
 
   // create(_createProfileDto: CreateProfileDto) {
@@ -49,7 +52,7 @@ export class ProfilesService {
           'profilesEducation.academicType',
           'profilesCv',
           'jobType',
-          
+
           'company',
           'company.companyRole',
           'company.companySize',
@@ -63,7 +66,7 @@ export class ProfilesService {
         // relationLoadStrategy: 'query',
         // relationLoadStrategy: 'join'
       });
-      
+
       return result;
     } catch (error) {
       throw error;
@@ -213,7 +216,7 @@ export class ProfilesService {
         // relationLoadStrategy: 'query',
         // relationLoadStrategy: 'join'
       });
-      
+
       return result;
     } catch (error) {
       throw error;
@@ -246,7 +249,7 @@ export class ProfilesService {
         // relationLoadStrategy: 'query',
         // relationLoadStrategy: 'join'
       });
-      
+
       return result;
     } catch (error) {
       throw error;
@@ -255,22 +258,21 @@ export class ProfilesService {
 
   async getProfileCompany(id: string) {
     try {
-      let result = await this.profileRepository.findOne({
-        relations: [
-          'company',
-          'company.companyRole',
-          'company.companySize',
-          'company.ward',
-          'company.ward.district',
-          'company.ward.district.province',
-          'company.category',
-          'company.companyImages',
-        ],
+      const result = await this.companyRepository.findOne({
         where: { accountId: id },
+        relations: [
+          'companyRole',
+          'companySize',
+          'ward',
+          'ward.district',
+          'ward.district.province',
+          'category',
+          'companyImages',
+        ],
         // relationLoadStrategy: 'query',
         // relationLoadStrategy: 'join'
       });
-      
+
       return result;
     } catch (error) {
       throw error;
