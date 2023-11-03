@@ -209,6 +209,7 @@ export class ProfilesService {
           'profilesLocations.province',
           'childCategories',
           'childCategories.parentCategory',
+          'company',
           // 'profilesExperiences',
           // 'profilesEducation',
         ],

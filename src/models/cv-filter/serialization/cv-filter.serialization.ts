@@ -3,7 +3,8 @@ import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 import { Language } from 'src/common/enum';
 import {
   categoryTranslator,
-  genderTranslator, locationTranslator,
+  genderTranslator,
+  locationTranslator,
 } from 'src/common/helper/translators';
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
@@ -22,9 +23,6 @@ export class CVFilterSerialization extends Profile {
     Object.assign(this, profile);
     this.lang = lang;
   }
-
-  @Exclude({ toPlainOnly: true })
-  override introduction!: string;
 
   @Exclude({ toPlainOnly: true })
   override gender!: number;
@@ -78,7 +76,7 @@ export class CVFilterSerialization extends Profile {
   override cvUrl!: string;
 
   @Exclude({ toPlainOnly: true })
-  override province!:Province;
+  override province!: Province;
 
   @Expose()
   get categoriesData() {
@@ -86,7 +84,6 @@ export class CVFilterSerialization extends Profile {
     return this.childCategories.map((category) => {
       return categoryTranslator(category, this.lang);
     });
-
   }
 
   @Expose()
@@ -103,7 +100,7 @@ export class CVFilterSerialization extends Profile {
     const result = this.profilesEducation.map((education) => {
       return new AcedemicTypesSerialization(education.academicType, this.lang);
     });
-    return filter(result)
+    return filter(result);
   }
 
   @Expose()
@@ -117,12 +114,36 @@ export class CVFilterSerialization extends Profile {
     if (!this.avatar) return null;
     return {
       avatar: this.avatar ? `${BUCKET_IMAGE_AVATAR}/${this.avatar}` : null,
-    }
+    };
   }
 
   @Expose()
   get birthdayData() {
     if (!this.birthday) return null;
     return birthdayTraslator(+this.birthday);
+  }
+
+  @Expose()
+  get hideEmail() {
+    if (!this.email) return null;
+
+    const index = this.email.indexOf('@');
+
+    if (index === -1) {
+      return null;
+    }
+
+    const average = index / 2;
+
+    return this.email.slice(0, average) + 'x'.repeat(5) + '@gmail.com';
+  }
+
+  @Expose()
+  get hidePhone() {
+    if (!this.phone) return null;
+
+    const index = Math.round(this.phone.length / 2);
+
+    return this.phone.slice(0, index) + 'x'.repeat(5);
   }
 }
