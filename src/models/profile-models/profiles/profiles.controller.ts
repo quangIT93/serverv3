@@ -24,6 +24,9 @@ import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-
 import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
 // import { ThrottlerGuard } from '@nestjs/throttler';
 import { Throttle } from '@nestjs/throttler';
+// import { ProfileInformationSerialization } from './serialization/profile-information.serialization';
+import { ProfileInformationInterceptor } from './interceptor/profile-information.interceptor';
+import { ProfileMoreInformationInterceptor } from './interceptor/profile-more-information.interceptor';
 
 
 @ApiTags('profiles')
@@ -104,4 +107,57 @@ export class ProfilesController {
       throw new BadRequestException('Something went wrong');
     }
   }
+
+
+  // @Throttle({
+  //   default: {
+  //     limit: 3,
+  //     ttl: 1000,
+  //   },
+  // })
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileInformationInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('me/information')
+  async information(@Req() req: CustomRequest) {
+    const id = req.user?.id;
+
+    if (!id) {
+      return null;
+    }
+    const profile = await this.profilesService.getProfileInformation(id);
+
+    return profile;
+  }
+
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileMoreInformationInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('me/information/more')
+  async informationMore(@Req() req: CustomRequest) {
+    const id = req.user?.id;
+
+    if (!id) {
+      return null;
+    }
+    const profile = await this.profilesService.getProfileMoreInformation(id);
+
+    return profile;
+  }
+
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('me/company')
+  async company(@Req() req: CustomRequest) {
+    const id = req.user?.id;
+
+    if (!id) {
+      return null;
+    }
+    const profile = await this.profilesService.getProfileCompany(id);
+
+    return profile;
+  }
+
 }
