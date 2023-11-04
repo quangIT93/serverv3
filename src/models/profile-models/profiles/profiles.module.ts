@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { ProfilesController } from './profiles.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,23 +13,24 @@ import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.modu
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middleware';
 import { UserModule } from 'src/models/users/users.module';
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Profile
-    ]),
+    TypeOrmModule.forFeature([Profile, Company]),
     AuthModule,
     JwtAccessTokenServiceModule,
     AWSModule,
-    UserModule
+    UserModule,
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],
-  exports: [ProfilesService]
+  exports: [ProfilesService],
 })
-export class ProfilesModule implements NestModule{
+export class ProfilesModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UnlockMiddleware).forRoutes({ path: 'profiles/:id', method: RequestMethod.GET });
+    consumer
+      .apply(UnlockMiddleware)
+      .forRoutes({ path: 'profiles/:id', method: RequestMethod.GET });
   }
 }

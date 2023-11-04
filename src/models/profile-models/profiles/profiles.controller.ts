@@ -13,6 +13,7 @@ import {
   Put,
   BadRequestException,
   HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -24,7 +25,10 @@ import { ProfileDetailCandidateInterceptor } from './interceptor/profile-detail-
 import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
 // import { ThrottlerGuard } from '@nestjs/throttler';
 import { Throttle } from '@nestjs/throttler';
-
+// import { ProfileInformationSerialization } from './serialization/profile-information.serialization';
+import { ProfileInformationInterceptor } from './interceptor/profile-information.interceptor';
+import { ProfileMoreInformationInterceptor } from './interceptor/profile-more-information.interceptor';
+import { CompanyInterceptor } from 'src/models/company-models/companies/interceptors/company.interceptor';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -56,22 +60,24 @@ export class ProfilesController {
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @UseInterceptors(ClassSerializerInterceptor, ProfileDetailCandidateInterceptor)
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    ProfileDetailCandidateInterceptor,
+  )
   async getProfileById(@Param('id') id: string, @Req() req: CustomRequest) {
     try {
-
       const accountId = req.user?.id;
 
       if (!accountId) {
         throw new BadRequestException('Account not found');
       }
-      
-      return await this.profilesService.getProfileById(id, accountId)
+
+      return await this.profilesService.getProfileById(id, accountId);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error getting profile')
+      throw new BadRequestException('Error getting profile');
     }
   }
 
@@ -102,6 +108,81 @@ export class ProfilesController {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Something went wrong');
+    }
+  }
+
+  // @Throttle({
+  //   default: {
+  //     limit: 3,
+  //     ttl: 1000,
+  //   },
+  // })
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileInformationInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('me/information')
+  async information(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+      const profile = await this.profilesService.getProfileInformation(id);
+
+      return profile;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
+
+  @ApiBearerAuth()
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    ProfileMoreInformationInterceptor,
+  )
+  @UseGuards(AuthGuard)
+  @Get('me/information/more')
+  async informationMore(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+      const profile = await this.profilesService.getProfileMoreInformation(id);
+
+      return profile;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
+
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, CompanyInterceptor)
+  @UseGuards(AuthGuard)
+  @Get('me/company')
+  async company(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+      const profile = await this.profilesService.getProfileCompany(id);
+
+      return profile;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
     }
   }
 }

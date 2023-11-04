@@ -1,11 +1,8 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { Profile } from "../entities";
-import { BUCKET_CV, BUCKET_IMAGE_AVATAR } from 'src/common/constants';
-import { categoryTranslator, genderTranslator, locationTranslator } from 'src/common/helper/translators';
 import { Province } from 'src/models/locations/provinces/entities';
 import { District } from 'src/models/locations/districts/entities';
 import { Language } from 'src/common/enum';
-import { CompanySerialization } from 'src/models/company-models/companies/serialization/company.serialization';
 import { ProfilesAwardSerialization } from '../../profiles-awards/serialization/profiles-award.serialization';
 import { ProfilesAward } from '../../profiles-awards/entities/profiles-award.entity';
 import { ProfilesCourse } from '../../profiles-courses/entities/profiles-course.entity';
@@ -28,7 +25,7 @@ import { ProfilesCvsSerialization } from '../../profiles-cvs/serialization/profi
 import { ProfilesEducation } from '../../profiles-educations/entities/profiles-education.entity';
 import { ProfilesEducationSerialization } from '../../profiles-educations/serialization/profiles-education.serialization';
 
-export class ProfileSerialization extends Profile {
+export class ProfileMoreInformationSerialization extends Profile {
     @Exclude({ toPlainOnly: true })
     lang: Language;
 
@@ -55,35 +52,36 @@ export class ProfileSerialization extends Profile {
 
     // exclude cvUrl
     // return cvUrlPath
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override cvUrl!: string;
 
     // exclude avatar
     // return avatarPath
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override avatar!: string;
     
     // exclude province
     // return addressText
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override province!: Province;
 
     //exclude profilesLocations
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override profilesLocations!: District[];
 
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override childCategories!: any[];
 
     // Transform createdAt to timestamp
-    @Transform(({ value }) => new Date(value).getTime())
+    // @Transform(({ value }) => new Date(value).getTime())
+    @Exclude()
     override createdAt!: Date;
 
     // Transform updatedAt to timestamp
-    @Transform(({ value }) => new Date(value).getTime())
+    @Exclude()
     override updatedAt!: Date;
     
-    @Exclude({ toPlainOnly: true })
+    @Exclude()
     override company: any;
 
     @Exclude({ toPlainOnly: true })
@@ -124,55 +122,55 @@ export class ProfileSerialization extends Profile {
 
 
     // expose addressText
-    @Expose()
-    get addressText() {
-        if (!this.address) return null;
-        return locationTranslator(this.province, this.lang);
-    }
+    // @Expose()
+    // get addressText() {
+    //     if (!this.address) return null;
+    //     return locationTranslator(this.province, this.lang);
+    // }
     
-    @Expose()
-    get cvUrlPath() {
-        if (!this.cvUrl) return null;
-        return `${BUCKET_CV}/${this.accountId}/${this.cvUrl}`;
-    }
+    // @Expose()
+    // get cvUrlPath() {
+    //     if (!this.cvUrl) return null;
+    //     return `${BUCKET_CV}/${this.accountId}/${this.cvUrl}`;
+    // }
     
-    @Transform(({ value }) => +value)
+    @Exclude()
     override birthday!: string;
 
-    @Expose()
-    get genderText() {
-        if (this.gender !== 0 && this.gender !== 1) return null;
-        return genderTranslator(this.gender, this.lang);
-    }
+    // @Expose()
+    // get genderText() {
+    //     if (this.gender !== 0 && this.gender !== 1) return null;
+    //     return genderTranslator(this.gender, this.lang);
+    // }
 
-    @Expose()
-    get avatarPath() {
-        if (!this.avatar) return null;
-        return `${BUCKET_IMAGE_AVATAR}/${this.avatar}`;
-    }
+    // @Expose()
+    // get avatarPath() {
+    //     if (!this.avatar) return null;
+    //     return `${BUCKET_IMAGE_AVATAR}/${this.avatar}`;
+    // }
 
 
-    @Expose()
-    get profileLocations() {
-        if (!this.profilesLocations) return null;
-        return this.profilesLocations.map(profileLocation => {
-            return locationTranslator(profileLocation, this.lang);
-        })
-    }
+    // @Expose()
+    // get profileLocations() {
+    //     if (!this.profilesLocations) return null;
+    //     return this.profilesLocations.map(profileLocation => {
+    //         return locationTranslator(profileLocation, this.lang);
+    //     })
+    // }
 
-    @Expose()
-    get profileCategories() {
-        if (!this.childCategories) return null;
-        return this.childCategories.map(category => {
-            return categoryTranslator(category, this.lang);
-        })
-    }
+    // @Expose()
+    // get profileCategories() {
+    //     if (!this.childCategories) return null;
+    //     return this.childCategories.map(category => {
+    //         return categoryTranslator(category, this.lang);
+    //     })
+    // }
 
-    @Expose()
-    get companyInfomation() {
-        if (!this.company) return null;
-        return new CompanySerialization(this.company, this.lang);
-    }
+    // @Expose()
+    // get companyInfomation() {
+    //     if (!this.company) return null;
+    //     return new CompanySerialization(this.company, this.lang);
+    // }
 
     @Expose()
     get profileAwards() {
@@ -242,10 +240,10 @@ export class ProfileSerialization extends Profile {
         return new JobTypesSerialization(this.jobType, this.lang);
     }
 
-    @Expose()
-    get typeRoleData() {
-        return this.user?.type ?? null;
-    }
+    // @Expose()
+    // get typeRoleData() {
+    //     return this.user?.type ?? null;
+    // }
 
     @Expose()
     get profilesCvs() {

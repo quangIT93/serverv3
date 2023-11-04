@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserService } from 'src/models/users/users.service';
-
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
 @Injectable()
 export class ProfilesService {
@@ -13,6 +13,9 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
     private readonly userService: UserService,
+
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
   ) {}
 
   // create(_createProfileDto: CreateProfileDto) {
@@ -35,6 +38,7 @@ export class ProfilesService {
           'childCategories.parentCategory',
           'profilesExperiences',
           'profilesEducation',
+
           'profilesAward',
           'profilesCourse',
           'profilesHobby',
@@ -48,6 +52,7 @@ export class ProfilesService {
           'profilesEducation.academicType',
           'profilesCv',
           'jobType',
+
           'company',
           'company.companyRole',
           'company.companySize',
@@ -58,10 +63,10 @@ export class ProfilesService {
           'company.companyImages',
         ],
         where: { accountId: id },
-        relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'query',
         // relationLoadStrategy: 'join'
       });
-      
+
       return result;
     } catch (error) {
       throw error;
@@ -193,4 +198,85 @@ export class ProfilesService {
   // remove(id: number) {`
   //   return `This action removes a #${id} profile`;
   // }`
+
+  async getProfileInformation(id: string) {
+    try {
+      let result = await this.profileRepository.findOne({
+        relations: [
+          'user',
+          'province',
+          'profilesLocations',
+          'profilesLocations.province',
+          'childCategories',
+          'childCategories.parentCategory',
+          'company',
+          // 'profilesExperiences',
+          // 'profilesEducation',
+        ],
+        where: { accountId: id },
+        // relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'join'
+      });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProfileMoreInformation(id: string) {
+    try {
+      let result = await this.profileRepository.findOne({
+        relations: [
+          'profilesExperiences',
+          'profilesEducation',
+          'profilesAward',
+          'profilesCourse',
+          'profilesHobby',
+          'profilesActivity',
+          'profilesIntership',
+          'profilesReference',
+          'profilesSkill',
+          'profilesSkill.levelType',
+          'profileLanguage',
+          'profileLanguage.levelTypeLanguage',
+          'profilesEducation.academicType',
+          'profilesCv',
+          'jobType',
+          // 'profilesExperiences',
+          // 'profilesEducation',
+        ],
+        where: { accountId: id },
+        // relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'join'
+      });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProfileCompany(id: string) {
+    try {
+      const result = await this.companyRepository.findOne({
+        where: { accountId: id },
+        relations: [
+          'companyRole',
+          'companySize',
+          'ward',
+          'ward.district',
+          'ward.district.province',
+          'category',
+          'companyImages',
+        ],
+        // relationLoadStrategy: 'query',
+        // relationLoadStrategy: 'join'
+      });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

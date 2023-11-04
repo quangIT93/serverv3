@@ -25,9 +25,6 @@ export class CVFilterSerialization extends Profile {
   }
 
   @Exclude({ toPlainOnly: true })
-  override introduction!: string;
-
-  @Exclude({ toPlainOnly: true })
   override gender!: number;
 
   @Exclude({ toPlainOnly: true })
@@ -124,5 +121,29 @@ export class CVFilterSerialization extends Profile {
   get birthdayData() {
     if (!this.birthday) return null;
     return birthdayTraslator(+this.birthday);
+  }
+
+  @Expose()
+  get hideEmail() {
+    if (!this.email) return null;
+
+    const index = this.email.indexOf('@');
+
+    if (index === -1) {
+      return null;
+    }
+
+    const average = index / 2;
+
+    return this.email.slice(0, average) + 'x'.repeat(5) + '@gmail.com';
+  }
+
+  @Expose()
+  get hidePhone() {
+    if (!this.phone) return null;
+
+    const index = Math.round(this.phone.length / 2);
+
+    return this.phone.slice(0, index) + 'x'.repeat(5);
   }
 }
