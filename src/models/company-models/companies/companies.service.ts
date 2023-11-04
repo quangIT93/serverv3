@@ -64,8 +64,8 @@ export class CompaniesService {
           'companies.bookmarkedCompany',
           'bookmarkedCompany',
           'bookmarkedCompany.accountId = :accountId',
-        )
-        .setParameter('accountId', accountId);
+          { accountId },
+        );
 
       if (addresses) {
         companies.andWhere('district.id IN (:...addresses)', {
@@ -102,27 +102,45 @@ export class CompaniesService {
     }
   }
 
-  async findById(id: number) {
-    const data = await this.companyRepository.findOne({
-      relations: [
-        'ward',
-        'ward.district',
-        'ward.district.province',
-        'category',
-        'companyRole',
-        'companySize',
-        'companyImages',
-        'posts',
-        'posts.ward',
-        'posts.ward.district',
-        'posts.ward.district.province',
-        'posts.postImages',
-        'posts.jobTypeData',
-        'posts.salaryTypeData',
-        'posts.companyResource',
-      ],
-      where: { id },
-    });
+  async findById(id: number, accountId?: string) {
+    // const data = await this.companyRepository.findOne({
+    //   relations: [
+    //     'ward',
+    //     'ward.district',
+    //     'ward.district.province',
+    //     'category',
+    //     'companyRole',
+    //     'companySize',
+    //     'companyImages',
+    //     'posts',
+    //     'posts.ward',
+    //     'posts.ward.district',
+    //     'posts.ward.district.province',
+    //     'posts.postImages',
+    //     'posts.jobTypeData',
+    //     'posts.salaryTypeData',
+    //     'posts.companyResource',
+    //     'bookmarkedCompany',
+    //   ],
+    //   where: { id },
+    // });
+    const data = this.companyRepository
+      .createQueryBuilder('company')
+      .where('company.id = :id', { id })
+      .leftJoinAndSelect('company.ward', 'ward')
+      .leftJoinAndSelect('ward.district', 'district')
+      .leftJoinAndSelect('district.province', 'province')
+      .leftJoinAndSelect('company.category', 'category')
+      .leftJoinAndSelect('company.companySize', 'companySize')
+      .leftJoinAndSelect('company.companyImages', 'companyImages')
+      .leftJoinAndSelect('company.companyRole', 'companyRole')
+      .leftJoinAndSelect(
+        'company.bookmarkedCompany',
+        'bookmarkedCompany',
+        'bookmarkedCompany.accountId = :accountId',
+        { accountId },
+      )
+      .getOne();
 
     return data;
   }

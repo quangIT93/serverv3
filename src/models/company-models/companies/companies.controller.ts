@@ -157,10 +157,14 @@ export class CompaniesController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
   @UseInterceptors(ClassSerializerInterceptor, CompanyDetailInterceptor)
-  findById(@Param('id') id: number) {
+  findById(@Param('id') id: number, @Req() req: CustomRequest) {
     try {
-      return this.companiesService.findById(id);
+      const accountId = req.user?.id;
+
+      return this.companiesService.findById(id, accountId);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
