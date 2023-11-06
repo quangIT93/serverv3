@@ -11,12 +11,13 @@ export class CompanyBookmarkedInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((companyBookmarked: any) => {
         const lang = context.switchToHttp().getResponse().lang;
-        console.log('First');
+
         if (!companyBookmarked || !companyBookmarked.data) return null;
 
+        console.log(companyBookmarked.data);
         const data = companyBookmarked?.data.map(
-          (companyBookmarked: CompanyBookmarked) => {
-            return new CompanyBookmarkedSerialization(companyBookmarked, lang);
+          (bookmarked: CompanyBookmarked) => {
+            return new CompanyBookmarkedSerialization(bookmarked, lang);
           },
         );
 
@@ -27,6 +28,7 @@ export class CompanyBookmarkedInterceptor implements NestInterceptor {
             bookmarkedCompany: data,
             is_over: companyBookmarked.is_over,
           },
+          message: context.switchToHttp().getResponse().statusMessage,
         };
       }),
     );

@@ -90,7 +90,13 @@ export class PostsService {
       throw new NotFoundException();
     }
 
-    const data = await findByHotTopicQuery(this.postsRepository, query[0].query, page, limit, _provinceId);
+    const data = await findByHotTopicQuery(
+      this.postsRepository,
+      query[0].query,
+      page,
+      limit,
+      _provinceId,
+    );
 
     data.title = query[0].title;
 
@@ -261,9 +267,13 @@ export class PostsService {
       }
     } else if (queries?.parentCategoryId) {
       if (queries?.parentCategoryId) {
-        const parent = await this.parentCategoryService.findOne(queries.parentCategoryId);
+        const parent = await this.parentCategoryService.findOne(
+          queries.parentCategoryId,
+        );
         if (parent && parent.childCategories) {
-          listCategories.push(...parent.childCategories.map((child) => child.id));
+          listCategories.push(
+            ...parent.childCategories.map((child) => child.id),
+          );
         }
       }
     }
@@ -288,46 +298,98 @@ export class PostsService {
               AND (posts.end_date IS NULL
               OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
               AND province.id IN (${queries.provinceId.join(',')})
-              ${listCategories.length > 0 ? `AND posts_categories.category_id IN (${listCategories.join(',')})` : ''}
+              ${
+                listCategories.length > 0
+                  ? `AND posts_categories.category_id IN (${listCategories.join(
+                      ',',
+                    )})`
+                  : ''
+              }
               AND ward.district_id NOT IN (SELECT location_id FROM profiles_locations WHERE account_id = '${accountId}')
       GROUP BY posts.id
       ORDER BY posts.id DESC
       LIMIT ${limit}
       OFFSET ${page * limit}
-      `
-    );
+      `);
 
     if (listsId.length === 0) {
       return [];
     }
 
-    return await this.postsRepository.createQueryBuilder('posts')
-    .select([
-      'posts.id',
-      'posts.title',
-      'posts.accountId',
-      'posts.companyName',
-      'posts.address',
-      'posts.salaryMin',
-      'posts.salaryMax',
-      'posts.moneyType',
-      'posts.createdAt',
-      'posts.createdAtDate',
-      'posts.companyResourceId',
-    ])
-    .useIndex('descending_post_id_idx')
-    .innerJoinAndSelect('posts.postsCategories', 'categories')
-    // .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
-    .innerJoinAndSelect('posts.ward', 'ward')
-    .innerJoinAndSelect('ward.district', 'district')
-    .innerJoinAndSelect('district.province', 'province')
-    .leftJoinAndSelect('posts.postImages', 'postImages')
-    .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
-    .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
-    .innerJoinAndSelect('posts.companyResource', 'companyResource')
-    .where('posts.id IN (:...listsId)', { listsId: listsId.map((item: any) => item.id) })
-    .orderBy('posts.id', 'DESC')
-    .getMany();
+    return await this.postsRepository
+      .createQueryBuilder('posts')
+      .select([
+        'posts.id',
+        'posts.title',
+        'posts.accountId',
+        'posts.companyName',
+        'posts.address',
+        'posts.salaryMin',
+        'posts.salaryMax',
+        'posts.moneyType',
+        'posts.createdAt',
+        'posts.createdAtDate',
+        'posts.companyResourceId',
+      ])
+      .useIndex('descending_post_id_idx')
+      .innerJoinAndSelect('posts.postsCategories', 'categories')
+      // .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
+      .innerJoinAndSelect('posts.ward', 'ward')
+      .innerJoinAndSelect('ward.district', 'district')
+      .innerJoinAndSelect('district.province', 'province')
+      .leftJoinAndSelect('posts.postImages', 'postImages')
+      .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
+      .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
+      .innerJoinAndSelect('posts.companyResource', 'companyResource')
+      .where('posts.id IN (:...listsId)', {
+        listsId: listsId.map((item: any) => item.id),
+      })
+      .orderBy('posts.id', 'DESC')
+      .getMany();
+  }
 
+  async findPostsByCompanyId(
+    id: number,
+    limit: number,
+    page: number,
+    accountId?: string,
+  ) {
+    try {
+      const posts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .leftJoinAndSelect('posts.companyInformation', 'companyInformation')
+        .where('companyInformation.id = :id', { id })
+        .leftJoinAndSelect('posts.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
+        .leftJoinAndSelect('posts.jobTypeData', 'jobTypeData')
+        .leftJoinAndSelect('posts.companyResource', 'companyResource')
+        .leftJoinAndSelect('posts.postImages', 'postImages')
+        .leftJoinAndSelect('posts.categories', 'categories')
+        .leftJoinAndSelect('categories.parentCategory', 'parentCategory')
+        .leftJoinAndSelect(
+          'posts.bookmarks',
+          'bookmarks',
+          'bookmarks.accountId = :accountId',
+          { accountId },
+        );
+      const total = await posts.getCount();
+
+      const data = await posts
+        .take(limit)
+        .skip(page)
+        .orderBy('posts.updatedAt', 'DESC')
+        .getMany();
+
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 }

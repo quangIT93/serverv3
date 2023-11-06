@@ -20,10 +20,11 @@ export class CompanyRatingsInterceptor implements NestInterceptor {
           status: _context.switchToHttp().getResponse().statusCode,
           data: {
             total: companyRatings.total,
-            companyRatings: data,
             averageRated: companyRatings.averageRated,
+            companyRatings: data,
+            is_over: companyRatings.is_over,
           },
-          message: _context.switchToHttp().getRequest().statusMessage,
+          message: _context.switchToHttp().getResponse().statusMessage,
         };
       }),
     );

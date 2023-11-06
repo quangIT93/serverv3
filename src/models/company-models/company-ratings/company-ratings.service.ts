@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyRating } from './entities/company-rating.entity';
 import { Repository } from 'typeorm';
 import { Company } from '../companies/entities/company.entity';
-import { User } from 'src/models/users/entities';
 
 @Injectable()
 export class CompanyRatingsService {
@@ -14,12 +13,10 @@ export class CompanyRatingsService {
     private companyRatingRepository: Repository<CompanyRating>,
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
-    @InjectRepository(User)
-    private UserRepository: Repository<User>,
   ) {}
 
   async create(createCompanyRatingDto: CreateCompanyRatingDto) {
-    const { companyId, accountId } = createCompanyRatingDto;
+    const { companyId } = createCompanyRatingDto;
 
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
@@ -28,15 +25,7 @@ export class CompanyRatingsService {
     if (!company) {
       throw new BadRequestException('Company not found');
     }
-
-    const user = await this.UserRepository.findOne({
-      where: { id: accountId },
-    });
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
+    console.log(createCompanyRatingDto);
     const companyRating = this.companyRatingRepository.create(
       createCompanyRatingDto,
     );
@@ -47,7 +36,7 @@ export class CompanyRatingsService {
     return `This action returns all companyRatings`;
   }
 
-  async findAllByCompany(id: number) {
+  async findAllByCompany(id: number, limit: number, page: number) {
     try {
       const company = await this.companyRepository.findOne({
         where: { id },
@@ -60,6 +49,12 @@ export class CompanyRatingsService {
       const data = await this.companyRatingRepository.find({
         relations: ['account', 'account.profile'],
         where: { companyId: id },
+        take: limit,
+        skip: page * limit,
+      });
+
+      const total = await this.companyRatingRepository.count({
+        where: { companyId: id },
       });
 
       const totalRated = data.reduce((total, item) => {
@@ -69,9 +64,11 @@ export class CompanyRatingsService {
       const averageRated = Number((totalRated / data.length).toFixed(1));
 
       return {
-        total: data.length,
+        total,
         data,
         averageRated,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;

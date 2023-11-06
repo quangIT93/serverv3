@@ -18,6 +18,7 @@ export class CompaniesInterceptor implements NestInterceptor {
           data: {
             total: company.total,
             companies: data,
+            is_over: company.is_over,
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };

@@ -25,8 +25,8 @@ export class CompanyBookmarkedController {
     private readonly companyBookmarkedService: CompanyBookmarkedService,
   ) {}
 
-  @ApiBearerAuth()
   @Post()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async create(
     @Body() createCompanyBookmarkedDto: CreateCompanyBookmarkedDto,
@@ -63,22 +63,28 @@ export class CompanyBookmarkedController {
     }
   }
 
-  @ApiBearerAuth()
   @Get('account')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(ClassSerializerInterceptor, CompanyBookmarkedInterceptor)
   async findAllByAccount(@Req() req: CustomRequest) {
     try {
       const accountId = req.user?.id;
-      const { limit, page } = req.query;
+      const { limit, page, sort } = req.query;
 
       if (!accountId) {
         throw new UnauthorizedException();
       }
+
+      if (sort && sort !== 'DESC' && sort !== 'ASC') {
+        throw new BadRequestException('Param sort is DESC or ASC');
+      }
+
       return await this.companyBookmarkedService.findAllByAccount(
         accountId,
         limit ? +limit : 20,
         page ? +page : 0,
+        (sort as 'DESC' | 'ASC') ? (sort as 'DESC' | 'ASC') : 'DESC',
       );
     } catch (error) {
       if (error instanceof Error) {

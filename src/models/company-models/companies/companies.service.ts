@@ -96,6 +96,8 @@ export class CompaniesService {
       return {
         total,
         data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;

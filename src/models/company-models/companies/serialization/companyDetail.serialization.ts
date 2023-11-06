@@ -9,11 +9,10 @@ import { ParentCategory } from 'src/models/categories/parents/entities/parent.en
 import { CompanySizeSerialization } from '../../company-sizes/serialization/company-size.serialization';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { CompanyImagesSerializer } from '../../company-images/serializers/company-images.serializer';
-import { Post } from 'src/models/post-models/posts/entities';
-import { PostNormally } from 'src/models/post-models/posts/serialization/normally-post.class';
 import { BUCKET_IMAGE_COMPANY_ICON } from 'src/common/constants';
 import { CompanyRoleSerialization } from '../../company-roles/serialization/company-role.serializarion';
 import { CompanyRole } from '../../company-roles/entities/company-role.entity';
+import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
 
 export class CompanyDetailSerialization extends Company {
   @Exclude()
@@ -41,9 +40,6 @@ export class CompanyDetailSerialization extends Company {
   override categoryId!: number;
 
   @Exclude({ toPlainOnly: true })
-  override posts!: Post[];
-
-  @Exclude({ toPlainOnly: true })
   override ward!: any;
 
   @Exclude({ toPlainOnly: true })
@@ -57,6 +53,9 @@ export class CompanyDetailSerialization extends Company {
 
   @Exclude({ toPlainOnly: true })
   override companyRole!: CompanyRole;
+
+  @Exclude({ toPlainOnly: true })
+  override bookmarkedCompany!: CompanyBookmarked[];
 
   @Transform(({ value }) => new Date(value).getTime())
   override createdAt!: Date;
@@ -107,10 +106,7 @@ export class CompanyDetailSerialization extends Company {
   }
 
   @Expose()
-  get companyPosts() {
-    if (!this.posts) return null;
-    return this.posts.map((post) =>
-      Object.assign(new PostNormally(post, this.lang)),
-    );
+  get isBookmarked() {
+    return this.bookmarkedCompany.length > 0 ? true : false;
   }
 }

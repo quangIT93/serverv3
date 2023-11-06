@@ -5,6 +5,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -46,8 +47,10 @@ export class CompanyRating extends BaseEntity {
   updatedAt!: Date;
 
   @ManyToOne(() => Company, (company) => company.companyRatings)
+  @JoinColumn({ name: 'company_id' })
   company!: Company;
 
   @ManyToOne(() => User, (user) => user.companyRatings)
+  @JoinColumn({ name: 'account_id' })
   account!: User;
 }

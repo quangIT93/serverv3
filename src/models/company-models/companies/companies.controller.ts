@@ -133,8 +133,6 @@ export class CompaniesController {
     }
   }
 
-  // @Roles(Role.ADMIN)
-  // @UseGuards(AuthGuard)
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthNotRequiredGuard)

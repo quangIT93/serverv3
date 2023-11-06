@@ -39,13 +39,26 @@ export class CompanyBookmarkedService {
     }
   }
 
-  async findAllByAccount(accountId: string, limit: number, page: number) {
+  async findAllByAccount(
+    accountId: string,
+    limit: number,
+    page: number,
+    sort: 'DESC' | 'ASC',
+  ) {
     try {
       const data = await this.companyBookmarkedRepository.find({
         where: { accountId },
-        relations: ['company'],
+        relations: [
+          'company',
+          'company.bookmarkedCompany',
+          'company.posts',
+          'company.ward',
+          'company.ward.district',
+          'company.ward.district.province',
+        ],
         take: limit,
         skip: page * limit,
+        order: { createdAt: sort },
       });
 
       const total = await this.companyBookmarkedRepository.count({

@@ -16,7 +16,7 @@ export class CompanyInterceptor implements NestInterceptor {
         return {
           status: context.switchToHttp().getResponse().statusCode,
           data,
-          message: context.switchToHttp().getRequest().statusMessage,
+          message: context.switchToHttp().getResponse().statusMessage,
         };
       }),
     );
