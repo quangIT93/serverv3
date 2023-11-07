@@ -6,6 +6,7 @@ export const BUCKET_IMAGE_POST = `${BUCKET_IMAGE}/posts-images`
 export const BUCKET_IMAGE_POST_UPLOAD = `images/posts-images`
 export const BUCKET_IMAGE_BANNER = `${BUCKET_IMAGE}/banners`
 export const BUCKET_IMAGE_AVATAR = `${BUCKET_IMAGE}/avatar`
+export const BUCKET_IMAGE_AVATAR_UPLOAD = `images/avatar`
 export const BUCKET_IMAGE_THEME = `${BUCKET_IMAGE}/themes`
 export const BUCKET_IMAGE_APPLICATION = `${BUCKET_IMAGE}/applications`
 export const BUCKET_IMAGE_COMPANY_ICON = `${BUCKET_IMAGE}/icons/company`

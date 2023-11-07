@@ -33,7 +33,7 @@ import { CompanyInterceptor } from 'src/models/company-models/companies/intercep
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AvatarImagePipe } from './interceptor/avatar.interceptor';
 import { AWSService } from 'src/services/aws/aws.service';
-import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
+import {  BUCKET_IMAGE_AVATAR_UPLOAD } from 'src/common/constants';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -199,11 +199,11 @@ export class ProfilesController {
   @UseGuards(AuthGuard)
   @Put('me/avatar')
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fieldSize: 1024 * 1024 * 6 } }),
+    FileInterceptor('images', { limits: { fieldSize: 1024 * 1024 * 6 } }),
   )
   async updateAvatar(
     @Req() req: CustomRequest,
-    @UploadedFile(AvatarImagePipe) file: any,
+    @UploadedFile(AvatarImagePipe) images: any,
   ) {
     try {
       const id = req.user?.id;
@@ -212,15 +212,19 @@ export class ProfilesController {
         throw new UnauthorizedException();
       }
 
-      const profile = await this.profilesService.updateAvatar(
-        id,
-        file.originalname,
-      );
+      if (!images) {
+        throw new BadRequestException('File not found');
+      }
 
-      const uploadedAvatar = await this.awsService.uploadFile(file, {
-        BUCKET: BUCKET_IMAGE_AVATAR,
+      const uploadedAvatar = await this.awsService.uploadFile(images, {
+        BUCKET: BUCKET_IMAGE_AVATAR_UPLOAD,
         id,
       });
+
+      const profile = await this.profilesService.updateAvatar(
+        id,
+        images.originalname,
+      );
 
       return {
         statusCode: HttpStatus.OK,
