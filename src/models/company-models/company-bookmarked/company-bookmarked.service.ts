@@ -55,6 +55,8 @@ export class CompanyBookmarkedService {
           'company.ward',
           'company.ward.district',
           'company.ward.district.province',
+          'company.category',
+          'company.companySize',
         ],
         take: limit,
         skip: page * limit,

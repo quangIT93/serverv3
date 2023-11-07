@@ -105,27 +105,6 @@ export class CompaniesService {
   }
 
   async findById(id: number, accountId?: string) {
-    // const data = await this.companyRepository.findOne({
-    //   relations: [
-    //     'ward',
-    //     'ward.district',
-    //     'ward.district.province',
-    //     'category',
-    //     'companyRole',
-    //     'companySize',
-    //     'companyImages',
-    //     'posts',
-    //     'posts.ward',
-    //     'posts.ward.district',
-    //     'posts.ward.district.province',
-    //     'posts.postImages',
-    //     'posts.jobTypeData',
-    //     'posts.salaryTypeData',
-    //     'posts.companyResource',
-    //     'bookmarkedCompany',
-    //   ],
-    //   where: { id },
-    // });
     const data = this.companyRepository
       .createQueryBuilder('company')
       .where('company.id = :id', { id })

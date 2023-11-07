@@ -5,7 +5,7 @@ export function hideEmailFN(email: string) {
     return null;
   }
 
-  const average = index / 2;
+  const average = Math.round(index / 2);
 
   return email.slice(0, average) + 'x'.repeat(5) + '@gmail.com';
 }

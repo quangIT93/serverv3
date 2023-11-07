@@ -7,6 +7,8 @@ import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
+import { ParentCategoriesSerialization } from 'src/models/categories/parents/serialization/ParentCategoies.serialization';
+import { CompanySizeSerialization } from '../../company-sizes/serialization/company-size.serialization';
 
 export class CompaniesSerialization extends Company {
   @Exclude()
@@ -79,6 +81,18 @@ export class CompaniesSerialization extends Company {
   get companyLocation() {
     if (!this.ward) return null;
     return locationTranslator(this.ward, this.lang);
+  }
+
+  @Expose()
+  get categoryData() {
+    if (!this.category) return null;
+    return new ParentCategoriesSerialization(this.category, this.lang);
+  }
+
+  @Expose()
+  get companySizeData() {
+    if (!this.companySize) return null;
+    return new CompanySizeSerialization(this.companySize, this.lang);
   }
 
   @Expose()
