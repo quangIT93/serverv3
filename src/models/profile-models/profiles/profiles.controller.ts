@@ -218,7 +218,7 @@ export class ProfilesController {
 
       const uploadedAvatar = await this.awsService.uploadFile(images, {
         BUCKET: BUCKET_IMAGE_AVATAR_UPLOAD,
-        id,
+        // id,
       });
 
       const profile = await this.profilesService.updateAvatar(
