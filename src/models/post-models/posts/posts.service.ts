@@ -390,10 +390,9 @@ export class PostsService {
           { accountId },
         );
       const total = await posts.getCount();
-
       const data = await posts
         .take(limit)
-        .skip(page)
+        .skip(page * limit)
         .orderBy('posts.updatedAt', 'DESC')
         .getMany();
 

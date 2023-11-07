@@ -63,7 +63,7 @@ export class CompanyRatingsService {
 
       const data = await bookmarked
         .take(limit)
-        .skip(page)
+        .skip(page * limit)
         .orderBy('companyBookmarks.updatedAt', 'DESC')
         .getMany();
 

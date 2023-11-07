@@ -248,7 +248,7 @@ export class PostsController {
 
       return await this.postsService.findPostsByCompanyId(
         +id,
-        limit ? limit : 0,
+        limit ? limit : 20,
         page ? page : 0,
         accountId,
       );

@@ -89,7 +89,7 @@ export class CompaniesService {
 
       const data = await companies
         .take(limit ? limit : 20)
-        .skip(page ? page : 0)
+        .skip(page ? page * limit : 0)
         .orderBy('companies.updatedAt', 'DESC')
         .getMany();
 
