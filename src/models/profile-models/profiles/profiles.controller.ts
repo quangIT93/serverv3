@@ -14,6 +14,7 @@ import {
   BadRequestException,
   HttpStatus,
   UnauthorizedException,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -29,12 +30,19 @@ import { Throttle } from '@nestjs/throttler';
 import { ProfileInformationInterceptor } from './interceptor/profile-information.interceptor';
 import { ProfileMoreInformationInterceptor } from './interceptor/profile-more-information.interceptor';
 import { CompanyInterceptor } from 'src/models/company-models/companies/interceptors/company.interceptor';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AvatarImagePipe } from './interceptor/avatar.interceptor';
+import { AWSService } from 'src/services/aws/aws.service';
+import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
 
 @ApiTags('profiles')
 @Controller('profiles')
 @UseGuards(ThrottlerBehindProxyGuard)
 export class ProfilesController {
-  constructor(private readonly profilesService: ProfilesService) {}
+  constructor(
+    private readonly profilesService: ProfilesService,
+    private readonly awsService: AWSService,
+  ) {}
 
   @Throttle({
     default: {
@@ -190,20 +198,37 @@ export class ProfilesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(AuthGuard)
   @Put('me/avatar')
-  async updateAvatar(@Req() req: CustomRequest) {
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fieldSize: 1024 * 1024 * 6 } }),
+  )
+  async updateAvatar(
+    @Req() req: CustomRequest,
+    @UploadedFile(AvatarImagePipe) file: any,
+  ) {
     try {
       const id = req.user?.id;
 
       if (!id) {
         throw new UnauthorizedException();
       }
-      
-      // const profile = await this.profilesService.updateAvatar(id, req.file);
+
+      const profile = await this.profilesService.updateAvatar(
+        id,
+        file.originalname,
+      );
+
+      const uploadedAvatar = await this.awsService.uploadFile(file, {
+        BUCKET: BUCKET_IMAGE_AVATAR,
+        id,
+      });
 
       return {
         statusCode: HttpStatus.OK,
         message: 'Update avatar successfully',
-        // data: profile,
+        data: {
+          ...profile,
+          avatar: uploadedAvatar.Location,
+        },
       };
     } catch (error) {
       if (error instanceof Error) {

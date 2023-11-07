@@ -279,4 +279,23 @@ export class ProfilesService {
       throw error;
     }
   }
+
+  async updateAvatar(id: string, fileOriginalName: string) {
+    const profile = await this.profileRepository.findOne({
+      where: { accountId: id },
+    });
+
+    if (!profile) {
+      throw new BadRequestException('Profile not found');
+    }
+
+    await this.profileRepository.update(id, {
+      ...profile,
+      avatar: fileOriginalName,
+    });
+
+    return await this.profileRepository.findOne({
+      where: { accountId: id },
+    });
+  }
 }
