@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
 
-@Entity('company_Bookmarked')
+@Entity('company_bookmarked')
 export class CompanyBookmarked extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', nullable: false, name: 'account_id' })
   accountId!: string;
