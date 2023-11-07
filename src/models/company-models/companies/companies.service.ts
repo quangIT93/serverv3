@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -105,6 +105,14 @@ export class CompaniesService {
   }
 
   async findById(id: number, accountId?: string) {
+    const company = await this.companyRepository.findOne({
+      where: { id },
+    });
+
+    if (!company) {
+      throw new BadRequestException('Company not found');
+    }
+
     const data = this.companyRepository
       .createQueryBuilder('company')
       .where('company.id = :id', { id })

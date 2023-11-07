@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities';
@@ -22,6 +26,7 @@ import { NewestPostQueriesDto } from './dto/newest-queries.dto';
 import { NearByQueriesDto } from './dto/nearby-queries.dto';
 import { ParentService } from 'src/models/categories/parents/parents.service';
 import { isArray } from 'class-validator';
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 // import { HotTopicsService } from 'src/models/hot-topics/hot-topics.service';
 // import { CreatePostDto } from './dto/create-post.dto';
 
@@ -35,6 +40,8 @@ export class PostsService {
     private readonly postCategoriesService: PostsCategoriesService,
     private readonly postResourceService: PostResourceService,
     private readonly parentCategoryService: ParentService,
+    @InjectRepository(Company)
+    private readonly CompanyRepository: Repository<Company>,
   ) {}
 
   async findByAccountId(accountId: string): Promise<Post[]> {
@@ -355,6 +362,14 @@ export class PostsService {
     accountId?: string,
   ) {
     try {
+      const company = await this.CompanyRepository.findOne({
+        where: { id },
+      });
+
+      if (!company) {
+        throw new BadRequestException('Company not found');
+      }
+
       const posts = await this.postsRepository
         .createQueryBuilder('posts')
         .leftJoinAndSelect('posts.companyInformation', 'companyInformation')
