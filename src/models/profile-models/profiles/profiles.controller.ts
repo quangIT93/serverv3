@@ -185,4 +185,31 @@ export class ProfilesController {
       throw new BadRequestException('Error getting');
     }
   }
+
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(AuthGuard)
+  @Put('me/avatar')
+  async updateAvatar(@Req() req: CustomRequest) {
+    try {
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+      
+      // const profile = await this.profilesService.updateAvatar(id, req.file);
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Update avatar successfully',
+        // data: profile,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
 }
