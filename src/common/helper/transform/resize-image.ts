@@ -170,7 +170,7 @@ async function resize(
                     .toBuffer();
             } catch (error) {
                 console.log(error);
-                return buffer;
+                throw new Error('Error resize image');
             }
         case 'jpg':
         case 'jpeg':
@@ -187,10 +187,11 @@ async function resize(
                     .toBuffer();
             } catch (error) {
                 console.log(error);
-                return buffer;
+                throw new Error('Error resize image');
             }
         default:
-            return buffer;
+            throw new Error('Error resize image');
+
     }
 }
 
