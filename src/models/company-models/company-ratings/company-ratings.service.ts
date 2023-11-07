@@ -46,29 +46,37 @@ export class CompanyRatingsService {
         throw new BadRequestException('Company not found');
       }
 
-      const data = await this.companyRatingRepository.find({
-        relations: ['account', 'account.profile'],
-        where: { companyId: id },
-        take: limit,
-        skip: page * limit,
-      });
+      const bookmarked = this.companyRatingRepository
+        .createQueryBuilder('companyBookmarks')
+        .where('companyBookmarks.companyId = :id', { id })
+        .leftJoinAndSelect('companyBookmarks.account', 'account')
+        .leftJoinAndSelect('account.profile', 'profile');
 
-      const total = await this.companyRatingRepository.count({
-        where: { companyId: id },
-      });
+      const total = await bookmarked.getCount();
+      const bookmarks = await bookmarked.getMany();
 
-      const totalRated = data.reduce((total, item) => {
+      const totalRated = bookmarks.reduce((total, item) => {
         return total + Number(item.star);
       }, 0);
 
-      const averageRated = Number((totalRated / data.length).toFixed(1));
+      const averageRated = Number((totalRated / total).toFixed(1));
+
+      const data = await bookmarked
+        .take(limit)
+        .skip(page)
+        .orderBy('companyBookmarks.updatedAt', 'DESC')
+        .getMany();
 
       return {
         total,
         data,
         averageRated,
         is_over:
-          data.length === total ? true : data.length < limit ? true : false,
+          bookmarks.length === total
+            ? true
+            : bookmarks.length < limit
+            ? true
+            : false,
       };
     } catch (error) {
       throw error;
