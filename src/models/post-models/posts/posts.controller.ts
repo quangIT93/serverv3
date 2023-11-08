@@ -244,12 +244,13 @@ export class PostsController {
   ) {
     try {
       const accountId = req.user?.id;
-      const { limit, page } = req;
+      const { limit, page, status } = req.query;
 
       return await this.postsService.findPostsByCompanyId(
         +id,
-        limit ? limit : 20,
-        page ? page : 0,
+        limit ? +limit : 20,
+        page ? +page : 0,
+        status ? +status : 1,
         accountId,
       );
     } catch (error) {

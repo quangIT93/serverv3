@@ -44,28 +44,30 @@ export class CompanyBookmarkedService {
     limit: number,
     page: number,
     sort: 'DESC' | 'ASC',
+    status = 1,
   ) {
     try {
-      const data = await this.companyBookmarkedRepository.find({
-        where: { accountId },
-        relations: [
-          'company',
-          'company.bookmarkedCompany',
-          'company.posts',
-          'company.ward',
-          'company.ward.district',
-          'company.ward.district.province',
-          'company.category',
-          'company.companySize',
-        ],
-        take: limit,
-        skip: page * limit,
-        order: { createdAt: sort },
-      });
+      const bookmarked = this.companyBookmarkedRepository
+        .createQueryBuilder('companyBookmarked')
+        .where('companyBookmarked.accountId = :accountId', { accountId })
+        .leftJoinAndSelect('companyBookmarked.company', 'company')
+        .leftJoinAndSelect('company.bookmarkedCompany', 'bookmarkedCompany')
+        .leftJoinAndSelect('company.posts', 'post', 'post.status = :status', {
+          status,
+        })
+        .leftJoinAndSelect('company.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('company.category', 'category')
+        .leftJoinAndSelect('company.companySize', 'companySize');
 
-      const total = await this.companyBookmarkedRepository.count({
-        where: { accountId },
-      });
+      const total = await bookmarked.getCount();
+
+      const data = await bookmarked
+        .take(limit)
+        .skip(page * limit)
+        .orderBy('companyBookmarked.createdAt', sort)
+        .getMany();
 
       return {
         total,

@@ -50,8 +50,15 @@ export class CompaniesService {
 
   async findAll(query: FilterCompaniesDto) {
     try {
-      const { addresses, categories, companySizeId, limit, page, accountId } =
-        query;
+      const {
+        addresses,
+        categories,
+        companySizeId,
+        limit = 20,
+        page = 0,
+        accountId,
+        status = 1,
+      } = query;
       const companies = this.companyRepository
         .createQueryBuilder('companies')
         .leftJoinAndSelect('companies.ward', 'ward')
@@ -59,7 +66,12 @@ export class CompaniesService {
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('companies.category', 'category')
         .leftJoinAndSelect('companies.companySize', 'companySize')
-        .leftJoinAndSelect('companies.posts', 'posts')
+        .leftJoinAndSelect(
+          'companies.posts',
+          'posts',
+          'posts.status = :status',
+          { status },
+        )
         .leftJoinAndSelect(
           'companies.bookmarkedCompany',
           'bookmarkedCompany',
@@ -88,8 +100,8 @@ export class CompaniesService {
       const total = await companies.getCount();
 
       const data = await companies
-        .take(limit ? limit : 20)
-        .skip(page ? page * limit : 0)
+        .take(limit)
+        .skip(page * limit)
         .orderBy('companies.updatedAt', 'DESC')
         .getMany();
 

@@ -28,6 +28,10 @@ export class FilterCompaniesDto {
   @IsOptional()
   limit!: number;
 
+  @ApiProperty({ type: 'int', required: false, default: 1 })
+  @IsOptional()
+  status!: number;
+
   @ApiProperty({ type: 'int', required: false, default: 0 })
   @IsOptional()
   page!: number;

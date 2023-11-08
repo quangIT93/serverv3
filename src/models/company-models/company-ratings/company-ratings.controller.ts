@@ -61,11 +61,11 @@ export class CompanyRatingsController {
   @UseInterceptors(ClassSerializerInterceptor, CompanyRatingsInterceptor)
   findAllByCompany(@Param('id') id: number, @Req() req: CustomRequest) {
     try {
-      const { limit, page } = req;
+      const { limit, page } = req.query;
       return this.companyRatingsService.findAllByCompany(
         +id,
-        limit ? limit : 20,
-        page ? page : 0,
+        limit ? +limit : 20,
+        page ? +page : 0,
       );
     } catch (error) {
       if (error instanceof Error) {

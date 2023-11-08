@@ -42,9 +42,6 @@ export class PostsSerialization extends Post {
   override ward!: Ward;
 
   @Exclude({ toPlainOnly: true })
-  override status!: number;
-
-  @Exclude({ toPlainOnly: true })
   override companyResourceId!: number;
 
   @Exclude({ toPlainOnly: true })

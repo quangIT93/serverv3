@@ -359,6 +359,7 @@ export class PostsService {
     id: number,
     limit: number,
     page: number,
+    status = 1,
     accountId?: string,
   ) {
     try {
@@ -374,6 +375,7 @@ export class PostsService {
         .createQueryBuilder('posts')
         .leftJoinAndSelect('posts.companyInformation', 'companyInformation')
         .where('companyInformation.id = :id', { id })
+        .andWhere('posts.status = :status', { status })
         .leftJoinAndSelect('posts.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'province')
@@ -390,6 +392,12 @@ export class PostsService {
           { accountId },
         );
       const total = await posts.getCount();
+
+      // if (status) {
+      //   console.log('sta', status);
+      //   posts.andWhere('posts.status = :status', { status });
+      // }
+
       const data = await posts
         .take(limit)
         .skip(page * limit)
