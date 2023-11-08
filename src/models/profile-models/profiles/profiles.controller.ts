@@ -15,6 +15,7 @@ import {
   HttpStatus,
   UnauthorizedException,
   UploadedFile,
+  Logger,
 } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -206,6 +207,8 @@ export class ProfilesController {
     @UploadedFile(AvatarImagePipe) images: any,
   ) {
     try {
+      Logger.log("Update avatar")
+      
       const id = req.user?.id;
 
       if (!id) {
