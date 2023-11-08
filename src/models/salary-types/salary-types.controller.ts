@@ -1,34 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SalaryTypesService } from './salary-types.service';
-import { CreateSalaryTypeDto } from './dto/create-salary-type.dto';
-import { UpdateSalaryTypeDto } from './dto/update-salary-type.dto';
+import { Controller } from '@nestjs/common';
+// import { SalaryTypesService } from './salary-types.service';
 
 @Controller('salary-types')
 export class SalaryTypesController {
-  constructor(private readonly salaryTypesService: SalaryTypesService) {}
+  constructor() {}
 
-  @Post()
-  create(@Body() createSalaryTypeDto: CreateSalaryTypeDto) {
-    return this.salaryTypesService.create(createSalaryTypeDto);
-  }
+  // @Post()
+  // create(@Body() createSalaryTypeDto: CreateSalaryTypeDto) {
+  //   return this.salaryTypesService.create(createSalaryTypeDto);
+  // }
 
-  @Get()
-  findAll() {
-    return this.salaryTypesService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.salaryTypesService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.salaryTypesService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.salaryTypesService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSalaryTypeDto: UpdateSalaryTypeDto) {
-    return this.salaryTypesService.update(+id, updateSalaryTypeDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateSalaryTypeDto: UpdateSalaryTypeDto) {
+  //   return this.salaryTypesService.update(+id, updateSalaryTypeDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.salaryTypesService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.salaryTypesService.remove(+id);
+  // }
 }

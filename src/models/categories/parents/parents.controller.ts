@@ -21,7 +21,9 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { RoleGuard } from 'src/authentication/role.guard';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('parent')
+@ApiTags('ParentCategory')
 export class ParentController {
   constructor(private readonly parentService: ParentService) {}
 

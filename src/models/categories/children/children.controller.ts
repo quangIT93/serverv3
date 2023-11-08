@@ -6,7 +6,9 @@ import { CreateChildDto } from './dto/create-child.dto';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { RoleGuard } from 'src/authentication/role.guard';
 import { UpdateChildDto } from './dto/update-child.dto';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('children')
+@ApiTags('Children Controller')
 export class ChildrenController {
   constructor(private readonly childrenService: ChildrenService) {}
 
@@ -62,6 +64,8 @@ export class ChildrenController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   remove(@Param('id') id: string) {
     return this.childrenService.remove(+id);
   }

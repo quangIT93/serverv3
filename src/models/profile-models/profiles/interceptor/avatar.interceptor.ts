@@ -18,10 +18,9 @@ export class AvatarImagePipe
       }
 
       return await createResizeImage(file, {
-        width: 768,
-        height: 768,
+        width: 512,
+        height: 512,
         ext: 'png',
-        quanlity: 100,
       });
     } catch (error) {
       throw error;
