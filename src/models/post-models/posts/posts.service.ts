@@ -286,7 +286,7 @@ export class PostsService {
               AND (posts.expired_date IS NULL
               OR posts.expired_date >= NOW())
               AND (posts.end_date IS NULL
-              OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
+              OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
               AND province.id IN (${queries.provinceId.join(',')})
               ${listCategories.length > 0 ? `AND posts_categories.category_id IN (${listCategories.join(',')})` : ''}
               AND ward.district_id NOT IN (SELECT location_id FROM profiles_locations WHERE account_id = '${accountId}')
