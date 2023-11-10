@@ -5,6 +5,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpStatus,
   Param,
   ParseFilePipeBuilder,
   ParseIntPipe,
@@ -54,6 +55,29 @@ export class PostsController {
     private readonly postsService: PostsService,
     private readonly postNotification: PostNotificationsService,
   ) {}
+
+  @Get('account/checkPostedToday')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async checkUserPostedToday(@Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new UnauthorizedException();
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        data: await this.postsService.checkUserPostedToday(accountId),
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Getting error');
+    }
+  }
 
   @UseGuards(AuthGuard)
   @Get('account/:accountId')

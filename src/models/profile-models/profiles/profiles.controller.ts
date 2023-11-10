@@ -34,7 +34,7 @@ import { CompanyInterceptor } from 'src/models/company-models/companies/intercep
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AvatarImagePipe } from './interceptor/avatar.interceptor';
 import { AWSService } from 'src/services/aws/aws.service';
-import {  BUCKET_IMAGE_AVATAR_UPLOAD } from 'src/common/constants';
+import { BUCKET_IMAGE_AVATAR_UPLOAD } from 'src/common/constants';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -207,8 +207,8 @@ export class ProfilesController {
     @UploadedFile(AvatarImagePipe) images: any,
   ) {
     try {
-      Logger.log("Update avatar")
-      
+      Logger.log('Update avatar');
+
       const id = req.user?.id;
 
       if (!id) {

@@ -1,6 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCompanyRatingDto } from './dto/create-company-rating.dto';
-import { UpdateCompanyRatingDto } from './dto/update-company-rating.dto';
+import { UpdateCompanyRatingByUserDto } from './dto/update-company-rating-by-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyRating } from './entities/company-rating.entity';
 import { Repository } from 'typeorm';
@@ -16,24 +20,32 @@ export class CompanyRatingsService {
   ) {}
 
   async create(createCompanyRatingDto: CreateCompanyRatingDto) {
-    const { companyId } = createCompanyRatingDto;
+    try {
+      const { companyId, accountId } = createCompanyRatingDto;
 
-    const company = await this.companyRepository.findOne({
-      where: { id: companyId },
-    });
+      const rated = await this.companyRatingRepository.findOne({
+        where: { accountId, companyId },
+      });
 
-    if (!company) {
-      throw new BadRequestException('Company not found');
+      if (rated) {
+        throw new BadRequestException('Account has rated this company');
+      }
+
+      const company = await this.companyRepository.findOne({
+        where: { id: companyId },
+      });
+
+      if (!company) {
+        throw new BadRequestException('Company not found');
+      }
+
+      const companyRating = this.companyRatingRepository.create(
+        createCompanyRatingDto,
+      );
+      return await this.companyRatingRepository.save(companyRating);
+    } catch (error) {
+      throw error;
     }
-    console.log(createCompanyRatingDto);
-    const companyRating = this.companyRatingRepository.create(
-      createCompanyRatingDto,
-    );
-    return await this.companyRatingRepository.save(companyRating);
-  }
-
-  findAll() {
-    return `This action returns all companyRatings`;
   }
 
   async findAllByCompany(id: number, limit: number, page: number) {
@@ -83,15 +95,78 @@ export class CompanyRatingsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} companyRatings`;
+  async findOneByUser(accountId: string, companyId: number) {
+    try {
+      const company = await this.companyRepository.findOne({
+        where: { id: companyId },
+      });
+
+      if (!company) {
+        throw new BadRequestException('Company not found');
+      }
+
+      const rated = await this.companyRatingRepository.findOne({
+        where: { accountId, companyId },
+      });
+
+      if (!rated) {
+        throw new NotFoundException('Account has not rated the company yet');
+      }
+
+      return rated;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  update(id: number, _updateCompanyRatingDto: UpdateCompanyRatingDto) {
-    return `This action updates a #${id} companyRating`;
+  async updateByUser(updateCompanyRatingDto: UpdateCompanyRatingByUserDto) {
+    try {
+      const { accountId, companyId } = updateCompanyRatingDto;
+      const rated = await this.companyRatingRepository.findOne({
+        where: { accountId, companyId },
+      });
+
+      if (!rated) {
+        throw new NotFoundException('Evaluate not found');
+      }
+
+      await this.companyRatingRepository.update(
+        rated.id,
+        updateCompanyRatingDto,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
-  remove(id: number) {
-    return this.companyRatingRepository.delete(id);
+  async removeByUser(accountId: string, companyId: number) {
+    try {
+      const rated = await this.companyRatingRepository.findOne({
+        where: { accountId, companyId },
+      });
+
+      if (!rated) {
+        throw new NotFoundException('Evaluate not found');
+      }
+
+      return this.companyRatingRepository.delete(rated.id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async remove(id: number) {
+    try {
+      const rated = await this.companyRatingRepository.findOne({
+        where: { id },
+      });
+
+      if (!rated) {
+        throw new NotFoundException('Evaluate not found');
+      }
+      return this.companyRatingRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
   }
 }

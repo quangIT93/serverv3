@@ -393,11 +393,6 @@ export class PostsService {
         );
       const total = await posts.getCount();
 
-      // if (status) {
-      //   console.log('sta', status);
-      //   posts.andWhere('posts.status = :status', { status });
-      // }
-
       const data = await posts
         .take(limit)
         .skip(page * limit)
@@ -410,6 +405,34 @@ export class PostsService {
         is_over:
           data.length === total ? true : data.length < limit ? true : false,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async checkUserPostedToday(accountId: string) {
+    try {
+      const posts = await this.postsRepository.find({
+        where: { accountId },
+        take: 1,
+        order: { id: 'DESC' },
+      });
+
+      let checked = false;
+
+      if (posts.length === 0) {
+        return checked;
+      }
+
+      const timePosted = new Date(posts[0].createdAt).getTime();
+      const hour24 = 1000 * 60 * 60 * 24;
+      const current = new Date().getTime();
+
+      if (current < timePosted + hour24) {
+        checked = true;
+      }
+
+      return checked;
     } catch (error) {
       throw error;
     }
