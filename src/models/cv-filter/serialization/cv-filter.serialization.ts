@@ -135,7 +135,7 @@ export class CVFilterSerialization extends Profile {
 
     const average = index / 2;
 
-    return this.email.slice(0, average) + 'x'.repeat(5) + '@gmail.com';
+    return this.email.slice(0, average) + '*'.repeat(5) + '@gmail.com';
   }
 
   @Expose()
@@ -144,6 +144,6 @@ export class CVFilterSerialization extends Profile {
 
     const index = Math.round(this.phone.length / 2);
 
-    return this.phone.slice(0, index) + 'x'.repeat(5);
+    return this.phone.slice(0, index) + '*'.repeat(5);
   }
 }
