@@ -303,7 +303,7 @@ export class PostsService {
               AND (posts.expired_date IS NULL
               OR posts.expired_date >= NOW())
               AND (posts.end_date IS NULL
-              OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
+              OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
               AND province.id IN (${queries.provinceId.join(',')})
               ${
                 listCategories.length > 0

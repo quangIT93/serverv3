@@ -99,7 +99,7 @@ export class PostsQueryBuilder {
             }
             WHERE posts.status = 1
                 AND (posts.expired_date IS NULL OR posts.expired_date >= NOW())
-                AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)
+                AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
                 ${_threshold ? `AND posts.id < ${_threshold}` : ''}
             GROUP BY posts.id
             ORDER BY posts.id DESC
