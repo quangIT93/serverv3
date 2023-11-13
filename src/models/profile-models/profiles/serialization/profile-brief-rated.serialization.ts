@@ -2,6 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { Profile } from '../entities';
 import { Language } from 'src/common/enum';
 import { BUCKET_IMAGE_AVATAR } from 'src/common/constants';
+import { hideName } from 'src/common/helper/translators/candidate.translator';
 
 export class ProfileBriefRatedSerialization extends Profile {
   @Exclude()
@@ -58,9 +59,18 @@ export class ProfileBriefRatedSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override avatar!: string;
 
+  @Exclude({ toPlainOnly: true })
+  override name!: string;
+
   @Expose()
   get avatarPath() {
     if (!this.avatar) return null;
     return `${BUCKET_IMAGE_AVATAR}/${this.avatar}`;
+  }
+
+  @Expose()
+  get nameText() {
+    if (!this.name) return null;
+    return hideName(this.name);
   }
 }
