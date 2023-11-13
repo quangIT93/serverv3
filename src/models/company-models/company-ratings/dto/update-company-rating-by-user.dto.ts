@@ -25,8 +25,8 @@ export class UpdateCompanyRatingByUserDto {
     maxLength: 3000,
   })
   @IsNotEmpty()
-  @MaxLength(10000, {
-    message: 'content length must not exceed 10000 characters',
+  @MaxLength(3000, {
+    message: 'content length must not exceed 3000 characters',
   })
   comment!: string;
 }
