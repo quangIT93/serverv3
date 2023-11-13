@@ -79,11 +79,11 @@ export class PostsController {
     }
   }
 
-  @UseGuards(AuthGuard)
-  @Get('account/:accountId')
-  async findByAccountId(@Param('accountId') accountId: string) {
-    return this.postsService.findByAccountId(accountId);
-  }
+  // @UseGuards(AuthGuard)
+  // @Get('account/:accountId')
+  // async findByAccountId(@Param('accountId') accountId: string) {
+  //   return this.postsService.findByAccountId(accountId);
+  // }
 
   @SkipThrottle()
   @ApiQuery({ name: 'threshold', required: false })
