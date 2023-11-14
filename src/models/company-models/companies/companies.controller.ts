@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  // Delete,
   UseGuards,
   UseInterceptors,
   UploadedFiles,
@@ -354,29 +354,29 @@ export class CompaniesController {
     }
   }
 
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    if (!req.user) {
-      return {
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
-      };
-    }
-    const deleted = await this.companiesService.remove(+id, req.user?.id);
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // @Delete(':id')
+  // async remove(@Param('id') id: string, @Req() req: CustomRequest) {
+  //   if (!req.user) {
+  //     return {
+  //       statusCode: HttpStatus.UNAUTHORIZED,
+  //       message: 'Unauthorized',
+  //     };
+  //   }
+  //   const deleted = await this.companiesService.remove(+id, req.user?.id);
 
-    if (deleted.affected === 0) {
-      return {
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Company not found',
-      };
-    }
+  //   if (deleted.affected === 0) {
+  //     return {
+  //       statusCode: HttpStatus.NOT_FOUND,
+  //       message: 'Company not found',
+  //     };
+  //   }
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Company deleted successfully',
-    };
-  }
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: 'Company deleted successfully',
+  //   };
+  // }
 }
