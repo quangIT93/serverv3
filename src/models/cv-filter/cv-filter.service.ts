@@ -35,8 +35,9 @@ export class CvFilterService {
         .leftJoinAndSelect('profiles.profilesLocations', 'profilesLocations')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
-
-        .where('profiles.isSearch = :isSearch', { isSearch: 1 });
+        .innerJoin('profiles.user', 'user')
+        .where('profiles.isSearch = :isSearch', { isSearch: 1 })
+        .andWhere('user.status = :status', { status: 1 });
 
       if (addresses) {
         candidates.andWhere('profilesLocations.id IN (:...addresses)', {

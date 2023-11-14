@@ -45,6 +45,9 @@ export class User extends BaseEntity implements IUser {
     @Column({ type: 'datetime', nullable: true, default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
     updated_at!: Date;
 
+    @Column({ type: 'tinyint', nullable: false, default: 1, name: 'status' })
+    status!: number;
+
     @OneToMany(() => Post, post => post.account)
     posts!: Post[];
 
