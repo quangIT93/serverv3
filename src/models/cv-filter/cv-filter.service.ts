@@ -45,11 +45,13 @@ export class CvFilterService {
       }
 
       if (categories) {
-        candidates.andWhere('childCategory.id IN (:...categories)', {
-          categories: Array.isArray(categories)
-            ? categories.map((item) => +item)
-            : [+categories],
-        });
+        candidates
+          .andWhere('childCategory.id IN (:...categories)', {
+            categories: Array.isArray(categories)
+              ? categories.map((item) => +item)
+              : [+categories],
+          })
+          .addOrderBy('childCategory.id', 'ASC');
       }
 
       if (educations) {
