@@ -27,13 +27,13 @@ import { DataSource } from "typeorm";
                 // migrations: mariadbConfigService.migrations,
                 // subscribers: mariadbConfigService.subscribers,
                 // migrationsRun: mariadbConfigService.migrationsRun,
-                extra: {
-                    connectionTimeoutMillis: 10000,
-                    // max:
-                    poolSize: 100,
-                    query_timeout: 10000,
-                    statement_timeout: 10000,
-                },
+                // extra: {
+                //     connectionTimeoutMillis: 10000,
+                //     // max:
+                //     poolSize: 100,
+                //     query_timeout: 10000,
+                //     statement_timeout: 10000,
+                // },
                 extraProviders: [],
             } as TypeOrmModuleAsyncOptions),
 

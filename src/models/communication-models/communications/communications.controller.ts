@@ -228,6 +228,8 @@ export class CommunicationsController {
     try {
       const accountId =
         req.user?.id ||
+        (req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+        // req.headers['x-forwarded-for'] ||
         req.headers['client-ip'] ||
         ip.address();
 
