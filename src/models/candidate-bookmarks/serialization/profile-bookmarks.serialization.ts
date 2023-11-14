@@ -6,6 +6,10 @@ import {
   genderTranslator,
 } from 'src/common/helper/translators';
 import { birthdayTraslator } from 'src/common/helper/translators/birthday.translator';
+import {
+  hideEmailFN,
+  hidePhoneFN,
+} from 'src/common/helper/translators/candidate.translator';
 import { AcedemicTypesSerialization } from 'src/models/academic_types/serialization/acedemic_types.serialization';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
 import { DistrictSerializer } from 'src/models/locations/districts/districts.serialization';
@@ -21,9 +25,6 @@ export class ProfileBookmarksSerilization extends Profile {
     Object.assign(this, profile);
     this.lang = lang;
   }
-
-  @Exclude({ toPlainOnly: true })
-  override introduction!: string;
 
   @Exclude({ toPlainOnly: true })
   override gender!: number;
@@ -132,6 +133,18 @@ export class ProfileBookmarksSerilization extends Profile {
 
   @Expose()
   get isBookmarked() {
-    return true
+    return true;
+  }
+
+  @Expose()
+  get hideEmail() {
+    if (!this.email) return null;
+    return hideEmailFN(this.email);
+  }
+
+  @Expose()
+  get hidePhone() {
+    if (!this.phone) return null;
+    return hidePhoneFN(this.phone);
   }
 }

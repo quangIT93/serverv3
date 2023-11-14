@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { CreateCompanyImageDto } from '../company-images/dto/create-company-image.dto';
 import { CompanyImagesService } from '../company-images/company-images.service';
 import { CompanyImage } from '../company-images/entities/company-image.entity';
+import { FilterCompaniesDto } from './dto/filter-company.dto';
 
 @Injectable()
 export class CompaniesService {
@@ -14,28 +15,135 @@ export class CompaniesService {
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
     private readonly companyImagesService: CompanyImagesService,
-  ) { }
+  ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
     const company = this.companyRepository.create(createCompanyDto);
     return await this.companyRepository.save(company);
   }
 
-  async createCompanyImage(createCompanyImagesDto: CreateCompanyImageDto[]): Promise<CompanyImage[]> {
-    const companyImages = await this.companyImagesService.create(createCompanyImagesDto);
-    return this.companyImagesService.findByCompanyId(companyImages[0].companyId);
+  async createCompanyImage(
+    createCompanyImagesDto: CreateCompanyImageDto[],
+  ): Promise<CompanyImage[]> {
+    const companyImages = await this.companyImagesService.create(
+      createCompanyImagesDto,
+    );
+    return this.companyImagesService.findByCompanyId(
+      companyImages[0].companyId,
+    );
   }
 
   async removeCompanyImages(id: number[], companyId: number): Promise<any> {
-   const deletedImages = await Promise.all(id.map(async (imageId) => {
-      return await this.companyImagesService.remove(imageId, companyId);
-    }));
+    const deletedImages = await Promise.all(
+      id.map(async (imageId) => {
+        return await this.companyImagesService.remove(imageId, companyId);
+      }),
+    );
 
-    return deletedImages.filter((image) => image?.affected === undefined || image?.affected === null || image?.affected > 0);
+    return deletedImages.filter(
+      (image) =>
+        image?.affected === undefined ||
+        image?.affected === null ||
+        image?.affected > 0,
+    );
   }
 
-  findAll() {
-    return `This action returns all companies`;
+  async findAll(query: FilterCompaniesDto) {
+    try {
+      const {
+        addresses,
+        categories,
+        companySizeId,
+        limit = 20,
+        page = 0,
+        accountId,
+        status = 1,
+      } = query;
+      const companies = this.companyRepository
+        .createQueryBuilder('companies')
+        .leftJoinAndSelect('companies.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('companies.category', 'category')
+        .leftJoinAndSelect('companies.companySize', 'companySize')
+        .leftJoinAndSelect(
+          'companies.posts',
+          'posts',
+          'posts.status = :status',
+          { status },
+        )
+        .leftJoinAndSelect(
+          'companies.bookmarkedCompany',
+          'bookmarkedCompany',
+          'bookmarkedCompany.accountId = :accountId',
+          { accountId },
+        );
+
+      if (addresses) {
+        companies.andWhere('district.id IN (:...addresses)', {
+          addresses: Array.isArray(addresses) ? addresses : [addresses],
+        });
+      }
+
+      if (categories) {
+        companies.andWhere('category.id IN (:...categories)', {
+          categories: Array.isArray(categories) ? categories : [categories],
+        });
+      }
+
+      if (companySizeId) {
+        companies.andWhere('companies.companySize.id = :companySizeId', {
+          companySizeId,
+        });
+      }
+
+      const total = await companies.getCount();
+
+      const data = await companies
+        .take(limit)
+        .skip(page * limit)
+        .orderBy('companies.updatedAt', 'DESC')
+        .getMany();
+
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findById(id: number, accountId?: string) {
+    const company = await this.companyRepository.findOne({
+      where: { id },
+    });
+
+    if (!company) {
+      throw new BadRequestException('Company not found');
+    }
+
+    const data = this.companyRepository
+      .createQueryBuilder('company')
+      .where('company.id = :id', { id })
+      .leftJoinAndSelect('company.ward', 'ward')
+      .leftJoinAndSelect('ward.district', 'district')
+      .leftJoinAndSelect('district.province', 'province')
+      .leftJoinAndSelect('company.category', 'category')
+      .leftJoinAndSelect('company.companySize', 'companySize')
+      .leftJoinAndSelect('company.companyImages', 'companyImages')
+      .leftJoinAndSelect('company.companyRole', 'companyRole')
+      .leftJoinAndSelect(
+        'company.bookmarkedCompany',
+        'bookmarkedCompany',
+        'bookmarkedCompany.accountId = :accountId',
+        { accountId },
+      )
+      .getOne();
+
+    return data;
   }
 
   findOne(id: number, _accountId: string) {
@@ -50,11 +158,17 @@ export class CompaniesService {
 
   findByAccountId(_accountId: string) {
     return this.companyRepository.findOne({
-      relations: ['ward', 'ward.district', 'ward.district.province', 'companyRole', 'companySize'],
+      relations: [
+        'ward',
+        'ward.district',
+        'ward.district.province',
+        'companyRole',
+        'companySize',
+      ],
       where: {
         accountId: _accountId,
       },
-    })
+    });
   }
 
   async update(id: number, _updateCompanyDto: UpdateCompanyDto) {

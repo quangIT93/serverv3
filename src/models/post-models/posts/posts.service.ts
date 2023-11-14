@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -25,6 +26,7 @@ import { NewestPostQueriesDto } from './dto/newest-queries.dto';
 import { NearByQueriesDto } from './dto/nearby-queries.dto';
 import { ParentService } from 'src/models/categories/parents/parents.service';
 import { isArray } from 'class-validator';
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 // import { HotTopicsService } from 'src/models/hot-topics/hot-topics.service';
 // import { CreatePostDto } from './dto/create-post.dto';
 
@@ -38,6 +40,8 @@ export class PostsService {
     private readonly postCategoriesService: PostsCategoriesService,
     private readonly postResourceService: PostResourceService,
     private readonly parentCategoryService: ParentService,
+    @InjectRepository(Company)
+    private readonly CompanyRepository: Repository<Company>,
   ) {}
 
   async findByAccountId(accountId: string): Promise<Post[]> {
@@ -351,60 +355,60 @@ export class PostsService {
       .getMany();
   }
 
-  // async findPostsByCompanyId(
-  //   id: number,
-  //   limit: number,
-  //   page: number,
-  //   status = 1,
-  //   accountId?: string,
-  // ) {
-  //   try {
-  //     const company = await this.CompanyRepository.findOne({
-  //       where: { id },
-  //     });
+  async findPostsByCompanyId(
+    id: number,
+    limit: number,
+    page: number,
+    status = 1,
+    accountId?: string,
+  ) {
+    try {
+      const company = await this.CompanyRepository.findOne({
+        where: { id },
+      });
 
-  //     if (!company) {
-  //       throw new BadRequestException('Company not found');
-  //     }
+      if (!company) {
+        throw new BadRequestException('Company not found');
+      }
 
-  //     const posts = await this.postsRepository
-  //       .createQueryBuilder('posts')
-  //       .leftJoinAndSelect('posts.companyInformation', 'companyInformation')
-  //       .where('companyInformation.id = :id', { id })
-  //       .andWhere('posts.status = :status', { status })
-  //       .leftJoinAndSelect('posts.ward', 'ward')
-  //       .leftJoinAndSelect('ward.district', 'district')
-  //       .leftJoinAndSelect('district.province', 'province')
-  //       .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
-  //       .leftJoinAndSelect('posts.jobTypeData', 'jobTypeData')
-  //       .leftJoinAndSelect('posts.companyResource', 'companyResource')
-  //       .leftJoinAndSelect('posts.postImages', 'postImages')
-  //       .leftJoinAndSelect('posts.categories', 'categories')
-  //       .leftJoinAndSelect('categories.parentCategory', 'parentCategory')
-  //       .leftJoinAndSelect(
-  //         'posts.bookmarks',
-  //         'bookmarks',
-  //         'bookmarks.accountId = :accountId',
-  //         { accountId },
-  //       );
-  //     const total = await posts.getCount();
+      const posts = await this.postsRepository
+        .createQueryBuilder('posts')
+        .leftJoinAndSelect('posts.companyInformation', 'companyInformation')
+        .where('companyInformation.id = :id', { id })
+        .andWhere('posts.status = :status', { status })
+        .leftJoinAndSelect('posts.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
+        .leftJoinAndSelect('posts.jobTypeData', 'jobTypeData')
+        .leftJoinAndSelect('posts.companyResource', 'companyResource')
+        .leftJoinAndSelect('posts.postImages', 'postImages')
+        .leftJoinAndSelect('posts.categories', 'categories')
+        .leftJoinAndSelect('categories.parentCategory', 'parentCategory')
+        .leftJoinAndSelect(
+          'posts.bookmarks',
+          'bookmarks',
+          'bookmarks.accountId = :accountId',
+          { accountId },
+        );
+      const total = await posts.getCount();
 
-  //     const data = await posts
-  //       .take(limit)
-  //       .skip(page * limit)
-  //       .orderBy('posts.updatedAt', 'DESC')
-  //       .getMany();
+      const data = await posts
+        .take(limit)
+        .skip(page * limit)
+        .orderBy('posts.updatedAt', 'DESC')
+        .getMany();
 
-  //     return {
-  //       total,
-  //       data,
-  //       is_over:
-  //         data.length === total ? true : data.length < limit ? true : false,
-  //     };
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async checkUserPostedToday(accountId: string) {
     try {

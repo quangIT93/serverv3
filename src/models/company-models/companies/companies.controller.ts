@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  // Delete,
   UseGuards,
   UseInterceptors,
   UploadedFiles,
@@ -14,6 +14,8 @@ import {
   HttpStatus,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -27,11 +29,15 @@ import {
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
-import { Role } from 'src/common/enum';
-import { Roles } from 'src/authentication/roles.decorator';
+// import { Role } from 'src/common/enum';
+// import { Roles } from 'src/authentication/roles.decorator';
 import { CompanyImagesPipe } from './interceptors/image.interceptor';
 import { CreateCompanyImageDto } from '../company-images/dto/create-company-image.dto';
 import { UpdateCompanyImageDto } from '../company-images/dto/delete-comapny-image.dto';
+import { FilterCompaniesDto } from './dto/filter-company.dto';
+import { CompaniesInterceptor } from './interceptors/companies.interceptor';
+import { CompanyDetailInterceptor } from './interceptors/companyDetail.interceptor';
+import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -60,9 +66,7 @@ export class CompaniesController {
     ),
   )
   async create(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     listImages: any | undefined,
     @Req() req: CustomRequest,
     @Res() res: any,
@@ -79,22 +83,29 @@ export class CompaniesController {
       }
       createCompanyDto.accountId = req.user.id;
       createCompanyDto.logo = logo.originalname;
-      createCompanyDto.images = images ? images.map((image: any) => image.originalname) : [];
+      createCompanyDto.images = images
+        ? images.map((image: any) => image.originalname)
+        : [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
         BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
       if (images) {
-        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
-          id: String(company.id),
-        });
-  
-        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
-          companyId: company.id,
-          image: image.originalname,
-        }));
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(
+          images,
+          {
+            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            id: String(company.id),
+          },
+        );
+
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map(
+          (image) => ({
+            companyId: company.id,
+            image: image.originalname,
+          }),
+        );
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
@@ -122,12 +133,42 @@ export class CompaniesController {
     }
   }
 
-  @ApiBearerAuth()
-  @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.companiesService.findAll();
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
+  findAll(@Query() query: FilterCompaniesDto, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (accountId) {
+        query.accountId = accountId;
+      }
+
+      return this.companiesService.findAll(query);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
+
+  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(ClassSerializerInterceptor, CompanyDetailInterceptor)
+  findById(@Param('id') id: number, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      return this.companiesService.findById(id, accountId);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Error getting');
+    }
   }
 
   // @UseGuards(AuthGuard)
@@ -161,9 +202,7 @@ export class CompaniesController {
     ),
   )
   async update(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     imagesList: any | undefined,
     @Req() req: CustomRequest,
     @Body() updateCompanyDto: UpdateCompanyDto,
@@ -196,7 +235,7 @@ export class CompaniesController {
       return {
         statusCode: HttpStatus.OK,
         message: 'Company updated successfully',
-        data: null
+        data: null,
       };
     } catch (error) {
       if (error instanceof Error) {
@@ -227,9 +266,7 @@ export class CompaniesController {
     }),
   )
   async updateImages(
-    @UploadedFiles(
-      CompanyImagesPipe,
-    )
+    @UploadedFiles(CompanyImagesPipe)
     imagesList: any | undefined,
     @Req() req: CustomRequest,
     @Body() updateCompanyImage: UpdateCompanyImageDto,
@@ -254,44 +291,56 @@ export class CompaniesController {
 
       let deletedImages: any[] = [];
       if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
-        deletedImages = await this.companiesService.removeCompanyImages(updateCompanyImage.imagesId, id);
+        deletedImages = await this.companiesService.removeCompanyImages(
+          updateCompanyImage.imagesId,
+          id,
+        );
       }
 
       if (images && images.length > 0) {
         if (updateCompanyImage && updateCompanyImage?.imagesId?.length > 0) {
-          if (images.length + company.companyImages.length - deletedImages.length > 5 ) {
+          if (
+            images.length +
+              company.companyImages.length -
+              deletedImages.length >
+            5
+          ) {
             return {
               statusCode: HttpStatus.BAD_REQUEST,
               message: 'Maximum 5 images',
             };
           }
-        } else if (images.length + company.companyImages.length > 5 ) {
+        } else if (images.length + company.companyImages.length > 5) {
           return {
             statusCode: HttpStatus.BAD_REQUEST,
             message: 'Maximum 5 images',
           };
         }
 
-        const uploadedImages = await this.awsService.uploadMutilpleFiles(images, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
-          id: id
-        });
-  
-        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map((image) => ({
-          companyId: id,
-          image: image.originalname,
-        }));
+        const uploadedImages = await this.awsService.uploadMutilpleFiles(
+          images,
+          {
+            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            id: id,
+          },
+        );
 
-        await this.companiesService.createCompanyImage(companyImagesDto)
+        const companyImagesDto: CreateCompanyImageDto[] = uploadedImages.map(
+          (image) => ({
+            companyId: id,
+            image: image.originalname,
+          }),
+        );
+
+        await this.companiesService.createCompanyImage(companyImagesDto);
       }
-    
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Company images updated successfully',
         data: await this.companiesService.getCompanyImages(id, req.user.id),
       };
-    }
-    catch (error) {
+    } catch (error) {
       if (error instanceof Error) {
         return {
           statusCode: HttpStatus.BAD_REQUEST,
@@ -305,31 +354,29 @@ export class CompaniesController {
     }
   }
 
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard)
+  // @Delete(':id')
+  // async remove(@Param('id') id: string, @Req() req: CustomRequest) {
+  //   if (!req.user) {
+  //     return {
+  //       statusCode: HttpStatus.UNAUTHORIZED,
+  //       message: 'Unauthorized',
+  //     };
+  //   }
+  //   const deleted = await this.companiesService.remove(+id, req.user?.id);
 
+  //   if (deleted.affected === 0) {
+  //     return {
+  //       statusCode: HttpStatus.NOT_FOUND,
+  //       message: 'Company not found',
+  //     };
+  //   }
 
-  @ApiConsumes('multipart/form-data')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req: CustomRequest) {
-    if (!req.user) {
-      return {
-        statusCode: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized',
-      };
-    }
-    const deleted = await this.companiesService.remove(+id, req.user?.id);
-
-    if (deleted.affected === 0) {
-      return {
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Company not found',
-      };
-    }
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Company deleted successfully',
-    };
-  }
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: 'Company deleted successfully',
+  //   };
+  // }
 }

@@ -18,10 +18,11 @@ import { PostsCategoriesModule } from '../posts-categories/posts-categories.modu
 import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
 import { PostNotificationsModule } from 'src/models/notifications-model/post-notifications/post-notifications.module';
 import { ParentModule } from 'src/models/categories/parents/parents.module';
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post]),
+    TypeOrmModule.forFeature([Post, Company]),
     JwtAccessTokenServiceModule,
     BookmarksModule,
     AWSModule,
@@ -30,26 +31,26 @@ import { ParentModule } from 'src/models/categories/parents/parents.module';
     PostsCategoriesModule,
     ApplicationsModule,
     PostNotificationsModule,
-    ParentModule
+    ParentModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
   exports: [PostsService],
 })
 export class PostsModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-        .apply(PageAndLimitMiddleware)
-        .exclude(
-            { path: 'posts/:id', method: RequestMethod.PUT },
-            { path: 'posts', method: RequestMethod.POST },
-            )
-            .forRoutes(
-                { path: 'posts', method: RequestMethod.GET },
-                { path: 'posts/newest', method: RequestMethod.GET },
-                { path: 'posts/topic/:id', method: RequestMethod.GET },
-                { path: 'posts/account/:accountId', method: RequestMethod.GET },
-                { path: 'posts/nearby', method: RequestMethod.GET },
-            )
-    }
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(PageAndLimitMiddleware)
+      .exclude(
+        { path: 'posts/:id', method: RequestMethod.PUT },
+        { path: 'posts', method: RequestMethod.POST },
+      )
+      .forRoutes(
+        { path: 'posts', method: RequestMethod.GET },
+        { path: 'posts/newest', method: RequestMethod.GET },
+        { path: 'posts/topic/:id', method: RequestMethod.GET },
+        { path: 'posts/account/:accountId', method: RequestMethod.GET },
+        { path: 'posts/nearby', method: RequestMethod.GET },
+      );
+  }
 }

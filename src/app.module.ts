@@ -71,9 +71,11 @@ import { AcademicTypesModule } from './models/academic_types/academic_types.modu
 import { CandidateBookmarksModule } from './models/candidate-bookmarks/candidate-bookmarks.module';
 import { ViewProfilesModule } from './models/view_profiles/view_profiles.module';
 import { AppLoggerMiddleware } from './common/middlewares/logger/app.log';
-import { ThrottlerModule } from "@nestjs/throttler"
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
+import { CompanyRatingsModule } from './models/company-models/company-ratings/company-ratings.module';
+import { CompanyBookmarkedModule } from './models/company-models/company-bookmarked/company-bookmarked.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -98,9 +100,13 @@ import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
     SalaryTypesModule,
     BookmarksModule,
     MulterConfigModule,
+
+    // Company Module
     CompaniesModule,
     CompanyRolesModule,
     CompanySizesModule,
+    CompanyRatingsModule,
+    CompanyBookmarkedModule,
 
     // Profile Module
     ProfilesModule,
@@ -155,7 +161,6 @@ import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
 
     ThrottlerModule.forRoot([
       {
-        
         name: 'short',
         ttl: 1000,
         limit: 3000,

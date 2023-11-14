@@ -13,6 +13,10 @@ import { ProfilesEducation } from 'src/models/profile-models/profiles-educations
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { filter } from '../transform/cv-filter.transform';
 import { Province } from 'src/models/locations/provinces/entities';
+import {
+  hideEmailFN,
+  hidePhoneFN,
+} from 'src/common/helper/translators/candidate.translator';
 
 export class CVFilterSerialization extends Profile {
   @Exclude()
@@ -126,24 +130,12 @@ export class CVFilterSerialization extends Profile {
   @Expose()
   get hideEmail() {
     if (!this.email) return null;
-
-    const index = this.email.indexOf('@');
-
-    if (index === -1) {
-      return null;
-    }
-
-    const average = index / 2;
-
-    return this.email.slice(0, average) + '*'.repeat(5) + '@gmail.com';
+    return hideEmailFN(this.email);
   }
 
   @Expose()
   get hidePhone() {
     if (!this.phone) return null;
-
-    const index = Math.round(this.phone.length / 2);
-
-    return this.phone.slice(0, index) + '*'.repeat(5);
+    return hidePhoneFN(this.phone);
   }
 }

@@ -45,7 +45,7 @@ import { PostNewInterceptor } from './interceptors/posts-new.interceptor';
 import { NearByQueriesDto } from './dto/nearby-queries.dto';
 import { ThrottlerBehindProxyGuard } from 'src/throttlerBehindProxyGuard.guard';
 import { SkipThrottle } from '@nestjs/throttler';
-// import { PostsInterceptor } from './interceptors/posts.interceptor';
+import { PostsInterceptor } from './interceptors/posts.interceptor';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -85,19 +85,19 @@ export class PostsController {
   //   return this.postsService.findByAccountId(accountId);
   // }
 
-    @SkipThrottle()
-    @ApiQuery({ name: 'threshold', required: false })
-    @Get('newest')
-    @UseGuards(AuthNotRequiredGuard)
-    @UseInterceptors(PostNewInterceptor)
-    async getNewestPosts(
-        @Query() queries: NewestPostQueriesDto,
-        @Req() req: CustomRequest,
-    ) {
-        const { limit = 20, page = 0 } = req;
-        const { threshold } = queries;
-        return this.postsService.getNewestPosts(limit, page, queries, threshold);
-    }
+  @SkipThrottle()
+  @ApiQuery({ name: 'threshold', required: false })
+  @Get('newest')
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(PostNewInterceptor)
+  async getNewestPosts(
+    @Query() queries: NewestPostQueriesDto,
+    @Req() req: CustomRequest,
+  ) {
+    const { limit = 20, page = 0 } = req;
+    const { threshold } = queries;
+    return this.postsService.getNewestPosts(limit, page, queries, threshold);
+  }
 
   @SkipThrottle()
   @ApiBearerAuth()
@@ -258,30 +258,30 @@ export class PostsController {
   //     .createPostController({dto, images});
   // }
 
-  // @Get('company/:id')
-  // @ApiBearerAuth()
-  // @UseGuards(AuthNotRequiredGuard)
-  // @UseInterceptors(ClassSerializerInterceptor, PostsInterceptor)
-  // async findPostsByCompanyId(
-  //   @Param('id') id: number,
-  //   @Req() req: CustomRequest,
-  // ) {
-  //   try {
-  //     const accountId = req.user?.id;
-  //     const { limit, page, status } = req.query;
+  @Get('company/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(ClassSerializerInterceptor, PostsInterceptor)
+  async findPostsByCompanyId(
+    @Param('id') id: number,
+    @Req() req: CustomRequest,
+  ) {
+    try {
+      const accountId = req.user?.id;
+      const { limit, page, status } = req.query;
 
-  //     return await this.postsService.findPostsByCompanyId(
-  //       +id,
-  //       limit ? +limit : 20,
-  //       page ? +page : 0,
-  //       status ? +status : 1,
-  //       accountId,
-  //     );
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       throw new BadRequestException(error.message);
-  //     }
-  //     throw new BadRequestException('Getting error');
-  //   }
-  // }
+      return await this.postsService.findPostsByCompanyId(
+        +id,
+        limit ? +limit : 20,
+        page ? +page : 0,
+        status ? +status : 1,
+        accountId,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Getting error');
+    }
+  }
 }

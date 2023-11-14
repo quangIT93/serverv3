@@ -274,6 +274,10 @@ export class ProfilesService {
         // relationLoadStrategy: 'join'
       });
 
+      if (!result) {
+        throw new BadRequestException('You have not created company yet');
+      }
+
       return result;
     } catch (error) {
       throw error;

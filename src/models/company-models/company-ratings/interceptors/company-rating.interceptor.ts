@@ -1,17 +1,18 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
-import { Company } from '../entities/company.entity';
-import { CompanySerialization } from '../serialization/company.serialization';
 
-export class CompanyInterceptor implements NestInterceptor {
+import { CompanyRatingSerialization } from '../serialization/company-rating.serialization';
+
+export class CompanyRatingInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> {
     return next.handle().pipe(
-      map((company: Company) => {
+      map((companyRating: any) => {
         const lang = context.switchToHttp().getRequest().lang;
-        const data = new CompanySerialization(company, lang);
+
+        const data = new CompanyRatingSerialization(companyRating, lang);
 
         return {
           status: context.switchToHttp().getResponse().statusCode,
