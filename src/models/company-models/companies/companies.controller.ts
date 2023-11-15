@@ -16,6 +16,7 @@ import {
   ParseIntPipe,
   Query,
   BadRequestException,
+  Put,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -38,6 +39,9 @@ import { FilterCompaniesDto } from './dto/filter-company.dto';
 import { CompaniesInterceptor } from './interceptors/companies.interceptor';
 import { CompanyDetailInterceptor } from './interceptors/companyDetail.interceptor';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
+import { Role, StatusCompany } from 'src/common/enum';
+import { RoleGuard } from 'src/authentication/role.guard';
+import { Roles } from 'src/authentication/roles.decorator';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -379,4 +383,27 @@ export class CompaniesController {
   //     message: 'Company deleted successfully',
   //   };
   // }
+
+  @Put(':id/status-check')
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
+  async checkedCompany(@Param('id') id: number) {
+    try {
+      await this.companiesService.updateStatusCompany(
+        id,
+        StatusCompany.CHECKED,
+      );
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Company status updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Posting error');
+    }
+  }
 }
