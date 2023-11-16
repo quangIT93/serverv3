@@ -8,7 +8,6 @@ import { CreateCompanyImageDto } from '../company-images/dto/create-company-imag
 import { CompanyImagesService } from '../company-images/company-images.service';
 import { CompanyImage } from '../company-images/entities/company-image.entity';
 import { FilterCompaniesDto } from './dto/filter-company.dto';
-import { StatusCompany } from 'src/common/enum';
 
 @Injectable()
 export class CompaniesService {
@@ -184,22 +183,6 @@ export class CompaniesService {
   async getCompanyImages(id: number, _accountId: string) {
     try {
       return this.companyImagesService.findByCompanyId(id);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateStatusCompany(id: number, status: StatusCompany) {
-    try {
-      const company = await this.companyRepository.findOne({
-        where: { id },
-      });
-
-      if (!company) {
-        throw new BadRequestException('Company not found');
-      }
-
-      await this.companyRepository.update(id, { status });
     } catch (error) {
       throw error;
     }
