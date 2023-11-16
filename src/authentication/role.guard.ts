@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Role } from "src/common/enum/role.enum";
 
@@ -9,11 +9,11 @@ export class RoleGuard implements CanActivate {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        Logger.log('RoleGuard: canActivate');
+        // Logger.log('RoleGuard: canActivate');
         const roles = this.reflector.get<Role[]>('roles', context.getHandler());
         
         if (!roles) {
-            Logger.log('RoleGuard: canActivate: !roles');
+            // Logger.log('RoleGuard: canActivate: !roles');
             throw new UnauthorizedException()
         }
 
@@ -25,10 +25,10 @@ export class RoleGuard implements CanActivate {
 
         if (user && user.role && hasRole()) {
 
-            Logger.log('RoleGuard: canActivate: ' + user.role + ' ' + user.id);
+            // Logger.log('RoleGuard: canActivate: ' + user.role + ' ' + user.id);
             return true;
         } else {
-            Logger.log('RoleGuard: canActivate: else');
+            // Logger.log('RoleGuard: canActivate: else');
             // Permission denied
             throw new HttpException('Permission denied', HttpStatus.UNAUTHORIZED);
         }
