@@ -71,7 +71,7 @@ export class CompanyRatingsService {
         return total + Number(item.star);
       }, 0);
 
-      const averageRated = Number((totalRated / total).toFixed(1));
+      const averageRated = Number(totalRated / total).toFixed(1);
 
       const data = await bookmarked
         .take(limit)
