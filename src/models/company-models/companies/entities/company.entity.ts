@@ -58,7 +58,7 @@ export class Company {
   @Column({ type: 'varchar', length: 1000, nullable: false })
   description!: string;
 
-  @Column({ type: 'tinyint', nullable: false, default: 1 })
+  @Column({ type: 'tinyint', nullable: false, default: 0 })
   status!: number;
 
   @Column({
