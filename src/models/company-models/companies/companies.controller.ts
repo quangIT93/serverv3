@@ -39,9 +39,10 @@ import { FilterCompaniesDto } from './dto/filter-company.dto';
 import { CompaniesInterceptor } from './interceptors/companies.interceptor';
 import { CompanyDetailInterceptor } from './interceptors/companyDetail.interceptor';
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
-import { Role, StatusCompany } from 'src/common/enum';
+import { Role } from 'src/common/enum';
 import { RoleGuard } from 'src/authentication/role.guard';
 import { Roles } from 'src/authentication/roles.decorator';
+import { StatusCompanyDto } from './dto/status-company.dto';
 // import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 
 @ApiTags('Companies')
@@ -384,16 +385,16 @@ export class CompaniesController {
   //   };
   // }
 
-  @Put(':id/status-check')
+  @Put(':id/status')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async checkedCompany(@Param('id') id: number) {
+  async updatedStatusCompany(
+    @Param('id') id: number,
+    @Body() body: StatusCompanyDto,
+  ) {
     try {
-      await this.companiesService.updateStatusCompany(
-        id,
-        StatusCompany.CHECKED,
-      );
+      await this.companiesService.updateStatusCompany(id, body.status);
 
       return {
         statusCode: HttpStatus.OK,
