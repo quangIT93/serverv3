@@ -47,7 +47,4 @@ export class ProfileCompanyInformationSerialization extends Company {
 
   @Exclude({ toPlainOnly: true })
   override updatedAt!: Date;
-
-  @Exclude({ toPlainOnly: true })
-  override status!: number;
 }
