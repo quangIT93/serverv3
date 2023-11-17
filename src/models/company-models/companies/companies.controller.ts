@@ -159,11 +159,13 @@ export class CompaniesController {
     }
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('by-admin')
   @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
   async findAllByAdmin() {
     try {
-      console.log('first');
+
       return await this.companiesService.findAllByAdmin();
     } catch (error) {
       if (error instanceof Error) {

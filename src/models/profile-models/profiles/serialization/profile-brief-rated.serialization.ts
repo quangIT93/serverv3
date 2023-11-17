@@ -70,7 +70,7 @@ export class ProfileBriefRatedSerialization extends Profile {
 
   @Expose()
   get nameHide() {
-    if (!this.name) return 'Your name';
+    if (!this.name) return 'Anonymous';
     return hideName(this.name);
   }
 }
