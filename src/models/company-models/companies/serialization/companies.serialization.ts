@@ -103,6 +103,7 @@ export class CompaniesSerialization extends Company {
 
   @Expose()
   get isBookmarked() {
+    if (!this.bookmarkedCompany) return null;
     return this.bookmarkedCompany.length > 0 ? true : false;
   }
 }

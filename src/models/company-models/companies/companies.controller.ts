@@ -159,6 +159,20 @@ export class CompaniesController {
     }
   }
 
+  @Get('by-admin')
+  @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
+  async findAllByAdmin() {
+    try {
+      console.log('first');
+      return await this.companiesService.findAllByAdmin();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Getting error');
+    }
+  }
+
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthNotRequiredGuard)

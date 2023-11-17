@@ -204,4 +204,28 @@ export class CompaniesService {
       throw error;
     }
   }
+
+  async findAllByAdmin() {
+    try {
+      const companies = this.companyRepository
+        .createQueryBuilder('companies')
+        .leftJoinAndSelect('companies.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('companies.category', 'category')
+        .leftJoinAndSelect('companies.companySize', 'companySize');
+
+      const total = await companies.getCount();
+      const data = await companies
+        .orderBy('companies.updatedAt', 'DESC')
+        .getMany();
+
+      return {
+        total,
+        data,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
