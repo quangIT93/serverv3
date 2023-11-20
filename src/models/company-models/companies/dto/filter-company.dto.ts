@@ -28,7 +28,12 @@ export class FilterCompaniesDto {
   @IsOptional()
   limit!: number;
 
-  @ApiProperty({ type: 'int', required: false, default: 1 })
+  @ApiProperty({
+    type: 'int',
+    required: false,
+    default: 1,
+    description: 'Status company must be 0 || 1',
+  })
   @IsOptional()
   status!: number;
 

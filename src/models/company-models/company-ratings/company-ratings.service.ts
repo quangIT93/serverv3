@@ -84,11 +84,7 @@ export class CompanyRatingsService {
         data,
         averageRated,
         is_over:
-          bookmarks.length === total
-            ? true
-            : bookmarks.length < limit
-            ? true
-            : false,
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;
@@ -109,9 +105,9 @@ export class CompanyRatingsService {
         where: { accountId, companyId },
       });
 
-      if (!rated) {
-        throw new NotFoundException('Account has not rated the company yet');
-      }
+      // if (!rated) {
+      //   throw new NotFoundException('Account has not rated the company yet');
+      // }
 
       return rated;
     } catch (error) {

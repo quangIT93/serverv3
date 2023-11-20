@@ -62,17 +62,13 @@ export class CompaniesService {
       } = query;
       const companies = this.companyRepository
         .createQueryBuilder('companies')
+        .where('companies.status = :status', { status })
         .leftJoinAndSelect('companies.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('companies.category', 'category')
         .leftJoinAndSelect('companies.companySize', 'companySize')
-        .leftJoinAndSelect(
-          'companies.posts',
-          'posts',
-          'posts.status = :status',
-          { status },
-        )
+        .leftJoinAndSelect('companies.posts', 'posts', 'posts.status = 1')
         .leftJoinAndSelect(
           'companies.bookmarkedCompany',
           'bookmarkedCompany',
