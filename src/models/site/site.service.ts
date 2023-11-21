@@ -1,11 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, } from 'typeorm';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { Client } from '@googlemaps/google-maps-services-js';
 
 // import { CreatePostDto } from './dto/create-post.dto';
 
 @Injectable()
 export class SiteService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    private readonly dataSource: DataSource,
+    @Inject('GOOGLE_MAPS_CLIENT')
+    private readonly googleMapsClient: Client,
+  ) {
+    this.googleMapsClient = new Client({});
+  }
 
   // Count all posts
   async countAllPosts(): Promise<number> {
@@ -33,4 +40,23 @@ export class SiteService {
 
   //   return result;
   // }
+
+  async geocodeAddress(address: string) {
+    try {
+      const key = process.env['FIREBASE_MAP_API_KEY'];
+      if (!key) {
+        throw new BadRequestException('Internal server error');
+      }
+      const response = await this.googleMapsClient.geocode({
+        params: {
+          address,
+          key,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

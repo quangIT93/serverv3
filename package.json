@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.41",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/apollo": "^11.0.6",
     "@nestjs/axios": "^2.0.0",
