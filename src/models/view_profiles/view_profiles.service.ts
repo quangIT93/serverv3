@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { ViewProfile } from './entities/view_profile.entity';
 import { UserService } from '../users/users.service';
 import { NOT_ENOUGH_POINTS, NO_PERMISSION } from 'src/common/constants';
+import { CompaniesService } from '../company-models/companies/companies.service';
+import { ViewedCompanyDto } from './dto/viewed-company.dto';
 
 @Injectable()
 export class ViewProfilesService {
@@ -12,13 +14,15 @@ export class ViewProfilesService {
     @InjectRepository(ViewProfile)
     private viewProfileRepository: Repository<ViewProfile>,
     private readonly userService: UserService,
+    private readonly companiesService: CompaniesService,
   ) {}
   async create(createViewProfileDto: CreateViewProfileDto) {
     const user = await this.userService.findRoleById(
       createViewProfileDto.recruitId,
     );
 
-    const TOTAL_IN_DAY = (user && (user?.role === 3 || user?.role === 1)) ? 20 : 3;
+    const TOTAL_IN_DAY =
+      user && (user?.role === 3 || user?.role === 1) ? 20 : 3;
 
     if (user?.type !== 1) {
       throw new BadRequestException("Can't view profile", NO_PERMISSION);
@@ -35,7 +39,7 @@ export class ViewProfilesService {
       .getCount();
 
     if (result >= TOTAL_IN_DAY) {
-      throw new BadRequestException('Not enough points', NOT_ENOUGH_POINTS)
+      throw new BadRequestException('Not enough points', NOT_ENOUGH_POINTS);
     }
 
     const newEntity = this.viewProfileRepository.create(createViewProfileDto);
@@ -47,5 +51,21 @@ export class ViewProfilesService {
     }
 
     return TOTAL_IN_DAY - result;
+  }
+
+  async getCompanyViewedByAccount(accountId: string, query: ViewedCompanyDto) {
+    try {
+      const viewed = await this.viewProfileRepository.find({
+        where: { profileId: accountId },
+      });
+
+      const accountIds = viewed.map((view) => view.recruitId);
+
+      query.accountIds = accountIds;
+
+      return await this.companiesService.findAll(query);
+    } catch (error) {
+      throw error;
+    }
   }
 }

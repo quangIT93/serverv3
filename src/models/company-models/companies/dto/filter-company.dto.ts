@@ -9,7 +9,7 @@ export class FilterCompaniesDto {
     description: 'District id',
   })
   @IsOptional()
-  addresses!: number[];
+  addresses?: number[];
 
   @ApiProperty({
     type: 'array',
@@ -18,15 +18,15 @@ export class FilterCompaniesDto {
     description: 'Parent categories id',
   })
   @IsOptional()
-  categories!: number[];
+  categories?: number[];
 
   @ApiProperty({ type: 'int', required: false })
   @IsOptional()
-  companySizeId!: number;
+  companySizeId?: number;
 
   @ApiProperty({ type: 'int', required: false, default: 20 })
   @IsOptional()
-  limit!: number;
+  limit?: number;
 
   @ApiProperty({
     type: 'int',
@@ -35,11 +35,20 @@ export class FilterCompaniesDto {
     description: 'Status company must be 0 || 1',
   })
   @IsOptional()
-  status!: number;
+  status?: number;
 
   @ApiProperty({ type: 'int', required: false, default: 0 })
   @IsOptional()
-  page!: number;
+  page?: number;
 
-  accountId!: string;
+  accountId?: string;
+
+  @ApiProperty({
+    type: 'array',
+    items: { type: 'string' },
+    required: false,
+    description: 'Array account id',
+  })
+  @IsOptional()
+  accountIds?: string[];
 }

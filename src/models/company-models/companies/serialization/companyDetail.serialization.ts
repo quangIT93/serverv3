@@ -13,6 +13,7 @@ import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
 import { CompanyRoleSerialization } from '../../company-roles/serialization/company-role.serializarion';
 import { CompanyRole } from '../../company-roles/entities/company-role.entity';
 import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
+import { Post } from 'src/models/post-models/posts/entities';
 
 export class CompanyDetailSerialization extends Company {
   @Exclude()
@@ -56,6 +57,9 @@ export class CompanyDetailSerialization extends Company {
 
   @Exclude({ toPlainOnly: true })
   override bookmarkedCompany!: CompanyBookmarked[];
+
+  @Exclude({ toPlainOnly: true })
+  override posts!: Post[];
 
   @Transform(({ value }) => new Date(value).getTime())
   override createdAt!: Date;
@@ -108,5 +112,11 @@ export class CompanyDetailSerialization extends Company {
   @Expose()
   get isBookmarked() {
     return this.bookmarkedCompany.length > 0 ? true : false;
+  }
+
+  @Expose()
+  get amountPost() {
+    if (!this.posts) return null;
+    return this.posts.length;
   }
 }

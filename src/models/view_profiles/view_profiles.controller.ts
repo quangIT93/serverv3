@@ -1,9 +1,24 @@
-import { Controller, Post, Body, BadRequestException, UseGuards, Req, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  UseGuards,
+  Req,
+  HttpStatus,
+  Get,
+  UnauthorizedException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Query,
+} from '@nestjs/common';
 import { ViewProfilesService } from './view_profiles.service';
 import { CreateViewProfileDto } from './dto/create-view_profile.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { CompaniesInterceptor } from '../company-models/companies/interceptors/companies.interceptor';
+import { ViewedCompanyDto } from './dto/viewed-company.dto';
 
 @Controller('view-profiles')
 @ApiTags('View Profiles')
@@ -13,9 +28,11 @@ export class ViewProfilesController {
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  async create(@Body() createViewProfileDto: CreateViewProfileDto, @Req() req: CustomRequest) {
+  async create(
+    @Body() createViewProfileDto: CreateViewProfileDto,
+    @Req() req: CustomRequest,
+  ) {
     try {
-
       const accountId = req.user?.id;
 
       if (!accountId) {
@@ -28,13 +45,40 @@ export class ViewProfilesController {
 
       return {
         status: HttpStatus.OK,
-        total
+        total,
       };
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
       }
       throw new BadRequestException('Error');
+    }
+  }
+
+  @Get('companies-viewed/by-account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
+  async getCompanyViewedByAccount(
+    @Req() req: CustomRequest,
+    @Query() query: ViewedCompanyDto,
+  ) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new UnauthorizedException();
+      }
+
+      return this.viewProfilesService.getCompanyViewedByAccount(
+        accountId,
+        query,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Getting error');
     }
   }
 }

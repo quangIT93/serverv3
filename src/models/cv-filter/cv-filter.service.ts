@@ -37,7 +37,8 @@ export class CvFilterService {
         .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
         .innerJoin('profiles.user', 'user')
         .where('profiles.isSearch = :isSearch', { isSearch: 1 })
-        .andWhere('user.status = :status', { status: 1 });
+        .andWhere('user.status = :status', { status: 1 })
+        .andWhere('user.type = 0');
 
       if (addresses) {
         candidates.andWhere('profilesLocations.id IN (:...addresses)', {

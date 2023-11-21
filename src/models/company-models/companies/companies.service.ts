@@ -59,6 +59,7 @@ export class CompaniesService {
         page = 0,
         accountId,
         status = 1,
+        accountIds,
       } = query;
       const companies = this.companyRepository
         .createQueryBuilder('companies')
@@ -91,6 +92,12 @@ export class CompaniesService {
       if (companySizeId) {
         companies.andWhere('companies.companySize.id = :companySizeId', {
           companySizeId,
+        });
+      }
+
+      if (accountIds) {
+        companies.andWhere('companies.accountId IN (:...accountIds)', {
+          accountIds: Array.isArray(accountIds) ? accountIds : [accountIds],
         });
       }
 
@@ -138,6 +145,7 @@ export class CompaniesService {
         'bookmarkedCompany.accountId = :accountId',
         { accountId },
       )
+      .leftJoinAndSelect('company.posts', 'posts', 'posts.status = 1')
       .getOne();
 
     return data;
