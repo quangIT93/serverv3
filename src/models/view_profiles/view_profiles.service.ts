@@ -7,6 +7,7 @@ import { UserService } from '../users/users.service';
 import { NOT_ENOUGH_POINTS, NO_PERMISSION } from 'src/common/constants';
 import { CompaniesService } from '../company-models/companies/companies.service';
 import { ViewedCompanyDto } from './dto/viewed-company.dto';
+import { Company } from '../company-models/companies/entities/company.entity';
 
 @Injectable()
 export class ViewProfilesService {
@@ -15,11 +16,21 @@ export class ViewProfilesService {
     private viewProfileRepository: Repository<ViewProfile>,
     private readonly userService: UserService,
     private readonly companiesService: CompaniesService,
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
   ) {}
   async create(createViewProfileDto: CreateViewProfileDto) {
     const user = await this.userService.findRoleById(
       createViewProfileDto.recruitId,
     );
+
+    const company = await this.companyRepository.findOne({
+      where: { accountId: createViewProfileDto.recruitId },
+    });
+
+    if (!company) {
+      throw new BadRequestException('You have not company yet');
+    }
 
     const TOTAL_IN_DAY =
       user && (user?.role === 3 || user?.role === 1) ? 20 : 3;
@@ -61,6 +72,7 @@ export class ViewProfilesService {
 
       const accountIds = viewed.map((view) => view.recruitId);
 
+      query.accountId = accountId;
       query.accountIds = accountIds;
 
       return await this.companiesService.findAll(query);

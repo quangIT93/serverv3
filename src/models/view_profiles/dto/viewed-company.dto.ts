@@ -4,6 +4,7 @@ import { FilterCompaniesDto } from 'src/models/company-models/companies/dto/filt
 export class ViewedCompanyDto extends PickType(FilterCompaniesDto, [
   'limit',
   'page',
+  'accountId',
 ]) {
   accountIds!: string[];
 }

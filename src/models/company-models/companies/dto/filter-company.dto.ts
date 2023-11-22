@@ -41,7 +41,7 @@ export class FilterCompaniesDto {
   @IsOptional()
   page?: number;
 
-  accountId?: string;
+  accountId!: string;
 
   @ApiProperty({
     type: 'array',

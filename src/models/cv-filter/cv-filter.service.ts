@@ -38,7 +38,7 @@ export class CvFilterService {
         .innerJoin('profiles.user', 'user')
         .where('profiles.isSearch = :isSearch', { isSearch: 1 })
         .andWhere('user.status = :status', { status: 1 })
-        .andWhere('user.type = 0');
+        .andWhere('user.type <> 1 OR user.type IS NULL');
 
       if (addresses) {
         candidates.andWhere('profilesLocations.id IN (:...addresses)', {
