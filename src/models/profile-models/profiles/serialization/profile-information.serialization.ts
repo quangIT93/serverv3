@@ -119,7 +119,12 @@ export class ProfileInformationSerialization extends Profile {
     return `${BUCKET_CV}/${this.accountId}/${this.cvUrl}`;
   }
 
-  @Transform(({ value }) => +value)
+  @Transform(({ value }) => {
+    if (value === null) {
+      return new Date('01-01-2000').getTime();
+    }
+    return +value;
+  })
   override birthday!: string;
 
   @Expose()
