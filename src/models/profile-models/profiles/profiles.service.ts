@@ -302,4 +302,26 @@ export class ProfilesService {
       where: { accountId: id },
     });
   }
+
+  async getListCompanyViewProfile(id: string) {
+    try {
+      const profile = await this.profileRepository.findOne({
+        where: { accountId: id },
+      });
+
+      if (!profile) {
+        throw new BadRequestException('Profile not found');
+      }
+
+      const listCompanyViewProfile = await this.profileRepository
+        .createQueryBuilder('profile')
+        .leftJoinAndSelect('profile.viewProfiles', 'viewProfiles')
+        .where('profile.accountId = :id', { id })
+        .getOne();
+
+      return listCompanyViewProfile;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
