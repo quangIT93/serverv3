@@ -9,6 +9,8 @@ export class CompaniesInterceptor implements NestInterceptor {
       map((company: any) => {
         const lang = _context.switchToHttp().getRequest().lang;
 
+        console.log("data", company)
+
         const data = company?.data.map((data: Company) => {
           return new CompaniesSerialization(data, lang);
         });
