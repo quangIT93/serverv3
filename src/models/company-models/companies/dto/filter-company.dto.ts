@@ -43,12 +43,5 @@ export class FilterCompaniesDto {
 
   accountId!: string;
 
-  @ApiProperty({
-    type: 'array',
-    items: { type: 'string' },
-    required: false,
-    description: 'Array account id',
-  })
-  @IsOptional()
   accountIds?: string[];
 }
