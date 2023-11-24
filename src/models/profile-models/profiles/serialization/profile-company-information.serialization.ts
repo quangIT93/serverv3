@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { Language } from 'src/common/enum';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
@@ -47,4 +47,10 @@ export class ProfileCompanyInformationSerialization extends Company {
 
   @Exclude({ toPlainOnly: true })
   override updatedAt!: Date;
+
+  @Transform(({ value }) => parseFloat(value))
+  override latitude!: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  override longitude!: number;
 }

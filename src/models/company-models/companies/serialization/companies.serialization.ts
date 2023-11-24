@@ -3,7 +3,7 @@ import { Company } from '../entities/company.entity';
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { Post } from 'src/models/post-models/posts/entities';
 import { locationTranslator } from 'src/common/helper/translators';
-import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
+import { BUCKET_IMAGE_COMPANIES_LOGO } from 'src/common/constants';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
@@ -71,10 +71,16 @@ export class CompaniesSerialization extends Company {
   @Transform(({ value }) => value?.getTime())
   override updatedAt!: Date;
 
+  @Transform(({ value }) => parseFloat(value))
+  override latitude!: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  override longitude!: number;
+
   @Expose()
   get logoPath() {
     if (!this.logo) return null;
-    return `${BUCKET_IMAGE_COMANIES_LOGO}/${this.id}/${this.logo}`;
+    return `${BUCKET_IMAGE_COMPANIES_LOGO}/${this.id}/${this.logo}`;
   }
 
   @Expose()

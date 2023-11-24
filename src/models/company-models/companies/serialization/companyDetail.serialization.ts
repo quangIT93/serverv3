@@ -9,7 +9,7 @@ import { ParentCategory } from 'src/models/categories/parents/entities/parent.en
 import { CompanySizeSerialization } from '../../company-sizes/serialization/company-size.serialization';
 import { CompanySize } from '../../company-sizes/entities/company-size.entity';
 import { CompanyImagesSerializer } from '../../company-images/serializers/company-images.serializer';
-import { BUCKET_IMAGE_COMANIES_LOGO } from 'src/common/constants';
+import { BUCKET_IMAGE_COMPANIES_LOGO } from 'src/common/constants';
 import { CompanyRoleSerialization } from '../../company-roles/serialization/company-role.serializarion';
 import { CompanyRole } from '../../company-roles/entities/company-role.entity';
 import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
@@ -67,10 +67,16 @@ export class CompanyDetailSerialization extends Company {
   @Transform(({ value }) => new Date(value).getTime())
   override updatedAt!: Date;
 
+  @Transform(({ value }) => parseFloat(value))
+  override latitude!: number;
+
+  @Transform(({ value }) => parseFloat(value))
+  override longitude!: number;
+
   @Expose()
   get logoPath() {
     if (!this.logo) return null;
-    return `${BUCKET_IMAGE_COMANIES_LOGO}/${this.id}/${this.logo}`;
+    return `${BUCKET_IMAGE_COMPANIES_LOGO}/${this.id}/${this.logo}`;
   }
 
   @Expose()

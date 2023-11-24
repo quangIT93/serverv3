@@ -29,7 +29,7 @@ import {
   FilesInterceptor,
 } from '@nestjs/platform-express';
 import { AWSService } from 'src/services/aws/aws.service';
-import { BUCKET_IMAGE_COMANIES_LOGO_UPLOAD } from 'src/common/constants';
+import { BUCKET_IMAGE_COMPANIES_LOGO_UPLOAD } from 'src/common/constants';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 // import { Role } from 'src/common/enum';
 // import { Roles } from 'src/authentication/roles.decorator';
@@ -94,14 +94,14 @@ export class CompaniesController {
         : [];
       const company = await this.companiesService.create(createCompanyDto);
       const uploadedObject = await this.awsService.uploadFile(logo, {
-        BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+        BUCKET: BUCKET_IMAGE_COMPANIES_LOGO_UPLOAD,
         id: String(company.id),
       });
       if (images) {
         const uploadedImages = await this.awsService.uploadMutilpleFiles(
           images,
           {
-            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            BUCKET: BUCKET_IMAGE_COMPANIES_LOGO_UPLOAD,
             id: String(company.id),
           },
         );
@@ -251,7 +251,7 @@ export class CompaniesController {
       );
       if (logo && logo.originalname) {
         await this.awsService.uploadFile(logo, {
-          BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+          BUCKET: BUCKET_IMAGE_COMPANIES_LOGO_UPLOAD,
           id: String(company?.id),
         });
       }
@@ -346,7 +346,7 @@ export class CompaniesController {
         const uploadedImages = await this.awsService.uploadMutilpleFiles(
           images,
           {
-            BUCKET: BUCKET_IMAGE_COMANIES_LOGO_UPLOAD,
+            BUCKET: BUCKET_IMAGE_COMPANIES_LOGO_UPLOAD,
             id: id,
           },
         );
