@@ -16,6 +16,7 @@ import { CompanyImage } from '../../company-images/entities/company-image.entity
 import { Post } from 'src/models/post-models/posts/entities';
 import { CompanyRating } from '../../company-ratings/entities/company-rating.entity';
 import { CompanyBookmarked } from '../../company-bookmarked/entities/company-bookmarked.entity';
+import { ViewProfile } from 'src/models/view_profiles/entities/view_profile.entity';
 
 @Entity('companies')
 export class Company {
@@ -145,4 +146,8 @@ export class Company {
   )
   @JoinColumn({ name: 'company_id' })
   bookmarkedCompany!: CompanyBookmarked[];
+
+  @OneToMany(() => ViewProfile, (viewProfile) => viewProfile.company)
+  @JoinColumn({ name: 'account_id', referencedColumnName: 'recruitId' })
+  viewProfiles!: ViewProfile[];
 }

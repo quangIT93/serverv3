@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ViewProfile } from './entities/view_profile.entity';
 import { UserService } from '../users/users.service';
 import { NOT_ENOUGH_POINTS, NO_PERMISSION } from 'src/common/constants';
-import { CompaniesService } from '../company-models/companies/companies.service';
+// import { CompaniesService } from '../company-models/companies/companies.service';
 import { ViewedCompanyDto } from './dto/viewed-company.dto';
 import { Company } from '../company-models/companies/entities/company.entity';
 
@@ -15,7 +15,7 @@ export class ViewProfilesService {
     @InjectRepository(ViewProfile)
     private viewProfileRepository: Repository<ViewProfile>,
     private readonly userService: UserService,
-    private readonly companiesService: CompaniesService,
+    // private readonly companiesService: CompaniesService,
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
   ) {}
@@ -66,16 +66,39 @@ export class ViewProfilesService {
 
   async getCompanyViewedByAccount(accountId: string, query: ViewedCompanyDto) {
     try {
-      const viewed = await this.viewProfileRepository.find({
-        where: { profileId: accountId },
-      });
+      const queryRunner = this.viewProfileRepository
+        .createQueryBuilder('view_profiles')
+        .innerJoinAndSelect('view_profiles.company', 'company')
+        .leftJoinAndSelect(
+          'company.bookmarkedCompany',
+          'bookmarkedCompany',
+          'bookmarkedCompany.accountId = :accountId',
+          { accountId }
+        )
+        .leftJoinAndSelect('company.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('company.posts', 'posts', 'posts.status = 1')
+        .where('view_profiles.profileId = :accountId', { accountId })
+        .groupBy('view_profiles.recruitId');
 
-      const accountIds = viewed.map((view) => view.recruitId);
+      const total = await queryRunner.getCount();
 
-      query.accountId = accountId;
-      query.accountIds = accountIds;
+      const data = await queryRunner
+        .take(query.limit)
+        .skip(query.page * query.limit)
+        .getMany()
+        .then((result) => {
+          return result.map((view) => view.company);
+        });
 
-      return await this.companiesService.findAll(query);
+      const is_over = total < (query.page + 1) * query.limit;
+
+      return {
+        data,
+        total,
+        is_over,
+      };
     } catch (error) {
       throw error;
     }
