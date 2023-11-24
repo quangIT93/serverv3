@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SiteController } from './site.controller';
 import { SiteService } from './site.service';
-import { Client } from '@googlemaps/google-maps-services-js';
+import { GoogleMapProvider } from './google-map.provider';
 
 @Module({
   controllers: [SiteController],
-  providers: [
-    SiteService,
-    {
-      provide: 'GOOGLE_MAPS_CLIENT',
-      useValue: new Client({}),
-    },
-  ],
+  providers: [SiteService, GoogleMapProvider],
+  exports: [SiteService],
 })
 export class SiteModule {}

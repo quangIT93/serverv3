@@ -7,6 +7,8 @@ import { Company } from './entities/company.entity';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { CompanyImagesModule } from '../company-images/company-images.module';
+import { SiteService } from 'src/models/site/site.service';
+import { GoogleMapProvider } from 'src/models/site/google-map.provider';
 
 @Module({
   imports: [
@@ -16,6 +18,6 @@ import { CompanyImagesModule } from '../company-images/company-images.module';
     CompanyImagesModule,
   ],
   controllers: [CompaniesController],
-  providers: [CompaniesService],
+  providers: [CompaniesService, SiteService, GoogleMapProvider],
 })
 export class CompaniesModule {}

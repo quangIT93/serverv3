@@ -17,6 +17,7 @@ import {
   Query,
   BadRequestException,
   Put,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -114,6 +115,8 @@ export class CompaniesController {
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
+      await this.companiesService.updateLocationCompany(+company.id);
+
       return res.status(HttpStatus.CREATED).json({
         statusCode: HttpStatus.CREATED,
         message: 'Company created successfully',
@@ -165,7 +168,6 @@ export class CompaniesController {
   @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
   async findAllByAdmin() {
     try {
-
       return await this.companiesService.findAllByAdmin();
     } catch (error) {
       if (error instanceof Error) {
@@ -253,6 +255,9 @@ export class CompaniesController {
           id: String(company?.id),
         });
       }
+
+      await this.companiesService.updateLocationCompany(+req.params['id']);
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Company updated successfully',
@@ -421,6 +426,35 @@ export class CompaniesController {
         throw error;
       }
       throw new BadRequestException('Posting error');
+    }
+  }
+
+  @Patch('update-location/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async test(@Param('id') id: number, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+
+      if (!accountId) {
+        throw new UnauthorizedException();
+      }
+
+      const response = await this.companiesService.updateLocationCompany(id);
+
+      if (response) {
+        return response;
+      }
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Company location updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Updating error');
     }
   }
 }

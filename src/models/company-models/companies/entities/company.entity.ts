@@ -58,6 +58,12 @@ export class Company {
   @Column({ type: 'varchar', length: 1000, nullable: false })
   description!: string;
 
+  @Column({ type: 'decimal', nullable: true })
+  latitude!: number;
+
+  @Column({ type: 'decimal', nullable: true })
+  longitude!: number;
+
   @Column({ type: 'tinyint', nullable: false, default: 1 })
   status!: number;
 

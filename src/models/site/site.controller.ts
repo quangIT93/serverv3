@@ -68,7 +68,7 @@ export class SiteController {
   @Get('google-map/:address')
   async geocodeAddress(@Param('address') address: string) {
     try {
-      return await this.siteService.geocodeAddress(address);
+      return await this.siteService.googlemapGeocoding(address);
     } catch (error) {
       if (error instanceof Error) {
         throw error;

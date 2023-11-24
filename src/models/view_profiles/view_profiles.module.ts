@@ -9,6 +9,7 @@ import { CompaniesModule } from '../company-models/companies/companies.module';
 import { CompaniesService } from '../company-models/companies/companies.service';
 import { Company } from '../company-models/companies/entities/company.entity';
 import { CompanyImagesModule } from '../company-models/company-images/company-images.module';
+import { SiteModule } from '../site/site.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CompanyImagesModule } from '../company-models/company-images/company-im
     UserModule,
     CompaniesModule,
     CompanyImagesModule,
+    SiteModule,
   ],
   controllers: [ViewProfilesController],
   providers: [ViewProfilesService, CompaniesService],

@@ -9,6 +9,8 @@ import { CompanyImagesService } from '../company-images/company-images.service';
 import { CompanyImage } from '../company-images/entities/company-image.entity';
 import { FilterCompaniesDto } from './dto/filter-company.dto';
 import { StatusCompany } from 'src/common/enum';
+import { addressTranslator } from 'src/common/helper/translators/address.translator';
+import { SiteService } from 'src/models/site/site.service';
 
 @Injectable()
 export class CompaniesService {
@@ -16,6 +18,7 @@ export class CompaniesService {
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
     private readonly companyImagesService: CompanyImagesService,
+    private readonly siteService: SiteService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
@@ -228,6 +231,49 @@ export class CompaniesService {
         total,
         data,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateLocationCompany(id: number) {
+    try {
+      const company = await this.companyRepository.findOne({
+        where: { id },
+        relations: ['ward', 'ward.district', 'ward.district.province'],
+      });
+
+      if (!company) {
+        throw new BadRequestException('Company not found');
+      }
+
+      // if (!company.ward) {
+      //   throw new BadRequestException('Company ward not found');
+      // }
+
+      if (company.ward) {
+        const address = addressTranslator({
+          location: company.ward,
+          address: company.address,
+        });
+
+        if (!address) return;
+
+        const location = await this.siteService.googlemapGeocoding(address);
+
+        if (location.status === 'OK') {
+          const { lat, lng } = location.results[0].geometry.location;
+
+          await this.companyRepository.update(id, {
+            latitude: lat,
+            longitude: lng,
+          });
+        }
+
+        return location;
+      }
+
+      return;
     } catch (error) {
       throw error;
     }

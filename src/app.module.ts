@@ -76,6 +76,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
 import { CompanyRatingsModule } from './models/company-models/company-ratings/company-ratings.module';
 import { CompanyBookmarkedModule } from './models/company-models/company-bookmarked/company-bookmarked.module';
+// import { GoogleMapProvider } from './models/site/google-map.provider';
 @Module({
   imports: [
     AppConfigModule,
@@ -184,6 +185,7 @@ import { CompanyBookmarkedModule } from './models/company-models/company-bookmar
       provide: APP_GUARD,
       useValue: ThrottlerBehindProxyGuard,
     },
+    // GoogleMapProvider,
   ],
 })
 export class AppModule implements NestModule {

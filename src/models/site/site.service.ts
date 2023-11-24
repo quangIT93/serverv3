@@ -1,6 +1,7 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Client } from '@googlemaps/google-maps-services-js';
+import { GoogleMapsError } from 'src/common/enum';
 
 // import { CreatePostDto } from './dto/create-post.dto';
 
@@ -41,12 +42,10 @@ export class SiteService {
   //   return result;
   // }
 
-  async geocodeAddress(address: string) {
+  async googlemapGeocoding(address: string) {
     try {
-      const key = process.env['FIREBASE_MAP_API_KEY'];
-      if (!key) {
-        throw new BadRequestException('Internal server error');
-      }
+      const key = process.env['FIREBASE_MAP_API_KEY'] as string;
+
       const response = await this.googleMapsClient.geocode({
         params: {
           address,
@@ -54,8 +53,26 @@ export class SiteService {
         },
       });
 
-      return response.data;
-    } catch (error) {
+      if (response.status === 200 && response.data.status === 'OK') {
+        return response.data;
+      }
+
+      return;
+    } catch (error: any) {
+      const errorCode = error.response.data.status;
+
+      if (errorCode === GoogleMapsError.INVALID_REQUEST) {
+        Logger.error('Error INVALID_REQUEST Google Maps API:');
+        Logger.log(error.response.data);
+        return error.response.data;
+      }
+
+      if (errorCode === GoogleMapsError.OVER_QUERY_LIMIT) {
+        Logger.error('Error OVER_QUERY_LIMIT Google Maps API:');
+        Logger.log(error.response.data);
+        return error.response.data;
+      }
+
       throw error;
     }
   }
