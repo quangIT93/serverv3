@@ -115,6 +115,7 @@ export class CompaniesController {
         await this.companiesService.createCompanyImage(companyImagesDto);
       }
 
+      // location company
       await this.companiesService.updateLocationCompany(+company.id);
 
       return res.status(HttpStatus.CREATED).json({
@@ -128,11 +129,12 @@ export class CompaniesController {
       });
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error);
-        return res.status(HttpStatus.BAD_REQUEST).json({
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: error.message,
-        });
+        // console.log(error);
+        // return res.status(HttpStatus.BAD_REQUEST).json({
+        //   statusCode: HttpStatus.BAD_REQUEST,
+        //   message: error.message,
+        // });
+        throw error;
       }
       return res.status(HttpStatus.BAD_REQUEST).json({
         statusCode: HttpStatus.BAD_REQUEST,
@@ -256,6 +258,7 @@ export class CompaniesController {
         });
       }
 
+      // Update location Company
       await this.companiesService.updateLocationCompany(+req.params['id']);
 
       return {
@@ -440,11 +443,7 @@ export class CompaniesController {
         throw new UnauthorizedException();
       }
 
-      const response = await this.companiesService.updateLocationCompany(id);
-
-      if (response) {
-        return response;
-      }
+      await this.companiesService.updateLocationCompany(id);
 
       return {
         statusCode: HttpStatus.OK,

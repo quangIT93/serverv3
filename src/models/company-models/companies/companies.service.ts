@@ -247,30 +247,26 @@ export class CompaniesService {
         throw new BadRequestException('Company not found');
       }
 
-      // if (!company.ward) {
-      //   throw new BadRequestException('Company ward not found');
-      // }
+      if (!company.ward) {
+        throw new BadRequestException('Company ward not found');
+      }
 
-      if (company.ward) {
-        const address = addressTranslator({
-          location: company.ward,
-          address: company.address,
+      const address = addressTranslator({
+        location: company.ward,
+        address: company.address,
+      });
+
+      if (!address) return;
+
+      const location = await this.siteService.googlemapGeocoding(address);
+
+      if (location.status === 'OK') {
+        const { lat, lng } = location.results[0].geometry.location;
+
+        await this.companyRepository.update(id, {
+          latitude: lat,
+          longitude: lng,
         });
-
-        if (!address) return;
-
-        const location = await this.siteService.googlemapGeocoding(address);
-
-        if (location.status === 'OK') {
-          const { lat, lng } = location.results[0].geometry.location;
-
-          await this.companyRepository.update(id, {
-            latitude: lat,
-            longitude: lng,
-          });
-        }
-
-        return location;
       }
 
       return;
