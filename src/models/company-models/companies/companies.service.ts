@@ -109,7 +109,7 @@ export class CompaniesService {
       const data = await companies
         .take(limit)
         .skip(page * limit)
-        .orderBy('companies.updatedAt', 'DESC')
+        .orderBy('companies.createdAt', 'DESC')
         .getMany();
 
       return {
@@ -224,7 +224,7 @@ export class CompaniesService {
 
       const total = await companies.getCount();
       const data = await companies
-        .orderBy('companies.updatedAt', 'DESC')
+        .orderBy('companies.createdAt', 'DESC')
         .getMany();
 
       return {
