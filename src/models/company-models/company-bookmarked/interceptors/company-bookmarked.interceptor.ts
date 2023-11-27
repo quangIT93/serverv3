@@ -14,7 +14,6 @@ export class CompanyBookmarkedInterceptor implements NestInterceptor {
 
         if (!companyBookmarked || !companyBookmarked.data) return null;
 
-        console.log(companyBookmarked.data);
         const data = companyBookmarked?.data.map(
           (bookmarked: CompanyBookmarked) => {
             return new CompanyBookmarkedSerialization(bookmarked, lang);
