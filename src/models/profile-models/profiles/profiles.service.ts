@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import { UserService } from 'src/models/users/users.service';
+// import { UserService } from 'src/models/users/users.service';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    private readonly userService: UserService,
+    // private readonly userService: UserService,
 
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
@@ -118,11 +118,11 @@ export class ProfilesService {
 
   async getProfileById(id: string, accountId: string) {
     try {
-      const checkRecruit = await this.userService.findByIdAndType(accountId);
+      // const checkRecruit = await this.userService.findByIdAndType(accountId);
 
-      if (!checkRecruit) {
-        throw new BadRequestException('Is not a recruiter');
-      }
+      // if (!checkRecruit) {
+      //   throw new BadRequestException('Is not a recruiter');
+      // }
 
       const profile = await this.profileRepository
         .createQueryBuilder('profile')
