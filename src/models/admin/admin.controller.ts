@@ -26,9 +26,8 @@ export class AdminController {
                 throw new UnauthorizedException('Unauthorized');
             }
             
-            // max 10 mail in 1 request
             if (data.length > 200) {
-                throw new BadRequestException('Max 10 mail in 1 request');
+                throw new BadRequestException('Max 200 mail in 1 request');
             }
             
             await this.adminService.sendAdsMail(data, req.user.id);
