@@ -21,7 +21,7 @@ export class FilterPostDto {
   })
   @IsOptional()
   @OneOfOptionalRequired(['DESC', 'ASC'])
-  sort_by!: SORT_BY;
+  sortBy!: SORT_BY;
 
   @ApiProperty({
     type: 'string',
@@ -29,11 +29,11 @@ export class FilterPostDto {
     required: false,
     enum: ['1', '2'],
     default: '1',
-    description: 'money_type must be 1 - VND | 2 - USD ',
+    description: 'moneyType must be 1 - VND | 2 - USD ',
   })
   @IsOptional()
   @OneOfOptionalRequired(['1', '2'])
-  money_type!: string;
+  moneyType!: string;
 
   @ApiProperty({
     type: 'int',
@@ -43,7 +43,7 @@ export class FilterPostDto {
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'Salary min must be a number greater than or equal 0' })
-  salary_min!: number;
+  salaryMin!: number;
 
   @ApiProperty({
     type: 'int',
@@ -52,11 +52,11 @@ export class FilterPostDto {
   })
   @IsOptional()
   @IsNumber()
-  @IsGreaterOrEqualThan('salary_min', {
+  @IsGreaterOrEqualThan('salaryMin', {
     message: 'Salary max must be larger than salary min',
   })
   @Min(0, { message: 'Salary min must be a number greater than or equal 0' })
-  salary_max!: number;
+  salaryMax!: number;
 
   @IsOptional()
   a!: number;

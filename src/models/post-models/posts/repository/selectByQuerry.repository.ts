@@ -69,36 +69,36 @@ export async function findByHotTopicQuery(
 ) {
   const {
     provinceId,
-    sort_by = 'DESC',
-    salary_min,
-    money_type,
-    salary_max,
+    sortBy = 'DESC',
+    salaryMin,
+    salaryMax,
+    moneyType,
   } = filterPostDto;
 
   const queryBuilder = __init__(respository, query, { provinceId });
   const posts = await queryBuilder;
 
-  if (sort_by) {
-    posts.orderBy('posts.createdAt', sort_by);
+  if (sortBy) {
+    posts.orderBy('posts.createdAt', sortBy);
   }
 
-  if (money_type === '1' || money_type === '2') {
-    posts.andWhere('posts.moneyType = :money_type', { money_type });
+  if (moneyType === '1' || moneyType === '2') {
+    posts.andWhere('posts.moneyType = :moneyType', { moneyType });
   }
 
-  if (salary_min !== undefined && salary_max) {
-    if (salary_max < salary_min) {
+  if (salaryMin !== undefined && salaryMax) {
+    if (salaryMax < salaryMin) {
       throw new BadRequestException('Salary max must be salary min');
     }
 
     posts.andWhere(
-      '((posts.salary_min BETWEEN :salary_min AND :salary_max) OR (posts.salary_max BETWEEN :salary_min AND :salary_max))',
-      { salary_min, salary_max },
+      '((posts.salaryMin BETWEEN :salaryMin AND :salaryMax) OR (posts.salaryMax BETWEEN :salaryMin AND :salaryMax))',
+      { salaryMin, salaryMax },
     );
-  } else if (salary_min !== undefined) {
-    posts.andWhere('posts.salaryMin >= :salary_min', { salary_min });
-  } else if (salary_max) {
-    posts.andWhere('posts.salaryMax <= :salary_max', { salary_max });
+  } else if (salaryMin !== undefined) {
+    posts.andWhere('posts.salaryMin >= :salaryMin', { salaryMin });
+  } else if (salaryMax) {
+    posts.andWhere('posts.salaryMax <= :salaryMax', { salaryMax });
   }
 
   const data = await posts
