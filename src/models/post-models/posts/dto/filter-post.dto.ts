@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, Min } from 'class-validator';
 import { OneOfOptionalRequired } from 'src/common/decorators/validation';
-import { IsGreaterThan } from 'src/common/decorators/validation/isGreaterThan.validator';
+import { IsGreaterOrEqualThan } from 'src/common/decorators/validation/isGreaterThan.validator';
 import { SORT_BY } from 'src/common/enum/sort.enum';
 
 export class FilterPostDto {
@@ -29,30 +29,32 @@ export class FilterPostDto {
     required: false,
     enum: ['1', '2'],
     default: '1',
-    description: 'money_type must be 1 | 2 ',
+    description: 'money_type must be 1 - VND | 2 - USD ',
   })
   @IsOptional()
   @OneOfOptionalRequired(['1', '2'])
   money_type!: string;
 
   @ApiProperty({
-    type: 'double',
+    type: 'int',
     required: false,
     default: 0,
   })
   @IsOptional()
   @IsNumber()
+  @Min(0, { message: 'Salary min must be a number greater than or equal 0' })
   salary_min!: number;
 
   @ApiProperty({
-    type: 'double',
+    type: 'int',
     required: false,
     default: 0,
   })
   @IsOptional()
   @IsNumber()
-  @IsGreaterThan('salary_min', {
+  @IsGreaterOrEqualThan('salary_min', {
     message: 'Salary max must be larger than salary min',
   })
+  @Min(0, { message: 'Salary min must be a number greater than or equal 0' })
   salary_max!: number;
 }

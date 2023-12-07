@@ -4,7 +4,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
-export function IsGreaterThan(
+export function IsGreaterOrEqualThan(
   property: string,
   validationOptions?: ValidationOptions,
 ) {
@@ -19,10 +19,16 @@ export function IsGreaterThan(
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = (args.object as any)[relatedPropertyName];
+
+          // If field has not
+          if (relatedValue === undefined) {
+            return true;
+          }
+
           return (
             typeof value === 'number' &&
             typeof relatedValue === 'number' &&
-            value > relatedValue
+            value >= relatedValue
           );
         },
       },
