@@ -36,7 +36,7 @@ export class FilterPostDto {
   moneyType!: string;
 
   @ApiProperty({
-    type: 'int',
+    type: 'number',
     required: false,
     default: 0,
   })
@@ -46,7 +46,7 @@ export class FilterPostDto {
   salaryMin!: number;
 
   @ApiProperty({
-    type: 'int',
+    type: 'number',
     required: false,
     default: 0,
   })
