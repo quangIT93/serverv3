@@ -67,14 +67,19 @@ export async function findByHotTopicQuery(
   limit: number,
   filterPostDto: FilterPostDto,
 ) {
-  const { provinceId, sort_by, salary_min, money_type, salary_max } =
-    filterPostDto;
+  const {
+    provinceId,
+    sort_by = 'DESC',
+    salary_min,
+    money_type,
+    salary_max,
+  } = filterPostDto;
 
   const queryBuilder = __init__(respository, query, { provinceId });
   const posts = await queryBuilder;
 
   if (sort_by) {
-    posts.addOrderBy('posts.createdAt', sort_by);
+    posts.orderBy('posts.createdAt', sort_by);
   }
 
   if (money_type === '1' || money_type === '2') {
