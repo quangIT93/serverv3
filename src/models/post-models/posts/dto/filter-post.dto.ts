@@ -57,4 +57,7 @@ export class FilterPostDto {
   })
   @Min(0, { message: 'Salary min must be a number greater than or equal 0' })
   salary_max!: number;
+
+  @IsOptional()
+  a!: number;
 }
