@@ -102,8 +102,8 @@ export async function findByHotTopicQuery(
   }
 
   const data = await posts
-    .skip(page * limit)
-    .take(limit)
+    .skip(page ? page * limit - 1 : Math.abs(page * limit))
+    .take(Math.abs(limit))
     .getMany();
 
   const total = await queryBuilder.getCount();
