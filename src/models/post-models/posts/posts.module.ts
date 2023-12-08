@@ -19,6 +19,7 @@ import { ApplicationsModule } from 'src/models/application-model/applications/ap
 import { PostNotificationsModule } from 'src/models/notifications-model/post-notifications/post-notifications.module';
 import { ParentModule } from 'src/models/categories/parents/parents.module';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
+import { PostViewsModule } from '../post-views/post-views.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Company } from 'src/models/company-models/companies/entities/company.en
     ApplicationsModule,
     PostNotificationsModule,
     ParentModule,
+    PostViewsModule
   ],
   controllers: [PostsController],
   providers: [PostsService],

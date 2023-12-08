@@ -35,6 +35,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AvatarImagePipe } from './interceptor/avatar.interceptor';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_AVATAR_UPLOAD } from 'src/common/constants';
+import { ProfileActivityLogInterceptor } from './interceptor/profile-activity.interceptor';
 
 @ApiTags('profiles')
 @Controller('profiles')
@@ -44,6 +45,25 @@ export class ProfilesController {
     private readonly profilesService: ProfilesService,
     private readonly awsService: AWSService,
   ) {}
+
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileActivityLogInterceptor)
+  @UseGuards(AuthGuard)
+  @Get("activity-logs")
+  async getActivityLogs(@Req() req: CustomRequest) {
+    try {
+
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+
+      return this.profilesService.findActivityByAccountId(id);
+    } catch (error) {
+      throw error;
+    }
+  }
 
   @Throttle({
     default: {

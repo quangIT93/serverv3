@@ -1,11 +1,13 @@
+import { ApplicationsService } from './../../application-model/applications/applications.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 // import { CreateProfileDto } from './dto/create-profile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-// import { UserService } from 'src/models/users/users.service';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
+import { PostViewsService } from 'src/models/post-models/post-views/post-views.service';
+import { ProfileActivityDetail, ProfileLog } from './domain/profile-log';
 
 @Injectable()
 export class ProfilesService {
@@ -13,9 +15,10 @@ export class ProfilesService {
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
     // private readonly userService: UserService,
-
+    private readonly postViewsService: PostViewsService,
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
+    private readonly applicationsService: ApplicationsService,
   ) {}
 
   // create(_createProfileDto: CreateProfileDto) {
@@ -322,6 +325,22 @@ export class ProfilesService {
       return listCompanyViewProfile;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async findActivityByAccountId(id: string) {
+    const result: ProfileLog = new ProfileLog();
+    const postViewLogs = await this.postViewsService.findAllByAccountId(id);
+    const totalPostView = await this.postViewsService.getTotalViewByAccountId(id);
+
+    const applicationLogs = await this.applicationsService.getLogsApplicationByAccountId(id);
+    const totalApplication = await this.applicationsService.getTotalApplicationByAccountId(id);
+
+    result.viewPostLogs = new ProfileActivityDetail(totalPostView.count, postViewLogs);
+    result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
+    result.searchLogs = new ProfileActivityDetail(0, []);
+    return {
+      ...result,
     }
   }
 }

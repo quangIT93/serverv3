@@ -1,7 +1,9 @@
+
 import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,6 +29,8 @@ import { NearByQueriesDto } from './dto/nearby-queries.dto';
 import { ParentService } from 'src/models/categories/parents/parents.service';
 import { isArray } from 'class-validator';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
+import { PostViewsService } from '../post-views/post-views.service';
+import { CreatePostViewDto } from '../post-views/dto/create-post-view.dto';
 // import { HotTopicsService } from 'src/models/hot-topics/hot-topics.service';
 // import { CreatePostDto } from './dto/create-post.dto';
 
@@ -40,6 +44,7 @@ export class PostsService {
     private readonly postCategoriesService: PostsCategoriesService,
     private readonly postResourceService: PostResourceService,
     private readonly parentCategoryService: ParentService,
+    private readonly postViewsService: PostViewsService,
     @InjectRepository(Company)
     private readonly CompanyRepository: Repository<Company>,
   ) {}
@@ -118,8 +123,9 @@ export class PostsService {
     return countByHotTopicQuery(this.postsRepository, query);
   }
 
-  async findOne(id: number): Promise<Post | null> {
-    return this.postsRepository.findOne({
+  async findOne(id: number, accountId?: string): Promise<Post | null> {
+
+    const post =  this.postsRepository.findOne({
       relations: [
         'categories',
         'categories.parentCategory',
@@ -148,6 +154,18 @@ export class PostsService {
       },
       relationLoadStrategy: 'join',
     });
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    if (accountId) {
+      Logger.log("Create post view")
+      const dto: CreatePostViewDto = new CreatePostViewDto(id, accountId);
+      await this.postViewsService.create(dto);
+    }
+
+    return post;
   }
 
   async create(dto: CreatePostByAdminDto): Promise<Post> {
