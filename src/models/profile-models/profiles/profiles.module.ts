@@ -14,6 +14,8 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middleware';
 import { UserModule } from 'src/models/users/users.module';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
+import { PostViewsModule } from 'src/models/post-models/post-views/post-views.module';
+import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { Company } from 'src/models/company-models/companies/entities/company.en
     JwtAccessTokenServiceModule,
     AWSModule,
     UserModule,
+    PostViewsModule,
+    ApplicationsModule
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

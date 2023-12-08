@@ -3,6 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -94,4 +96,18 @@ export class User extends BaseEntity implements IUser {
   )
   @JoinColumn({ name: 'account_id' })
   bookmarkedCompany!: CompanyBookmarked[];
+
+  @ManyToMany(() => Post, (post) => post.postViews)
+  @JoinTable({
+    name: 'post_view',
+    joinColumn: {
+      name: 'account_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'post_id',
+      referencedColumnName: 'id',
+    },
+  })
+  postViews!: Post[];
 }

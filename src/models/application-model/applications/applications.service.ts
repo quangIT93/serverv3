@@ -34,6 +34,24 @@ export class ApplicationsService {
     });
   }
 
+  async getLogsApplicationByAccountId(accountId: string) {
+    return await this.applicationsRepository.createQueryBuilder('application')
+      .select('MONTH(application.created_at)', 'month')
+      .addSelect('YEAR(application.created_at)', 'year')
+      .addSelect('COUNT(*)', 'count')
+      .where('application.account_id = :accountId', { accountId })
+      .groupBy('month, year')
+      .orderBy('year, month', 'DESC')
+      .getRawMany();
+  }
+
+  async getTotalApplicationByAccountId(accountId: string) {
+    return await this.applicationsRepository.createQueryBuilder('application')
+      .select('COUNT(*)', 'count')
+      .where('application.account_id = :accountId', { accountId })
+      .getRawOne();
+  }
+
   update(id: number, _updateApplicationDto: UpdateApplicationDto) {
     return `This action updates a #${id} application`;
   }
