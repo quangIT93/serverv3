@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CommunicationImagesService } from './communication-images.service';
 import { CreateCommunicationImageDto } from './dto/create-communication-image.dto';
@@ -17,6 +18,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_COMMUNICATION_UPLOAD } from 'src/common/constants';
 import { ImageCommunicationPipe } from './interceptors/image-communication.interceptor';
+import { AuthGuard } from 'src/authentication/auth.guard';
+import { Roles } from 'src/authentication/roles.decorator';
+import { Role } from 'src/common/enum';
 
 @Controller('communication-images')
 export class CommunicationImagesController {
@@ -33,6 +37,8 @@ export class CommunicationImagesController {
   }
 
   @Post('image')
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
   @UseInterceptors(
     FileInterceptor('files[0]', { limits: { fieldSize: 1024 * 1024 * 6 } }),
   )
