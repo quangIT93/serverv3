@@ -27,6 +27,8 @@ import { NearByQueriesDto } from './dto/nearby-queries.dto';
 import { ParentService } from 'src/models/categories/parents/parents.service';
 import { isArray } from 'class-validator';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
+import { FilterPostDto } from './dto/filter-post.dto';
+
 // import { HotTopicsService } from 'src/models/hot-topics/hot-topics.service';
 // import { CreatePostDto } from './dto/create-post.dto';
 
@@ -86,7 +88,8 @@ export class PostsService {
     id: number,
     limit: number,
     page: number,
-    _provinceId?: string,
+    // _provinceId?: string,
+    filterPostDto: FilterPostDto,
   ): Promise<any> {
     // generate query and call function
     let query = await this.postsRepository.query(
@@ -102,7 +105,8 @@ export class PostsService {
       query[0].query,
       page,
       limit,
-      _provinceId,
+      // _provinceId,
+      filterPostDto,
     );
 
     data.title = query[0].title;
