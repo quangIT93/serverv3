@@ -6,7 +6,7 @@ export class CreateViewProfileDto {
     recruitId!:string;
 
     @ApiProperty({
-        type: 'varchar', 
+        type: 'string', 
         nullable: false, 
         description: 'id of candidate', 
         maxLength: 50, 
