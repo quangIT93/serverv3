@@ -18,9 +18,9 @@ export class ImageCommunicationPipe
       }
 
       return await createResizeImage(file, {
-        width: 512,
+        width: 680,
         height: 512,
-        ext: 'jpeg',
+        ext: 'png',
       });
     } catch (error) {
       throw error;
