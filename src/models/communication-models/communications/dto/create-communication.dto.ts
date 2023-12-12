@@ -19,13 +19,13 @@ export class CreateCommunicationDto {
   @ApiProperty({
     type: 'string',
     format: 'string',
-    maxLength: 10000,
+    maxLength: 65536,
     required: true,
     default: 'Test',
   })
   @IsNotEmpty()
-  @MaxLength(60000, {
-    message: 'content length must not exceed 60000 characters',
+  @MaxLength(65536, {
+    message: 'content length must not exceed 65536 characters',
   })
   content!: string;
 
