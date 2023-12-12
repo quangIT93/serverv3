@@ -78,4 +78,27 @@ export class CandidateBookmarksService {
       throw error;
     }
   }
+
+  async getLogsByRecruitId(recruitId: string) {
+    try {
+      const query = this.candidateBooKmarkedRepository.createQueryBuilder('candidate_bookmarked')
+      .select('MONTH(candidate_bookmarked.created_at)', 'month')
+      .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
+      .addSelect('COUNT(candidate_bookmarked.id)', 'count')
+      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
+      .groupBy('month, year')
+      .orderBy('year, month', 'DESC');
+
+      const total = await query.getCount();
+
+      const data = await query.getRawMany();
+
+      return {
+        data,
+        total,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

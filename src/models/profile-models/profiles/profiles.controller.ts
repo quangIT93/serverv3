@@ -65,6 +65,25 @@ export class ProfilesController {
     }
   }
 
+  @ApiBearerAuth()
+  @UseInterceptors(ClassSerializerInterceptor, ProfileActivityLogInterceptor)
+  @UseGuards(AuthGuard)
+  @Get("activity-logs/recruiter")
+  async getRecruiterActivityLogs(@Req() req: CustomRequest) {
+    try {
+
+      const id = req.user?.id;
+
+      if (!id) {
+        throw new UnauthorizedException();
+      }
+
+      return this.profilesService.findActivityByRecruiterId(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Throttle({
     default: {
       limit: 3,
