@@ -178,4 +178,18 @@ export class Post extends BaseEntity {
     @OneToMany(() => PostCategories, postCategories => postCategories.post)
     @JoinColumn({ name: 'id' })
     postsCategories: PostCategories[] | undefined;
+
+    @ManyToMany(() => User, user => user.postViews)
+    @JoinTable({
+        name: 'post_view',
+        joinColumn: {
+            name: 'post_id',
+            referencedColumnName: 'id'
+        },
+        inverseJoinColumn: {
+            name: 'account_id',
+            referencedColumnName: 'id'
+        }
+    })
+    postViews!: User[];
 }

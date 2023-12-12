@@ -1,42 +1,36 @@
---
--- Table structure for table `hot_topics`
---
+-- SELECT 
+--   MONTH(created_at) AS month,
+--   YEAR(created_at) AS year,
+--   COUNT(*) AS views
+-- FROM post_view 
+-- WHERE account_id = "c53fe2a4-52c3-4332-b7e8-9b3baae27764"
+-- GROUP BY account_id, month, year
+-- ORDER BY year, month DESC
+-- LIMIT 12;
 
-DROP TABLE IF EXISTS `hot_topics`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `hot_topics` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` tinyint(4) NOT NULL COMMENT '1: Remotely_job, 2: Constraint by parent_category, 3: Constraint by chilfren category',
-  `detail_id` int(11) NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `image` varchar(255) DEFAULT NULL,
-  `web_image` varchar(255) DEFAULT NULL,
-  `theme_id` tinyint(4) DEFAULT 2,
-  `order` tinyint(4) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT 1,
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_hot_topics` (`type`,`detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO post_view VALUES("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90001, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90002, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90003, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90004, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90005, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90006, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90007, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90008, "2023-11-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90009, "2023-11-08 13:22:44"),
+-- 2 logs in Dec
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90012, "2023-01-08 13:22:44"),
+-- 1 log in Jan
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90013, "2023-02-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90014, "2023-02-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90015, "2023-02-08 13:22:44"),
+-- 3 logs in Feb
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90016, "2023-03-08 13:22:44"),
+-- 1 log in Mar
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90017, "2023-04-08 13:22:44"),
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90018, "2023-04-08 13:22:44"),
+-- 2 logs in Apr
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90019, "2023-05-08 13:22:44"),
+-- 1 log in May
+("c53fe2a4-52c3-4332-b7e8-9b3baae27764", 90020, "2023-06-08 13:22:44");
 
---
--- Dumping data for table `hot_topics`
---
 
-LOCK TABLES `hot_topics` WRITE;
-/*!40000 ALTER TABLE `hot_topics` DISABLE KEYS */;
-INSERT INTO `hot_topics` VALUES (1,3,460,'Influencer','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/influencer.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/influencer.png',1,3,1,'2023-06-24 04:15:06','2023-10-06 10:37:29'),(2,1,1,'Remote','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/remote.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/remote.png',2,1,1,'2023-06-24 04:17:15','2023-10-06 10:37:50'),(3,4,1,'Short time','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/short-time.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/short-time.png',2,4,1,'2023-06-25 17:53:12','2023-10-06 10:38:15'),(4,5,1,'Job today','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/job-today.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/job-today.png',2,5,1,'2023-06-28 04:49:24','2023-10-06 10:38:48'),(5,6,4,'Freelancer','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/Freelancer.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/Freelancer.png',0,2,1,'2023-07-07 02:26:09','2023-10-06 10:42:08'),(6,7,0,'Driver','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/Delivery.png','https://hi-job-app-upload.s3.ap-southeast-1.amazonaws.com/images/hot-topics/web/driver.png',2,0,1,'2023-08-25 09:09:40','2023-10-06 10:40:36');
-/*!40000 ALTER TABLE `hot_topics` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
