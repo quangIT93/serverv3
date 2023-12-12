@@ -73,7 +73,7 @@ export class ViewProfilesService {
           'company.bookmarkedCompany',
           'bookmarkedCompany',
           'bookmarkedCompany.accountId = :accountId',
-          { accountId }
+          { accountId },
         )
         .leftJoinAndSelect('company.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
@@ -98,6 +98,31 @@ export class ViewProfilesService {
         data,
         total,
         is_over,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProfilesByRecruit(accountId: string, limit: number, page: number) {
+    try {
+      const candidates = this.viewProfileRepository
+        .createQueryBuilder('viewProfiles')
+        .where('viewProfiles.recruitId = :accountId', { accountId })
+        .leftJoinAndSelect('viewProfiles.profile', 'profile')
+        .leftJoinAndSelect('profile.childCategories', 'childCategory')
+        .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory');
+
+      const total = await candidates.getCount();
+      const data = await candidates
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
+        .getMany();
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;
