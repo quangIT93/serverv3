@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from '@nestjs/common';
 import { ImageValidator } from 'src/common/decorators/validation/image-validator/image.validator';
-import { createResizeImage } from 'src/common/helper/transform/resize-image';
+// import { createResizeImage } from 'src/common/helper/transform/resize-image';
 
 @Injectable()
 export class ImageCommunicationPipe
@@ -17,11 +17,13 @@ export class ImageCommunicationPipe
         throw new Error('Image must be image');
       }
 
-      return await createResizeImage(file, {
-        width: 680,
-        height: 512,
-        ext: 'png',
-      });
+      return file;
+
+      // return await createResizeImage(file, {
+      //   width: 680,
+      //   height: 512,
+      //   ext: 'png',
+      // });
     } catch (error) {
       throw error;
     }
