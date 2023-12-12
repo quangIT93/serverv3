@@ -9,6 +9,7 @@ import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { CompanyImagesModule } from '../company-images/company-images.module';
 import { SiteService } from 'src/models/site/site.service';
 import { GoogleMapProvider } from 'src/models/site/google-map.provider';
+import { CompanyViewsModule } from '../company-views/company-views.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GoogleMapProvider } from 'src/models/site/google-map.provider';
     JwtAccessTokenServiceModule,
     AWSModule,
     CompanyImagesModule,
+    CompanyViewsModule
   ],
   controllers: [CompaniesController],
   providers: [CompaniesService, SiteService, GoogleMapProvider],

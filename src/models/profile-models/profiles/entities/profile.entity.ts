@@ -130,6 +130,7 @@ export class Profile {
   })
   childCategories!: ChildCategory[];
 
+  // Company view your profile
   @OneToOne((_) => Company, (company) => company.profile)
   // @JoinColumn({ name: 'id', referencedColumnName: 'accountId' })
   company!: Company;

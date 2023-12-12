@@ -16,16 +16,19 @@ import { UserModule } from 'src/models/users/users.module';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 import { PostViewsModule } from 'src/models/post-models/post-views/post-views.module';
 import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
+import { ViewProfilesModule } from 'src/models/view_profiles/view_profiles.module';
+import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Profile, Company]),
+    TypeOrmModule.forFeature([Profile, Company, CandidateBookmark]),
     AuthModule,
     JwtAccessTokenServiceModule,
     AWSModule,
     UserModule,
     PostViewsModule,
-    ApplicationsModule
+    ApplicationsModule,
+    ViewProfilesModule,
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],
