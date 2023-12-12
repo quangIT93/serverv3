@@ -1,8 +1,22 @@
 
-export class ProfileLog {
-    viewPostLogs!: ProfileActivityDetail;
-    searchLogs!: ProfileActivityDetail;
+export class CandidateProfileLog {
     applyLogs!: ProfileActivityDetail;
+    viewPostLogs!: ProfileActivityDetail;
+    viewProfileLogs!: ProfileActivityDetail;
+    searchLogs!: number;
+    saveYourProfileLogs!: number;
+    saveCommunityLogs!: number;
+    createCommunityLogs!: number;
+}
+
+export class RecruiterProfileLog {
+    applyLogs!: ProfileActivityDetail;
+    saveCandidateLogs!: ProfileActivityDetail;
+    viewCandidateLogs!: ProfileActivityDetail; 
+    viewYourCompanyLogs!: number;
+    saveYourCompanyLogs!: number;
+    saveCommunityLogs!: number;
+    createCommunityLogs!: number;
 }
 
 export class ProfileActivityDetail {

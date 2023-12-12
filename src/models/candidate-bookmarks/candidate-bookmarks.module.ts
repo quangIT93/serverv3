@@ -15,6 +15,7 @@ import { PageAndLimitMiddleware } from 'src/common/middlewares/page-limit/page-l
   ],
   controllers: [CandidateBookmarksController],
   providers: [CandidateBookmarksService],
+  exports: [CandidateBookmarksService],
 })
 export class CandidateBookmarksModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

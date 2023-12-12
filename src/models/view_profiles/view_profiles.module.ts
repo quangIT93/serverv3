@@ -6,7 +6,6 @@ import { ViewProfile } from './entities/view_profile.entity';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
 import { UserModule } from '../users/users.module';
 import { CompaniesModule } from '../company-models/companies/companies.module';
-import { CompaniesService } from '../company-models/companies/companies.service';
 import { Company } from '../company-models/companies/entities/company.entity';
 import { CompanyImagesModule } from '../company-models/company-images/company-images.module';
 import { SiteModule } from '../site/site.module';
@@ -21,7 +20,7 @@ import { SiteModule } from '../site/site.module';
     SiteModule,
   ],
   controllers: [ViewProfilesController],
-  providers: [ViewProfilesService, CompaniesService],
+  providers: [ViewProfilesService],
   exports: [ViewProfilesService],
 })
 export class ViewProfilesModule {}

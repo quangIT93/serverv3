@@ -1,3 +1,4 @@
+import { CompanyViewsService } from './../company-views/company-views.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
@@ -19,6 +20,7 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>,
     private readonly companyImagesService: CompanyImagesService,
     private readonly siteService: SiteService,
+    private readonly companyViewsService: CompanyViewsService,
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
@@ -130,6 +132,13 @@ export class CompaniesService {
 
     if (!company) {
       throw new BadRequestException('Company not found');
+    }
+
+    if (accountId) {
+      await this.companyViewsService.create({
+        accountId,
+        companyId: id,
+      });
     }
 
     const data = this.companyRepository
