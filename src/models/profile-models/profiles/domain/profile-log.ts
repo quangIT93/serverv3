@@ -55,7 +55,7 @@ export class ProfileActivityDetail {
             }
         }
 
-        this.activities = activities;
+        this.activities = activities.reverse();
 
     }
 }
