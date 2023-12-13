@@ -30,6 +30,24 @@ export class BookmarksService {
       .getOne();
   }
 
+  async getLogsByUserId(userId: string) {
+    const logs = await this.bookmarkRepository
+      .createQueryBuilder('bookmarks')
+      .select('MONTH(bookmarks.created_at) as month')
+      .addSelect('YEAR(bookmarks.created_at) as year')
+      .addSelect('COUNT(*) as count')
+      .where('bookmarks.account_id = :userId', { userId })
+      .groupBy('month')
+      .addGroupBy('year')
+      .take(12)
+      .getRawMany();
+
+      return {
+        total: logs.length,
+        data: logs
+      };
+  }
+
   create(_createBookmarkDto: CreateBookmarkDto) {
     return 'This action adds a new bookmark';
   }

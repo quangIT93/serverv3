@@ -73,7 +73,7 @@ export class ViewProfilesService {
           'company.bookmarkedCompany',
           'bookmarkedCompany',
           'bookmarkedCompany.accountId = :accountId',
-          { accountId }
+          { accountId },
         )
         .leftJoinAndSelect('company.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
@@ -98,6 +98,81 @@ export class ViewProfilesService {
         data,
         total,
         is_over,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLogViewProfile(accountId: string) {
+    try {
+      const queryRunner = this.viewProfileRepository
+        .createQueryBuilder('view_profiles')
+        .select('MONTH(view_profiles.created_at)', 'month')
+        .addSelect('YEAR(view_profiles.created_at)', 'year')
+        .addSelect('COUNT(view_profiles.id)', 'count')
+        .where('view_profiles.profileId = :accountId', { accountId })
+        .groupBy('month')
+        .addGroupBy('year')
+        .orderBy('year', 'DESC')
+        .addOrderBy('month', 'DESC');
+      const total = await queryRunner.getCount();
+
+      const data = await queryRunner.getRawMany();
+
+      return {
+        data,
+        total,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLogViewProfileByRecruiterId(recruiterId: string) {
+    try {
+      const queryRunner = this.viewProfileRepository
+        .createQueryBuilder('view_profiles')
+        .select('MONTH(view_profiles.created_at)', 'month')
+        .addSelect('YEAR(view_profiles.created_at)', 'year')
+        .addSelect('COUNT(view_profiles.id)', 'count')
+        .where('view_profiles.recruitId = :recruiterId', { recruiterId })
+        .groupBy('month')
+        .addGroupBy('year')
+        .orderBy('year', 'DESC')
+        .addOrderBy('month', 'DESC');
+      const total = await queryRunner.getCount();
+
+      const data = await queryRunner.getRawMany();
+
+      return {
+        data,
+        total,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProfilesByRecruit(accountId: string, limit: number, page: number) {
+    try {
+      const candidates = this.viewProfileRepository
+        .createQueryBuilder('viewProfiles')
+        .where('viewProfiles.recruitId = :accountId', { accountId })
+        .leftJoinAndSelect('viewProfiles.profile', 'profile')
+        .leftJoinAndSelect('profile.childCategories', 'childCategory')
+        .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory');
+
+      const total = await candidates.getCount();
+      const data = await candidates
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
+        .getMany();
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;

@@ -181,7 +181,6 @@ import { PostViewsModule } from './models/post-models/post-views/post-views.modu
     ]),
 
     SearchHistoryModule,
-
     PostViewsModule,
   ],
   controllers: [AppController, BannersController],

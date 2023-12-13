@@ -1,3 +1,5 @@
+import { BookmarksService } from './../../bookmarks/bookmarks.service';
+import { ViewProfilesService } from './../../view_profiles/view_profiles.service';
 import { ApplicationsService } from './../../application-model/applications/applications.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 // import { CreateProfileDto } from './dto/create-profile.dto';
@@ -7,27 +9,23 @@ import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 import { PostViewsService } from 'src/models/post-models/post-views/post-views.service';
-import { ProfileActivityDetail, ProfileLog } from './domain/profile-log';
+import { ProfileActivityDetail, CandidateProfileLog, RecruiterProfileLog } from './domain/profile-log';
+import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 @Injectable()
 export class ProfilesService {
   constructor(
     @InjectRepository(Profile)
     private readonly profileRepository: Repository<Profile>,
-    // private readonly userService: UserService,
     private readonly postViewsService: PostViewsService,
     @InjectRepository(Company)
     private readonly companyRepository: Repository<Company>,
     private readonly applicationsService: ApplicationsService,
+    private readonly viewProfilesService: ViewProfilesService,
+    @InjectRepository(CandidateBookmark)  
+    private readonly candidateBookmarkRepository: Repository<CandidateBookmark>,
+    private readonly bookmarksService: BookmarksService,
   ) {}
-
-  // create(_createProfileDto: CreateProfileDto) {
-  //   return 'This action adds a new profile';
-  // }
-
-  // findAll() {
-  //   return `This action returns all profiles`;
-  // }
 
   async findOne(id: string) {
     try {
@@ -41,21 +39,6 @@ export class ProfilesService {
           'childCategories.parentCategory',
           'profilesExperiences',
           'profilesEducation',
-
-          // 'profilesAward',
-          // 'profilesCourse',
-          // 'profilesHobby',
-          // 'profilesActivity',
-          // 'profilesIntership',
-          // 'profilesReference',
-          // 'profilesSkill',
-          // 'profilesSkill.levelType',
-          // 'profileLanguage',
-          // 'profileLanguage.levelTypeLanguage',
-          // 'profilesEducation.academicType',
-          // 'profilesCv',
-          // 'jobType',
-
           'company',
           'company.companyRole',
           'company.companySize',
@@ -75,42 +58,6 @@ export class ProfilesService {
       throw error;
     }
   }
-
-  // async findOneByAccountId(id: string): Promise<Profile | null> {
-  //   try {
-  //     const profile = await this.profileRepository.findOne({
-  //       where: { accountId: id },
-  //     });
-
-  //     profile!.user = await this.getUser(id) || new User();
-  //     profile!.province = await this.getProvince(id) || new Province();
-
-  //     return profile;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-
-  // }
-
-  // async getProvince(id: string): Promise<Province | null> {
-  //   try {
-  //     const profile = await this.profileRepository.findOne({
-  //       where: { accountId: id },
-  //     });
-
-  //     if (!profile) {
-  //       return null;
-  //     }
-
-  //     return profile.province;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
-
-  // async getUser(id: string) {
-  //   return this.userService.findById(id);
-  // }
 
   getProfileEmail(id: string) {
     return this.profileRepository.findOne({
@@ -328,19 +275,161 @@ export class ProfilesService {
     }
   }
 
+  async getSearchLogs(id: string) {
+    try {
+      const searchLogs = await this.profileRepository
+        .query(`SELECT SUM(count) as total FROM search_history WHERE account_id = ?`, [id])
+        .then((result) => {
+          return +result[0].total;
+        });
+
+      return searchLogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get all comapnies save your profile
+  async getSaveProfileLogs(id: string) {
+    try {
+      const saveYourProfileLogs = await this.profileRepository
+        .query(`SELECT COUNT(*) as total FROM candidate_bookmarked WHERE candidate_id = ?`, [id])
+        .then((result) => {
+          return +result[0].total;
+        });
+
+      return saveYourProfileLogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getSaveCommunityLogs(id: string) {
+    try {
+      const saveCommunityLogs = await this.profileRepository
+        .query(`SELECT COUNT(*) as total FROM communication_bookmarked WHERE account_id = ?`, [id])
+        .then((result) => {
+          return +result[0].total;
+        });
+
+      return saveCommunityLogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCreateCommunityLogs(id: string) {
+    try {
+      const createCommunityLogs = await this.profileRepository
+        .query(`SELECT COUNT(*) as total FROM communications WHERE account_id = ?`, [id])
+        .then((result) => {
+          return +result[0].total;
+        });
+
+      return createCommunityLogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // use for ROLE_Candidate 
   async findActivityByAccountId(id: string) {
-    const result: ProfileLog = new ProfileLog();
+    const result: CandidateProfileLog = new CandidateProfileLog();
+
     const postViewLogs = await this.postViewsService.findAllByAccountId(id);
     const totalPostView = await this.postViewsService.getTotalViewByAccountId(id);
-
     const applicationLogs = await this.applicationsService.getLogsApplicationByAccountId(id);
     const totalApplication = await this.applicationsService.getTotalApplicationByAccountId(id);
+    const viewProfileLogs = await this.viewProfilesService.getLogViewProfile(id);
+    const savePostLogs = await this.bookmarksService.getLogsByUserId(id);
 
     result.viewPostLogs = new ProfileActivityDetail(totalPostView.count, postViewLogs);
     result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
-    result.searchLogs = new ProfileActivityDetail(0, []);
+    result.savePostLogs = new ProfileActivityDetail(savePostLogs.total, savePostLogs.data);
+
+    result.viewProfileLogs = viewProfileLogs.total;
+    result.searchLogs = await this.getSearchLogs(id);
+    result.saveYourProfileLogs = await this.getSaveProfileLogs(id);
+    result.saveCommunityLogs = await this.getSaveCommunityLogs(id);
+    result.createCommunityLogs = await this.getCreateCommunityLogs(id);
     return {
       ...result,
     }
   }
+
+  async getCandidateBookmarksSavedLogs(recruitId: string) {
+    try {
+      const query = this.candidateBookmarkRepository.createQueryBuilder('candidate_bookmarked')
+      .select('MONTH(candidate_bookmarked.created_at)', 'month')
+      .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
+      .addSelect('COUNT(candidate_id)', 'count')
+      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
+      .groupBy('month, year')
+      .orderBy('year, month', 'DESC');
+
+      const total = await query.getCount();
+
+      const data = await query.getRawMany();
+
+      return {
+        data,
+        total,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLogsViewCompany(id: string) {
+    try {
+      const total = await this.profileRepository.query(
+        `SELECT COUNT(*) as total FROM company_view WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
+        [id],
+      ).then((result) => {
+        return +result[0].total;
+      });
+
+      return total;
+    }
+    catch (error) {
+      throw error;
+    }
+  }
+
+  async getLogsSaveCompany(id: string) {
+    try {
+      const total = await this.profileRepository.query(
+        `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
+        [id],
+      ).then((result) => {
+        return +result[0].total;
+      });
+
+      return total;
+    }
+    catch (error) {
+      throw error;
+    }
+  }
+
+  // use for ROLE_Recruiter
+  async findActivityByRecruiterId(id: string) {
+    const result: RecruiterProfileLog = new RecruiterProfileLog();
+    const applicationLogs = await this.applicationsService.getLogsApplicationByRecruiterId(id);
+    const totalApplication = await this.applicationsService.getTotalApplicationByRecruiterId(id);
+    const viewProfileLogs = await this.viewProfilesService.getLogViewProfileByRecruiterId(id);
+    const saveCandidateLogs = await this.getCandidateBookmarksSavedLogs(id);
+
+    result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
+    result.viewCandidateLogs = new ProfileActivityDetail(viewProfileLogs.total, viewProfileLogs.data);
+    result.saveCandidateLogs = new ProfileActivityDetail(saveCandidateLogs.total, saveCandidateLogs.data);
+    result.viewYourCompanyLogs = await this.getLogsViewCompany(id);
+    result.saveYourCompanyLogs = await this.getSaveProfileLogs(id);
+    result.createCommunityLogs = await this.getCreateCommunityLogs(id);
+    result.saveCommunityLogs = await this.getSaveCommunityLogs(id);
+    return {
+      ...result,
+    }
+  }
+  
 }

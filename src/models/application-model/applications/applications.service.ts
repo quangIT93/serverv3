@@ -45,10 +45,28 @@ export class ApplicationsService {
       .getRawMany();
   }
 
+  async getLogsApplicationByRecruiterId(recruiterId: string) {
+    return await this.applicationsRepository.createQueryBuilder('application')
+      .select('MONTH(application.created_at)', 'month')
+      .addSelect('YEAR(application.created_at)', 'year')
+      .addSelect('COUNT(*)', 'count')
+      .where('application.post_id IN (SELECT id FROM posts WHERE account_id = :recruiterId)', { recruiterId })
+      .groupBy('month, year')
+      .orderBy('year, month', 'DESC')
+      .getRawMany();
+  }
+
   async getTotalApplicationByAccountId(accountId: string) {
     return await this.applicationsRepository.createQueryBuilder('application')
       .select('COUNT(*)', 'count')
       .where('application.account_id = :accountId', { accountId })
+      .getRawOne();
+  }
+
+  async getTotalApplicationByRecruiterId(recruiterId: string) {
+    return await this.applicationsRepository.createQueryBuilder('application')
+      .select('COUNT(*)', 'count')
+      .where('application.post_id IN (SELECT id FROM posts WHERE account_id = :recruiterId)', { recruiterId })
       .getRawOne();
   }
 
