@@ -2,7 +2,8 @@
 export class CandidateProfileLog {
     applyLogs!: ProfileActivityDetail;
     viewPostLogs!: ProfileActivityDetail;
-    viewProfileLogs!: ProfileActivityDetail;
+    savePostLogs!: ProfileActivityDetail;
+    viewProfileLogs!: number;
     searchLogs!: number;
     saveYourProfileLogs!: number;
     saveCommunityLogs!: number;

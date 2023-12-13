@@ -19,6 +19,7 @@ import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CompaniesInterceptor } from '../company-models/companies/interceptors/companies.interceptor';
 import { ViewedCompanyDto } from './dto/viewed-company.dto';
+import { ViewProfileInterceptor } from './interceptors/view-profile.interceptor';
 
 @Controller('view-profiles')
 @ApiTags('View Profiles')
@@ -73,6 +74,32 @@ export class ViewProfilesController {
       return this.viewProfilesService.getCompanyViewedByAccount(
         accountId,
         query,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Getting error');
+    }
+  }
+
+  @Get('by-account')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor, ViewProfileInterceptor)
+  async getProfileByRecruit(@Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+      const { limit, page } = req.query;
+
+      if (!accountId) {
+        throw new UnauthorizedException();
+      }
+
+      return this.viewProfilesService.getProfilesByRecruit(
+        accountId,
+        limit ? +limit : 20,
+        page ? +page : 0,
       );
     } catch (error) {
       if (error instanceof Error) {

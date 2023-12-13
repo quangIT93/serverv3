@@ -1,3 +1,4 @@
+import { BookmarksService } from './../../bookmarks/bookmarks.service';
 import { ViewProfilesService } from './../../view_profiles/view_profiles.service';
 import { ApplicationsService } from './../../application-model/applications/applications.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -23,6 +24,7 @@ export class ProfilesService {
     private readonly viewProfilesService: ViewProfilesService,
     @InjectRepository(CandidateBookmark)  
     private readonly candidateBookmarkRepository: Repository<CandidateBookmark>,
+    private readonly bookmarksService: BookmarksService,
   ) {}
 
   async findOne(id: string) {
@@ -330,7 +332,6 @@ export class ProfilesService {
     }
   }
 
-
   // use for ROLE_Candidate 
   async findActivityByAccountId(id: string) {
     const result: CandidateProfileLog = new CandidateProfileLog();
@@ -340,11 +341,13 @@ export class ProfilesService {
     const applicationLogs = await this.applicationsService.getLogsApplicationByAccountId(id);
     const totalApplication = await this.applicationsService.getTotalApplicationByAccountId(id);
     const viewProfileLogs = await this.viewProfilesService.getLogViewProfile(id);
-
+    const savePostLogs = await this.bookmarksService.getLogsByUserId(id);
 
     result.viewPostLogs = new ProfileActivityDetail(totalPostView.count, postViewLogs);
     result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
-    result.viewProfileLogs = new ProfileActivityDetail(viewProfileLogs.total, viewProfileLogs.data);
+    result.savePostLogs = new ProfileActivityDetail(savePostLogs.total, savePostLogs.data);
+
+    result.viewProfileLogs = viewProfileLogs.total;
     result.searchLogs = await this.getSearchLogs(id);
     result.saveYourProfileLogs = await this.getSaveProfileLogs(id);
     result.saveCommunityLogs = await this.getSaveCommunityLogs(id);
@@ -412,10 +415,6 @@ export class ProfilesService {
   // use for ROLE_Recruiter
   async findActivityByRecruiterId(id: string) {
     const result: RecruiterProfileLog = new RecruiterProfileLog();
-
-    // const postViewLogs = await this.postViewsService.findAllByRecruiterId(id);
-    // const totalPostView = await this.postViewsService.getTotalViewByRecruiterId(id);
-
     const applicationLogs = await this.applicationsService.getLogsApplicationByRecruiterId(id);
     const totalApplication = await this.applicationsService.getTotalApplicationByRecruiterId(id);
     const viewProfileLogs = await this.viewProfilesService.getLogViewProfileByRecruiterId(id);
