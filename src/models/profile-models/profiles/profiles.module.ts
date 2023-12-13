@@ -18,6 +18,7 @@ import { PostViewsModule } from 'src/models/post-models/post-views/post-views.mo
 import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
 import { ViewProfilesModule } from 'src/models/view_profiles/view_profiles.module';
 import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
+import { BookmarksModule } from 'src/models/bookmarks/bookmarks.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candi
     PostViewsModule,
     ApplicationsModule,
     ViewProfilesModule,
+    BookmarksModule
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],
