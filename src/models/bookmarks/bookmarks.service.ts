@@ -42,8 +42,14 @@ export class BookmarksService {
       .take(12)
       .getRawMany();
 
+    const total = await this.bookmarkRepository
+      .createQueryBuilder('bookmarks')
+      .select('COUNT(*) as count')
+      .where('bookmarks.account_id = :userId', { userId })
+      .getRawOne();
+      
       return {
-        total: logs.length,
+        total: total.count,
         data: logs
       };
   }
