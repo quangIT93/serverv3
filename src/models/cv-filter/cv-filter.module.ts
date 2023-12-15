@@ -9,10 +9,10 @@ import { CvFilterController } from './cv-filter.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from '../profile-models/profiles/entities';
 import { PageAndLimitMiddleware } from 'src/common/middlewares/page-limit/page-limit.middleware';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Profile]), JwtAccessTokenServiceModule],
+  imports: [TypeOrmModule.forFeature([Profile]), JwtAccessTokenModule],
   controllers: [CvFilterController],
   providers: [CvFilterService],
 })

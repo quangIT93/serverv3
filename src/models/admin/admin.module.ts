@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { AuthModule } from "src/authentication/auth.module";
-import { JwtAccessTokenServiceModule } from "src/providers/jwt/atk.provider.module";
+import { JwtAccessTokenModule } from "src/providers/jwt/atk.provider.module";
 import { MailService } from "src/services/mail/mail.service";
 import { AdminController } from "./admin.controller";
 // import { MailLoggerService } from "../log/mail-logger/mail-logger.service";
@@ -11,7 +11,7 @@ import { QueueModule } from "src/providers/queue/provider.module";
 @Module({
     imports: [
         AuthModule,
-        JwtAccessTokenServiceModule,
+        JwtAccessTokenModule,
         QueueModule,
         MailLoggerModule
     ],

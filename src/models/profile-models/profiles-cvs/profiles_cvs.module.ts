@@ -3,7 +3,7 @@ import { ProfilesCvsService } from './profiles_cvs.service';
 import { ProfilesCvsController } from './profiles_cvs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfilesCv } from './entities/profiles_cv.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { CreateProfileCvsTransaction } from './transaction/profiles_cv.transaction';
 import { AWSService } from 'src/services/aws/aws.service';
 import { AWSConfigModule } from 'src/config/storage/aws/config.module';
@@ -13,7 +13,7 @@ import { UserModule } from 'src/models/users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProfilesCv]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     AWSConfigModule,
     UserModule
   ],

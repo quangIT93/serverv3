@@ -9,7 +9,7 @@ import { ProfilesController } from './profiles.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from './entities';
 import { AuthModule } from 'src/authentication/auth.module';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middleware';
 import { UserModule } from 'src/models/users/users.module';
@@ -24,7 +24,7 @@ import { BookmarksModule } from 'src/models/bookmarks/bookmarks.module';
   imports: [
     TypeOrmModule.forFeature([Profile, Company, CandidateBookmark]),
     AuthModule,
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     AWSModule,
     UserModule,
     PostViewsModule,

@@ -3,14 +3,14 @@ import { CandidateBookmarksService } from './candidate-bookmarks.service';
 import { CandidateBookmarksController } from './candidate-bookmarks.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CandidateBookmark } from './entities/candidate-bookmark.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { ProfilesModule } from '../profile-models/profiles/profiles.module';
 import { PageAndLimitMiddleware } from 'src/common/middlewares/page-limit/page-limit.middleware';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CandidateBookmark]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     ProfilesModule,
   ],
   controllers: [CandidateBookmarksController],

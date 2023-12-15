@@ -40,3 +40,5 @@ lerna-debug.log*
 .env.development.local
 .env.development
 .env.production
+
+.ecosystem.config.js
