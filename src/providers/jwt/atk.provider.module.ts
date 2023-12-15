@@ -24,4 +24,4 @@ import { JwtAccessTokenService } from 'src/services/jwt/atk.service';
   exports: [JwtAccessTokenService, JwtConfigService],
   controllers: [],
 })
-export class JwtAccessTokenServiceModule {}
+export class JwtAccessTokenModule {}

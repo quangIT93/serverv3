@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Post } from "../../posts/entities";
 
 @Entity({ name: 'post_view' })
 export class PostView {
@@ -10,4 +11,8 @@ export class PostView {
 
     @Column({ name: 'created_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
     createdAt!: Date;
+
+    @ManyToOne(() => Post, post => post.postView)
+    @JoinColumn({ name: 'post_id' })
+    post!: Post;
 }
