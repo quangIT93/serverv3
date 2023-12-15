@@ -3,14 +3,14 @@ import { ChildrenService } from './children.service';
 import { ChildrenController } from './children.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChildCategory } from './entities/child.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ChildCategory
     ]),
-    JwtAccessTokenServiceModule
+    JwtAccessTokenModule
   ],
   controllers: [ChildrenController],
   providers: [ChildrenService],

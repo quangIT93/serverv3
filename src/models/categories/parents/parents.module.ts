@@ -3,7 +3,7 @@ import { ParentService } from './parents.service';
 import { ParentController } from './parents.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParentCategory } from './entities/parent.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { ChildCategory } from '../children/entities/child.entity';
 // import { ChildrenModule } from '../children/children.module';
 import { AWSService } from 'src/services/aws/aws.service';
@@ -17,7 +17,7 @@ import { ChildrenService } from '../children/children.service';
     TypeOrmModule.forFeature([
       ParentCategory, ChildCategory
     ]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     // ChildrenModule,
     // AWSModule
   ],

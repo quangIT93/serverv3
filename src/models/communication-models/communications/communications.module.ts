@@ -3,7 +3,7 @@ import { CommunicationsService } from './communications.service';
 import { CommunicationsController } from './communications.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Communication } from './entities/communication.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { CreateCommunicationTransaction } from './transactions/create-communication.transaction';
 import { CommunicationImagesModule } from '../communication-images/communication-images.module';
 import { CommunicationCategoriesModule } from '../communication-categories/communication-categories.module';
@@ -18,7 +18,7 @@ import { CommunicationViewsModule } from '../communication-views/communication-v
 @Module({
   imports: [
     TypeOrmModule.forFeature([Communication]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     CommunicationImagesModule,
     CommunicationCategoriesModule,
     AWSModule,

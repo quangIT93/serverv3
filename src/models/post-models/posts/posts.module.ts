@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { BookmarksModule } from 'src/models/bookmarks/bookmarks.module';
 import { PageAndLimitMiddleware } from 'src/common/middlewares/page-limit/page-limit.middleware';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
@@ -24,7 +24,7 @@ import { PostViewsModule } from '../post-views/post-views.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post, Company]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     BookmarksModule,
     AWSModule,
     PostsImagesModule,

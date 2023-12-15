@@ -3,12 +3,12 @@ import { ProfilesCoursesService } from './profiles-courses.service';
 import { ProfilesCoursesController } from './profiles-courses.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProfilesCourse } from './entities/profiles-course.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProfilesCourse]),
-    JwtAccessTokenServiceModule
+    JwtAccessTokenModule
   ],
   controllers: [ProfilesCoursesController],
   providers: [ProfilesCoursesService],
