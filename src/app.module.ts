@@ -76,9 +76,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerBehindProxyGuard } from './throttlerBehindProxyGuard.guard';
 import { CompanyRatingsModule } from './models/company-models/company-ratings/company-ratings.module';
 import { CompanyBookmarkedModule } from './models/company-models/company-bookmarked/company-bookmarked.module';
-// import { GoogleMapProvider } from './models/site/google-map.provider';
 import { SearchHistoryModule } from './models/search-models/search-history/search-history.module';
 import { PostViewsModule } from './models/post-models/post-views/post-views.module';
+import { CategoryDescriptionTemplatesModule } from './models/description-template-models/category-description-templates/category-description-templates.module';
+import { CompanyDescriptionTemplatesModule } from './models/description-template-models/company-description-templates/company-description-templates.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -161,6 +162,10 @@ import { PostViewsModule } from './models/post-models/post-views/post-views.modu
     AcademicTypesModule,
     CandidateBookmarksModule,
     ViewProfilesModule,
+
+    // Description template
+    CategoryDescriptionTemplatesModule,
+    CompanyDescriptionTemplatesModule,
 
     ThrottlerModule.forRoot([
       {
