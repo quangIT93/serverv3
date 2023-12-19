@@ -1,9 +1,9 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 import { CompanyBookmarked } from '../entities/company-bookmarked.entity';
-import { CompanyBookmarkedSerialization } from '../serialization/company-bookmarked.serialization';
+import { CompanyBookmarkedCandidateSerialization } from '../serialization/company-bookmarked-candidate.serialization';
 
-export class CompanyBookmarkedInterceptor implements NestInterceptor {
+export class CompanyBookmarkedCandidateInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
@@ -16,7 +16,10 @@ export class CompanyBookmarkedInterceptor implements NestInterceptor {
 
         const data = companyBookmarked?.data.map(
           (bookmarked: CompanyBookmarked) => {
-            return new CompanyBookmarkedSerialization(bookmarked, lang);
+            return new CompanyBookmarkedCandidateSerialization(
+              bookmarked,
+              lang,
+            );
           },
         );
 

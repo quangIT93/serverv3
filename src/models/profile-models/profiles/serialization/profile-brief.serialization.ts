@@ -18,7 +18,7 @@ import {
   hidePhoneFN,
 } from 'src/common/helper/translators/candidate.translator';
 
-export class ProfileSerialization extends Profile {
+export class ProfileBriefSerialization extends Profile {
   @Exclude()
   lang: Language;
 
@@ -83,7 +83,7 @@ export class ProfileSerialization extends Profile {
   override province!: Province;
 
   @Expose()
-  get categoriesData() {
+  get childCategoriesData() {
     if (!this.childCategories) return null;
     return this.childCategories.map((category) => {
       return categoryTranslator(category, this.lang);

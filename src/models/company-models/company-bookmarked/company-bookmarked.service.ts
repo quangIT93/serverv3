@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCompanyBookmarkedDto } from './dto/create-company-bookmarked.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyBookmarked } from './entities/company-bookmarked.entity';
 import { Repository } from 'typeorm';
+import { Company } from '../companies/entities/company.entity';
 
 @Injectable()
 export class CompanyBookmarkedService {
   constructor(
     @InjectRepository(CompanyBookmarked)
     private readonly companyBookmarkedRepository: Repository<CompanyBookmarked>,
+
+    @InjectRepository(Company)
+    private readonly CompanyRepository: Repository<Company>,
   ) {}
   async create(createCompanyBookmarkedDto: CreateCompanyBookmarkedDto) {
     try {
@@ -60,6 +64,52 @@ export class CompanyBookmarkedService {
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('company.category', 'category')
         .leftJoinAndSelect('company.companySize', 'companySize');
+
+      const total = await bookmarked.getCount();
+
+      const data = await bookmarked
+        .take(limit)
+        .skip(page * limit)
+        .orderBy('companyBookmarked.createdAt', sort)
+        .getMany();
+
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAllByCompany(
+    accountId: string,
+    limit: number,
+    page: number,
+    sort: 'DESC' | 'ASC',
+  ) {
+    try {
+      const company = await this.CompanyRepository.findOne({
+        where: { accountId },
+      });
+
+      if (!company) {
+        throw new NotFoundException('Company not found');
+      }
+
+      const bookmarked = this.companyBookmarkedRepository
+        .createQueryBuilder('companyBookmarked')
+        .where('companyBookmarked.companyId = :companyId', {
+          companyId: company.id,
+        })
+        .leftJoinAndSelect('companyBookmarked.user', 'user')
+        .leftJoinAndSelect('user.profile', 'profile')
+        .leftJoinAndSelect('profile.childCategories', 'childCategory')
+        .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
+        .leftJoinAndSelect('profile.profilesLocations', 'district')
+        .leftJoinAndSelect('district.province', 'province');
 
       const total = await bookmarked.getCount();
 
