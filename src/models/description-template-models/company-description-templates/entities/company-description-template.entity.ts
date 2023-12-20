@@ -1,9 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('company_description_templates')
 export class CompanyDescriptionTemplate {
   @PrimaryGeneratedColumn('increment')
   id!: number;
+
+  @Column({ type: 'int', nullable: false, name: 'parent_category_id' })
+  parentCategoryId!: number;
 
   @Column({ type: 'varchar', nullable: false, name: 'title' })
   title!: string;
@@ -29,4 +39,8 @@ export class CompanyDescriptionTemplate {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt!: Date;
+
+  @ManyToOne(() => ParentCategory, (parentCategory) => parentCategory)
+  @JoinColumn({ name: 'parent_category_id' })
+  parentCategory!: ParentCategory;
 }

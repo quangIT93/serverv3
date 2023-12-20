@@ -48,13 +48,16 @@ export class CompanyDescriptionTemplatesService {
   }
 
   async findAllByAdmin() {
-    return await this.companyTemplateRepository.find();
+    return await this.companyTemplateRepository.find({
+      relations: { parentCategory: true },
+    });
   }
 
   async findOne(id: number) {
     try {
       const data = await this.companyTemplateRepository.findOne({
         where: { id },
+        relations: { parentCategory: true },
       });
 
       if (!data) {

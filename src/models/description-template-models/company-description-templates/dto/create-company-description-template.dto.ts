@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class CreateCompanyDescriptionTemplateDto {
   @ApiProperty({
@@ -7,6 +13,7 @@ export class CreateCompanyDescriptionTemplateDto {
     format: 'string',
     nullable: false,
     maxLength: 525,
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -20,6 +27,7 @@ export class CreateCompanyDescriptionTemplateDto {
     format: 'string',
     maxLength: 3000,
     nullable: false,
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -27,4 +35,9 @@ export class CreateCompanyDescriptionTemplateDto {
     message: 'content length must not exceed 3000 characters',
   })
   content!: string;
+
+  @ApiProperty({ type: 'int', required: true, nullable: false })
+  @IsNumber()
+  @Min(0)
+  parentCategoryId!: number;
 }

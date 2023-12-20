@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS `company_description_templates` (
     status TINYINT(1) NOT NULL DEFAULT 1,
     created_at datetime DEFAULT current_timestamp(),
     updated_at datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
     Constraint FK_ParentCategories_CategoryDescriptionTemplate FOREIGN KEY (parent_category_id) REFERENCES parent_categories (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
