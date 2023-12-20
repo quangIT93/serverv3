@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { PostViewsService } from './post-views.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostView } from './entities/post-view.entity';
@@ -11,20 +16,16 @@ import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
   imports: [
     TypeOrmModule.forFeature([PostView]),
     AuthModule,
-    JwtAccessTokenModule
+    JwtAccessTokenModule,
   ],
-  controllers: [
-    PostViewsController
-  ],
+  controllers: [PostViewsController],
   providers: [PostViewsService],
-  exports: [PostViewsService],  
+  exports: [PostViewsService],
 })
 export class PostViewsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(PageAndLimitMiddleware)
-    .forRoutes(
-      { path: 'post-views', method: RequestMethod.GET },
-    )
+      .apply(PageAndLimitMiddleware)
+      .forRoutes({ path: 'post-view', method: RequestMethod.GET });
   }
 }
