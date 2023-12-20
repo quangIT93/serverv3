@@ -73,6 +73,7 @@ export class CompanyViewsService {
 
       const views = this.companyViewRepository
         .createQueryBuilder('companyViews')
+        .where('companyViews.companyId = :companyId', { companyId: company.id })
         .leftJoinAndSelect('companyViews.user', 'user')
         .leftJoinAndSelect('user.profile', 'profile')
         .leftJoinAndSelect('profile.childCategories', 'childCategory')
