@@ -79,8 +79,8 @@ export class ViewProfilesService {
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('company.posts', 'posts', 'posts.status = 1')
-        .where('view_profiles.profileId = :accountId', { accountId })
-        .groupBy('view_profiles.recruitId');
+        .where('view_profiles.profileId = :accountId', { accountId });
+      // .groupBy('view_profiles.recruitId');
 
       const total = await queryRunner.getCount();
 

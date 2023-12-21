@@ -316,10 +316,18 @@ export class ProfilesService {
 
   async saveYourCompanyLogs(id: string) {
     try {
+      const company = await this.companyRepository.findOne({
+        where: { accountId: id },
+      });
+
+      if (!company) {
+        return 0;
+      }
+      const companyId = company.id;
       const saveYourProfileLogs = await this.profileRepository
         .query(
-          `SELECT COUNT(*) as total FROM candidate_bookmarked WHERE recruit_id = ?`,
-          [id],
+          `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = ?`,
+          [companyId],
         )
         .then((result) => {
           return +result[0].total;

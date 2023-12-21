@@ -113,7 +113,7 @@ export class CandidateBookmarksController {
       const accountId = req.user?.id;
 
       const { limit, page } = req;
-      console.log('d', limit, page);
+
       if (!accountId) {
         throw new UnauthorizedException();
       }

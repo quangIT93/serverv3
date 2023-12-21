@@ -27,7 +27,7 @@ export class CandidateBookmarkCompaniesSerialization extends CandidateBookmark {
   override company!: Company;
 
   @Expose()
-  get companyData() {
+  get CompanyData() {
     if (!this.company) return null;
     return new CompaniesSerialization(this.company, this.lang);
   }
