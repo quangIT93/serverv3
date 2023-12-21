@@ -9,7 +9,11 @@ import { Profile } from './entities/profile.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { Company } from 'src/models/company-models/companies/entities/company.entity';
 import { PostViewsService } from 'src/models/post-models/post-views/post-views.service';
-import { ProfileActivityDetail, CandidateProfileLog, RecruiterProfileLog } from './domain/profile-log';
+import {
+  ProfileActivityDetail,
+  CandidateProfileLog,
+  RecruiterProfileLog,
+} from './domain/profile-log';
 import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
 
 @Injectable()
@@ -22,7 +26,7 @@ export class ProfilesService {
     private readonly companyRepository: Repository<Company>,
     private readonly applicationsService: ApplicationsService,
     private readonly viewProfilesService: ViewProfilesService,
-    @InjectRepository(CandidateBookmark)  
+    @InjectRepository(CandidateBookmark)
     private readonly candidateBookmarkRepository: Repository<CandidateBookmark>,
     private readonly bookmarksService: BookmarksService,
   ) {}
@@ -278,7 +282,10 @@ export class ProfilesService {
   async getSearchLogs(id: string) {
     try {
       const searchLogs = await this.profileRepository
-        .query(`SELECT SUM(count) as total FROM search_history WHERE account_id = ?`, [id])
+        .query(
+          `SELECT SUM(count) as total FROM search_history WHERE account_id = ?`,
+          [id],
+        )
         .then((result) => {
           return +result[0].total;
         });
@@ -293,7 +300,27 @@ export class ProfilesService {
   async getSaveProfileLogs(id: string) {
     try {
       const saveYourProfileLogs = await this.profileRepository
-        .query(`SELECT COUNT(*) as total FROM candidate_bookmarked WHERE candidate_id = ?`, [id])
+        .query(
+          `SELECT COUNT(*) as total FROM candidate_bookmarked WHERE candidate_id = ?`,
+          [id],
+        )
+        .then((result) => {
+          return +result[0].total;
+        });
+      console.log('saveYourCompanyLogs', saveYourProfileLogs);
+      return saveYourProfileLogs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveYourCompanyLogs(id: string) {
+    try {
+      const saveYourProfileLogs = await this.profileRepository
+        .query(
+          `SELECT COUNT(*) as total FROM candidate_bookmarked WHERE recruit_id = ?`,
+          [id],
+        )
         .then((result) => {
           return +result[0].total;
         });
@@ -307,7 +334,10 @@ export class ProfilesService {
   async getSaveCommunityLogs(id: string) {
     try {
       const saveCommunityLogs = await this.profileRepository
-        .query(`SELECT COUNT(*) as total FROM communication_bookmarked WHERE account_id = ?`, [id])
+        .query(
+          `SELECT COUNT(*) as total FROM communication_bookmarked WHERE account_id = ?`,
+          [id],
+        )
         .then((result) => {
           return +result[0].total;
         });
@@ -321,7 +351,10 @@ export class ProfilesService {
   async getCreateCommunityLogs(id: string) {
     try {
       const createCommunityLogs = await this.profileRepository
-        .query(`SELECT COUNT(*) as total FROM communications WHERE account_id = ?`, [id])
+        .query(
+          `SELECT COUNT(*) as total FROM communications WHERE account_id = ?`,
+          [id],
+        )
         .then((result) => {
           return +result[0].total;
         });
@@ -332,20 +365,35 @@ export class ProfilesService {
     }
   }
 
-  // use for ROLE_Candidate 
+  // use for ROLE_Candidate
   async findActivityByAccountId(id: string) {
     const result: CandidateProfileLog = new CandidateProfileLog();
 
     const postViewLogs = await this.postViewsService.findAllByAccountId(id);
-    const totalPostView = await this.postViewsService.getTotalViewByAccountId(id);
-    const applicationLogs = await this.applicationsService.getLogsApplicationByAccountId(id);
-    const totalApplication = await this.applicationsService.getTotalApplicationByAccountId(id);
-    const viewProfileLogs = await this.viewProfilesService.getLogViewProfile(id);
+    const totalPostView = await this.postViewsService.getTotalViewByAccountId(
+      id,
+    );
+    const applicationLogs =
+      await this.applicationsService.getLogsApplicationByAccountId(id);
+    const totalApplication =
+      await this.applicationsService.getTotalApplicationByAccountId(id);
+    const viewProfileLogs = await this.viewProfilesService.getLogViewProfile(
+      id,
+    );
     const savePostLogs = await this.bookmarksService.getLogsByUserId(id);
 
-    result.viewPostLogs = new ProfileActivityDetail(totalPostView.count, postViewLogs);
-    result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
-    result.savePostLogs = new ProfileActivityDetail(savePostLogs.total, savePostLogs.data);
+    result.viewPostLogs = new ProfileActivityDetail(
+      totalPostView.count,
+      postViewLogs,
+    );
+    result.applyLogs = new ProfileActivityDetail(
+      totalApplication.count,
+      applicationLogs,
+    );
+    result.savePostLogs = new ProfileActivityDetail(
+      savePostLogs.total,
+      savePostLogs.data,
+    );
 
     result.viewProfileLogs = viewProfileLogs.total;
     result.searchLogs = await this.getSearchLogs(id);
@@ -354,18 +402,19 @@ export class ProfilesService {
     result.createCommunityLogs = await this.getCreateCommunityLogs(id);
     return {
       ...result,
-    }
+    };
   }
 
   async getCandidateBookmarksSavedLogs(recruitId: string) {
     try {
-      const query = this.candidateBookmarkRepository.createQueryBuilder('candidate_bookmarked')
-      .select('MONTH(candidate_bookmarked.created_at)', 'month')
-      .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
-      .addSelect('COUNT(candidate_id)', 'count')
-      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
-      .groupBy('month, year')
-      .orderBy('year, month', 'DESC');
+      const query = this.candidateBookmarkRepository
+        .createQueryBuilder('candidate_bookmarked')
+        .select('MONTH(candidate_bookmarked.created_at)', 'month')
+        .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
+        .addSelect('COUNT(candidate_id)', 'count')
+        .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
+        .groupBy('month, year')
+        .orderBy('year, month', 'DESC');
 
       const total = await query.getCount();
 
@@ -382,32 +431,34 @@ export class ProfilesService {
 
   async getLogsViewCompany(id: string) {
     try {
-      const total = await this.profileRepository.query(
-        `SELECT COUNT(*) as total FROM company_view WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
-        [id],
-      ).then((result) => {
-        return +result[0].total;
-      });
+      const total = await this.profileRepository
+        .query(
+          `SELECT COUNT(*) as total FROM company_view WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
+          [id],
+        )
+        .then((result) => {
+          return +result[0].total;
+        });
 
       return total;
-    }
-    catch (error) {
+    } catch (error) {
       throw error;
     }
   }
 
   async getLogsSaveCompany(id: string) {
     try {
-      const total = await this.profileRepository.query(
-        `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
-        [id],
-      ).then((result) => {
-        return +result[0].total;
-      });
+      const total = await this.profileRepository
+        .query(
+          `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = (SELECT id FROM companies WHERE account_id = ?)`,
+          [id],
+        )
+        .then((result) => {
+          return +result[0].total;
+        });
 
       return total;
-    }
-    catch (error) {
+    } catch (error) {
       throw error;
     }
   }
@@ -415,21 +466,32 @@ export class ProfilesService {
   // use for ROLE_Recruiter
   async findActivityByRecruiterId(id: string) {
     const result: RecruiterProfileLog = new RecruiterProfileLog();
-    const applicationLogs = await this.applicationsService.getLogsApplicationByRecruiterId(id);
-    const totalApplication = await this.applicationsService.getTotalApplicationByRecruiterId(id);
-    const viewProfileLogs = await this.viewProfilesService.getLogViewProfileByRecruiterId(id);
+    const applicationLogs =
+      await this.applicationsService.getLogsApplicationByRecruiterId(id);
+    const totalApplication =
+      await this.applicationsService.getTotalApplicationByRecruiterId(id);
+    const viewProfileLogs =
+      await this.viewProfilesService.getLogViewProfileByRecruiterId(id);
     const saveCandidateLogs = await this.getCandidateBookmarksSavedLogs(id);
 
-    result.applyLogs = new ProfileActivityDetail(totalApplication.count, applicationLogs);
-    result.viewCandidateLogs = new ProfileActivityDetail(viewProfileLogs.total, viewProfileLogs.data);
-    result.saveCandidateLogs = new ProfileActivityDetail(saveCandidateLogs.total, saveCandidateLogs.data);
+    result.applyLogs = new ProfileActivityDetail(
+      totalApplication.count,
+      applicationLogs,
+    );
+    result.viewCandidateLogs = new ProfileActivityDetail(
+      viewProfileLogs.total,
+      viewProfileLogs.data,
+    );
+    result.saveCandidateLogs = new ProfileActivityDetail(
+      saveCandidateLogs.total,
+      saveCandidateLogs.data,
+    );
     result.viewYourCompanyLogs = await this.getLogsViewCompany(id);
-    result.saveYourCompanyLogs = await this.getSaveProfileLogs(id);
+    result.saveYourCompanyLogs = await this.saveYourCompanyLogs(id);
     result.createCommunityLogs = await this.getCreateCommunityLogs(id);
     result.saveCommunityLogs = await this.getSaveCommunityLogs(id);
     return {
       ...result,
-    }
+    };
   }
-  
 }

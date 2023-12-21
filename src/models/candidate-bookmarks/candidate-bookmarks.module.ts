@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { CandidateBookmarksService } from './candidate-bookmarks.service';
 import { CandidateBookmarksController } from './candidate-bookmarks.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -20,9 +25,10 @@ import { PageAndLimitMiddleware } from 'src/common/middlewares/page-limit/page-l
 export class CandidateBookmarksModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(PageAndLimitMiddleware)
-    .forRoutes(
-      { path: 'candidate-bookmarks', method: RequestMethod.GET },
-    )
+      .apply(PageAndLimitMiddleware)
+      .forRoutes(
+        { path: 'candidate-bookmarks', method: RequestMethod.GET },
+        { path: 'candidate-bookmarks/by-candidate', method: RequestMethod.GET },
+      );
   }
 }

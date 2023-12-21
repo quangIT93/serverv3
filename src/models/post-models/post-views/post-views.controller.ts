@@ -23,7 +23,7 @@ export class PostViewsController {
   @UseInterceptors(ClassSerializerInterceptor, PostViewInterceptor)
   async getLogsByUserId(@Req() req: CustomRequest) {
     const { page, limit } = req;
-    console.log('paging', page, limit);
+
     return await this.postViewsService.getLogsByUserId(
       req.user?.id ?? '',
       page ?? 0,
