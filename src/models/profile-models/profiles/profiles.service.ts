@@ -307,7 +307,7 @@ export class ProfilesService {
         .then((result) => {
           return +result[0].total;
         });
-      console.log('saveYourCompanyLogs', saveYourProfileLogs);
+
       return saveYourProfileLogs;
     } catch (error) {
       throw error;

@@ -53,7 +53,6 @@ export class SiteController {
         data: jsonData,
       };
     } catch (error) {
-      console.log(error);
       throw new BadRequestException('Error reading language file');
     }
   }
