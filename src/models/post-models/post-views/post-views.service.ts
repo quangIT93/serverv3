@@ -10,8 +10,35 @@ export class PostViewsService {
   constructor(
     @InjectRepository(PostView)
     private postViewRepository: Repository<PostView>,
-  ) {}
-
+    ) {}
+    
+  getLogsByUserId(id: string, page: number, limit: number) {
+    return this.postViewRepository.createQueryBuilder('post_view')
+      .select('post_view.createdAt', 'post_view_created_at')
+      .addSelect('post_view.postId', 'post_view_post_id')
+      .addSelect('post_view.accountId', 'post_view_account_id')
+      .where('post_view.accountId = :id', { id })
+      .leftJoinAndSelect('post_view.post', 'post')
+      .leftJoinAndSelect('post.salaryTypeData', 'salaryTypeData')
+      .leftJoinAndSelect('post.jobTypeData', 'jobTypeData')
+      .leftJoinAndSelect('post.companyResource', 'companyResource')
+      .leftJoinAndSelect('post.postImages', 'postImages')
+      .leftJoinAndSelect('post.categories', 'categories')
+      .leftJoinAndSelect('categories.parentCategory', 'parentCategory')
+      .leftJoinAndSelect('post.ward', 'ward')
+      .leftJoinAndSelect('ward.district', 'district')
+      .leftJoinAndSelect('district.province', 'province')
+      .leftJoinAndSelect(
+        'post.bookmarks',
+        'bookmarks',
+        'bookmarks.accountId = :id',
+        { id },
+      )
+      .orderBy('post_view.createdAt', 'DESC')
+      .skip(page * (limit - 1))
+      .take(limit)
+      .getMany();
+  }
   async create(_createPostViewDto: CreatePostViewDto) {
     if (await this.findOneByPostIdAndAccountId(_createPostViewDto.postId, _createPostViewDto.accountId)) {
       return;

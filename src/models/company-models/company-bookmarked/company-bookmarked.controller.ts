@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/authentication/auth.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 import { CompanyBookmarkedInterceptor } from './interceptors/company-bookmarked.interceptor';
+import { CompanyBookmarkedCandidateInterceptor } from './interceptors/company-bookmarked-candidate.interceptor';
 
 @Controller('company-bookmarked')
 @ApiTags('Company-bookmarked')
@@ -81,6 +82,40 @@ export class CompanyBookmarkedController {
       }
 
       return await this.companyBookmarkedService.findAllByAccount(
+        accountId,
+        limit ? +limit : 20,
+        page ? +page : 0,
+        (sort as 'DESC' | 'ASC') ? (sort as 'DESC' | 'ASC') : 'DESC',
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('getting error');
+    }
+  }
+
+  @Get('by-company')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    CompanyBookmarkedCandidateInterceptor,
+  )
+  async findAllByCompany(@Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+      const { limit, page, sort } = req.query;
+
+      if (!accountId) {
+        throw new UnauthorizedException();
+      }
+
+      if (sort && sort !== 'DESC' && sort !== 'ASC') {
+        throw new BadRequestException('Param sort is DESC or ASC');
+      }
+
+      return await this.companyBookmarkedService.findAllByCompany(
         accountId,
         limit ? +limit : 20,
         page ? +page : 0,

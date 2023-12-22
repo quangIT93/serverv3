@@ -10,7 +10,7 @@ export class CompanyBookmarkedInterceptor implements NestInterceptor {
   ): Observable<any> {
     return next.handle().pipe(
       map((companyBookmarked: any) => {
-        const lang = context.switchToHttp().getResponse().lang;
+        const lang = context.switchToHttp().getRequest().lang;
 
         if (!companyBookmarked || !companyBookmarked.data) return null;
 

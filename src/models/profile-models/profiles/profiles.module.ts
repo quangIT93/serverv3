@@ -9,7 +9,7 @@ import { ProfilesController } from './profiles.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from './entities';
 import { AuthModule } from 'src/authentication/auth.module';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { AWSModule } from 'src/providers/storage/aws/provider.module';
 import { UnlockMiddleware } from 'src/common/middlewares/unclock/unlock.middleware';
 import { UserModule } from 'src/models/users/users.module';
@@ -18,17 +18,19 @@ import { PostViewsModule } from 'src/models/post-models/post-views/post-views.mo
 import { ApplicationsModule } from 'src/models/application-model/applications/applications.module';
 import { ViewProfilesModule } from 'src/models/view_profiles/view_profiles.module';
 import { CandidateBookmark } from 'src/models/candidate-bookmarks/entities/candidate-bookmark.entity';
+import { BookmarksModule } from 'src/models/bookmarks/bookmarks.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Profile, Company, CandidateBookmark]),
     AuthModule,
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     AWSModule,
     UserModule,
     PostViewsModule,
     ApplicationsModule,
     ViewProfilesModule,
+    BookmarksModule
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService],

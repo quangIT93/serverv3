@@ -3,7 +3,7 @@ import { TypeNotificationPlatformService } from './type-notification-platform.se
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeNotificationPlatform } from './entities/type-notification-platform.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { ProfilesModule } from 'src/models/profile-models/profiles/profiles.module';
 import { FcmTokensModule } from 'src/models/fcm-tokens/fcm-tokens.module';
 
@@ -11,7 +11,7 @@ import { FcmTokensModule } from 'src/models/fcm-tokens/fcm-tokens.module';
   imports: [
     TypeOrmModule.forFeature([TypeNotificationPlatform]),
     JwtModule,
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     ProfilesModule,
     FcmTokensModule
   ],

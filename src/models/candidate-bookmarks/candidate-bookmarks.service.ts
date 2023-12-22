@@ -54,26 +54,30 @@ export class CandidateBookmarksService {
 
   async find(accountId: string, limit: number, page: number) {
     try {
-      const query = this.candidateBooKmarkedRepository.createQueryBuilder('candidate_bookmarked')
-      .leftJoinAndSelect('candidate_bookmarked.profile', 'profile')
-      .leftJoinAndSelect('profile.childCategories', 'childCategory')
-      .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
-      .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
-      .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
-      .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
-      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId : accountId})
-      .take(limit)
-      .skip(page * limit);
+      const query = this.candidateBooKmarkedRepository
+        .createQueryBuilder('candidate_bookmarked')
+        .leftJoinAndSelect('candidate_bookmarked.profile', 'profile')
+        .leftJoinAndSelect('profile.childCategories', 'childCategory')
+        .leftJoinAndSelect('profile.profilesEducation', 'profilesEducation')
+        .leftJoinAndSelect('profile.profilesLocations', 'profilesLocations')
+        .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
+        .leftJoinAndSelect('profilesEducation.academicType', 'academicType')
+        .where('candidate_bookmarked.recruitId = :recruitId', {
+          recruitId: accountId,
+        })
+        .take(limit)
+        .skip(page * limit);
 
-      const check = await query.getCount()
+      const check = await query.getCount();
 
-      const data = await query.getMany()
+      const data = await query.getMany();
 
       return {
-        total : check,
+        total: check,
         data,
-        is_over: data.length === check ? true : data.length < limit ? true : false,
-      }
+        is_over:
+          data.length === check ? true : data.length < limit ? true : false,
+      };
     } catch (error) {
       throw error;
     }
@@ -81,13 +85,14 @@ export class CandidateBookmarksService {
 
   async getLogsByRecruitId(recruitId: string) {
     try {
-      const query = this.candidateBooKmarkedRepository.createQueryBuilder('candidate_bookmarked')
-      .select('MONTH(candidate_bookmarked.created_at)', 'month')
-      .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
-      .addSelect('COUNT(candidate_bookmarked.id)', 'count')
-      .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
-      .groupBy('month, year')
-      .orderBy('year, month', 'DESC');
+      const query = this.candidateBooKmarkedRepository
+        .createQueryBuilder('candidate_bookmarked')
+        .select('MONTH(candidate_bookmarked.created_at)', 'month')
+        .addSelect('YEAR(candidate_bookmarked.created_at)', 'year')
+        .addSelect('COUNT(candidate_bookmarked.id)', 'count')
+        .where('candidate_bookmarked.recruitId = :recruitId', { recruitId })
+        .groupBy('month, year')
+        .orderBy('year, month', 'DESC');
 
       const total = await query.getCount();
 
@@ -96,6 +101,46 @@ export class CandidateBookmarksService {
       return {
         data,
         total,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAllCompanyByCandidate(
+    candidateId: string,
+    page: number,
+    limit: number,
+  ) {
+    try {
+      const bookmarked = this.candidateBooKmarkedRepository
+        .createQueryBuilder('bookmarked')
+        .where('bookmarked.candidateId = :candidateId', { candidateId })
+        .leftJoinAndSelect('bookmarked.company', 'company')
+        .leftJoinAndSelect('company.ward', 'ward')
+        .leftJoinAndSelect('ward.district', 'district')
+        .leftJoinAndSelect('district.province', 'province')
+        .leftJoinAndSelect('company.posts', 'posts', 'posts.status = 1')
+        .leftJoinAndSelect(
+          'company.bookmarkedCompany',
+          'bookmarkedCompany',
+          'bookmarkedCompany.accountId = :accountId',
+          { accountId: candidateId },
+        );
+
+      const total = await bookmarked.getCount();
+
+      const data = await bookmarked
+        .skip(page * (limit - 1))
+        .take(limit)
+        .orderBy('bookmarked.createdAt', 'DESC')
+        .getMany();
+
+      return {
+        total,
+        data,
+        is_over:
+          data.length === total ? true : data.length < limit ? true : false,
       };
     } catch (error) {
       throw error;

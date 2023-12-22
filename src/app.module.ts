@@ -7,7 +7,7 @@ import { AuthModule } from './authentication/auth.module';
 import { UserModule } from './models/users/users.module';
 import { MailModule } from './providers/mail/provider.module';
 import { QueueModule } from './providers/queue/provider.module';
-import { JwtAccessTokenServiceModule } from './providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from './providers/jwt/atk.provider.module';
 import { JwtRefreshTokenServiceModule } from './providers/jwt/rtk.provider.module';
 import { ProvincesModule } from './models/locations/provinces/provinces.module';
 import { UserHistoriesModule } from './models/user-histories/user-histories.module';
@@ -88,7 +88,7 @@ import { PostViewsModule } from './models/post-models/post-views/post-views.modu
     QueueModule,
     AWSModule,
     AuthModule,
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     JwtRefreshTokenServiceModule,
     ProvincesModule,
     DistrictsModule,
@@ -181,7 +181,6 @@ import { PostViewsModule } from './models/post-models/post-views/post-views.modu
     ]),
 
     SearchHistoryModule,
-
     PostViewsModule,
   ],
   controllers: [AppController, BannersController],

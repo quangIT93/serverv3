@@ -12,6 +12,7 @@ import { Company } from "src/models/company-models/companies/entities/company.en
 import { Profile } from "src/models/profile-models/profiles/entities";
 import { CompanyResource } from "src/models/company-resources/entities/company-resources.entity";
 import { PostCategories } from "../../posts-categories/entities/posts-categories.entity";
+import { PostView } from "../../post-views/entities/post-view.entity";
 // import { Application } from "src/models/application-model/applications/entities/application.entity";
 
 
@@ -192,4 +193,8 @@ export class Post extends BaseEntity {
         }
     })
     postViews!: User[];
+
+    @OneToMany(() => PostView, postView => postView.post)
+    @JoinColumn({ name: 'id', referencedColumnName: "post_id" })
+    postView: PostView[] | undefined;
 }
