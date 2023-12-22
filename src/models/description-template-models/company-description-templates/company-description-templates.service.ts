@@ -5,17 +5,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyDescriptionTemplate } from './entities/company-description-template.entity';
 import { Repository } from 'typeorm';
 import { PagingDto } from 'src/common/dtos/paging.dto';
+import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 
 @Injectable()
 export class CompanyDescriptionTemplatesService {
   constructor(
     @InjectRepository(CompanyDescriptionTemplate)
     private readonly companyTemplateRepository: Repository<CompanyDescriptionTemplate>,
+    @InjectRepository(ParentCategory)
+    private readonly parentCategoryRepository: Repository<ParentCategory>,
   ) {}
   async create(
     _createCompanyDescriptionTemplateDto: CreateCompanyDescriptionTemplateDto,
   ) {
     try {
+      const parentCategory = await this.parentCategoryRepository.findOne({
+        where: { id: _createCompanyDescriptionTemplateDto.parentCategoryId },
+      });
+
+      if (!parentCategory) {
+        throw new NotFoundException('Parent category not found');
+      }
+
       const template = this.companyTemplateRepository.create(
         _createCompanyDescriptionTemplateDto,
       );

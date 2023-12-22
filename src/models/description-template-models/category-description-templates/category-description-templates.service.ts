@@ -26,7 +26,7 @@ export class CategoryDescriptionTemplatesService {
       });
 
       if (!category) {
-        throw new NotFoundException('Category not found');
+        throw new NotFoundException('Child category not found');
       }
 
       const categoryTemplate = this.categoryTemplateRepository.create(

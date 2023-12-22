@@ -36,7 +36,7 @@ export class CreateCompanyDescriptionTemplateDto {
   })
   content!: string;
 
-  @ApiProperty({ type: 'int', required: true, nullable: false })
+  @ApiProperty({ type: 'number', required: true, nullable: false })
   @IsNumber()
   @Min(0)
   parentCategoryId!: number;

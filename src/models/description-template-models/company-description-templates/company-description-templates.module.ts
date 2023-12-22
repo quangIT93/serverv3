@@ -4,10 +4,11 @@ import { CompanyDescriptionTemplatesController } from './company-description-tem
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CompanyDescriptionTemplate } from './entities/company-description-template.entity';
 import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CompanyDescriptionTemplate]),
+    TypeOrmModule.forFeature([CompanyDescriptionTemplate, ParentCategory]),
     JwtAccessTokenServiceModule,
   ],
   controllers: [CompanyDescriptionTemplatesController],

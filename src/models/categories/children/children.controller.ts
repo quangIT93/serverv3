@@ -1,4 +1,15 @@
-import { Controller, Get, Param, Delete, Post, Body, UseGuards, HttpStatus, Put, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Delete,
+  Post,
+  Body,
+  UseGuards,
+  HttpStatus,
+  Put,
+  BadRequestException,
+} from '@nestjs/common';
 import { ChildrenService } from './children.service';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
@@ -16,21 +27,19 @@ export class ChildrenController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   async create(@Body() createChildDto: CreateChildDto) {
-
     try {
       await this.childrenService.create(createChildDto);
 
       return {
         status: HttpStatus.OK,
-        message: 'created successfully'
-      }
+        message: 'created successfully',
+      };
     } catch (error) {
       if (error instanceof Error) {
-        throw new BadRequestException(error.message)
+        throw new BadRequestException(error.message);
       }
-      throw new BadRequestException('Error creating search')
+      throw new BadRequestException('Error creating search');
     }
-  
   }
 
   @Get()
@@ -46,21 +55,20 @@ export class ChildrenController {
   async findOne(@Param('id') id: string) {
     return {
       status: HttpStatus.OK,
-      data: await this.childrenService.findOne(+id)
-    }
+      data: await this.childrenService.findOne(+id),
+    };
   }
 
   @Put('update/:id')
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
-  async update(@Param('id') id: number,@Body() dto: UpdateChildDto) {    
-
-    await this.childrenService.update(id, dto)
+  async update(@Param('id') id: number, @Body() dto: UpdateChildDto) {
+    await this.childrenService.update(id, dto);
 
     return {
-        statusCode: HttpStatus.OK,
-        message: 'update search successfully',
-    }
+      statusCode: HttpStatus.OK,
+      message: 'update search successfully',
+    };
   }
 
   @Delete(':id')
@@ -76,7 +84,7 @@ export class ChildrenController {
   async getChildByIdParent(@Param('id') id: string) {
     return {
       status: HttpStatus.OK,
-      data: await this.childrenService.getChildByIdParent(+id)
-    }
+      data: await this.childrenService.getChildByIdParent(+id),
+    };
   }
 }
