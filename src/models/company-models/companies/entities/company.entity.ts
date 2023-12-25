@@ -56,7 +56,7 @@ export class Company {
   @Column({ type: 'varchar', length: 255, nullable: false })
   website!: string;
 
-  @Column({ type: 'varchar', length: 1000, nullable: false })
+  @Column({ type: 'varchar', length: 4000, nullable: false })
   description!: string;
 
   @Column({ type: 'decimal', nullable: true })

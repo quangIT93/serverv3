@@ -54,7 +54,7 @@ export class CreateCompanyDto {
 
   @ApiProperty({ type: 'string', format: 'string', required: true })
   @IsString({ message: 'Description must be a string' })
-  @MaxLength(1000, { message: 'Description must be less than 1000 characters' })
+  @MaxLength(4000, { message: 'Description must be less than 4000 characters' })
   description!: string;
 
   @ApiProperty({ type: 'number', format: 'string', required: true })

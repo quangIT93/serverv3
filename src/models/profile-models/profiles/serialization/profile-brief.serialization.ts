@@ -129,7 +129,7 @@ export class ProfileBriefSerialization extends Profile {
 
   @Expose()
   get hideEmail() {
-    if (!this.email) return null;
+    if (!this.email) return 'Your name';
     return hideEmailFN(this.email);
   }
 
