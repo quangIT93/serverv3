@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   NotFoundException,
@@ -128,8 +127,7 @@ export class PostsService {
   }
 
   async findOne(id: number, accountId?: string): Promise<Post | null> {
-
-    const post =  this.postsRepository.findOne({
+    const post = this.postsRepository.findOne({
       relations: [
         'categories',
         'categories.parentCategory',
@@ -164,7 +162,7 @@ export class PostsService {
     }
 
     if (accountId) {
-      Logger.log("Create post view")
+      Logger.log('Create post view');
       const dto: CreatePostViewDto = new CreatePostViewDto(id, accountId);
       await this.postViewsService.create(dto);
     }
@@ -418,7 +416,7 @@ export class PostsService {
       const data = await posts
         .take(limit)
         .skip(page * limit)
-        .orderBy('posts.updatedAt', 'DESC')
+        .orderBy('posts.createdAt', 'DESC')
         .getMany();
 
       return {

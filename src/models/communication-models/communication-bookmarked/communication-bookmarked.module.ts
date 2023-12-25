@@ -3,13 +3,13 @@ import { CommunicationBookmarkedService } from './communication-bookmarked.servi
 import { CommunicationBookmarkedController } from './communication-bookmarked.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommunicationBookmarked } from './entities/communication-bookmarked.entity';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 import { CommunicationViewsModule } from '../communication-views/communication-views.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CommunicationBookmarked]),
-    JwtAccessTokenServiceModule,
+    JwtAccessTokenModule,
     CommunicationViewsModule
   ],
   controllers: [CommunicationBookmarkedController],

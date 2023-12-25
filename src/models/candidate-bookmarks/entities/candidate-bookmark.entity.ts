@@ -1,3 +1,4 @@
+import { Company } from 'src/models/company-models/companies/entities/company.entity';
 import { Profile } from 'src/models/profile-models/profiles/entities';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
@@ -15,4 +16,8 @@ export class CandidateBookmark {
   @ManyToOne(() => Profile, (profile) => profile.candidateBookmarked)
   @JoinColumn({ name: 'candidate_id', referencedColumnName: 'accountId' })
   profile!: Profile;
+
+  @ManyToOne(() => Company, (company) => company)
+  @JoinColumn({ name: 'recruit_id', referencedColumnName: 'accountId' })
+  company!: Company;
 }

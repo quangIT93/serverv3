@@ -7,12 +7,12 @@ import { AWSService } from 'src/services/aws/aws.service';
 import { AWSConfigService } from 'src/config/storage/aws/config.service';
 import { JwtAccessTokenService } from 'src/services/jwt/atk.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtAccessTokenServiceModule } from 'src/providers/jwt/atk.provider.module';
+import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
 
 @Module({ 
     imports: [
         TypeOrmModule.forFeature([Banner]),
-        JwtAccessTokenServiceModule
+        JwtAccessTokenModule
     ],
         
     controllers: [BannersController],
