@@ -9,3 +9,5 @@ CREATE TABLE IF NOT EXISTS `category_description_templates` (
     PRIMARY KEY (id),
     Constraint FK_ChildCategories_CategoryDescriptionTemplate FOREIGN KEY (child_category_id) REFERENCES child_categories (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+ALTER TABLE companies MODIFY COLUMN description varchar(4000) DEFAULT NULL;
