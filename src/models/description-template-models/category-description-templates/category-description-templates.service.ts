@@ -4,8 +4,8 @@ import { UpdateCategoryDescriptionTemplateDto } from './dto/update-category-desc
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryDescriptionTemplate } from './entities/category-description-template.entity';
 import { Repository } from 'typeorm';
-import { PagingDto } from 'src/common/dtos/paging.dto';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
+import { QueryCategoryDescriptionDto } from './dto/query-category-description.dto';
 
 @Injectable()
 export class CategoryDescriptionTemplatesService {
@@ -39,7 +39,7 @@ export class CategoryDescriptionTemplatesService {
     }
   }
 
-  async findAll() {
+  async findAllByAdmin() {
     try {
       return await this.categoryTemplateRepository.find({
         relations: { childCategory: true },
@@ -49,27 +49,32 @@ export class CategoryDescriptionTemplatesService {
     }
   }
 
-  async findAllByCategoryId(childCategoryId: number, query: PagingDto) {
+  async findAll(query: QueryCategoryDescriptionDto) {
     try {
-      const { limit, page } = query;
-      const category = await this.childCategoryRepository.findOne({
-        where: { id: childCategoryId },
-      });
+      const { page = 0, limit = 20, childCategoryId, title } = query;
 
-      if (!category) {
-        throw new NotFoundException('Category not found');
+      const template =
+        this.categoryTemplateRepository.createQueryBuilder('template');
+
+      if (childCategoryId) {
+        template.andWhere('template.childCategoryId = :childCategoryId', {
+          childCategoryId,
+        });
       }
 
-      const data = await this.categoryTemplateRepository.find({
-        where: { childCategoryId },
-        take: limit ? limit : 20,
-        skip: page ? page * limit : 0,
-      });
+      if (title) {
+        template.andWhere('template.title like :title', {
+          title: `%${title}%`,
+        });
+      }
 
-      const total = await this.categoryTemplateRepository.count({
-        where: { childCategoryId },
-      });
+      const total = await template.getCount();
 
+      const data = await template
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
+        .orderBy('template.createdAt', 'DESC')
+        .getMany();
       return {
         total,
         data,
@@ -85,7 +90,6 @@ export class CategoryDescriptionTemplatesService {
     try {
       const data = await this.categoryTemplateRepository.findOne({
         where: { id },
-        relations: { childCategory: true },
       });
 
       if (!data) {

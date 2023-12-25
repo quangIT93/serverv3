@@ -31,7 +31,7 @@ export class CategoryDescriptionTemplate {
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createAt!: Date;
+  createdAt!: Date;
 
   @Column({
     type: 'datetime',

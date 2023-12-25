@@ -11,17 +11,21 @@ import {
   Res,
   UseGuards,
   Put,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { CompanyDescriptionTemplatesService } from './company-description-templates.service';
 import { CreateCompanyDescriptionTemplateDto } from './dto/create-company-description-template.dto';
 import { UpdateCompanyDescriptionTemplateDto } from './dto/update-company-description-template.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { PagingDto } from 'src/common/dtos/paging.dto';
 import { Response } from 'express';
 import { Roles } from 'src/authentication/roles.decorator';
 import { Role } from 'src/common/enum';
 import { RoleGuard } from 'src/authentication/role.guard';
 import { AuthGuard } from 'src/authentication/auth.guard';
+import { QueryCompanyDescriptionDto } from './dto/query-company-description.dto';
+import { CompanyDescriptionTemplateInterceptor } from './interceptors/company-description-template.interceptor';
+import { DetailCompanyDescriptionInterceptor } from './interceptors/detail-company-description.interceptor';
 
 @ApiTags('Company-description-templates')
 @Controller('company-description-templates')
@@ -60,9 +64,13 @@ export class CompanyDescriptionTemplatesController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  findAll(@Query() query: PagingDto) {
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    CompanyDescriptionTemplateInterceptor,
+  )
+  async findAll(@Query() query: QueryCompanyDescriptionDto) {
     try {
-      return this.companyDescriptionTemplatesService.findAll(query);
+      return await this.companyDescriptionTemplatesService.findAll(query);
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -75,9 +83,9 @@ export class CompanyDescriptionTemplatesController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(Role.ADMIN)
-  findAllByAdmin() {
+  async findAllByAdmin() {
     try {
-      return this.companyDescriptionTemplatesService.findAllByAdmin();
+      return await this.companyDescriptionTemplatesService.findAllByAdmin();
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -89,9 +97,13 @@ export class CompanyDescriptionTemplatesController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
+  @UseInterceptors(
+    ClassSerializerInterceptor,
+    DetailCompanyDescriptionInterceptor,
+  )
+  async indOne(@Param('id') id: string) {
     try {
-      return this.companyDescriptionTemplatesService.findOne(+id);
+      return await this.companyDescriptionTemplatesService.findOne(+id);
     } catch (error) {
       if (error instanceof Error) {
         throw error;

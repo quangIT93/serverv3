@@ -30,7 +30,7 @@ export class CompanyDescriptionTemplate {
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createAt!: Date;
+  createdAt!: Date;
 
   @Column({
     type: 'datetime',

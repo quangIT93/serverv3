@@ -4,8 +4,8 @@ import { UpdateCompanyDescriptionTemplateDto } from './dto/update-company-descri
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyDescriptionTemplate } from './entities/company-description-template.entity';
 import { Repository } from 'typeorm';
-import { PagingDto } from 'src/common/dtos/paging.dto';
 import { ParentCategory } from 'src/models/categories/parents/entities/parent.entity';
+import { QueryCompanyDescriptionDto } from './dto/query-company-description.dto';
 
 @Injectable()
 export class CompanyDescriptionTemplatesService {
@@ -37,15 +37,32 @@ export class CompanyDescriptionTemplatesService {
     }
   }
 
-  async findAll(query: PagingDto) {
+  async findAll(query: QueryCompanyDescriptionDto) {
     try {
-      const { limit, page } = query;
-      const data = await this.companyTemplateRepository.find({
-        take: limit ? limit : 20,
-        skip: page ? page * limit : 0,
-      });
+      const { limit, page, parentCategoryId, title } = query;
 
-      const total = await this.companyTemplateRepository.count();
+      const template =
+        this.companyTemplateRepository.createQueryBuilder('template');
+
+      if (parentCategoryId) {
+        template.andWhere('template.parentCategoryId = :parentCategoryId', {
+          parentCategoryId,
+        });
+      }
+
+      if (title) {
+        template.andWhere('template.title like :title', {
+          title: `%${title}%`,
+        });
+      }
+
+      const total = await template.getCount();
+
+      const data = await template
+        .take(limit ? limit : 20)
+        .skip(page ? page * limit : 0)
+        .orderBy('template.createdAt', 'DESC')
+        .getMany();
 
       return {
         total,
@@ -68,7 +85,6 @@ export class CompanyDescriptionTemplatesService {
     try {
       const data = await this.companyTemplateRepository.findOne({
         where: { id },
-        relations: { parentCategory: true },
       });
 
       if (!data) {
@@ -92,6 +108,14 @@ export class CompanyDescriptionTemplatesService {
 
       if (!data) {
         throw new NotFoundException('Template not found');
+      }
+
+      const parentCategory = await this.parentCategoryRepository.findOne({
+        where: { id: _updateCompanyDescriptionTemplateDto.parentCategoryId },
+      });
+
+      if (!parentCategory) {
+        throw new NotFoundException('Parent category not found');
       }
 
       await this.companyTemplateRepository.update(
