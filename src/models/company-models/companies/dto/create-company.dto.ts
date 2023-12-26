@@ -45,7 +45,7 @@ export class CreateCompanyDto {
   @MaxLength(255, { message: 'Email must be less than 255 characters' })
   email!: string;
 
-  @ApiProperty({ type: 'string', format: 'string', required: true })
+  @ApiProperty({ type: 'string', format: 'string', required: false })
   @IsString({ message: 'Website must be a string' })
   @MaxLength(255, { message: 'Website must be less than 255 characters' })
   @IsUrl({}, { message: 'Website must be a valid url' })
