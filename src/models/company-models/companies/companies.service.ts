@@ -24,6 +24,14 @@ export class CompaniesService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+    const isExist = await this.companyRepository.findOne({
+      where: { accountId: createCompanyDto.accountId },
+    });
+
+    if (isExist) {
+      throw new BadRequestException('Account created company ');
+    }
+
     const company = this.companyRepository.create(createCompanyDto);
     return await this.companyRepository.save(company);
   }
