@@ -109,7 +109,8 @@ export class CompanyBookmarkedService {
         .leftJoinAndSelect('profile.childCategories', 'childCategory')
         .leftJoinAndSelect('childCategory.parentCategory', 'parentCategory')
         .leftJoinAndSelect('profile.profilesLocations', 'district')
-        .leftJoinAndSelect('district.province', 'province');
+        .leftJoinAndSelect('district.province', 'province')
+        .andWhere('user.type = 0');
 
       const total = await bookmarked.getCount();
 

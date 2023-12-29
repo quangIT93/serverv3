@@ -82,6 +82,9 @@ export class CVFilterSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override province!: Province;
 
+  @Transform(({ value }) => (value ? value : 'Your name'))
+  override name!: string;
+
   @Expose()
   get categoriesData() {
     if (!this.childCategories) return null;

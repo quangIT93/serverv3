@@ -326,7 +326,10 @@ export class ProfilesService {
       const companyId = company.id;
       const saveYourProfileLogs = await this.profileRepository
         .query(
-          `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = ?`,
+          // `SELECT COUNT(*) as total FROM company_bookmarked WHERE company_id = ?`,
+          `SELECT COUNT(*) as total FROM company_bookmarked 
+          LEFT JOIN accounts ON company_bookmarked.account_id = accounts.id
+          WHERE company_bookmarked.company_id = ? AND accounts.type = 0`,
           [companyId],
         )
         .then((result) => {

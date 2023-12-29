@@ -82,6 +82,9 @@ export class ProfileBriefSerialization extends Profile {
   @Exclude({ toPlainOnly: true })
   override province!: Province;
 
+  @Transform(({ value }) => (value ? value : 'Your name'))
+  override name!: string;
+
   @Expose()
   get childCategoriesData() {
     if (!this.childCategories) return null;
@@ -129,7 +132,7 @@ export class ProfileBriefSerialization extends Profile {
 
   @Expose()
   get hideEmail() {
-    if (!this.email) return 'Your name';
+    if (!this.email) return null;
     return hideEmailFN(this.email);
   }
 

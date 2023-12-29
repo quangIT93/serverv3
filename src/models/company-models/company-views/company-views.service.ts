@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CompanyView } from './entities/company-view.entity';
 import { Company } from '../companies/entities/company.entity';
 import { QueryCompanyViewDto } from './dto/query-company-view.dto';
+import { User } from 'src/models/users/entities';
 
 @Injectable()
 export class CompanyViewsService {
@@ -14,6 +15,9 @@ export class CompanyViewsService {
 
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async create(_createPostViewDto: CreateCompanyViewDto) {
@@ -23,6 +27,15 @@ export class CompanyViewsService {
         _createPostViewDto.accountId,
       )
     ) {
+      return;
+    }
+
+    const account = await this.userRepository.findOne({
+      where: { id: _createPostViewDto.accountId },
+    });
+
+    // check user is candidate if not return
+    if (account?.type === 1) {
       return;
     }
 
