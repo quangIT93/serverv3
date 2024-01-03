@@ -40,9 +40,15 @@ export class CvFilterService {
         .andWhere('user.status = :status', { status: 1 })
         .andWhere('(user.type != 1 OR user.type IS NULL)');
 
+      // if (addresses) {
+      //   candidates.andWhere('profilesLocations.id IN (:...addresses)', {
+      //     addresses: Array.isArray(addresses) ? addresses : [addresses],
+      //   });
+      // }
+
       if (addresses) {
-        candidates.andWhere('profilesLocations.id IN (:...addresses)', {
-          addresses: Array.isArray(addresses) ? addresses : [addresses],
+        candidates.andWhere('profiles.address = :addresses', {
+          addresses,
         });
       }
 
