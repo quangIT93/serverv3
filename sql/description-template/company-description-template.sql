@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS `company_description_templates` (
     updated_at datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (id),
     Constraint FK_ParentCategories_CategoryDescriptionTemplate FOREIGN KEY (parent_category_id) REFERENCES parent_categories (id) ON DELETE CASCADE ON UPDATE NO ACTION
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
