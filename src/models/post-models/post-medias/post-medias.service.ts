@@ -50,6 +50,7 @@ export class PostMediasService {
         .createQueryBuilder('postMedia')
         .leftJoinAndSelect('postMedia.post', 'post')
         .leftJoinAndSelect('postMedia.company', 'company')
+        .where('postMedia.status = :status', { status: 1 })
         .select([
           'postMedia',
           'post.id',
@@ -167,14 +168,12 @@ export class PostMediasService {
         throw new NotFoundException('Post media not found');
       }
 
-      if (body.postId) {
-        const post = await this.postRepository.findOne({
-          where: { id: body.postId },
-        });
+      const post = await this.postRepository.findOne({
+        where: { id: body.postId },
+      });
 
-        if (!post) {
-          throw new NotFoundException('Post not found');
-        }
+      if (!post) {
+        throw new NotFoundException('Post not found');
       }
 
       body.companyId = postMedia.companyId;
