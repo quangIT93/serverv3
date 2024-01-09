@@ -103,16 +103,27 @@ export class PostMediasService {
 
   async findOne(id: number) {
     try {
-      const postMedia = await this.postMediasRepository.findOne({
-        where: { id },
-        relations: ['post', 'company'],
-      });
+      const postMedia = this.postMediasRepository
+        .createQueryBuilder('postMedia')
+        .leftJoinAndSelect('postMedia.post', 'post')
+        .leftJoinAndSelect('postMedia.company', 'company')
+        .where('postMedia.id = :id', { id })
+        .select([
+          'postMedia',
+          'post.id',
+          'post.title',
+          'company.id',
+          'company.name',
+          'company.logo',
+        ]);
 
-      if (!postMedia) {
-        throw new NotFoundException('Post not found');
+      const data = await postMedia.getOne();
+
+      if (!data) {
+        throw new NotFoundException('Post media not found');
       }
 
-      return postMedia;
+      return data;
     } catch (error) {
       throw error;
     }

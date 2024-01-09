@@ -27,7 +27,7 @@ export class CreatePostMediaDto {
   @IsString()
   image!: string;
 
-  @ApiProperty({ type: 'file', format: 'binary', required: false })
-  @IsOptional()
-  video!: string;
+  // @ApiProperty({ type: 'file', format: 'binary', required: false })
+  // @IsOptional()
+  // video!: string;
 }

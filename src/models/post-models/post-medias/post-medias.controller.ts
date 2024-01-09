@@ -111,6 +111,7 @@ export class PostMediasController {
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor, PostMediaDetailInterceptor)
   async findOne(@Param('id') id: number) {
     try {
       return await this.postMediasService.findOne(id);
