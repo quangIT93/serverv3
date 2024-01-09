@@ -31,6 +31,7 @@ import { PostMediaImagePipe } from './interceptors/image-post-media.interceptor'
 import { AWSService } from 'src/services/aws/aws.service';
 import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
 import { PostMediasInterceptor } from './interceptors/post-medias.interceptor';
+import { PostMediaDetailInterceptor } from './interceptors/post-media-detail.interceptor';
 
 @ApiTags('Post-medias')
 @Controller('post-medias')
@@ -113,6 +114,18 @@ export class PostMediasController {
   async findOne(@Param('id') id: number) {
     try {
       return await this.postMediasService.findOne(id);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Getting error');
+    }
+  }
+  @Get('/post/:id')
+  @UseInterceptors(ClassSerializerInterceptor, PostMediaDetailInterceptor)
+  async findOneByPost(@Param('id') id: number) {
+    try {
+      return await this.postMediasService.findOneByPost(id);
     } catch (error) {
       if (error instanceof Error) {
         throw error;

@@ -92,7 +92,10 @@ export class PostMediasService {
           'company.logo',
         ]);
 
-      return await postMedia.getMany();
+      const data = await postMedia.getMany();
+      return {
+        data,
+      };
     } catch (error) {
       throw error;
     }
@@ -110,6 +113,34 @@ export class PostMediasService {
       }
 
       return postMedia;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOneByPost(postId: number) {
+    try {
+      const postMedia = this.postMediasRepository
+        .createQueryBuilder('postMedia')
+        .leftJoinAndSelect('postMedia.post', 'post')
+        .leftJoinAndSelect('postMedia.company', 'company')
+        .where('post.id = :postId', { postId })
+        .select([
+          'postMedia',
+          'post.id',
+          'post.title',
+          'company.id',
+          'company.name',
+          'company.logo',
+        ]);
+
+      const data = await postMedia.getOne();
+
+      if (!data) {
+        throw new NotFoundException('Post media not found');
+      }
+
+      return data;
     } catch (error) {
       throw error;
     }
