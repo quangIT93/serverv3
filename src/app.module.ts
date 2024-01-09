@@ -80,6 +80,7 @@ import { SearchHistoryModule } from './models/search-models/search-history/searc
 import { PostViewsModule } from './models/post-models/post-views/post-views.module';
 import { CategoryDescriptionTemplatesModule } from './models/description-template-models/category-description-templates/category-description-templates.module';
 import { CompanyDescriptionTemplatesModule } from './models/description-template-models/company-description-templates/company-description-templates.module';
+import { PostMediasModule } from './models/post-models/post-medias/post-medias.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -187,6 +188,7 @@ import { CompanyDescriptionTemplatesModule } from './models/description-template
 
     SearchHistoryModule,
     PostViewsModule,
+    PostMediasModule,
   ],
   controllers: [AppController, BannersController],
   providers: [
