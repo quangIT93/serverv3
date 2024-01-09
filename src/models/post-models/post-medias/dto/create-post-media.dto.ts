@@ -30,4 +30,6 @@ export class CreatePostMediaDto {
   // @ApiProperty({ type: 'file', format: 'binary', required: false })
   // @IsOptional()
   // video!: string;
+
+  status!: number;
 }

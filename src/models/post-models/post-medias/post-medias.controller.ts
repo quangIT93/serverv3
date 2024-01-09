@@ -66,6 +66,7 @@ export class PostMediasController {
           id: body.postId,
         });
         body.image = image.originalname;
+        body.status = 1;
       }
 
       await this.postMediasService.create(accountId, body);
@@ -162,6 +163,7 @@ export class PostMediasController {
           id: body.postId,
         });
         body.image = image.originalname;
+        body.status = 1;
       }
 
       await this.postMediasService.update(id, body);

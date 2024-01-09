@@ -22,6 +22,7 @@ export class PostMediasSerialization extends PostMedia {
 
   @Expose()
   get imageThumb() {
+    if (!this.image) return;
     return `${BUCKET_IMAGE_POST}/${this.postId}/${this.image}`;
   }
 

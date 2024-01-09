@@ -178,10 +178,6 @@ export class PostMediasService {
 
       body.companyId = postMedia.companyId;
 
-      if (body.image) {
-        body.status = 1;
-      }
-
       await this.postMediasRepository.update(id, body);
     } catch (error) {
       throw error;
