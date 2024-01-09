@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS `category_description_templates` (
     updated_at datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     PRIMARY KEY (id),
     Constraint FK_ChildCategories_CategoryDescriptionTemplate FOREIGN KEY (child_category_id) REFERENCES child_categories (id) ON DELETE CASCADE ON UPDATE NO ACTION
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 ALTER TABLE companies MODIFY COLUMN description varchar(4000) DEFAULT NULL;
