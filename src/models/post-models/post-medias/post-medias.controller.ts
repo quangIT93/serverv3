@@ -28,18 +28,13 @@ import { Role } from 'src/common/enum';
 import { RoleGuard } from 'src/authentication/role.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostMediaImagePipe } from './interceptors/image-post-media.interceptor';
-import { AWSService } from 'src/services/aws/aws.service';
-import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
 import { PostMediasInterceptor } from './interceptors/post-medias.interceptor';
 import { PostMediaDetailInterceptor } from './interceptors/post-media-detail.interceptor';
 
 @ApiTags('Post-medias')
 @Controller('post-medias')
 export class PostMediasController {
-  constructor(
-    private readonly postMediasService: PostMediasService,
-    private readonly awsService: AWSService,
-  ) {}
+  constructor(private readonly postMediasService: PostMediasService) {}
 
   @Post()
   @ApiBearerAuth()
@@ -60,16 +55,11 @@ export class PostMediasController {
         throw new UnauthorizedException();
       }
 
-      if (image) {
-        await this.awsService.uploadFile(image, {
-          BUCKET: BUCKET_IMAGE_POST_UPLOAD,
-          id: body.postId,
-        });
-        body.image = image.originalname;
-        body.status = 1;
-      }
-
-      await this.postMediasService.create(accountId, body);
+      await this.postMediasService.create({
+        accountId,
+        body,
+        image,
+      });
 
       return {
         statusCode: HttpStatus.CREATED,
@@ -157,16 +147,8 @@ export class PostMediasController {
         throw new UnauthorizedException();
       }
 
-      if (image) {
-        await this.awsService.uploadFile(image, {
-          BUCKET: BUCKET_IMAGE_POST_UPLOAD,
-          id: body.postId,
-        });
-        body.image = image.originalname;
-        body.status = 1;
-      }
+      await this.postMediasService.update({ id, body, image });
 
-      await this.postMediasService.update(id, body);
       return {
         statusCode: HttpStatus.OK,
         message: 'Post media updated successfully',

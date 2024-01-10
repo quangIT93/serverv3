@@ -7,6 +7,8 @@ import { Post } from '../posts/entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PagingDto } from 'src/common/dtos/paging.dto';
 import { UpdatePostMediaDto } from './dto/update-post-media.dto';
+import { AWSService } from 'src/services/aws/aws.service';
+import { BUCKET_IMAGE_POST_UPLOAD } from 'src/common/constants';
 
 @Injectable()
 export class PostMediasService {
@@ -17,8 +19,17 @@ export class PostMediasService {
     private companyRepository: Repository<Company>,
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
+    private readonly awsService: AWSService,
   ) {}
-  async create(accountId: string, body: CreatePostMediaDto) {
+  async create({
+    accountId,
+    body,
+    image,
+  }: {
+    accountId: string;
+    body: CreatePostMediaDto;
+    image?: Express.Multer.File;
+  }) {
     const company = await this.companyRepository.findOne({
       where: { accountId },
     });
@@ -29,14 +40,21 @@ export class PostMediasService {
       body.companyId = company.id;
     }
 
-    if (body.postId) {
-      const post = await this.postRepository.findOne({
-        where: { id: body.postId },
-      });
+    const post = await this.postRepository.findOne({
+      where: { id: body.postId },
+    });
 
-      if (!post) {
-        throw new NotFoundException('Post not found');
-      }
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (image) {
+      await this.awsService.uploadFile(image, {
+        BUCKET: BUCKET_IMAGE_POST_UPLOAD,
+        id: body.postId,
+      });
+      body.image = image.originalname;
+      body.status = 1;
     }
 
     const postMedia = this.postMediasRepository.create(body);
@@ -161,7 +179,15 @@ export class PostMediasService {
     }
   }
 
-  async update(id: number, body: UpdatePostMediaDto) {
+  async update({
+    id,
+    body,
+    image,
+  }: {
+    id: number;
+    body: UpdatePostMediaDto;
+    image: Express.Multer.File;
+  }) {
     try {
       const postMedia = await this.postMediasRepository.findOne({
         where: { id },
@@ -177,6 +203,15 @@ export class PostMediasService {
 
       if (!post) {
         throw new NotFoundException('Post not found');
+      }
+
+      if (image) {
+        await this.awsService.uploadFile(image, {
+          BUCKET: BUCKET_IMAGE_POST_UPLOAD,
+          id: body.postId,
+        });
+        body.image = image.originalname;
+        body.status = 1;
       }
 
       body.companyId = postMedia.companyId;
