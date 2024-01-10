@@ -65,6 +65,7 @@ export class PostMediasService {
       const data = await postMedia
         .take(page)
         .skip(page * limit)
+        .orderBy('postMedia.createdAt', 'DESC')
         .getMany();
 
       return {
@@ -93,7 +94,9 @@ export class PostMediasService {
           'company.logo',
         ]);
 
-      const data = await postMedia.getMany();
+      const data = await postMedia
+        .orderBy('postMedia.createdAt', 'DESC')
+        .getMany();
       return {
         data,
       };
@@ -136,7 +139,7 @@ export class PostMediasService {
         .createQueryBuilder('postMedia')
         .leftJoinAndSelect('postMedia.post', 'post')
         .leftJoinAndSelect('postMedia.company', 'company')
-        .where('post.id = :postId', { postId })
+        .where('postMedia.postId = :postId', { postId })
         .select([
           'postMedia',
           'post.id',
