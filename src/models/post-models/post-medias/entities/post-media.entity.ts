@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Post } from '../../posts/entities';
 
-@Entity('post-medias')
+@Entity('post_medias')
 export class PostMedia {
   @PrimaryGeneratedColumn('increment')
   id!: number;
