@@ -69,6 +69,7 @@ export class PostMediasService {
         .leftJoinAndSelect('postMedia.post', 'post')
         .leftJoinAndSelect('postMedia.company', 'company')
         .where('postMedia.status = :status', { status: 1 })
+        .andWhere('post.status = 1')
         .select([
           'postMedia',
           'post.id',
@@ -110,6 +111,7 @@ export class PostMediasService {
           'company.id',
           'company.name',
           'company.logo',
+          'post.status',
         ]);
 
       const data = await postMedia

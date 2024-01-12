@@ -39,4 +39,10 @@ export class PostMediasSerialization extends PostMedia {
     };
   })
   override company!: Company;
+
+  @Expose()
+  get statusPost() {
+    if (!this.post.status) return;
+    return this.post.status;
+  }
 }
