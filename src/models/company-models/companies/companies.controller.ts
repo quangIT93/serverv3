@@ -167,6 +167,7 @@ export class CompaniesController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RoleGuard)
   @Get('by-admin')
+  @ApiBearerAuth()
   @UseInterceptors(ClassSerializerInterceptor, CompaniesInterceptor)
   async findAllByAdmin() {
     try {

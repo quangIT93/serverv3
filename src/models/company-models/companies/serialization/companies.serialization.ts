@@ -29,8 +29,8 @@ export class CompaniesSerialization extends Company {
   @Exclude({ toPlainOnly: true })
   override phone!: string;
 
-  @Exclude({ toPlainOnly: true })
-  override email!: string;
+  // @Exclude({ toPlainOnly: true })
+  // override email!: string;
 
   @Exclude({ toPlainOnly: true })
   override website!: string;

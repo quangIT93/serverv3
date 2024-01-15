@@ -243,8 +243,8 @@ export class CompaniesService {
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'province')
         .leftJoinAndSelect('companies.category', 'category')
-        .leftJoinAndSelect('companies.companySize', 'companySize');
-
+        .leftJoinAndSelect('companies.companySize', 'companySize')
+        .leftJoinAndSelect('companies.posts', 'posts', 'posts.status = 1');
       const total = await companies.getCount();
       const data = await companies
         .orderBy('companies.createdAt', 'DESC')
