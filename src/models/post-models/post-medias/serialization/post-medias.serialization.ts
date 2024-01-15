@@ -22,7 +22,7 @@ export class PostMediasSerialization extends PostMedia {
 
   @Expose()
   get imageThumb() {
-    if (!this.image) return;
+    if (!this.image) return null;
     return `${BUCKET_IMAGE_POST}/${this.postId}/${this.image}`;
   }
 
@@ -39,4 +39,10 @@ export class PostMediasSerialization extends PostMedia {
     };
   })
   override company!: Company;
+
+  @Expose()
+  get statusPost() {
+    if (!this.post.status) return;
+    return this.post.status;
+  }
 }

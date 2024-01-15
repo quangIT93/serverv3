@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { OneOfOptionalRequired } from 'src/common/decorators/validation';
 
 export class CreatePostMediaDto {
   companyId!: number;
@@ -31,5 +32,15 @@ export class CreatePostMediaDto {
   // @IsOptional()
   // video!: string;
 
+  @ApiProperty({
+    type: 'number',
+    format: 'enum',
+    required: true,
+    enum: [1, 2],
+    description: '1: success, 2: block',
+  })
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @OneOfOptionalRequired([1, 2])
   status!: number;
 }
