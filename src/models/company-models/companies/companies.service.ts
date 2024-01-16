@@ -90,17 +90,17 @@ export class CompaniesService {
           { accountId },
         );
 
-      // if (addresses) {
-      //   companies.andWhere('district.id IN (:...addresses)', {
-      //     addresses: Array.isArray(addresses) ? addresses : [addresses],
-      //   });
-      // }
-
       if (addresses) {
-        companies.andWhere('province.id = :addresses', {
-          addresses,
+        companies.andWhere('district.id IN (:...addresses)', {
+          addresses: Array.isArray(addresses) ? addresses : [addresses],
         });
       }
+
+      // if (addresses) {
+      //   companies.andWhere('province.id = :addresses', {
+      //     addresses,
+      //   });
+      // }
 
       if (categories) {
         companies.andWhere('category.id IN (:...categories)', {

@@ -2,22 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 
 export class FilterCompaniesDto {
-  // @ApiProperty({
-  //   type: 'array',
-  //   items: { type: 'number' },
-  //   required: false,
-  //   description: 'District id',
-  // })
-  // @IsOptional()
-  // addresses?: number[];
-
   @ApiProperty({
-    type: 'int',
-    description: 'Province id',
+    type: 'array',
+    items: { type: 'number' },
     required: false,
+    description: 'District id',
   })
   @IsOptional()
-  addresses?: number;
+  addresses?: number[];
+
+  // @ApiProperty({
+  //   type: 'int',
+  //   description: 'Province id',
+  //   required: false,
+  // })
+  // @IsOptional()
+  // addresses?: number;
 
   @ApiProperty({
     type: 'array',
