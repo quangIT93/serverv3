@@ -66,10 +66,10 @@ export class SearchPostService {
 
       if (jobTypeId !== undefined) {
         if (
-          salary_type !== 1 &&
-          salary_type !== 2 &&
-          salary_type !== 4 &&
-          salary_type !== 7
+          jobTypeId !== 1 &&
+          jobTypeId !== 2 &&
+          jobTypeId !== 4 &&
+          jobTypeId !== 7
         ) {
           throw new BadRequestException('Please enter the correct jobTypeId');
         } else {
