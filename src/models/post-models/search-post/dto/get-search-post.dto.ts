@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, Min, Validate } from 'class-validator';
 
 export class GetSearchPostDto {
   @ApiProperty({
@@ -68,7 +68,7 @@ export class GetSearchPostDto {
   is_remotely!: string;
 
   @ApiProperty({
-    type: 'double',
+    type: 'int',
     required: false,
     description: 'Salary Min',
     default: 0,
@@ -77,7 +77,7 @@ export class GetSearchPostDto {
   salary_min!: number;
 
   @ApiProperty({
-    type: 'double',
+    type: 'int',
     required: false,
     description: 'Salary Max',
     default: 12000000,
@@ -86,24 +86,39 @@ export class GetSearchPostDto {
   salary_max!: number;
 
   @ApiProperty({
-    type: 'number',
-    format: 'enum',
+    type: 'int',
     required: false,
     description:
-      'Salary type (1 - Hourly, 2 - Daily, 3 - Weekly, 4 - Monthly, 5 - Job)',
-    enum: [1, 2, 3, 4, 5],
+      'Salary type (1 - Hourly, 2 - Daily, 3 - Weekly, 4 - Monthly, 5 - Job, 6 - Negotiate)',
   })
   @IsOptional()
+  @Validate((value: number) => {
+    const validValues = [1, 2, 3, 4, 5, 6];
+    if (!validValues.includes(value)) {
+      return {
+        message: 'Invalid salary_type value. Must be one of: 1, 2, 3, 4, 5, 6.',
+      };
+    }
+    return true;
+  })
   salary_type!: number;
 
   @ApiProperty({
-    type: 'enum',
+    type: 'int',
     required: false,
     description:
-      'Job type (1 - Fulltime, 2 - Partime, 3 - Freelancer, 4 - Intern)',
-    enum: ['1', '2', '4', '7'],
+      'Job type (1 - Fulltime, 2 - Partime, 4 - Freelancer, 7 - Intern)',
   })
   @IsOptional()
+  @Validate((value: number) => {
+    const validValues = [1, 2, 4, 7];
+    if (!validValues.includes(value)) {
+      return {
+        message: 'Invalid jobTypeId value. Must be one of: 1, 2, 4, 7.',
+      };
+    }
+    return true;
+  })
   jobTypeId!: number;
 
   @ApiProperty({

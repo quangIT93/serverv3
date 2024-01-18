@@ -1,20 +1,22 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { Post } from '../../posts/entities';
 import { Ward } from 'src/models/locations/wards/entities';
-import { BUCKET_IMAGE_POST } from 'src/common/constants';
+
 import { PostImages } from '../../posts-images/entities/post-images.entity';
 import { timeToTextTransform } from 'src/common/helper/transform/timeToText.transform';
 import { Language, MoneyType } from 'src/common/enum';
 import { ChildCategory } from 'src/models/categories/children/entities/child.entity';
 import { JobType } from 'src/models/job-types/entities/job-type.entity';
-import { SalaryTypeSerialization } from 'src/models/salary-types/serialization/salary-type.serialization';
-import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
+
 import { locationTranslator } from 'src/common/helper/translators';
 import { CompanyResourceSerialization } from 'src/models/company-resources/serialization/company-resource.serialization';
+import { SalaryTypeSerialization } from 'src/models/salary-types/serialization/salary-type.serialization';
+import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
+// import { BadRequestException } from '@nestjs/common';
 
 export class SearchPostSerialization extends Post {
-  lang: Language = Language.VI;
-
+  @Exclude()
+  lang!: Language;
   constructor(post: Post, lang: Language) {
     super();
     this.lang = lang;
@@ -46,10 +48,10 @@ export class SearchPostSerialization extends Post {
   override jobTypeData!: JobType;
 
   @Exclude({ toPlainOnly: true })
-  override companyResource!: any;
+  override jobType!: number;
 
   @Exclude({ toPlainOnly: true })
-  override salaryType!: number;
+  override companyResource!: any;
 
   @Exclude({ toPlainOnly: true })
   override salaryTypeData!: any;
@@ -60,41 +62,59 @@ export class SearchPostSerialization extends Post {
   @Exclude({ toPlainOnly: true })
   override createdAtDate!: Date;
 
-  @Transform(({ value }) => (value ? +value : null))
-  override startDate!: string | null;
+  @Exclude({ toPlainOnly: true })
+  override bookmarks!: any;
 
-  @Transform(({ value }) => (value ? +value : null))
-  override endDate!: string | null;
+  @Exclude({ toPlainOnly: true })
+  override description!: string;
 
-  @Transform(({ value }) => (value ? +value : null))
-  override startTime!: string;
+  @Exclude({ toPlainOnly: true })
+  override phoneContact!: string;
 
-  @Transform(({ value }) => (value ? +value : null))
-  override endTime!: string;
+  @Exclude({ toPlainOnly: true })
+  override email!: string;
 
-  @Transform(({ value }) => new Date(value).getTime())
-  override createdAt!: Date;
+  @Exclude({ toPlainOnly: true })
+  override url!: string;
 
-  @Transform(({ value }) => new Date(value).getTime())
-  override updatedAt!: Date;
+  @Exclude({ toPlainOnly: true })
+  override companyResourceId!: number;
 
-  @Transform(({ value }) => new Date(value).getTime() || null)
-  override expiredDate!: Date;
-
-  @Transform(({ value }) => +value)
+  @Exclude({ toPlainOnly: true })
   override isInHouseData!: string;
 
-  @Transform(({ value }) => +value)
-  override moneyType!: string;
+  @Exclude({ toPlainOnly: true })
+  override isDatePeriod!: number;
+
+  @Exclude({ toPlainOnly: true })
+  override startDate!: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  override endDate!: string | null;
+
+  @Exclude({ toPlainOnly: true })
+  override startTime!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override endTime!: string;
+
+  @Exclude({ toPlainOnly: true })
+  override expiredDate!: Date | null;
+
+  @Exclude({ toPlainOnly: true })
+  override createdAt!: Date;
+
+  @Exclude({ toPlainOnly: true })
+  override updatedAt!: Date;
 
   @Transform(({ value }) => +value)
   override isRemotely!: string;
 
-  @Expose()
-  get moneyTypeData() {
-    if (!this.moneyType) return null;
-    return this.moneyType === MoneyType.VND ? 'VND' : 'USD';
-  }
+  @Transform(({ value }) => {
+    if (!value) return null;
+    return value === MoneyType.VND ? 'VND' : 'USD';
+  })
+  override moneyType!: string;
 
   @Expose()
   get salaryTypeValue() {
@@ -130,19 +150,4 @@ export class SearchPostSerialization extends Post {
   get createdAtText() {
     return timeToTextTransform(this.createdAt, this.lang);
   }
-
-  @Expose()
-  get image() {
-    return this.postImages && this.postImages.length > 0
-      ? `${BUCKET_IMAGE_POST}/${this.id}/${this.postImages[0].image}`
-      : this.categories
-      ? ''
-      : null;
-  }
-
-  //   @Expose()
-  //   get companyId() {
-  //     if (!this.companyInformation) return null;
-  //     return this.companyInformation.id;
-  //   }
 }

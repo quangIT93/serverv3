@@ -9,7 +9,7 @@ export class SearchPostService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
   ) {}
-  async findAll(query: GetSearchPostDto) {
+  async findAll(query: GetSearchPostDto, accountId?: string) {
     const {
       money_type,
       districtId,
@@ -31,8 +31,15 @@ export class SearchPostService {
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'provinces')
         .leftJoinAndSelect('posts.postImages', 'images')
+        .leftJoinAndSelect('posts.salaryTypeData', 'salaryType')
+        .leftJoinAndSelect('posts.jobTypeData', 'jobType')
         .leftJoinAndSelect('posts.categories', 'categories')
-        .leftJoinAndSelect('posts.bookmarks', 'bookmarks')
+        .leftJoinAndSelect(
+          'posts.bookmarks',
+          'bookmarks',
+          'bookmarks.accountId = :accountId',
+          { accountId },
+        )
         .leftJoinAndSelect('posts.companyResource', 'companyResourceData')
         .andWhere('posts.status = :status', { status: 1 });
       if (q) {
@@ -58,16 +65,37 @@ export class SearchPostService {
       }
 
       if (jobTypeId !== undefined) {
-        filter.andWhere('posts.jobType = :jobTypeId', {
-          jobTypeId,
-        });
+        if (
+          salary_type !== 1 &&
+          salary_type !== 2 &&
+          salary_type !== 4 &&
+          salary_type !== 7
+        ) {
+          throw new BadRequestException('Please enter the correct jobTypeId');
+        } else {
+          filter.andWhere('posts.jobType = :jobTypeId', {
+            jobTypeId,
+          });
+        }
       }
 
       if (salary_type !== undefined) {
-        filter.andWhere('posts.salaryType = :salary_type', {
-          salary_type,
-        });
+        if (
+          salary_type !== 1 &&
+          salary_type !== 2 &&
+          salary_type !== 3 &&
+          salary_type !== 4 &&
+          salary_type !== 5 &&
+          salary_type !== 6
+        ) {
+          throw new BadRequestException('Please enter the correct salary type');
+        } else {
+          filter.andWhere('posts.salaryType = :salary_type', {
+            salary_type,
+          });
+        }
       }
+
       if (salary_min !== undefined && salary_max) {
         if (salary_max < salary_min) {
           throw new BadRequestException(

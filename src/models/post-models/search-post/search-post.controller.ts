@@ -4,19 +4,34 @@ import {
   Query,
   UseInterceptors,
   ClassSerializerInterceptor,
+  UseGuards,
+  Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { SearchPostService } from './search-post.service';
 import { GetSearchPostDto } from './dto/get-search-post.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SearchPostInterceptor } from './interceptor/search-post.interceptor';
+import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
+import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
 @ApiTags('Search-post')
 @Controller('search-post')
 export class SearchPostController {
   constructor(private readonly searchPostService: SearchPostService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor, SearchPostInterceptor)
   @Get()
-  findAll(@Query() query: GetSearchPostDto) {
-    return this.searchPostService.findAll(query);
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(ClassSerializerInterceptor, SearchPostInterceptor)
+  findAll(@Query() query: GetSearchPostDto, @Req() req: CustomRequest) {
+    try {
+      const accountId = req.user?.id;
+      return this.searchPostService.findAll(query, accountId);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Error getting');
+    }
   }
 }
