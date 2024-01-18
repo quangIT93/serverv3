@@ -33,7 +33,7 @@ import { PostViewsModule } from '../post-views/post-views.module';
     ApplicationsModule,
     PostNotificationsModule,
     ParentModule,
-    PostViewsModule
+    PostViewsModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],

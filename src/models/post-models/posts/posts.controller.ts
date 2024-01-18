@@ -150,7 +150,10 @@ export class PostsController {
   @UseGuards(AuthNotRequiredGuard)
   @UseInterceptors(ClassSerializerInterceptor, PostDetailInterceptor)
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number, @Req() req: CustomRequest) {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: CustomRequest,
+  ) {
     const accountId = req.user?.id;
     return await this.postsService.findOne(id, accountId);
   }

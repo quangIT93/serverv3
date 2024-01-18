@@ -18,14 +18,16 @@ async function bootstrap() {
   app.set('trust proxy', 1);
 
   // set global pipes
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    transformOptions: {
-      enableImplicitConversion: true
-    }
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
   // CORS
   app.enableCors({
@@ -48,9 +50,9 @@ async function bootstrap() {
 
   // init firebase admin
   const adminConfig: ServiceAccount = {
-    "projectId": appConfig.firebase?.projectId || '',
-    "privateKey": appConfig.firebase.privateKey.replace(/\\n/g, '\n'),
-    "clientEmail": appConfig.firebase.clientEmail,
+    projectId: appConfig.firebase?.projectId || '',
+    privateKey: appConfig.firebase.privateKey.replace(/\\n/g, '\n'),
+    clientEmail: appConfig.firebase.clientEmail,
   };
   // Initialize the firebase admin app
   admin.initializeApp({
@@ -58,7 +60,10 @@ async function bootstrap() {
   });
 
   await app.listen(appConfig.port || 8000, () => {
-    Logger.log(`Server running on http://localhost:${appConfig.port}`, 'Bootstrap');
+    Logger.log(
+      `Server running on http://localhost:${appConfig.port}`,
+      'Bootstrap',
+    );
   });
 }
 bootstrap();

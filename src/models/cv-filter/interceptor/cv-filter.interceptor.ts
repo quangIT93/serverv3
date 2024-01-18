@@ -19,7 +19,7 @@ export class CVFilterInterceptor implements NestInterceptor {
           data: {
             total: cvFilter.total,
             cvFilters: data,
-            is_over: cvFilter.is_over
+            is_over: cvFilter.is_over,
           },
           message: _context.switchToHttp().getResponse().statusMessage,
         };
