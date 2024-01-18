@@ -12,6 +12,7 @@ import { locationTranslator } from 'src/common/helper/translators';
 import { CompanyResourceSerialization } from 'src/models/company-resources/serialization/company-resource.serialization';
 import { SalaryTypeSerialization } from 'src/models/salary-types/serialization/salary-type.serialization';
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
+// import { BUCKET_IMAGE_POST } from 'src/common/constants';
 // import { BadRequestException } from '@nestjs/common';
 
 export class SearchPostSerialization extends Post {
@@ -40,6 +41,20 @@ export class SearchPostSerialization extends Post {
 
   @Exclude({ toPlainOnly: true })
   override postImages: PostImages[] | undefined;
+
+  @Expose()
+  get image() {
+    if (!this.postImages || this.postImages.length === 0) return null;
+    if (this.postImages[0].type === 1) {
+      this.postImages.shift();
+    }
+    return this.postImages.map((image) => {
+      return {
+        id: image.id,
+        // url: `${BUCKET_IMAGE_POST}/${this.id}/${image.image}`,
+      };
+    });
+  }
 
   @Exclude({ toPlainOnly: true })
   override companyInformation: any;

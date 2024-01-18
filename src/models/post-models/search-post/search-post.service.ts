@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from '../posts/entities';
 import { Repository } from 'typeorm';
 import { GetSearchPostDto } from './dto/get-search-post.dto';
+
 @Injectable()
 export class SearchPostService {
   constructor(
@@ -30,10 +31,11 @@ export class SearchPostService {
         .leftJoinAndSelect('posts.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'provinces')
-        .leftJoinAndSelect('posts.postImages', 'images')
+        .leftJoinAndSelect('posts.postImages', 'postImages')
         .leftJoinAndSelect('posts.salaryTypeData', 'salaryType')
         .leftJoinAndSelect('posts.jobTypeData', 'jobType')
         .leftJoinAndSelect('posts.categories', 'categories')
+        .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
         .leftJoinAndSelect(
           'posts.bookmarks',
           'bookmarks',
@@ -138,6 +140,7 @@ export class SearchPostService {
       }
 
       const total = await filter.getCount();
+
       const result = await filter
         .take(query.limit)
         .skip(query.page ? query.page * query.limit : 0)
