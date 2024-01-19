@@ -33,7 +33,7 @@ import { PostViewsModule } from '../post-views/post-views.module';
     ApplicationsModule,
     PostNotificationsModule,
     ParentModule,
-    PostViewsModule
+    PostViewsModule,
   ],
   controllers: [PostsController],
   providers: [PostsService],
@@ -53,6 +53,7 @@ export class PostsModule implements NestModule {
         { path: 'posts/topic/:id', method: RequestMethod.GET },
         { path: 'posts/account/:accountId', method: RequestMethod.GET },
         { path: 'posts/nearby', method: RequestMethod.GET },
+        { path: 'posts/newest/v2', method: RequestMethod.GET },
       );
   }
 }

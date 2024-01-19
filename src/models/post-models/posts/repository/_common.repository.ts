@@ -142,51 +142,115 @@ export class PostsQueryBuilder {
       .getMany();
   }
 
-  // let query = this.init()
-  // .innerJoinAndSelect('posts.categories', 'categories')
-  // .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
-  // .innerJoinAndSelect('posts.ward', 'ward')
-  // .innerJoinAndSelect('ward.district', 'district')
-  // .innerJoinAndSelect('district.province', 'province')
-  // .leftJoinAndSelect('posts.postImages', 'postImages')
-  // .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
-  // .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
-  // .innerJoinAndSelect('posts.companyResource', 'companyResource')
-  // .where(`posts.status = 1`)
-  // .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`)
-  // .andWhere(`(posts.endDate IS NULL OR posts.endDate >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)`)
+  async getNewestPostsV2(
+    _page: number,
+    limit: number,
+    _queries?: NewestPostQueriesDto,
+    _threshold?: number,
+  ): Promise<Post[]> {
+    console.log('page, limit', _page, limit);
+    const listIds = await this.repository.query(`
+            SELECT
+                posts.id
+            FROM posts USE INDEX(descending_post_id_idx)
+            INNER JOIN wards ON wards.id = posts.ward_id ${
+              _queries?.districtIds
+                ? `AND wards.district_id IN (${_queries.districtIds})`
+                : ''
+            }
+            ${
+              _queries?.provinceId
+                ? `INNER JOIN districts ON districts.id = wards.district_id 
+                AND districts.province_id = ${_queries.provinceId}`
+                : ''
+            }
+            INNER JOIN posts_categories ON posts_categories.post_id = posts.id ${
+              _queries?.childrenCategoryId
+                ? `AND posts_categories.category_id IN (${_queries.childrenCategoryId})`
+                : ''
+            }
+            ${
+              _queries?.parentCategoryId
+                ? `INNER JOIN child_categories ON child_categories.id = posts_categories.category_id 
+                AND child_categories.parent_category_id = ${_queries.parentCategoryId}`
+                : ''
+            }
+            WHERE posts.status = 1
+                AND (posts.expired_date IS NULL OR posts.expired_date >= NOW())
+                AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
+            GROUP BY posts.id
+            ORDER BY date_format(posts.created_at,'%y-%m-%d') DESC, posts.is_inhouse_data,posts.id desc
+            LIMIT ${limit * _page},${limit}
+        `);
 
-  // if (_queries?.parentCategoryId) {
-  //     query = query.andWhere(`parentCategory.id = :parentCategoryId`, {
-  //         parentCategoryId: _queries.parentCategoryId,
-  //     });
-  // }
+    if (!listIds.length) {
+      return [];
+    }
 
-  // if (_queries?.childrenCategoryId) {
-  //     query = query.andWhere(`categories.id IN (:...childrenCategoryId)`, {
-  //         childrenCategoryId: _queries.childrenCategoryId,
-  //     });
-  // }
-
-  // if (_queries?.provinceId) {
-  //     query = query.andWhere(`province.id = :provinceId`, {
-  //         provinceId: _queries.provinceId,
-  //     });
-  // }
-
-  // if (_queries?.districtIds) {
-  //     query = query.andWhere(`district.id IN (:...districtIds)`, {
-  //         districtIds: _queries.districtIds,
-  //     });
-  // }
-
-  // if (_threshold) {
-  //     query = query.andWhere(`posts.id < :threshold`, {
-  //         threshold: _threshold,
-  //     });
-  // }
-
-  // query = query.orderBy(`posts.createdAt`, 'DESC');
-
-  // return query.take(limit).getMany();
+    return this.init()
+      .innerJoinAndSelect('posts.categories', 'categories')
+      .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
+      .innerJoinAndSelect('posts.ward', 'ward')
+      .innerJoinAndSelect('ward.district', 'district')
+      .innerJoinAndSelect('district.province', 'province')
+      .leftJoinAndSelect('posts.postImages', 'postImages')
+      .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
+      .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
+      .innerJoinAndSelect('posts.companyResource', 'companyResource')
+      .where(`posts.id IN (:...ids)`, {
+        ids: listIds.map((item: any) => item.id),
+      })
+      .orderBy(
+        `FIELD(posts.id, ${listIds.map((item: any) => item.id).join(',')})`,
+      )
+      .getMany();
+  }
 }
+
+// let query = this.init()
+// .innerJoinAndSelect('posts.categories', 'categories')
+// .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
+// .innerJoinAndSelect('posts.ward', 'ward')
+// .innerJoinAndSelect('ward.district', 'district')
+// .innerJoinAndSelect('district.province', 'province')
+// .leftJoinAndSelect('posts.postImages', 'postImages')
+// .innerJoinAndSelect('posts.jobTypeData', 'jobTypeData')
+// .innerJoinAndSelect('posts.salaryTypeData', 'salaryTypeData')
+// .innerJoinAndSelect('posts.companyResource', 'companyResource')
+// .where(`posts.status = 1`)
+// .andWhere(`(posts.expiredDate IS NULL OR posts.expiredDate >= NOW())`)
+// .andWhere(`(posts.endDate IS NULL OR posts.endDate >= UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) * 1000)`)
+
+// if (_queries?.parentCategoryId) {
+//     query = query.andWhere(`parentCategory.id = :parentCategoryId`, {
+//         parentCategoryId: _queries.parentCategoryId,
+//     });
+// }
+
+// if (_queries?.childrenCategoryId) {
+//     query = query.andWhere(`categories.id IN (:...childrenCategoryId)`, {
+//         childrenCategoryId: _queries.childrenCategoryId,
+//     });
+// }
+
+// if (_queries?.provinceId) {
+//     query = query.andWhere(`province.id = :provinceId`, {
+//         provinceId: _queries.provinceId,
+//     });
+// }
+
+// if (_queries?.districtIds) {
+//     query = query.andWhere(`district.id IN (:...districtIds)`, {
+//         districtIds: _queries.districtIds,
+//     });
+// }
+
+// if (_threshold) {
+//     query = query.andWhere(`posts.id < :threshold`, {
+//         threshold: _threshold,
+//     });
+// }
+
+// query = query.orderBy(`posts.createdAt`, 'DESC');
+
+// return query.take(limit).getMany();

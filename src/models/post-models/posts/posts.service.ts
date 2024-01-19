@@ -274,6 +274,20 @@ export class PostsService {
     );
   }
 
+  async getNewestPostsV2(
+    limit: number,
+    page: number,
+    queries?: NewestPostQueriesDto,
+    threshold?: number,
+  ): Promise<any[]> {
+    return new PostsQueryBuilder(this.postsRepository).getNewestPostsV2(
+      page,
+      limit,
+      queries,
+      threshold,
+    );
+  }
+
   async getNearByPosts(
     limit: number,
     page: number,
