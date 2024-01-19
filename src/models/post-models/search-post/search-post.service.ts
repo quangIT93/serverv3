@@ -43,7 +43,29 @@ export class SearchPostService {
           'bookmarks.accountId = :accountId',
           { accountId },
         )
-        .andWhere('posts.status = :status', { status: 1 });
+        .andWhere('posts.status = :status', { status: 1 })
+        .select([
+          'posts.id',
+          'posts.companyName',
+          'posts.address',
+          'posts.salaryMin',
+          'posts.salaryMax',
+          'posts.salaryType',
+          'posts.title',
+          'posts.createdAt',
+          'posts.updatedAt',
+          'salaryType',
+          'ward',
+          'district',
+          'provinces',
+          'companyResourceData',
+          'bookmarks',
+          'postImages',
+          'jobType',
+          'categories',
+          'parentCategory',
+        ]);
+
       if (q) {
         filter.andWhere('LOWER(posts.title) LIKE LOWER(:q)', { q: `%${q}%` });
       }

@@ -32,6 +32,8 @@ export class SearchPostInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((item: any) => {
+        console.log('item', item);
+
         const data = item?.result?.map((data: Post) => {
           const postNormally = new PostNormally(data, lang);
           if (bookmarks.includes(postNormally.id)) {

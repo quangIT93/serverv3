@@ -10,7 +10,7 @@ import { JobType } from 'src/models/job-types/entities/job-type.entity';
 
 import { locationTranslator } from 'src/common/helper/translators';
 import { CompanyResourceSerialization } from 'src/models/company-resources/serialization/company-resource.serialization';
-import { SalaryTypeSerialization } from 'src/models/salary-types/serialization/salary-type.serialization';
+// import { SalaryTypeSerialization } from 'src/models/salary-types/serialization/salary-type.serialization';
 import { JobTypesSerialization } from 'src/models/job-types/serialization/job_types.serialization';
 // import { BUCKET_IMAGE_POST } from 'src/common/constants';
 // import { BadRequestException } from '@nestjs/common';
@@ -68,8 +68,8 @@ export class SearchPostSerialization extends Post {
   @Exclude({ toPlainOnly: true })
   override companyResource!: any;
 
-  @Exclude({ toPlainOnly: true })
-  override salaryTypeData!: any;
+  // @Exclude({ toPlainOnly: true })
+  // override salaryTypeData!: any;
 
   @Exclude({ toPlainOnly: true })
   override profile!: any;
@@ -131,7 +131,8 @@ export class SearchPostSerialization extends Post {
   @Expose()
   get salaryTypeValue() {
     if (!this.salaryType) return null;
-    return new SalaryTypeSerialization(this.salaryTypeData, this.lang);
+    return this.salaryTypeData;
+    // return new SalaryTypeSerialization(this.salaryTypeData, this.lang);
   }
 
   @Expose()
