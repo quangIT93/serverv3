@@ -146,6 +146,7 @@ export class PostsQueryBuilder {
     _queries?: NewestPostQueriesDto,
     _threshold?: number,
   ): Promise<Post[]> {
+    console.log('page, limit', _page, limit);
     const listIds = await this.repository.query(`
             SELECT
                 posts.id
@@ -177,7 +178,7 @@ export class PostsQueryBuilder {
                 AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
             GROUP BY posts.id
             ORDER BY date_format(posts.created_at,'%y-%m-%d') DESC, posts.is_inhouse_data,posts.id desc
-            LIMIT ${limit * _page}${limit}
+            LIMIT ${limit * _page},${limit}
         `);
 
     if (!listIds.length) {
