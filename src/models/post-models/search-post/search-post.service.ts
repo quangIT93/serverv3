@@ -28,6 +28,7 @@ export class SearchPostService {
     try {
       const filter = this.postRepository
         .createQueryBuilder('posts')
+        .useIndex('rev_id_idx')
         .leftJoinAndSelect('posts.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'provinces')
