@@ -78,9 +78,6 @@ export class SearchPostSerialization extends Post {
   override createdAtDate!: Date;
 
   @Exclude({ toPlainOnly: true })
-  override bookmarks!: any;
-
-  @Exclude({ toPlainOnly: true })
   override description!: string;
 
   @Exclude({ toPlainOnly: true })
@@ -153,12 +150,6 @@ export class SearchPostSerialization extends Post {
   get companyResourceData() {
     if (!this.companyResource) return null;
     return new CompanyResourceSerialization(this.companyResource, this.lang);
-  }
-
-  @Expose()
-  get bookmarked() {
-    if (!this.bookmarks) return null;
-    return this.bookmarks?.length > 0 ? true : false;
   }
 
   @Expose()

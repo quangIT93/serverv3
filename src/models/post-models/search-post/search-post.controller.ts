@@ -11,9 +11,10 @@ import {
 import { SearchPostService } from './search-post.service';
 import { GetSearchPostDto } from './dto/get-search-post.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { SearchPostInterceptor } from './interceptor/search-post.interceptor';
+
 import { AuthNotRequiredGuard } from 'src/authentication/authNotRequired.guard';
 import { CustomRequest } from 'src/common/interfaces/customRequest.interface';
+import { SearchPostInterceptor } from './interceptor/search-post.interceptor';
 @ApiTags('Search-post')
 @Controller('search-post')
 export class SearchPostController {

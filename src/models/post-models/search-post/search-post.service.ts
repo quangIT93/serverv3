@@ -36,13 +36,13 @@ export class SearchPostService {
         .leftJoinAndSelect('posts.jobTypeData', 'jobType')
         .leftJoinAndSelect('posts.categories', 'categories')
         .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
+        .leftJoinAndSelect('posts.companyResource', 'companyResourceData')
         .leftJoinAndSelect(
           'posts.bookmarks',
           'bookmarks',
           'bookmarks.accountId = :accountId',
           { accountId },
         )
-        .leftJoinAndSelect('posts.companyResource', 'companyResourceData')
         .andWhere('posts.status = :status', { status: 1 });
       if (q) {
         filter.andWhere('LOWER(posts.title) LIKE LOWER(:q)', { q: `%${q}%` });
