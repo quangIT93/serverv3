@@ -108,10 +108,11 @@ export class PostsQueryBuilder {
                 AND (posts.end_date IS NULL OR posts.end_date >= UNIX_TIMESTAMP(CURDATE()) * 1000)
                 ${_threshold ? `AND posts.id < ${_threshold}` : ''}
             GROUP BY posts.id
-            ORDER BY date_format(posts.created_at,'%y-%m-%d') DESC, posts.is_inhouse_data,posts.id desc
+            ORDER BY posts.id DESC
             LIMIT ${limit}
         `);
     // ORDER BY posts.id DESC
+    // ORDER BY date_format(posts.created_at,'%y-%m-%d') DESC, posts.is_inhouse_data,posts.id desc
     // , field(company_resource_id,2) desc, posts.id desc
     // AND ${lastCompanyResourceId ? lastCompanyResourceId.companyResourceId  === 2
     //     ? `(posts.company_resource_id != 2 OR posts.id < ${_threshold})`
