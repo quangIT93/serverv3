@@ -10,7 +10,10 @@ export class SearchPostService {
     @InjectRepository(Post)
     private readonly postRepository: Repository<Post>,
   ) {}
-  async findAll(query: GetSearchPostDto, accountId?: string) {
+  async findAll(
+    query: GetSearchPostDto,
+    // , accountId?: string
+  ) {
     const {
       money_type,
       districtId,
@@ -28,7 +31,6 @@ export class SearchPostService {
     try {
       const filter = this.postRepository
         .createQueryBuilder('posts')
-        .useIndex('rev_id_idx')
         .leftJoinAndSelect('posts.ward', 'ward')
         .leftJoinAndSelect('ward.district', 'district')
         .leftJoinAndSelect('district.province', 'provinces')
@@ -38,12 +40,6 @@ export class SearchPostService {
         .leftJoinAndSelect('posts.categories', 'categories')
         .innerJoinAndSelect('categories.parentCategory', 'parentCategory')
         .leftJoinAndSelect('posts.companyResource', 'companyResourceData')
-        .leftJoinAndSelect(
-          'posts.bookmarks',
-          'bookmarks',
-          'bookmarks.accountId = :accountId',
-          { accountId },
-        )
         .andWhere('posts.status = :status', { status: 1 })
         .select([
           'posts.id',
@@ -51,20 +47,34 @@ export class SearchPostService {
           'posts.address',
           'posts.salaryMin',
           'posts.salaryMax',
-          'posts.salaryType',
           'posts.title',
           'posts.createdAt',
           'posts.updatedAt',
-          'salaryType',
-          'ward',
-          'district',
-          'provinces',
-          'companyResourceData',
-          'bookmarks',
-          'postImages',
-          'jobType',
+          'salaryType.id',
+          'salaryType.value',
+          'salaryType.valueEn',
+          'salaryType.valueKo',
+          'ward.id',
+          'ward.fullName',
+          'ward.fullNameEn',
+          'district.id',
+          'district.fullName',
+          'district.fullNameEn',
+          'provinces.id',
+          'provinces.fullName',
+          'provinces.fullNameEn',
+          'companyResourceData.id',
+          'companyResourceData.logo',
+          'companyResourceData.name',
+          'postImages.id',
+          'postImages.image',
+          'postImages.type',
+          'jobType.id',
+          'jobType.name',
+          'jobType.nameEn',
+          'jobType.nameKo',
           'categories',
-          'parentCategory',
+          'parentCategory.image',
         ]);
 
       if (q) {
@@ -138,19 +148,29 @@ export class SearchPostService {
         filter.andWhere('posts.salary_max <= :salary_max', { salary_max });
       }
 
-      if (districtId) {
-        filter.andWhere('ward.district.id IN (:...districtId)', {
-          districtId: Array.isArray(districtId)
-            ? districtId.map((item) => +item)
-            : [+districtId],
-        });
-      }
-
-      if (provinceIds) {
+      if (provinceIds && districtId) {
+        filter.andWhere(
+          '(provinces.id IN (:...provinceIds) OR ward.district.id IN (:...districtId))',
+          {
+            provinceIds: Array.isArray(provinceIds)
+              ? provinceIds.map((item) => +item)
+              : [+provinceIds],
+            districtId: Array.isArray(districtId)
+              ? districtId.map((item) => +item)
+              : [+districtId],
+          },
+        );
+      } else if (provinceIds) {
         filter.andWhere('provinces.id IN (:...provinceIds)', {
           provinceIds: Array.isArray(provinceIds)
             ? provinceIds.map((item) => +item)
             : [+provinceIds],
+        });
+      } else if (districtId) {
+        filter.andWhere('ward.district.id IN (:...districtId)', {
+          districtId: Array.isArray(districtId)
+            ? districtId.map((item) => +item)
+            : [+districtId],
         });
       }
 
