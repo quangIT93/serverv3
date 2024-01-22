@@ -5,7 +5,7 @@ import { BullMailService } from 'src/services/bull/bull-mail.service';
 import { MailService } from 'src/services/mail/mail.service';
 import { QueueModule } from 'src/providers/queue/provider.module';
 import { JwtAccessTokenModule } from 'src/providers/jwt/atk.provider.module';
-import { AuthController } from './auth.controller';
+// import { AuthController } from './auth.controller';
 
 @Module({
   imports: [UserModule, QueueModule, JwtAccessTokenModule],
@@ -15,6 +15,6 @@ import { AuthController } from './auth.controller';
     MailService,
     // JwtAccessTokenService
   ],
-  controllers: [AuthController],
+  // controllers: [AuthController],
 })
 export class AuthModule {}
