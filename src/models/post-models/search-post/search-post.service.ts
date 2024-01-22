@@ -181,7 +181,7 @@ export class SearchPostService {
         });
       }
 
-      const total = await filter.getCount();
+      // const total = await filter.getCount();
 
       const result = await filter
         .take(query.limit)
@@ -189,14 +189,9 @@ export class SearchPostService {
         .orderBy('posts.createdAt', 'DESC')
         .getMany();
       return {
-        total,
+        // total,
         result,
-        is_over:
-          result.length === total
-            ? true
-            : result.length < query.limit
-            ? true
-            : false,
+        is_over: result.length < query.limit ? true : false,
       };
     } catch (error) {
       throw error;
