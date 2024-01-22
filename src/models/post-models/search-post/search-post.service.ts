@@ -49,7 +49,6 @@ export class SearchPostService {
           'posts.salaryMax',
           'posts.title',
           'posts.createdAt',
-          'posts.updatedAt',
           'salaryType.id',
           'salaryType.value',
           'salaryType.valueEn',
