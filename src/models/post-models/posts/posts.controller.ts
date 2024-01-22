@@ -101,6 +101,20 @@ export class PostsController {
   }
 
   @SkipThrottle()
+  @ApiQuery({ name: 'threshold', required: false })
+  @Get('newest/v2')
+  @UseGuards(AuthNotRequiredGuard)
+  @UseInterceptors(PostNewInterceptor)
+  async getNewestPostsV2(
+    @Query() queries: NewestPostQueriesDto,
+    @Req() req: CustomRequest,
+  ) {
+    const { limit = 20, page = 0 } = req;
+    const { threshold } = queries;
+    return this.postsService.getNewestPostsV2(limit, page, queries, threshold);
+  }
+
+  @SkipThrottle()
   @ApiBearerAuth()
   @Get('nearby')
   @UseGuards(AuthGuard)
