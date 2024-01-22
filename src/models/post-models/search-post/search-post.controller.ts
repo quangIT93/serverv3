@@ -41,4 +41,25 @@ export class SearchPostController {
       throw new BadRequestException('Error getting');
     }
   }
+
+  @Get('/total')
+  @ApiBearerAuth()
+  @UseGuards(AuthNotRequiredGuard)
+  findAllTotal(
+    @Query() query: GetSearchPostDto,
+    // , @Req() req: CustomRequest
+  ) {
+    try {
+      // const accountId = req.user?.id;
+      return this.searchPostService.findAllTotal(
+        query,
+        // , accountId
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new BadRequestException('Error getting');
+    }
+  }
 }
