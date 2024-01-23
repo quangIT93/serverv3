@@ -81,6 +81,7 @@ import { PostViewsModule } from './models/post-models/post-views/post-views.modu
 import { CategoryDescriptionTemplatesModule } from './models/description-template-models/category-description-templates/category-description-templates.module';
 import { CompanyDescriptionTemplatesModule } from './models/description-template-models/company-description-templates/company-description-templates.module';
 import { PostMediasModule } from './models/post-models/post-medias/post-medias.module';
+import { SearchPostModule } from './models/post-models/search-post/search-post.module';
 @Module({
   imports: [
     AppConfigModule,
@@ -167,6 +168,9 @@ import { PostMediasModule } from './models/post-models/post-medias/post-medias.m
     // Description template
     CategoryDescriptionTemplatesModule,
     CompanyDescriptionTemplatesModule,
+
+    // Search Post
+    SearchPostModule,
 
     ThrottlerModule.forRoot([
       {

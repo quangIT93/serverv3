@@ -88,7 +88,7 @@ export async function findByHotTopicQuery(
 
   if (salaryMin !== undefined && salaryMax) {
     if (salaryMax < salaryMin) {
-      throw new BadRequestException('Salary max must be salary min');
+      throw new BadRequestException('Salary max must greater than salary min');
     }
 
     posts.andWhere(
